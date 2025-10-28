@@ -2,6 +2,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import {API_BASE_URL} from "../../constants/config"
+
 
 export default function Register() {
   const [userType, setUserType] = useState('Convencer'); // 'Convencer' or 'customer'
@@ -54,6 +56,8 @@ export default function Register() {
     const data = await res.text();
     console.log("Response:", data);
   };
+  const baseUrl = API_BASE_URL;
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#eaeaea] px-4">
@@ -63,17 +67,12 @@ export default function Register() {
           <div className="text-center ">
             <h2 className="text-3xl font-light ">Welcome to <br></br > Movwise</h2>
             <p className="mt-2 text-white/80 ">We make it for you</p>
-         <Image
-  src="/Group 1410119737.png"
-  alt="GreenApp Logo"
-  className="w-40 mx-auto my-8"
-  width={160}
-  height={160}
-/>
+
           </div>
-          <button className="border border-white mt-7 px-6 py-2 rounded-full hover:bg-white hover:text-[#27a277] transition-all">
-           <Link href="auth/login"> SIGN IN </Link>
-          </button>
+          {/* <button className="border border-white mt-7 px-6 py-2 rounded-full hover:bg-white hover:text-[#27a277] transition-all">
+           <Link  href={`${baseUrl}/auth/login`}> SIGN IN </Link>
+             
+          </button> */}
         </div>
 
         {/* Right Section */}
@@ -143,7 +142,7 @@ export default function Register() {
 
             <span className="text-black text-center block mt-2">
               Already have an account?{' '}
-              <Link href="auth/login" className="text-[#27a277]">
+              <Link  href={`${baseUrl}/auth/login`} className="text-[#27a277]">
                 Login
               </Link>
             </span>
