@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
 
 .font-outfit {
   font-family: 'Outfit', sans-serif;
@@ -127,4 +126,7 @@ color:#4A7C59;
 .scrollbar-hidden {
   -ms-overflow-style: none; /* IE & Edge */
   scrollbar-width: none; /* Firefox */
+}
+.errormessage{
+  color: red;
 }

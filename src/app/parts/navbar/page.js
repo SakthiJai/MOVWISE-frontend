@@ -2,12 +2,15 @@
 
 import Link from "next/link";
 
-const Navbar = () => {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+const Navbar = ({ originalstyle = false }) => {
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://movwise.digitalcloudies.in/';
 
   return (
     <div>
-       <header className="mx-auto max-w-[1200px]  pt-6 flex items-center justify-between">
+       <header  className={`w-full bg-white  ${
+        originalstyle ? "" : "pt-3"
+      }  mx-auto max-w-[1200px]   flex items-center justify-between`}>
+             
         {/* Logo */}
         <Link href="/" className="flex items-center select-none">
           <span className="text-[34px] leading-none font-extrabold text-[#1E5C3B] tracking-tight">MovWise</span>
@@ -21,7 +24,7 @@ const Navbar = () => {
   Home
   <span className="absolute left-1/2 bottom-0 transform -translate-x-1/2 w-4 h-[2px] bg-green-700 rounded"></span>
 </Link>
-          <Link href={`${baseUrl}/components/quotesdetails`} className="px-4 font-medium hover:opacity-80 font-outfit text-gray-700">About</Link>
+          <Link href={`${baseUrl}/components/Ouotesdetails/`} className="px-4 font-medium hover:opacity-80 font-outfit text-gray-700">About</Link>
           <Link               href={`${baseUrl}/components/partnerspage/`}
  className="px-4 font-medium hover:opacity-80 font-outfit">Services</Link>
           <Link               href={`${baseUrl}/components/partnerspagecard/`} className="px-4 font-medium hover:opacity-80">Advice / Blog</Link>

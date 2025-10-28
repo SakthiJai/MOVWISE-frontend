@@ -2,7 +2,9 @@ import React from 'react'
 import  Navbar  from "../../parts/navbar/page";// app/personal-details/page.js
 import Link from 'next/link';
 export default function PropertyDetails ()  {
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    // const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://movwise.digitalcloudies.in/';
+      const baseUrl = 'https://movwise.digitalcloudies.in/';
+
 
   return (
     
@@ -213,12 +215,12 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
               >
                 Cancel
               </a>
-              <a
+              <Link
                 href={`${baseUrl}/components/comparequotes`}
                 className="  font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full bg-[#1E5C3B] text-[#EDF4EF]"
               >
                 Continue to Property Details →
-              </a>
+              </Link>
             </div>
           </section>
         </div>

@@ -98,18 +98,15 @@ import { FaArrowRight } from "react-icons/fa";
 
 export default function Footer() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col">
       {/* ---------------- HEADER ---------------- */}
-     <header className="flex items-center justify-between px-10 py-6 bg-white">
-  {/* Logo on left */}
+     {/* <header className="flex items-center justify-between px-10 py-6 bg-white">
   <div className="flex items-center space-x-1">
     <h1 className="text-2xl font-bold">Mover</h1>
     <span className="text-yellow-400 text-lg">^</span>
   </div>
 
-  {/* Right side: Nav + Register */}
   <div className="flex items-center space-x-8">
-    {/* Nav */}
     <nav className="hidden md:flex space-x-8 text-sm font-medium text-gray-700">
       <a href="#" className="text-green-700 border-b-2 border-green-700 pb-1">
         Home
@@ -120,17 +117,16 @@ export default function Footer() {
       <a href="#">Resources</a>
     </nav>
 
-    {/* Register Button */}
     <button className="bg-yellow-400 hover:bg-yellow-500 text-black font-medium px-6 py-2 rounded-full flex items-center space-x-2">
       <span>Register</span>
       <FaArrowRight />
     </button>
   </div>
-</header>
+</header> */}
 
 
       {/* ---------------- MAIN CONTENT (empty, can add later) ---------------- */}
-      <main className="flex-1"></main>
+      {/* <main className="flex-1"></main> */}
 
       {/* ---------------- FOOTER ---------------- */}
    <footer className="bg-[#161719] text-white px-10 py-12">

@@ -18,12 +18,14 @@ const Topbar = () => {
         {/* Nav */}
         <div className="flex items-center gap-3 bg-white px-3 py-2 rounded-full shadow-sm">
             <div className="relative w-8 h-8">
-              {/* <Image
-                src="" // replace with your own user image
+              <Image
+                src="https://cdn-icons-png.flaticon.com/512/295/295128.png"
                 alt="user avatar"
                 fill
                 className="rounded-full object-cover"
-              /> */}
+                width={10}
+                height={10}
+              />
             </div>
             <span className="font-medium text-gray-800">Jessica Samson</span>
           </div>

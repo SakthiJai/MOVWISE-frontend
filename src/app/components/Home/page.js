@@ -1,5 +1,9 @@
 // This file is assumed to be in a Next.js project (e.g., app/page.tsx)
 import Head from 'next/head';
+import Footer from '../Footer';
+import Image from 'next/image';
+import Navbar from '../../parts/navbar/page';
+import Link from 'next/link';
 
 // --- Utility Components for Icons and Buttons (simplified) ---
 const FeatureIcon = ({ icon, title, description }) => (
@@ -9,6 +13,7 @@ const FeatureIcon = ({ icon, title, description }) => (
     <p className="text-sm text-gray-600">{description}</p>
   </div>
 );
+  const baseUrl = 'https://movwise.digitalcloudies.in/';
 
 const PrimaryCTA = ({ text }) => (
   // Primary Action colour: Emerald Green
@@ -25,18 +30,11 @@ export default function HomePage() {
         <title>MovWise | Compare Conveyancing Quotes & Move with Confidence</title>
       </Head>
 
-      {/* --- 1. HEADER / NAVIGATION (Simplified) --- */}
-      <header className="bg-white shadow-md sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto flex justify-between items-center py-4 px-4 sm:px-6 lg:px-8">
-          <div className="text-2xl font-bold text-emerald-800">🏠 MovWise</div>
-          <nav className="hidden md:flex space-x-6 text-gray-600">
-            <a href="#how-it-works" className="hover:text-emerald-600">How It Works</a>
-            <a href="#why-choose" className="hover:text-emerald-600">Why Choose Us</a>
-            <a href="#solicitors" className="hover:text-emerald-600">For Solicitors</a>
-          </nav>
-          <PrimaryCTA text="Get Your Free Quote" />
-        </div>
-      </header>
+      {/* --- 1. HEADER / NAVIGATION --- */}
+      <div className='bg-white shadow-md sticky top-0 p-4 '>
+         <Navbar originalstyle={true} />
+      </div>
+
 
       {/* --- 2. HERO SECTION --- */}
       <section className="bg-white pt-16 pb-24 border-b border-gray-100">
@@ -56,11 +54,17 @@ export default function HomePage() {
             </div>
           </div>
           {/* Image Placeholder */}
-          <div className="hidden md:block">
-             <div className="bg-gray-200 h-96 rounded-xl shadow-lg flex items-center justify-center text-gray-500">
-                [Image Placeholder: Happy couple receiving keys]
-             </div>
-          </div>
+       <div className="hidden md:block">
+  {/* <div className="relative bg-gray-200 h-96 rounded-xl shadow-lg overflow-hidden">
+    <Image
+      src="/homepagedesign.jpeg"
+      alt="conveyancing"
+      fill
+      className="object-cover rounded-xl"
+    />
+  </div> */}
+</div>
+
         </div>
       </section>
 
@@ -70,48 +74,34 @@ export default function HomePage() {
       <section id="how-it-works" className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">How MovWise Works</h2>
-        
-<div className="grid md:grid-cols-4 gap-8 text-center">
-    {/* Step 1 */}
-    <div>
-      {/* Container styled with Emerald Green background */}
-      <div className="text-2xl font-bold text-white mb-3 mx-auto w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center shadow-md">
-          1
-      </div>
-      <h3 className="font-semibold text-lg">Tell Us About Your Move</h3>
-      <p className="text-sm text-gray-600">Complete our simple 2-minute form.</p>
-    </div>
-    {/* Step 2 */}
-    <div>
-      {/* Container styled with Emerald Green background */}
-      <div className="text-2xl font-bold text-white mb-3 mx-auto w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center shadow-md">
-          2
-      </div>
-      <h3 className="font-semibold text-lg">Compare Instant Quotes</h3>
-      <p className="text-sm text-gray-600">Receive up to 5 fixed-fee quotes.</p>
-    </div>
-    {/* Step 3 */}
-    <div>
-      {/* Container styled with Emerald Green background */}
-      <div className="text-2xl font-bold text-white mb-3 mx-auto w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center shadow-md">
-          3
-      </div>
-      <h3 className="font-semibold text-lg">Choose & Connect</h3>
-      <p className="text-sm text-gray-600">Select your preferred solicitor.</p>
-    </div>
-    {/* Step 4 */}
-    <div>
-      {/* Container styled with Emerald Green background */}
-      <div className="text-2xl font-bold text-white mb-3 mx-auto w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center shadow-md">
-          4
-      </div>
-      <h3 className="font-semibold text-lg">Track Your Progress</h3>
-      <p className="text-sm text-gray-600">Monitor your case 24/7 via the Cloud Portal.</p>
-    </div>
-</div>
-
+          <div className="grid md:grid-cols-4 gap-8 text-center">
+            {/* Step 1 */}
+            <div>
+              <div className="text-2xl font-bold text-white mb-3 mx-auto w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center shadow-md">1</div>
+              <h3 className="font-semibold text-lg text-black">Tell Us About Your Move</h3>
+              <p className="text-sm text-gray-600">Complete our simple 2-minute form. Share your property details and language preference.</p>
+            </div>
+            {/* Step 2 */}
+            <div>
+              <div className="text-2xl font-bold text-white mb-3 mx-auto w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center shadow-md">2</div>
+              <h3 className="font-semibold text-lg text-black">Compare Instant Quotes</h3>
+              <p className="text-sm text-gray-600">Receive up to 5 fixed-fee quotes from trusted, regulated conveyancers.</p>
+            </div>
+            {/* Step 3 */}
+            <div>
+              <div className="text-2xl font-bold text-white mb-3 mx-auto w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center shadow-md">3</div>
+              <h3 className="font-semibold text-lg text-black">Choose & Connect</h3>
+              <p className="text-sm text-gray-600">Select your preferred solicitor. Our team helps you understand everything in your language.</p>
+            </div>
+            {/* Step 4 */}
+            <div>
+              <div className="text-2xl font-bold text-white mb-3 mx-auto w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center shadow-md">4</div>
+              <h3 className="font-semibold text-lg text-black">Track Your Progress</h3>
+              <p className="text-sm text-gray-600">Monitor your case through our secure MovWise Cloud Portal.</p>
+            </div>
+          </div>
           <div className="text-center mt-12">
-            <PrimaryCTA text="Start My Quote" />
+           <Link href={`${baseUrl}/auth/login`}> <PrimaryCTA text="Start My Quote"  /></Link>
           </div>
         </div>
       </section>
@@ -133,7 +123,6 @@ export default function HomePage() {
             <FeatureIcon icon="🧑‍💼" title="Verified Professionals" description="Every conveyancer is regulated by the SRA or CLC for your peace of mind." />
             <FeatureIcon icon="🔁" title="Smart Matching" description="We pair you with firms experienced in your specific property type and location." />
             <FeatureIcon icon="☁️" title="Secure Case Tracking" description="Monitor your conveyancing progress 24/7 through our secure cloud portal." />
-            {/* Add more icons/features here */}
           </div>
         </div>
       </section>
@@ -161,15 +150,15 @@ export default function HomePage() {
                   </select>
                   <button className="bg-emerald-600 text-white py-2 px-4 rounded-lg hover:bg-emerald-700">Search</button>
                 </div>
+                <p className="mt-6 text-sm text-gray-500 font-semibold">Languages Available: English, Spanish, Tamil, Hindi, Malayalam, Telugu, Polish, Punjabi, Urdu, Arabic, Romanian, and more.</p>
               </div>
 
               <div className="mt-8 space-y-4">
-                {/* Use Amber accent for testimonials */}
                 <blockquote className="p-4 border-l-4 border-amber-500 bg-white shadow-sm italic text-gray-700">
-                  "Finally found a **Tamil-speaking conveyancer!**" – Karthick Raja, Reading
+                 Finally found a Tamil-speaking conveyancer  Karthick Raja Reading
                 </blockquote>
                 <blockquote className="p-4 border-l-4 border-amber-500 bg-white shadow-sm italic text-gray-700">
-                  "Legal documents explained clearly in **Hindi**" – Rohan Patel, London
+                 Legal documents explained clearly in Hindi Rohan Patel, London
                 </blockquote>
               </div>
             </div>
@@ -177,12 +166,13 @@ export default function HomePage() {
             {/* Right Column: Support Services */}
             <div>
               <h3 className="text-2xl font-semibold mb-4 text-gray-800">Language Support Services</h3>
-              <ul className="space-y-3 text-gray-700">
-                <li className="flex items-center text-emerald-600">✅ <span className="text-gray-700 ml-2">Document explanations in your chosen language</span></li>
-                <li className="flex items-center text-emerald-600">✅ <span className="text-gray-700 ml-2">Help completing forms and ID checks</span></li>
-                <li className="flex items-center text-emerald-600">✅ <span className="text-gray-700 ml-2">Regular case follow-ups with your conveyancer</span></li>
+              <ul className="space-y-3 text-gray-700 list-none p-0">
+                <li className="flex items-center text-emerald-600">✓ <span className="text-gray-700 ml-2">Help completing forms and ID checks</span></li>
+                <li className="flex items-center text-emerald-600">✓ <span className="text-gray-700 ml-2">Document explanations in your chosen language</span></li>
+                <li className="flex items-center text-emerald-600">✓ <span className="text-gray-700 ml-2">Regular case follow-ups with your conveyancer</span></li>
+                <li className="flex items-center text-emerald-600">✓ <span className="text-gray-700 ml-2">Secure document storage in MovWise Cloud</span></li>
+                <li className="flex items-center text-emerald-600">✓ <span className="text-gray-700 ml-2">Optional printed final documents</span></li>
               </ul>
-              <p className="mt-6 text-sm text-gray-500">Languages available: English, Spanish, Tamil, Hindi, Malayalam, Telugu, Polish, Punjabi, Urdu, Arabic, Romanian, and more.</p>
             </div>
           </div>
         </div>
@@ -190,7 +180,115 @@ export default function HomePage() {
 
       {/* ---------------------------------------------------------------------------------- */}
 
-      {/* --- 6. FOR SOLICITORS & CONVEYANCERS (Footer CTA) --- */}
+      {/* --- 6. SUPPORT FEE SECTION --- */}
+      <section className="py-16 bg-white">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 p-8 rounded-xl border border-emerald-300 bg-emerald-50 shadow-lg">
+              <h2 className="text-2xl font-bold text-emerald-800 mb-4">MovWise Support Fee: Complete Peace of Mind</h2>
+              <p className="text-lg text-gray-700 mb-6">
+                  MovWise includes a **small support fee** covering essential services that guarantee a smoother, clearer process:
+              </p>
+              
+              <ul className="grid md:grid-cols-2 gap-4 text-gray-700 list-none p-0 mb-6">
+                  <li className="flex items-center">
+                      <span className="text-xl text-emerald-600 mr-3">💬</span> Translation and explanation services
+                  </li>
+                  <li className="flex items-center">
+                      <span className="text-xl text-emerald-600 mr-3">⏱️</span> Case tracking and regular follow-ups
+                  </li>
+                  <li className="flex items-center">
+                      <span className="text-xl text-emerald-600 mr-3">☁️</span> Secure digital document storage
+                  </li>
+                  <li className="flex items-center">
+                      <span className="text-xl text-emerald-600 mr-3">📞</span> Multilingual client support
+                  </li>
+              </ul>
+
+              <p className="text-xl font-semibold text-emerald-800 border-t border-emerald-200 pt-4 mt-4">
+                  **Value Proposition:** A small price for complete peace of mind — especially when every property detail matters.
+              </p>
+          </div>
+      </section>
+      
+      {/* ---------------------------------------------------------------------------------- */}
+
+      {/* --- 7. ABOUT MOVWISE SECTION --- */}
+      <section id="about" className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">About MovWise</h2>
+          <div className="grid md:grid-cols-2 gap-12">
+            <div>
+              <h3 className="text-2xl font-semibold text-emerald-800 mb-4">Our Mission</h3>
+              <p className="text-gray-700 leading-relaxed">
+                To make every home move **smarter, simpler, and more supported** through technology and transparency. We aim to remove the stress and confusion from the conveyancing process.
+              </p>
+            </div>
+            <div>
+              <h3 className="text-2xl font-semibold text-emerald-800 mb-4">Our Values</h3>
+              <ul className="space-y-2 text-gray-700 list-disc list-inside">
+                <li>**Transparency** in every quote and communication</li>
+                <li>**Inclusivity** through multilingual accessibility</li>
+                <li>**Innovation** in client-conveyancer connections</li>
+                <li>**Partnership** with regulated legal experts</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ---------------------------------------------------------------------------------- */}
+
+      {/* --- 8. FAQ SECTION --- */}
+      <section className="py-20 bg-white">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">Frequently Asked Questions</h2>
+          <div className="space-y-6">
+            <details className="p-4 rounded-lg bg-gray-50 border border-gray-200">
+              <summary className="font-semibold text-lg cursor-pointer text-emerald-700">Q: Are MovWise quotes fixed-fee estimates?</summary>
+              <p className="mt-2 pl-4 text-gray-700">A: **Yes** — all quotes are fixed-fee estimates provided directly by SRA or CLC-regulated firms. This ensures transparency with no hidden costs.</p>
+            </details>
+            <details className="p-4 rounded-lg bg-gray-50 border border-gray-200">
+              <summary className="font-semibold text-lg cursor-pointer text-emerald-700">Q: Do I have to pay to get a quote?</summary>
+              <p className="mt-2 pl-4 text-gray-700"> No it&apos;s 100% free to compare quotes and contact conveyancers through MovWise. 
+  You only pay the firm you instruct.</p>
+            </details>
+            <details className="p-4 rounded-lg bg-gray-50 border border-gray-200">
+              <summary className="font-semibold text-lg cursor-pointer text-emerald-700">Q: How secure is my data?</summary>
+              <p className="mt-2 pl-4 text-gray-700">A: MovWise uses encrypted servers and complies fully with **UK GDPR standards** to protect your personal and property data.</p>
+            </details>
+            <details className="p-4 rounded-lg bg-gray-50 border border-gray-200">
+              <summary className="font-semibold text-lg cursor-pointer text-emerald-700">Q: Can I access my documents anytime?</summary>
+              <p className="mt-2 pl-4 text-gray-700">A: **Absolutely**. All documents are stored safely in your MovWise Cloud Portal 24/7, giving you full control over your case files.</p>
+            </details>
+          </div>
+        </div>
+      </section>
+      
+      {/* ---------------------------------------------------------------------------------- */}
+
+      {/* --- 9. CONTACT SECTION --- */}
+      <section id="contact" className="py-16 bg-emerald-50">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-3xl font-bold text-emerald-800 mb-4">We&apos;re Here to Help!</h2>
+          <p className="text-gray-700 text-lg mb-8">We&apos;re happy to help! Get in touch with our multilingual support team for assistance.</p>
+          <div className="flex justify-center space-x-12">
+            <div className="text-center">
+              <p className="text-3xl text-emerald-600 mb-1">📧</p>
+              <p className="font-semibold text-gray-800">Email Support</p>
+              <a href="mailto:support@movwise.co.uk" className="text-emerald-600 hover:underline">support@movwise.co.uk</a>
+            </div>
+            <div className="text-center">
+              <p className="text-3xl text-emerald-600 mb-1">📞</p>
+              <p className="font-semibold text-gray-800">Call Us</p>
+              <a href="tel:08001234567" className="text-emerald-600 hover:underline">0800 123 4567</a>
+            </div>
+          </div>
+          <p className="mt-6 text-sm text-gray-500">🕘 Mon–Fri, 9am–6pm (UK time)</p>
+        </div>
+      </section>
+
+      {/* ---------------------------------------------------------------------------------- */}
+
+      {/* --- 10. FOR SOLICITORS & CONVEYANCERS (Partner CTA) --- */}
       <section id="solicitors" className="py-16 bg-gray-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold">Grow Your Practice with Qualified Clients</h2>
@@ -200,31 +298,89 @@ export default function HomePage() {
           <div className="mt-8">
             {/* Secondary CTA colour: Amber Yellow */}
             <button className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-bold py-3 px-8 rounded-lg shadow-xl transition duration-300">
-              Join as a Partner →
+             <Link href={`${baseUrl}conveyancers/Companyregistration/`}> Join as a Partner →</Link>
+
             </button>
           </div>
         </div>
       </section>
+
+      {/* ---------------------------------------------------------------------------------- */}
+
+      {/* --- 11. FINAL CTA SECTION --- */}
+      <section className="py-20 bg-emerald-700 text-white text-center">
+        <h2 className="text-4xl font-bold mb-4">Ready to Get Moving?</h2>
+        <p className="text-xl mb-8 max-w-3xl mx-auto">
+          Get transparent quotes from trusted conveyancers and make your move with total confidence. **Your next chapter starts with MovWise.**
+        </p>
+        <PrimaryCTA text="Get My Free Conveyancing Quote" />
+      </section>
       
       {/* ---------------------------------------------------------------------------------- */}
 
-      {/* --- 7. FOOTER --- */}
-      <footer className="bg-gray-800 text-gray-400 py-8">
+      {/* --- 12. FOOTER --- */}
+      <footer className="bg-gray-800 text-gray-400 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-4">
-            <p className="text-sm">
-              **MovWise Support Fee:** Includes translation, case tracking, and secure digital storage. A small price for complete peace of mind.
-            </p>
-          </div>
-          <div className="border-t border-gray-700 pt-4 flex justify-between items-center text-sm">
-            <p>&copy; {new Date().getFullYear()} MovWise. All rights reserved.</p>
-            <div className="flex space-x-4">
-               {/* SRA/CLC Logos Placeholder */}
-               <span className="font-semibold text-amber-500">Regulated by SRA & CLC</span>
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 border-b border-gray-700 pb-8">
+            
+            {/* Quick Links */}
+            <div>
+              <h3 className="text-lg font-semibold text-white mb-4">Quick Links</h3>
+              <ul className="space-y-2">
+                <li><a href="#" className="hover:text-amber-500">Home</a></li>
+                <li><a href="#" className="hover:text-amber-500">Get Quotes</a></li>
+                <li><a href="#solicitors" className="hover:text-amber-500">For Solicitors</a></li>
+                <li><a href="#about" className="hover:text-amber-500">About Us</a></li>
+                <li><a href="#contact" className="hover:text-amber-500">Contact</a></li>
+              </ul>
             </div>
+
+            {/* Language Support */}
+            <div>
+              <h3 className="text-lg font-semibold text-white mb-4">Language Support</h3>
+              <ul className="space-y-2">
+                <li><a href="#" className="hover:text-amber-500">Tamil Conveyancers</a></li>
+                <li><a href="#" className="hover:text-amber-500">Hindi Conveyancers</a></li>
+                <li><a href="#" className="hover:text-amber-500">Spanish Support</a></li>
+                <li><a href="#" className="hover:text-amber-500">Find Your Language</a></li>
+              </ul>
+            </div>
+
+            {/* Legal */}
+            <div>
+              <h3 className="text-lg font-semibold text-white mb-4">Legal</h3>
+              <ul className="space-y-2">
+                <li><a href="#" className="hover:text-amber-500">Privacy Policy</a></li>
+                <li><a href="#" className="hover:text-amber-500">Terms of Use</a></li>
+                <li><a href="#" className="hover:text-amber-500">Cookie Policy</a></li>
+                <li><a href="#" className="hover:text-amber-500">Complaints Procedure</a></li>
+              </ul>
+            </div>
+
+            {/* Trust Badges & Social */}
+            <div className="col-span-2">
+              <h3 className="text-lg font-semibold text-white mb-4">Trust & Compliance</h3>
+              <div className="flex space-x-4 mb-6">
+                <span className="text-amber-500 font-semibold border border-amber-500 p-2 text-sm rounded">SRA Compliant</span>
+                <span className="text-amber-500 font-semibold border border-amber-500 p-2 text-sm rounded">GDPR Certified</span>
+                <span className="text-amber-500 font-semibold border border-amber-500 p-2 text-sm rounded">SSL Secured</span>
+              </div>
+              <h3 className="text-lg font-semibold text-white mb-2">Connect With Us</h3>
+              <div className="flex space-x-4 text-3xl">
+                <a href="#" className="hover:text-amber-500 transition duration-200">Facebook</a> {/* Facebook icon placeholder */}
+                <a href="#" className="hover:text-amber-500 transition duration-200">Twitter</a> {/* Twitter icon placeholder */}
+                <a href="#" className="hover:text-amber-500 transition duration-200">LinkedIn</a> {/* LinkedIn icon placeholder */}
+                <a href="#" className="hover:text-amber-500 transition duration-200">Instagram</a> {/* Instagram icon placeholder */}
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-8 text-center text-sm">
+            <p>&copy; {new Date().getFullYear()} MovWise. All rights reserved.</p>
           </div>
         </div>
       </footer>
+      {/* <Footer/> */}
     </div>
   );
 }

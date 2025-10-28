@@ -52,7 +52,7 @@ export default function Ouotesdetails() {
           <div className="flex items-center gap-2 px-4 py-1 bg-white border border-[#DEE4EB] shadow-[0_2px_40px_2px_rgba(0,0,0,0.06)] rounded-[32px]">
             <div className="relative w-6 h-6 rounded-full overflow-hidden">
               <Image
-              src="public\globe.svg"
+                src="https://cdn-icons-png.flaticon.com/512/295/295128.png"
                 alt="User Avatar"
                 className="absolute w-[26px] h-[26px] object-cover"
                 width={10}
@@ -111,7 +111,7 @@ export default function Ouotesdetails() {
         </aside>
 
         {/* Main Content (scrolls internally only) */}
-        <main className="flex-1 p-10 bg-white overflow-y-auto scrollbar-hidden">
+        <main className="flex-1 p-10 bg-white overflow-y-auto scrollbar-thin">
           <div className="min-h-full flex flex-col space-y-6">
             <div>
               <h2 className="text-2xl font-semibold text-gray-800 flex items-center gap-2 font text-[32px]">
@@ -131,7 +131,7 @@ export default function Ouotesdetails() {
   {/* Header */}
   <div className="flex items-center justify-between bg-red-50 mx-2 mt-2 rounded-2xl px-8 py-5">
     <div className="flex items-center gap-5">
-      <Image src="public\globe.svg" alt="MyHomeMove" className="w-24 h-14 object-contain"  width={10}
+      <Image                 src="https://cdn-icons-png.flaticon.com/512/295/295128.png" alt="MyHomeMove" className="w-24 h-14 object-contain"  width={10}
                 height={10} />
       <h3 className="font-semibold text-lg text-gray-800">MyHomeMove Conveyancing</h3>
     </div>
@@ -241,7 +241,7 @@ export default function Ouotesdetails() {
               <div className="flex items-center justify-between bg-green-50 mx-2 mt-2 rounded-2xl px-8 py-5">
                 <div className="flex items-center gap-10">
                   <Image
-                   src="public\globe.svg"
+                src="https://cdn-icons-png.flaticon.com/512/295/295128.png"
                     alt="PM Property Lawyers"
                     className="w-24 h-14 object-contain"
                       width={10}

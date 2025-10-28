@@ -5,6 +5,11 @@ import Image from 'next/image';
 
 
 export default function Login() {
+
+      // const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://movwise.digitalcloudies.in/';
+  const baseUrl = 'https://movwise.digitalcloudies.in/';
+
+  
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -48,9 +53,11 @@ export default function Login() {
               src="https://cdn-icons-png.flaticon.com/512/295/295128.png"
               alt="Login Icon"
               className="w-16 mx-auto my-8"
+              width={2}
+              height={2}
             />
           </div>
-          <Link href="/">
+              <Link href="/auth/registeruser/" >
             <button className="border border-white px-6 py-2 rounded-full hover:bg-white hover:text-[#27a277] transition-all">
               SIGN UP
             </button>
@@ -91,7 +98,7 @@ export default function Login() {
 
             <span className="text-black text-center block mt-2">
               Don’t have an account?{' '}
-              <Link href="/" className="text-[#27a277]">
+              <Link href="/auth/registeruser" className="text-[#27a277]">
                 Sign up
               </Link>
             </span>

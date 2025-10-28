@@ -12,6 +12,8 @@ import Partnerspagecard from "./components/partnerspagecard/page";
 import Ouotesdetails from"./components/quotesdetails/page";
 import  Landingpage from "./components/Home/page"
 
+import Companyregistration from "./conveyancers/Companyregistration/page"
+
 export default function Home() {
   
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -45,8 +47,7 @@ console.log(apiUrl,baseUrl)
      
 
      
-
-
+{/* <Companyregistration/> */}
 
      
 <Landingpage/>

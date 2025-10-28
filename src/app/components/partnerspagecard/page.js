@@ -58,7 +58,7 @@ export default function Partnerspagecard() {
               <div className="flex items-center gap-2 px-4 py-1 bg-white border border-[#DEE4EB] shadow-[0_2px_40px_2px_rgba(0,0,0,0.06)] rounded-[32px]">
                 <div className="relative w-6 h-6 rounded-full overflow-hidden">
                   <Image
-                    src="/profile.png"
+                src="https://cdn-icons-png.flaticon.com/512/295/295128.png"
                     alt="User Avatar"
                     className="absolute w-[26px] h-[26px] object-cover"
                     width={10}

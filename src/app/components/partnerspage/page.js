@@ -57,7 +57,7 @@ export default function PartnersPage() {
           <div className="flex items-center gap-2 px-4 py-1 bg-white border border-[#DEE4EB] shadow-[0_2px_40px_2px_rgba(0,0,0,0.06)] rounded-[32px]">
             <div className="relative w-6 h-6 rounded-full overflow-hidden">
               <Image
-                src="public\globe.svg"
+                src="https://cdn-icons-png.flaticon.com/512/295/295128.png"
                 alt="User Avatar"
                 className="absolute w-[26px] h-[26px] object-cover"
                 width={10}
@@ -116,7 +116,7 @@ export default function PartnersPage() {
         </aside>
 
         {/* Main Content (scrolls internally only) */}
-        <main className="flex-1 p-10 bg-white overflow-y-auto scrollbar-hidden">
+        <main className="flex-1  bg-white overflow-y-auto scrollbar-hidden">
        {/* Content */}
         <main className="flex-1 p-8 font">
           <h1 className="text-2xl font-semibold  flex items-center gap-2 font text-[#1B1D21] ">
