@@ -109,17 +109,7 @@ export default function ServicePage() {
               </ul>
             </div>
 
-            {/* Language Support */}
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-4">Language Support</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="hover:text-amber-500">Tamil Conveyancers</a></li>
-                <li><a href="#" className="hover:text-amber-500">Hindi Conveyancers</a></li>
-                <li><a href="#" className="hover:text-amber-500">Spanish Support</a></li>
-                <li><a href="#" className="hover:text-amber-500">Find Your Language</a></li>
-              </ul>
-            </div>
-
+          
             {/* Legal */}
             <div>
               <h3 className="text-lg font-semibold text-white mb-4">Legal</h3>

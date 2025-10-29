@@ -4,7 +4,7 @@ import  Navbar  from "../../parts/navbar/page";// app/personal-details/page.js
 import {API_BASE_URL} from "../../constants/config"
 export const metadata = {
   title: 'Companyregistration | Movwise',
-  description: 'Share your Personal Details',
+  description: 'Share your Companyregistration',
 };
 
 
