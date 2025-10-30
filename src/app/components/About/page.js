@@ -40,24 +40,28 @@ export default function AboutPage() {
         <title>MovWise | Compare Conveyancing Quotes &amp; Move with Confidence</title>
       </Head>
 
+      {/* Sticky Navigation Bar */}
       <div className="bg-white shadow-md sticky top-0 p-4">
         <Navbar originalstyle={true} />
       </div>
 
-      <div className="min-h-screen bg-gray-50 font-sans p-4 sm:p-8">
-        <div className="max-w-6xl mx-auto bg-white shadow-xl rounded-2xl overflow-hidden">
+      {/* Main Page Container */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-4 lg:px-4">
+        <div className="">
+          
           {/* Header/Hero Section */}
-          <header className="bg-green-700 text-white p-8 sm:p-12 text-center rounded-t-2xl">
-            <h1 className="text-4xl sm:text-5xl font-extrabold mb-2 tracking-tight">
+          <header className="text-white p-8 sm:p-12 text-center rounded-t-2xl">
+            <h1 className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">
               About MovWise
             </h1>
-            <p className="text-white-200 text-xl sm:text-2xl font-light">
+            <p className="text-base font-semibold tracking-wide uppercase mt-2" style={{ color: '#008236' }} >
               Your Smart Conveyancing Comparison Platform
             </p>
           </header>
 
           {/* Core Content Section */}
           <main className="p-6 sm:p-12 space-y-12">
+            
             {/* Mission & Overview */}
             <section>
               <h2 className="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-green-600 pb-2">
@@ -126,17 +130,17 @@ export default function AboutPage() {
         </div>
       </div>
 
-      <footer className="bg-gray-800 text-gray-400 py-12">
+      {/* Footer Section (Simplified for display) */}
+    <footer className="bg-gray-800 text-gray-400 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8 border-b border-gray-700 pb-8">
+            
             {/* Quick Links */}
             <div>
-              <h3 className="text-lg font-semibold text-white mb-4">
-                Quick Links
-              </h3>
+              <h3 className="text-lg font-semibold text-white mb-4">Quick Links</h3>
               <ul className="space-y-2">
                 <li><a href="#" className="hover:text-amber-500">Home</a></li>
-                <li><a href="#" className="hover:text-amber-500">Get Quotes</a></li>
+                <li><a href="#featured-articles" className="hover:text-amber-500">Advice Hub</a></li>
                 <li><a href="#solicitors" className="hover:text-amber-500">For Solicitors</a></li>
                 <li><a href="#about" className="hover:text-amber-500">About Us</a></li>
                 <li><a href="#contact" className="hover:text-amber-500">Contact</a></li>
@@ -145,18 +149,16 @@ export default function AboutPage() {
 
             {/* Language Support */}
             <div>
-              <h3 className="text-lg font-semibold text-white mb-4">
-                Language Support
-              </h3>
+              <h3 className="text-lg font-semibold text-white mb-4">Popular Topics</h3>
               <ul className="space-y-2">
-                <li><a href="#" className="hover:text-amber-500">Tamil Conveyancers</a></li>
-                <li><a href="#" className="hover:text-amber-500">Hindi Conveyancers</a></li>
-                <li><a href="#" className="hover:text-amber-500">Spanish Support</a></li>
-                <li><a href="#" className="hover:text-amber-500">Find Your Language</a></li>
+                <li><a href="#" className="hover:text-amber-500">First-Time Buyer</a></li>
+                <li><a href="#" className="hover:text-amber-500">Stamp Duty Guide</a></li>
+                <li><a href="#" className="hover:text-amber-500">Leasehold Explained</a></li>
+                <li><a href="#" className="hover:text-amber-500">Moving Checklist</a></li>
               </ul>
             </div>
 
-            {/* Legal */}
+            {/* Legal (Retained) */}
             <div>
               <h3 className="text-lg font-semibold text-white mb-4">Legal</h3>
               <ul className="space-y-2">
@@ -167,30 +169,20 @@ export default function AboutPage() {
               </ul>
             </div>
 
-            {/* Trust Badges & Social */}
+            {/* Trust Badges & Social (Retained) */}
             <div className="col-span-2">
-              <h3 className="text-lg font-semibold text-white mb-4">
-                Trust &amp; Compliance
-              </h3>
+              <h3 className="text-lg font-semibold text-white mb-4">Trust & Compliance</h3>
               <div className="flex space-x-4 mb-6">
-                <span className="text-amber-500 font-semibold border border-amber-500 p-2 text-sm rounded">
-                  SRA Compliant
-                </span>
-                <span className="text-amber-500 font-semibold border border-amber-500 p-2 text-sm rounded">
-                  GDPR Certified
-                </span>
-                <span className="text-amber-500 font-semibold border border-amber-500 p-2 text-sm rounded">
-                  SSL Secured
-                </span>
+                <span className="text-amber-500 font-semibold border border-amber-500 p-2 text-sm rounded">SRA Compliant</span>
+                <span className="text-amber-500 font-semibold border border-amber-500 p-2 text-sm rounded">GDPR Certified</span>
+                <span className="text-amber-500 font-semibold border border-amber-500 p-2 text-sm rounded">SSL Secured</span>
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">
-                Connect With Us
-              </h3>
+              <h3 className="text-lg font-semibold text-white mb-2">Connect With Us</h3>
               <div className="flex space-x-4 text-3xl">
-                <a href="#" className="hover:text-amber-500 transition duration-200">Facebook</a>
-                <a href="#" className="hover:text-amber-500 transition duration-200">Twitter</a>
-                <a href="#" className="hover:text-amber-500 transition duration-200">LinkedIn</a>
-                <a href="#" className="hover:text-amber-500 transition duration-200">Instagram</a>
+                <a href="#" className="hover:text-amber-500 transition duration-200">Facebook</a> {/* Facebook icon placeholder */}
+                <a href="#" className="hover:text-amber-500 transition duration-200">Twitter</a> {/* Twitter icon placeholder */}
+                <a href="#" className="hover:text-amber-500 transition duration-200">LinkedIn</a> {/* LinkedIn icon placeholder */}
+                <a href="#" className="hover:text-amber-500 transition duration-200">Instagram</a> {/* Instagram icon placeholder */}
               </div>
             </div>
           </div>
@@ -203,3 +195,4 @@ export default function AboutPage() {
     </div>
   );
 }
+ 

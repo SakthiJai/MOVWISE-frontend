@@ -123,6 +123,8 @@ export default function HomePage() {
             <FeatureIcon icon="🧑‍💼" title="Verified Professionals" description="Every conveyancer is regulated by the SRA or CLC for your peace of mind." />
             <FeatureIcon icon="🔁" title="Smart Matching" description="We pair you with firms experienced in your specific property type and location." />
             <FeatureIcon icon="☁️" title="Secure Case Tracking" description="Monitor your conveyancing progress 24/7 through our secure cloud portal." />
+            
+            <FeatureIcon icon="⚡" title="Faster Exchange Times" description="Our proactive platform and dedicated support streamline the legal process." />
           </div>
         </div>
       </section>
