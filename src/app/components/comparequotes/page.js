@@ -4,9 +4,12 @@ import Navbar from '../../parts/navbar/page';
 import { RiArrowDropDownLine } from "react-icons/ri";
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 export default function Comparequotes() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const router = useRouter();
 
   function toggleDropdown() {
     setIsDropdownOpen(!isDropdownOpen);
@@ -143,7 +146,7 @@ export default function Comparequotes() {
                       {/* Flex wrapper for the header remains */}
                       <div className="flex flex-col sm:flex-row items-center justify-between bg-red-50 mx-2 mt-2 rounded-2xl p-4 sm:px-8 sm:py-5">
                         <div className="flex items-center gap-5 mb-3 sm:mb-0">
-                          <Image alt="MyHomeMove" className="w-20 h-10 object-contain" />
+                          <Image width={10} height={10} src="https://cdn-icons-png.flaticon.com/512/295/295128.png" alt="MyHomeMove" className="w-20 h-10 object-contain" />
                           <h3 className="font-semibold text-base sm:text-lg text-gray-800">MyHomeMove Conveyancing</h3>
                         </div>
                         <div className="flex items-center gap-4">
@@ -211,7 +214,7 @@ export default function Comparequotes() {
                       {/* Header */}
                       <div className="flex flex-col sm:flex-row items-center justify-between bg-red-50 mx-2 mt-2 rounded-2xl p-4 sm:px-8 sm:py-5">
                         <div className="flex items-center gap-5 mb-3 sm:mb-0">
-                          <Image alt="MyHomeMove" className="w-20 h-10 object-contain" />
+                          <Image width={10} height={10} src="https://cdn-icons-png.flaticon.com/512/295/295128.png" alt="MyHomeMove" className="w-20 h-10 object-contain" />
                           <h3 className="font-semibold text-base sm:text-lg text-gray-800">MyHomeMove Conveyancing</h3>
                         </div>
                         <div className="flex items-center gap-4">
@@ -319,17 +322,18 @@ export default function Comparequotes() {
             {/* Bottom actions */}
             {/* KEY CHANGE: Adjusted margin-top and removed max-w to align properly with content card. */}
             <div className="mt-18 flex justify-end gap-4">
-              <a
-                href={`${baseUrl}`}
-                className="font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1B1D21] "
-              >
-                Cancel
-              </a>
+             <button
+  onClick={() => router.back()}
+  className="font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1B1D21]"
+>
+  Back
+</button>
+
               <Link
                     href={`${baseUrl}/components/propertydetails`}
                 className="font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full bg-[#1E5C3B] text-[#EDF4EF]"
               >
-                Continue to Property Details →
+                Continue
               </Link>
             </div>
           </section>

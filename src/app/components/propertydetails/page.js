@@ -1,10 +1,14 @@
+"use client"
 import React from 'react'
 import  Navbar  from "../../parts/navbar/page";// app/personal-details/page.js
 import Link from 'next/link';
+import { useRouter } from "next/navigation";
+
 export default function PropertyDetails ()  {
     // const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://movwise.digitalcloudies.in/';
       const baseUrl = 'https://movwise.digitalcloudies.in/';
 
+  const router = useRouter();
 
   return (
     
@@ -209,17 +213,18 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
 
            {/* Bottom actions */}
             <div className="mt-30 flex justify-end gap-4 max-w-[760px] ">
-              <a
-                  href={`${baseUrl}`}
-                className=" font-outfit  font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1B1D21] "
-              >
-                Cancel
-              </a>
+              <button
+  onClick={() => router.back()}
+  className="font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1B1D21]"
+>
+  Back
+</button>
+
               <Link
                 href={`${baseUrl}/components/comparequotes`}
                 className="  font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full bg-[#1E5C3B] text-[#EDF4EF]"
               >
-                Continue to Property Details →
+                Continue to Compare Quotes →
               </Link>
             </div>
           </section>

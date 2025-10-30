@@ -13,33 +13,34 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+const handleLogin = async (e) => {
+  e.preventDefault();
 
-    const payload = { username, password };
-    console.log("Logging in...", payload);
+  if (!username) {
+    alert("Please enter your email");
+    return;
+  }
 
-    try {
-      const res = await fetch('http://localhost:3000/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
+  try {
+    const res = await fetch("/api/sendemail", {   
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: username }),
+    });
 
-      const data = await res.json();
+    const data = await res.json();
 
-      if (res.ok && data.token) {
-        localStorage.setItem("token", data.token);
-        alert("Login successful!");
-        console.log("Token saved:", data.token);
-      } else {
-        alert(data.message || "Invalid credentials");
-      }
-    } catch (error) {
-      console.error("Login failed:", error);
-      alert("Something went wrong during login.");
+    if (res.ok) {
+      alert(`Email sent successfully to ${username}`);
+    } else {
+      alert(data.message || "Failed to send email");
     }
-  };
+  } catch (error) {
+    console.error("Error sending email:", error);
+    alert("Something went wrong.");
+  }
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#eaeaea] px-4 font">
@@ -67,7 +68,7 @@ export default function Login() {
         {/* Right Section */}
         <div className="bg-white p-10 col-span-7">
           <h2 className="text-2xl font-semibold text-[#27a277] mb-6 text-center">
-            Login to Convencing
+           Enter your Email to Send OTP
           </h2>
 
           <form onSubmit={handleLogin} className="grid gap-4">
@@ -80,27 +81,19 @@ export default function Login() {
               className="w-full rounded-full border px-4 py-2 focus:ring-2 focus:ring-[#27a277] outline-none text-black"
             />
 
-            <input
-              type="password"
-              placeholder="Enter your Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              className="w-full rounded-full border px-4 py-2 focus:ring-2 focus:ring-[#27a277] outline-none text-black"
-            />
+         
 
             <button
               type="submit"
-              className="w-full bg-[#27a277] hover:bg-[#239267] text-white py-2 rounded-full font-semibold transition-all"
+              className="w-full bg-[#27a277] hover:bg-[#239267] text-white py-2 rounded-full font-semibold transition-all mt-10"
             >
-              LOGIN
-            </button>
+SEND            </button>
 
             <span className="text-black text-center block mt-2">
               <Link href="/auth/registeruser" className="text-[#27a277]">
 Create New Account        
       </Link><span className='m-4'>Or</span>
-      <Link href="/auth/forgetpassword/" className="text-[#27a277]">Forget Password</Link>
+      <Link href="/auth/password/" className="text-[#27a277]">Forget Password</Link>
             </span>
           </form>
         </div>

@@ -1,11 +1,10 @@
-'useclient'
+'use client'
 import Link from "next/link";
 import  Navbar  from "../../parts/navbar/page";// app/personal-details/page.js
 import {API_BASE_URL} from "../../constants/config"
-export const metadata = {
-  title: 'Companyregistration | Movwise',
-  description: 'Share your Companyregistration',
-};
+import { useRouter } from "next/navigation";
+
+
 
 
 export default function Companyregistration() {
@@ -14,6 +13,7 @@ export default function Companyregistration() {
   const baseUrl = 'https://movwise.digitalcloudies.in/';
 console.log(API_BASE_URL);
 
+  const router = useRouter();
 
   return (
     <div className="min-h-screen bg-white antialiased font">
@@ -176,26 +176,20 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
                   </div>
 
                   {/* Checkbox */}
-                  <label className="mt-5 flex items-start gap-3 text-[16px] text-[#1B1D21] font-outfit font-regular">
-                    <input
-                      type="checkbox"
-                      defaultChecked
-                      className="mt-[2px] h-[24px] w-[24px] rounded border-[#CDD8C7]  accent-[#4A7C59] font"
-                    />
-                    <span className='font'>Yes, I’d like the moving house checklist emails and tips to make moving easier.</span>
-                  </label>
+               
                 </form>
               </div>
             </div>
 
             {/* Bottom actions */}
             <div className="mt-28 flex justify-end gap-4 max-w-[760px] ">
-              <a
-              href={`${API_BASE_URL}`}
-                className=" font-outfit  font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1B1D21] "
-              >
-                Cancel
-              </a>
+              <button
+  onClick={() => router.back()}
+  className="font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1B1D21]"
+>
+  Back
+</button>
+
               <Link
        href={`${API_BASE_URL}/conveyancers/quotationdetails`}
                 className="  font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full bg-[#1E5C3B] text-[#EDF4EF]"

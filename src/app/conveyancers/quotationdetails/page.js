@@ -3,6 +3,9 @@ import Link from "next/link";
 import  Navbar  from "../../parts/navbar/page";// app/personal-details/page.js
 import {API_BASE_URL} from "../../constants/config"
 import { useState } from "react";
+import { PlusCircle } from "lucide-react";
+import { useRouter } from "next/navigation";
+import Swal from "sweetalert2";
 
 // export const metadata = {
 //   title: 'Quotationdetails | Movwise',
@@ -13,6 +16,7 @@ export default function Quotationdetails() {
 // console.log(API_BASE_URL);
 
 const baseUrl = API_BASE_URL;
+  const router = useRouter();
 
   const data = {
     Legalcosts: [
@@ -42,6 +46,7 @@ const baseUrl = API_BASE_URL;
   const [formValues, setFormValues] = useState({}); // structure: { category: { itemId: [ {min,max,price}, ... ] } }
   const [errors, setErrors] = useState({}); // keyed by `${key}-${itemId}-${rowIndex}-field` and add errors `${key}-${itemId}-add`
   const [lockedIndex, setLockedIndex] = useState({}); // locks previous items when Next pressed: { category: lockedUpToIndex }
+   let [showbelow,setshowbelow]=useState(true) 
 
   // Toggle accordion open/close
   const toggleAccordion = (key) => {
@@ -59,70 +64,98 @@ const baseUrl = API_BASE_URL;
    
   }
   // Update field for a specific row of a specific item
-  const handleInputChange = (key, itemId, index, field, value) => {
-    setFormValues((prev) => {
-      const rows = prev[key]?.[itemId] || [];
-      const updatedRows = [...rows];
-      updatedRows[index] = { ...(updatedRows[index] || { min: "", max: "", price: "" }), [field]: value };
-      return {
-        ...prev,
-        [key]: { ...(prev[key] || {}), [itemId]: updatedRows },
-      };
-    });
+const handleInputChange = (key, rowIndex, field, value) => {
+  setFormValues((prev) => {
+    const updated = { ...prev };
+    const rows = [...(updated[key] || [])];
+    const row = { ...rows[rowIndex] };
 
-    // clear related errors when user types
-    setErrors((prev) => {
-      const newErrors = { ...prev };
-      delete newErrors[`${key}-${itemId}-${index}-${field}`];
-      delete newErrors[`${key}-${itemId}-add`]; // clear add-row block message if any
-      return newErrors;
-    });
-  };
+    if (field === "itemId") {
+      const selectedItem = data[key].find((i) => i.id === Number(value));
 
-  // Add a new empty row for a specific item — blocked if an existing row's max is empty
- const addRow = (key, itemId) => {
-  const rows = formValues[key]?.[itemId] || [];
+      // 🔹 Reset dependent fields when dropdown changes
+      row.itemId = value;
+      row.type = selectedItem?.type || 0;
+      row.min = "";
+      row.max = "";
+      row.price = "";
 
-  // ✅ Block add only if last row is incomplete
-  if (rows.length > 0) {
-    const lastRow = rows[rows.length - 1];
-    if (!lastRow.min || !lastRow.price) {
-      setErrors((prev) => ({
-        ...prev,
-        [`${key}-${itemId}-add`]: "Fill min and price before adding a new row.",
-      }));
-      return;
+      // 🔹 Remove all previous validation errors for this row
+      setErrors((prevErrors) => {
+        const newErrors = { ...prevErrors };
+        Object.keys(newErrors).forEach((errKey) => {
+          if (errKey.startsWith(`${key}-${rowIndex}-`)) {
+            delete newErrors[errKey];
+          }
+        });
+        return newErrors;
+      });
+    } else {
+      // Normal field update
+      row[field] = value;
+
+      // 🔹 Dynamic error clearing logic (real-time)
+      setErrors((prevErrors) => {
+        const newErrors = { ...prevErrors };
+        const errorKey = `${key}-${rowIndex}-${field}`;
+        const selectedItem = data[key].find((i) => i.id === Number(row.itemId));
+        const itemType = selectedItem?.type || 0;
+
+        if (field === "min") {
+          if (value !== "" && !isNaN(value)) delete newErrors[errorKey];
+          if (row.max && Number(value) < Number(row.max)) {
+            delete newErrors[`${key}-${rowIndex}-max`]; // remove max error if now valid
+          }
+        }
+
+        if (field === "max") {
+          if (value !== "" && !isNaN(value) && Number(value) > Number(row.min)) {
+            delete newErrors[errorKey];
+            delete newErrors[`${key}-${rowIndex}-min`];
+          }
+        }
+
+        if (field === "price") {
+          if (value !== "" && !isNaN(value)) delete newErrors[errorKey];
+        }
+
+        if (field === "itemId" && value) {
+          delete newErrors[errorKey];
+        }
+
+        return newErrors;
+      });
     }
 
-    if (
-      lastRow.max !== "" &&
-      lastRow.max !== undefined &&
-      Number(lastRow.max) <= Number(lastRow.min)
-    ) {
-      setErrors((prev) => ({
-        ...prev,
-        [`${key}-${itemId}-add`]: "Max must be greater than Min.",
-      }));
-      return;
-    }
-  }
-
-  // ✅ Add new empty row
-  setFormValues((prev) => ({
-    ...prev,
-    [key]: {
-      ...(prev[key] || {}),
-      [itemId]: [...(prev[key]?.[itemId] || []), { min: "", max: "", price: "" }],
-    },
-  }));
-
-  // ✅ Clear add-row error
-  setErrors((prev) => {
-    const newErrors = { ...prev };
-    delete newErrors[`${key}-${itemId}-add`];
-    return newErrors;
+    rows[rowIndex] = row;
+    updated[key] = rows;
+    return updated;
   });
 };
+
+
+
+
+
+
+
+  // Add a new empty row for a specific item — blocked if an existing row's max is empty
+const addRow = (key) => {
+setshowbelow(false);
+    console.log(  showbelow)
+  setFormValues((prev) => {
+    const rows = prev[key] || [];
+    return {
+      ...prev,
+      [key]: [
+        ...rows,
+        { itemId: "", min: "", max: "", price: "" },
+      ],
+    };
+  });
+
+};
+
 
 
 
@@ -183,149 +216,220 @@ const validateRows = (key, itemId) => {
 
 
   // Build API payload: convert empty max -> null, use item.id as typeid
-  const buildApiPayload = () => {
-    let payload = {};
+ const buildApiPayload = () => {
+  let payload = {};
 
-    Object.keys(formValues).forEach((category) => {
-      let allRows = [];
-      Object.keys(formValues[category]).forEach((itemId) => {
-        const rows = formValues[category][itemId] || [];
-        rows.forEach((r) => {
-          // only include rows that at least have min and price (you could also include after validation)
-          allRows.push({
-            typeid: Number(itemId),
-            min: r.min === "" || r.min === undefined ? null : Number(r.min),
-            max: r.max === "" || r.max === undefined ? null : Number(r.max),
-            price: r.price === "" || r.price === undefined ? null : Number(r.price),
-          });
-        });
-      });
-      payload[category] = allRows;
-    });
+  Object.keys(formValues).forEach((category) => {
+    const rows = formValues[category] || [];
+    const formattedRows = rows.map((r) => ({
+      typeid: Number(r.itemId),
+      min: r.min === "" || r.min === undefined ? null : Number(r.min),
+      max: r.max === "" || r.max === undefined ? null : Number(r.max),
+      price: r.price === "" || r.price === undefined ? null : Number(r.price),
+    }));
 
-    return payload;
-  };
+    payload[category] = formattedRows;
+  });
+
+  return payload;
+};
+
 
   // Submit: validate every visible item (or all items) and if valid, build payload
 const handleSubmit = () => {
   let allValid = true;
   let tempErrors = {};
 
-  Object.keys(data).forEach((key) => {
-    data[key].forEach((item) => {
-      const rows = formValues[key]?.[item.id] || [];
+    const isCompletelyEmpty = Object.values(formValues).every((rows) =>
+    (rows || []).every(
+      (row) =>
+        !row.itemId &&
+        (row.min === "" || row.min === undefined) &&
+        (row.max === "" || row.max === undefined) &&
+        (row.price === "" || row.price === undefined)
+    )
+  );
 
-      rows.forEach((row, index) => {
-        const isEmptyRow =
-          (!row.min && !row.max && !row.price) ||
-          (row.min === "" && row.max === "" && row.price === "");
+  if (isCompletelyEmpty) {
+    Swal.fire({
+      icon: "warning",
+      title: "Empty Form",
+      text: "Please fill in at least one item before submitting.",
+      confirmButtonColor: "#f59e0b", // amber
+    });
+    return;
+  }
 
-        const isOpenEndedRow =
-          row.max === "" || row.max === undefined || row.max === null;
+  Object.keys(formValues).forEach((key) => {
+    const rows = formValues[key] || [];
 
-          if (isOpenEndedRow && index < rows.length - 1) {
-  tempErrors[`${key}-${item.id}-${index}-max`] =
-    "Only the last row can have an open-ended max";
+    // 🧩 Track duplicates for type=0
+    const type0ItemIds = new Set();
+
+    rows.forEach((row, index) => {
+      const isEmptyRow =
+        (!row.min && !row.max && !row.price && !row.itemId) ||
+        (row.min === "" && row.max === "" && row.price === "" && !row.itemId);
+
+      if (!row.itemId) {
+        tempErrors[`${key}-${index}-itemId`] = "Item selection is required";
+        allValid = false;
+        return;
+      }
+
+      const selectedItem = data[key].find((i) => i.id === Number(row.itemId));
+      const itemType = selectedItem?.type || 0;
+
+      // 🚫 Prevent same type=0 item selection multiple times
+      if (itemType === 0) {
+        if (type0ItemIds.has(row.itemId)) {
+          tempErrors[`${key}-${index}-itemId`] =
+            "This item can only be selected once";
+          allValid = false;
+        } else {
+          type0ItemIds.add(row.itemId);
+        }
+      }
+
+      // ✅ Case 1 — Empty row
+      if (isEmptyRow) {
+        if (itemType === 1) {
+          tempErrors[`${key}-${index}-min`] = "Min is required";
+        }
+        tempErrors[`${key}-${index}-price`] = "Price is required";
+        allValid = false;
+        return;
+      }
+
+      // ✅ Case 2 — Required fields for type=1
+      if (itemType === 1) {
+        if (row.min === "" || row.min === undefined) {
+          tempErrors[`${key}-${index}-min`] = "Min is required";
+          allValid = false;
+        }
+
+        if (row.price === "" || row.price === undefined) {
+          tempErrors[`${key}-${index}-price`] = "Price is required";
+          allValid = false;
+        }
+
+        // ✅ Case 3 — Open-ended max only for last row of same item
+        const sameItemRows = rows.filter((r) => r.itemId === row.itemId);
+        const hasAnotherOpen = sameItemRows.filter((r) => !r.max).length > 1;
+
+        if (!row.max && hasAnotherOpen) {
+          tempErrors[`${key}-${index}-max`] =
+            "Only one open-ended Max allowed per item";
+          allValid = false;
+        }
+
+        // ✅ Case 4 — Min < Max (if max exists)
+        if (row.max && Number(row.min) >= Number(row.max)) {
+          tempErrors[`${key}-${index}-max`] = "Max must be greater than Min";
+          allValid = false;
+        }
+        if (!row.max) {
+  const isLast = index === rows.length - 1;
+  if (!isLast) {
+    tempErrors[`${key}-${index}-max`] = "Empty Max allowed only in last range";
+    allValid = false;
+  }
+}
+      } else {
+        // ✅ For type=0: only price required
+        if (row.price === "" || row.price === undefined) {
+          tempErrors[`${key}-${index}-price`] = "Price is required";
+          allValid = false;
+        }
+      }
+      // Ensure only last range can have empty max
+
+
+    });
+
+    // ✅ Check overlapping ranges (type=1 only)
+    const type1Rows = (rows || []).filter((r) => {
+      const selected = data[key].find((i) => i.id === Number(r.itemId));
+      return selected?.type === 1;
+    });
+
+   const overlapFound = hasOverlap(type1Rows);
+if (overlapFound) {
   allValid = false;
+  type1Rows.forEach((r, idx) => {
+    tempErrors[`${key}-${idx}-min`] =
+      tempErrors[`${key}-${idx}-min`] || "Overlapping ranges found";
+  });
 }
 
-
-        // ✅ Case 1 — Entirely empty row → invalid
-        if (isEmptyRow) {
-          tempErrors[`${key}-${item.id}-${index}-min`] = "Min is required";
-          tempErrors[`${key}-${item.id}-${index}-price`] = "Price is required";
-          allValid = false;
-          return;
-        }
-
-        // ✅ Case 2 — Min and Price are required
-        if (row.min === "" || row.min === undefined || row.min === null) {
-          tempErrors[`${key}-${item.id}-${index}-min`] = "Min is required";
-          allValid = false;
-        }
-        if (row.price === "" || row.price === undefined || row.price === null) {
-          tempErrors[`${key}-${item.id}-${index}-price`] = "Price is required";
-          allValid = false;
-        }
-
-        // ✅ Case 3 — If max is provided, must be valid
-        if (!isOpenEndedRow) {
-          // max exists → must be greater than min
-          if (Number(row.min) >= Number(row.max)) {
-            tempErrors[`${key}-${item.id}-${index}-max`] = "Max must be greater than Min";
-            allValid = false;
-          }
-          if (Number(row.max) < 0) {
-            tempErrors[`${key}-${item.id}-${index}-max`] = "Max must be ≥ 0";
-            allValid = false;
-          }
-        }
-
-        // ✅ Case 4 — If max is empty, it’s fine (open-ended), no error
-        // But still, min and price must exist (already handled above)
-
-        // ✅ Case 5 — Prevent negatives
-        if (row.min !== "" && Number(row.min) < 0) {
-          tempErrors[`${key}-${item.id}-${index}-min`] = "Min must be ≥ 0";
-          allValid = false;
-        }
-        if (row.price !== "" && Number(row.price) < 0) {
-          tempErrors[`${key}-${item.id}-${index}-price`] = "Price must be ≥ 0";
-          allValid = false;
-        }
-      });
-    });
   });
 
   setErrors(tempErrors);
 
-  if (!allValid) {
-    alert("Fix validation errors before submitting.");
+if (!allValid) {
+    Swal.fire({
+      icon: "error",
+      title: "Validation Error",
+      text: "Please correct the highlighted fields before submitting.",
+      confirmButtonColor: "#dc2626", // red
+    });
+    console.log("❌ Validation Errors:", tempErrors);
     return;
   }
 
   const payload = buildApiPayload();
   console.log("✅ Final Payload:", payload);
-  alert("Submit successful (check console).");
+
+  Swal.fire({
+    icon: "success",
+    title: "Success!",
+    text: "Your form was submitted successfully.",
+    confirmButtonColor: "#16a34a", // green
+  }).then(() => {
+    router.push("/conveyancers/Notes/");
+  });
 };
 
-const [availableItems, setAvailableItems] = useState(
-  Object.keys(data).reduce((acc, key) => {
-    acc[key] = data[key];
-    return acc;
-  }, {})
-);
-const [selectedItems, setSelectedItems] = useState(
-  Object.keys(data).reduce((acc, key) => {
-    acc[key] = [];
-    return acc;
-  }, {})
-);
 
-const handleSelectItem = (key, id) => {
-  if (!id) return;
 
-  const item = availableItems[key].find((i) => i.id === parseInt(id));
 
-  // Move item from dropdown → selected list
-  setSelectedItems((prev) => ({
-    ...prev,
-    [key]: [...prev[key], item],
-  }));
 
-  setAvailableItems((prev) => ({
-    ...prev,
-    [key]: prev[key].filter((i) => i.id !== parseInt(id)),
-  }));
 
-  // Initialize default row
-  addRow(key, item.id);
+
+// ✅ Prevent overlapping min–max for same item
+// Check for overlapping ranges within same itemId
+const hasOverlap = (rows) => {
+  const rangesByItem = {};
+
+  rows.forEach((row, index) => {
+    if (!row.itemId || row.min === "" || row.min === undefined) return;
+    const itemKey = row.itemId;
+    if (!rangesByItem[itemKey]) rangesByItem[itemKey] = [];
+    const min = Number(row.min);
+    const max = row.max === "" || row.max === undefined ? Infinity : Number(row.max);
+    rangesByItem[itemKey].push({ index, min, max });
+  });
+
+  for (const itemId in rangesByItem) {
+    const ranges = rangesByItem[itemId].sort((a, b) => a.min - b.min);
+    for (let i = 0; i < ranges.length - 1; i++) {
+      const current = ranges[i];
+      const next = ranges[i + 1];
+      if (current.max > next.min) {
+        // Found an overlap — return true
+        return true;
+      }
+    }
+  }
+
+  return false; // ✅ No overlaps
 };
 
-const handleNext = (key) => {
-  // Re-show dropdown for that section
-  // (does nothing if no items left)
-};
+
+
+
+
+
 
 
 
@@ -446,108 +550,147 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
       </button>
 
       {/* Accordion Content */}
-      {openAccordion === key && (
-        <div className="p-4 bg-white transition-all">
-          {/* ✅ Dropdown for selecting item */}
-          {availableItems[key]?.length > 0 && (
+  {openAccordion === key && (
+  <div className="p-4 bg-white transition-all">
+    {(formValues[key] || []).map((row, rowIndex) => (
+      <div key={rowIndex} className="mb-4 border-b pb-3">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
+          {/* Dropdown */}
+          <div>
             <select
-              onChange={(e) => handleSelectItem(key, e.target.value)}
-              defaultValue=""
-              className="border p-2 rounded w-full mb-4 text-black"
+              value={row.itemId}
+              onChange={(e) =>
+                handleInputChange(key, rowIndex, "itemId", e.target.value)
+              }
+              className={`border p-2 rounded w-full text-black ${
+                errors[`${key}-${rowIndex}-itemId`] ? "border-red-500" : ""
+              }`}
             >
-              <option value="">-- Select an item --</option>
-              {availableItems[key].map((item) => (
-                <option key={item.id} value={item.id}>
+              <option value="">-- Select Item --</option>
+              {data[key].map((item) => (
+                <option key={item.id} value={item.id} className="font">
                   {item.name}
                 </option>
               ))}
             </select>
-          )}
+            {errors[`${key}-${rowIndex}-itemId`] && (
+              <p className="text-red-600 text-sm mt-1">
+                {errors[`${key}-${rowIndex}-itemId`]}
+              </p>
+            )}
+          </div>
 
-          {/* ✅ Render selected items below */}
-          {selectedItems[key]?.map((item, index) => {
-            const rows = formValues[key]?.[item.id] || [];
+          {/* ✅ Show Min & Max only if selected item has type=1 */}
+          {(() => {
+            const selectedItem = data[key].find(
+              (i) => i.id === Number(row.itemId)
+            );
+            if (selectedItem?.type === 1) {
+              return (
+                <>
+                  <div>
+                    <input
+                      type="number"
+                      placeholder="Min"
+                      value={row.min || ""}
+                      onChange={(e) => {
+                        handleInputChange(
+                          key,
+                          rowIndex,
+                          "min",
+                          e.target.value
+                        );
+                      }}
+                      className={`border p-2 rounded w-full text-black ${
+                        errors[`${key}-${rowIndex}-min`] ? "border-red-500" : ""
+                      }`}
+                    />
+                    {errors[`${key}-${rowIndex}-min`] && (
+                      <p className="text-red-600 text-sm mt-1">
+                        {errors[`${key}-${rowIndex}-min`]}
+                      </p>
+                    )}
+                  </div>
 
-            return (
-              <div key={item.id} className="mb-3 border-b pb-3">
-                <h4 className="font-semibold mb-2 text-black">{item.name}</h4>
+                  <div>
+                    <input
+                      type="number"
+                      placeholder="Max (optional)"
+                      value={row.max || ""}
+                      onChange={(e) => {
+                        handleInputChange(
+                          key,
+                          rowIndex,
+                          "max",
+                          e.target.value
+                        );
+                      }}
+                      className={`border p-2 rounded w-full text-black ${
+                        errors[`${key}-${rowIndex}-max`] ? "border-red-500" : ""
+                      }`}
+                    />
+                    {errors[`${key}-${rowIndex}-max`] && (
+                      <p className="text-red-600 text-sm mt-1">
+                        {errors[`${key}-${rowIndex}-max`]}
+                      </p>
+                    )}
+                  </div>
+                </>
+              );
+            }
+            return null;
+          })()}
 
-                {/* Render existing rows */}
-              {rows.map((row, rowIndex) => (
-                      <div key={rowIndex} className="flex flex-col md:flex-row gap-2 mb-2">
-                        <div className="flex-1">
-                          <input
-                            type="number"
-                            placeholder="Enter min value"
-                            value={row.min}
-                            onChange={(e) => handleInputChange(key, item.id, rowIndex, "min", e.target.value)}
-                            className="border p-2 rounded w-full text-black"
-                          />
-                          {errors[`${key}-${item.id}-${rowIndex}-min`] && (
-                            <p className= "!text-red-600 font-medium text-sm errormessage">{errors[`${key}-${item.id}-${rowIndex}-min`]}</p>
-                          )}
-                        </div>
+          {/* Price */}
+        <div>
+  <div className="flex flex-row gap-3 items-stretch">
+    <input
+      type="number"
+      placeholder="Charge"
+      value={row.price || ""}
+      onChange={(e) =>
+        handleInputChange(key, rowIndex, "price", e.target.value)
+      }
+      className={`border p-1 rounded w-full text-black ${
+        errors[`${key}-${rowIndex}-price`] ? "border-red-500" : ""
+      }`}
+    />
 
-                        <div className="flex-1">
-                          <input
-                            type="number"
-                            placeholder="Enter max value (optional)"
-                            value={row.max}
-                            onChange={(e) => handleInputChange(key, item.id, rowIndex, "max", e.target.value)}
-                            className="border p-2 rounded w-full text-black"
-                          />
-                          {row.max === "" && (row.min !== "" && row.min !== undefined) && (
-                            <p className="text-gray-600 text-sm">Open-ended (treated as `greater than {row.min})</p>
-                          )}
-                          {errors[`${key}-${item.id}-${rowIndex}-max`] && (
-                            <p className= "!text-red-600 font-medium text-sm errormessage">{errors[`${key}-${item.id}-${rowIndex}-max`]}</p>
-                          )}
-                        </div>
-
-                        <div className="flex-1">
-                          <input
-                            type="number"
-                            placeholder="Enter price value"
-                            value={row.price}
-                            onChange={(e) => handleInputChange(key, item.id, rowIndex, "price", e.target.value)}
-                            className="border p-2 rounded w-full text-black"
-                          />
-                          {errors[`${key}-${item.id}-${rowIndex}-price`] && (
-                            <p className= "!text-red-600 font-medium text-sm errormessage">{errors[`${key}-${item.id}-${rowIndex}-price`]}</p>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-
-                {/* Add Row / Next controls */}
-                <div className="flex justify-between mt-2">
-               <div>
     <button
-      onClick={() => addRow(key, item.id)}
-      className="text-green-600 text-sm border px-3 py-1 rounded"
+      onClick={() => addRow(key)}
+      className="text-green-600 text-sm border rounded flex items-center justify-center px-3 py-2 h-full"
     >
-      + Add Row
+      <PlusCircle size={22} />
     </button>
-    {errors[`${key}-${item.id}-add`] && (
-      <p className="!text-red-600 font-medium text-sm errormessage">
-        {errors[`${key}-${item.id}-add`]}
-      </p>
-    )}
   </div>
 
-             
-                </div>
-              </div>
-            );
-          })}
+  {errors[`${key}-${rowIndex}-price`] && (
+    <p className="text-red-600 text-sm mt-1">
+      {errors[`${key}-${rowIndex}-price`]}
+    </p>
+  )}
+</div>
+
         </div>
-      )}
+      </div>
+      
+    ))}
+
+   {showbelow &&  <button
+      onClick={() => addRow(key)}
+      className="text-green-600 text-sm border px-3 py-1 rounded mt-2"
+    >
+   <PlusCircle size={22} />    </button>}
+  </div>
+)}
+
+
     </div>
   ))}
 </div>
- <button onClick={handleSubmit} className="mt-4 bg-blue-600 text-white px-4 py-2 rounded w-full">
+ {/* <button  className="mt-4 bg-blue-600 text-white px-4 py-2 rounded w-full">
         Submit
-      </button>
+      </button> */}
   </div>
 
 
@@ -556,18 +699,18 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
 
            {/* Bottom actions */}
             <div className="mt-10 flex justify-end gap-4 max-w-[760px] ">
-              <a
-                  href={`${baseUrl}`}
-                className=" font-outfit  font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1B1D21] "
-              >
-                Cancel
-              </a>
-              <Link
-                href={`${baseUrl}/components/comparequotes`}
+                   <button
+  onClick={() => router.back()}
+  className="font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1B1D21]"
+>
+  Back
+</button>
+              <button
+              onClick={handleSubmit}
                 className="  font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full bg-[#1E5C3B] text-[#EDF4EF]"
               >
-                Continue to Property Details →
-              </Link>
+                Continue to Notes Section →
+              </button>
             </div>
           </section>
         </div>

@@ -1,10 +1,11 @@
 "use client";
 import { Lightbulb, Users, Handshake, Globe } from "lucide-react";
 import Head from "next/head";
-import Footer from "../Footer";
 import Image from "next/image";
 import Navbar from "../../parts/navbar/page";
 import Link from "next/link";
+import Footer from '../../parts/Footer/footer';
+
 
 const values = [
   { 
@@ -131,67 +132,7 @@ export default function AboutPage() {
       </div>
 
       {/* Footer Section (Simplified for display) */}
-    <footer className="bg-gray-800 text-gray-400 py-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 border-b border-gray-700 pb-8">
-            
-            {/* Quick Links */}
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-4">Quick Links</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="hover:text-amber-500">Home</a></li>
-                <li><a href="#featured-articles" className="hover:text-amber-500">Advice Hub</a></li>
-                <li><a href="#solicitors" className="hover:text-amber-500">For Solicitors</a></li>
-                <li><a href="#about" className="hover:text-amber-500">About Us</a></li>
-                <li><a href="#contact" className="hover:text-amber-500">Contact</a></li>
-              </ul>
-            </div>
-
-            {/* Language Support */}
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-4">Popular Topics</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="hover:text-amber-500">First-Time Buyer</a></li>
-                <li><a href="#" className="hover:text-amber-500">Stamp Duty Guide</a></li>
-                <li><a href="#" className="hover:text-amber-500">Leasehold Explained</a></li>
-                <li><a href="#" className="hover:text-amber-500">Moving Checklist</a></li>
-              </ul>
-            </div>
-
-            {/* Legal (Retained) */}
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-4">Legal</h3>
-              <ul className="space-y-2">
-                <li><a href="#" className="hover:text-amber-500">Privacy Policy</a></li>
-                <li><a href="#" className="hover:text-amber-500">Terms of Use</a></li>
-                <li><a href="#" className="hover:text-amber-500">Cookie Policy</a></li>
-                <li><a href="#" className="hover:text-amber-500">Complaints Procedure</a></li>
-              </ul>
-            </div>
-
-            {/* Trust Badges & Social (Retained) */}
-            <div className="col-span-2">
-              <h3 className="text-lg font-semibold text-white mb-4">Trust & Compliance</h3>
-              <div className="flex space-x-4 mb-6">
-                <span className="text-amber-500 font-semibold border border-amber-500 p-2 text-sm rounded">SRA Compliant</span>
-                <span className="text-amber-500 font-semibold border border-amber-500 p-2 text-sm rounded">GDPR Certified</span>
-                <span className="text-amber-500 font-semibold border border-amber-500 p-2 text-sm rounded">SSL Secured</span>
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Connect With Us</h3>
-              <div className="flex space-x-4 text-3xl">
-                <a href="#" className="hover:text-amber-500 transition duration-200">Facebook</a> {/* Facebook icon placeholder */}
-                <a href="#" className="hover:text-amber-500 transition duration-200">Twitter</a> {/* Twitter icon placeholder */}
-                <a href="#" className="hover:text-amber-500 transition duration-200">LinkedIn</a> {/* LinkedIn icon placeholder */}
-                <a href="#" className="hover:text-amber-500 transition duration-200">Instagram</a> {/* Instagram icon placeholder */}
-              </div>
-            </div>
-          </div>
-
-          <div className="pt-8 text-center text-sm">
-            <p>&copy; {new Date().getFullYear()} MovWise. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+   <Footer/>
     </div>
   );
 }

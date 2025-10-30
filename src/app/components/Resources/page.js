@@ -1,9 +1,10 @@
 "use client";
 import { Lightbulb, Users, Handshake, Globe } from "lucide-react";
 import Head from "next/head";
-import Footer from "../Footer";
 import Navbar from "../../parts/navbar/page";
 import Link from "next/link";
+import Footer from '../../parts/Footer/footer';
+
 
 const values = [
   {
@@ -92,141 +93,8 @@ export default function ResourcePage() {
         </section>
       </div>
 
-      {/* Footer */}
-      <footer className="bg-gray-800 text-gray-400 py-12 mt-12">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-8 border-b border-gray-700 pb-8">
-            {/* Quick Links */}
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-4">
-                Quick Links
-              </h3>
-              <ul className="space-y-2">
-                <li>
-                  <a href="#" className="hover:text-amber-500">
-                    Home
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-amber-500">
-                    Get Quotes
-                  </a>
-                </li>
-                <li>
-                  <a href="#solicitors" className="hover:text-amber-500">
-                    For Solicitors
-                  </a>
-                </li>
-                <li>
-                  <a href="#about" className="hover:text-amber-500">
-                    About Us
-                  </a>
-                </li>
-                <li>
-                  <a href="#contact" className="hover:text-amber-500">
-                    Contact
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            {/* Language Support */}
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-4">
-                Language Support
-              </h3>
-              <ul className="space-y-2">
-                <li>
-                  <a href="#" className="hover:text-amber-500">
-                    Tamil Conveyancers
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-amber-500">
-                    Hindi Conveyancers
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-amber-500">
-                    Spanish Support
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-amber-500">
-                    Find Your Language
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            {/* Legal */}
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-4">Legal</h3>
-              <ul className="space-y-2">
-                <li>
-                  <a href="#" className="hover:text-amber-500">
-                    Privacy Policy
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-amber-500">
-                    Terms of Use
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-amber-500">
-                    Cookie Policy
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="hover:text-amber-500">
-                    Complaints Procedure
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            {/* Trust Badges & Social */}
-            <div className="col-span-2">
-              <h3 className="text-lg font-semibold text-white mb-4">
-                Trust & Compliance
-              </h3>
-              <div className="flex flex-wrap gap-3 mb-6">
-                <span className="text-amber-500 font-semibold border border-amber-500 p-2 text-sm rounded">
-                  SRA Compliant
-                </span>
-                <span className="text-amber-500 font-semibold border border-amber-500 p-2 text-sm rounded">
-                  GDPR Certified
-                </span>
-                <span className="text-amber-500 font-semibold border border-amber-500 p-2 text-sm rounded">
-                  SSL Secured
-                </span>
-              </div>
-              <h3 className="text-lg font-semibold text-white mb-2">
-                Connect With Us
-              </h3>
-              <div className="flex space-x-4 text-sm">
-                <a href="#" className="hover:text-amber-500 transition duration-200">
-                  Facebook
-                </a>
-                <a href="#" className="hover:text-amber-500 transition duration-200">
-                  Twitter
-                </a>
-                <a href="#" className="hover:text-amber-500 transition duration-200">
-                  LinkedIn
-                </a>
-                <a href="#" className="hover:text-amber-500 transition duration-200">
-                  Instagram
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <div className="pt-8 text-center text-sm">
-            <p>&copy; {new Date().getFullYear()} MovWise. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+           <Footer/>
+    
     </div>
   );
 }
