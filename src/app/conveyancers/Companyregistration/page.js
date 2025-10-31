@@ -8,9 +8,7 @@ import { useRouter } from "next/navigation";
 
 
 export default function Companyregistration() {
-  // const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://movwise.digitalcloudies.in/';
   
-  const baseUrl = 'https://movwise.digitalcloudies.in/';
 console.log(API_BASE_URL);
 
   const router = useRouter();

@@ -2,13 +2,12 @@
 import Link from "next/link";
 import  Navbar  from "../../parts/navbar/page";// app/personal-details/page.js
 import { useRouter } from "next/navigation";
+import { API_BASE_URL } from "../.././constants/config";
 
 
 
 export default function Personaldetails() {
-  // const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://movwise.digitalcloudies.in/';
   
-  const baseUrl = 'https://movwise.digitalcloudies.in/';
   const router = useRouter();
 
   return (
@@ -176,7 +175,7 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
 </button>
 
               <Link
-       href={`${baseUrl}/components/propertydetails`}
+       href={`${API_BASE_URL}/components/propertydetails`}
                 className="  font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full bg-[#1E5C3B] text-[#EDF4EF]"
               >
                 Continue to Property Details →

@@ -2,12 +2,12 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { API_BASE_URL } from "../.././constants/config";
 
 
 export default function Login() {
 
-      // const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://movwise.digitalcloudies.in/';
-  const baseUrl = 'https://movwise.digitalcloudies.in/';
+   
 
   
   const [username, setUsername] = useState('');
@@ -91,10 +91,8 @@ SEND            </button>
 
             <span className="text-black text-center block mt-2">
               <Link href="/auth/registeruser" className="text-[#27a277]">
-Create New Account        
-      </Link><span className='m-4'>Or</span>
-      <Link href="/auth/password/" className="text-[#27a277]">Forget Password</Link>
-            </span>
+Create New Account     </Link></span>   
+      
           </form>
         </div>
       </div>

@@ -12,14 +12,16 @@ import Partnerspagecard from "./components/partnerspagecard/page";
 import Ouotesdetails from"./components/quotesdetails/page";
 import  Landingpage from "./components/Home/page"
 
+
 import Companyregistration from "./conveyancers/Companyregistration/page"
+import { API_BASE_URL } from "./constants/config";
 
 export default function Home() {
   
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const apiUrl = API_BASE_URL
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
-console.log(apiUrl,baseUrl)
+console.log(apiUrl)
 
   return (
     

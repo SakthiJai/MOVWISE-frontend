@@ -56,7 +56,6 @@ export default function Register() {
     const data = await res.text();
     console.log("Response:", data);
   };
-  const baseUrl = API_BASE_URL;
   
 
   return (
@@ -142,7 +141,7 @@ export default function Register() {
 
             <span className="text-black text-center block mt-2">
               Already have an account?{' '}
-              <Link  href={`${baseUrl}/auth/login`} className="text-[#27a277]">
+              <Link  href={`${API_BASE_URL}/auth/login`} className="text-[#27a277]">
                 Login
               </Link>
             </span>

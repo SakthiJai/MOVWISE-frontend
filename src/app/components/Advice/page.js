@@ -7,6 +7,8 @@ import Head from 'next/head';
 import Navbar from '../../parts/navbar/page';
 import Link from 'next/link';
 import Footer from '../../parts/Footer/footer';
+import {API_BASE_URL} from "../../constants/config"
+
 
 // --- Utility Components for Icons and Buttons (simplified, retained) ---
 const FeatureIcon = ({ icon, title, description }) => (
@@ -17,7 +19,6 @@ const FeatureIcon = ({ icon, title, description }) => (
   </div>
 );
 
-const baseUrl = 'https://movwise.digitalcloudies.in/';
 
 const PrimaryCTA = ({ text, href = '#' }) => (
   // Primary Action colour: Emerald Green
@@ -108,7 +109,7 @@ export default function AdvicePage() {
             </div>
           </div>
           <div className="text-center mt-12">
-            <PrimaryCTA text="Get a Conveyancing Quote" href={`${baseUrl}/auth/login`}/>
+            <PrimaryCTA text="Get a Conveyancing Quote" href={`${API_BASE_URL}/auth/login`}/>
           </div>
         </div>
       </section>

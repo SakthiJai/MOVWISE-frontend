@@ -6,8 +6,6 @@ import Image from 'next/image';
 
 export default function Login() {
 
-      // const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://movwise.digitalcloudies.in/';
-  const baseUrl = 'https://movwise.digitalcloudies.in/';
 
   
   const [username, setUsername] = useState('');

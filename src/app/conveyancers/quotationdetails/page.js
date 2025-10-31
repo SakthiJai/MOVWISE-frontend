@@ -1,11 +1,12 @@
 "use client"
 import Link from "next/link";
 import  Navbar  from "../../parts/navbar/page";// app/personal-details/page.js
-import {API_BASE_URL} from "../../constants/config"
 import { useState } from "react";
 import { PlusCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
+import { API_BASE_URL } from "../.././constants/config";
+
 
 // export const metadata = {
 //   title: 'Quotationdetails | Movwise',
@@ -15,7 +16,6 @@ import Swal from "sweetalert2";
 export default function Quotationdetails() {
 // console.log(API_BASE_URL);
 
-const baseUrl = API_BASE_URL;
   const router = useRouter();
 
   const data = {

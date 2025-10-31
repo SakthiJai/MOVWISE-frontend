@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Navbar from '../../parts/navbar/page';
 import Link from 'next/link';
 import { Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
+import { API_BASE_URL } from "../.././constants/config";
 
 // --- Utility Components for Icons and Buttons (simplified) ---
 const FeatureIcon = ({ icon, title, description }) => (
@@ -14,7 +15,6 @@ const FeatureIcon = ({ icon, title, description }) => (
     <p className="text-sm text-gray-600">{description}</p>
   </div>
 );
-  const baseUrl = 'https://movwise.digitalcloudies.in/';
 
 const PrimaryCTA = ({ text }) => (
   // Primary Action colour: Emerald Green
@@ -45,7 +45,7 @@ export default function HomePage() {
               Compare Conveyancing Quotes & Move with Confidence
             </h1>
             <p className="mt-4 text-xl text-gray-600">
-              **Your Move. Your Choice. Your Conveyancer.**
+              <strong>Your Move. Your Choice. Your Conveyancer.</strong>
             </p>
             <p className="mt-4 text-lg text-gray-500">
               Compare fixed-fee quotes from trusted UK conveyancers and solicitors in minutes. MovWise helps you find the right legal partner to buy, sell, or remortgage your home — faster, clearer, and smarter.
@@ -102,7 +102,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="text-center mt-12">
-           <Link href={`${baseUrl}/auth/login`}> <PrimaryCTA text="Start My Quote"  /></Link>
+           <Link href={`${API_BASE_URL}/auth/login`}> <PrimaryCTA text="Start My Quote"  /></Link>
           </div>
         </div>
       </section>
@@ -188,7 +188,7 @@ export default function HomePage() {
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 p-8 rounded-xl border border-emerald-300 bg-emerald-50 shadow-lg">
               <h2 className="text-2xl font-bold text-emerald-800 mb-4">MovWise Support Fee: Complete Peace of Mind</h2>
               <p className="text-lg text-gray-700 mb-6">
-                  MovWise includes a **small support fee** covering essential services that guarantee a smoother, clearer process:
+                  MovWise includes a <strong>small support fee</strong> covering essential services that guarantee a smoother, clearer process:
               </p>
               
               <ul className="grid md:grid-cols-2 gap-4 text-gray-700 list-none p-0 mb-6">
@@ -207,7 +207,7 @@ export default function HomePage() {
               </ul>
 
               <p className="text-xl font-semibold text-emerald-800 border-t border-emerald-200 pt-4 mt-4">
-                  **Value Proposition:** A small price for complete peace of mind — especially when every property detail matters.
+                  <strong>Value Proposition:</strong> A small price for complete peace of mind — especially when every property detail matters.
               </p>
           </div>
       </section>
@@ -222,16 +222,16 @@ export default function HomePage() {
             <div>
               <h3 className="text-2xl font-semibold text-emerald-800 mb-4">Our Mission</h3>
               <p className="text-gray-700 leading-relaxed">
-                To make every home move **smarter, simpler, and more supported** through technology and transparency. We aim to remove the stress and confusion from the conveyancing process.
+                To make every home move <strong>smarter, simpler, and more supported</strong> through technology and transparency. We aim to remove the stress and confusion from the conveyancing process.
               </p>
             </div>
             <div>
               <h3 className="text-2xl font-semibold text-emerald-800 mb-4">Our Values</h3>
               <ul className="space-y-2 text-gray-700 list-disc list-inside">
-                <li>**Transparency** in every quote and communication</li>
-                <li>**Inclusivity** through multilingual accessibility</li>
-                <li>**Innovation** in client-conveyancer connections</li>
-                <li>**Partnership** with regulated legal experts</li>
+                <li><strong>Transparency</strong> in every quote and communication</li>
+                <li><strong>Inclusivity</strong> through multilingual accessibility</li>
+                <li><strong>Innovation</strong> in client-conveyancer connections</li>
+                <li><strong>Partnership</strong> with regulated legal experts</li>
               </ul>
             </div>
           </div>
@@ -247,7 +247,7 @@ export default function HomePage() {
           <div className="space-y-6">
             <details className="p-4 rounded-lg bg-gray-50 border border-gray-200">
               <summary className="font-semibold text-lg cursor-pointer text-emerald-700">Q: Are MovWise quotes fixed-fee estimates?</summary>
-              <p className="mt-2 pl-4 text-gray-700">A: **Yes** — all quotes are fixed-fee estimates provided directly by SRA or CLC-regulated firms. This ensures transparency with no hidden costs.</p>
+              <p className="mt-2 pl-4 text-gray-700">A: <strong>Yes</strong> — all quotes are fixed-fee estimates provided directly by SRA or CLC-regulated firms. This ensures transparency with no hidden costs.</p>
             </details>
             <details className="p-4 rounded-lg bg-gray-50 border border-gray-200">
               <summary className="font-semibold text-lg cursor-pointer text-emerald-700">Q: Do I have to pay to get a quote?</summary>
@@ -256,11 +256,11 @@ export default function HomePage() {
             </details>
             <details className="p-4 rounded-lg bg-gray-50 border border-gray-200">
               <summary className="font-semibold text-lg cursor-pointer text-emerald-700">Q: How secure is my data?</summary>
-              <p className="mt-2 pl-4 text-gray-700">A: MovWise uses encrypted servers and complies fully with **UK GDPR standards** to protect your personal and property data.</p>
+              <p className="mt-2 pl-4 text-gray-700">A: MovWise uses encrypted servers and complies fully with <em>UK GDPR standards</em> to protect your personal and property data.</p>
             </details>
             <details className="p-4 rounded-lg bg-gray-50 border border-gray-200">
               <summary className="font-semibold text-lg cursor-pointer text-emerald-700">Q: Can I access my documents anytime?</summary>
-              <p className="mt-2 pl-4 text-gray-700">A: **Absolutely**. All documents are stored safely in your MovWise Cloud Portal 24/7, giving you full control over your case files.</p>
+              <p className="mt-2 pl-4 text-gray-700">A: <strong>Absolutely</strong>. All documents are stored safely in your MovWise Cloud Portal 24/7, giving you full control over your case files.</p>
             </details>
           </div>
         </div>
@@ -314,7 +314,7 @@ export default function HomePage() {
       <section className="py-20 bg-emerald-700 text-white text-center">
         <h2 className="text-4xl font-bold mb-4">Ready to Get Moving?</h2>
         <p className="text-xl mb-8 max-w-3xl mx-auto">
-          Get transparent quotes from trusted conveyancers and make your move with total confidence. **Your next chapter starts with MovWise.**
+          Get transparent quotes from trusted conveyancers and make your move with total confidence. <strong>Your next chapter starts with MovWise.</strong>
         </p>
       </section>
       

@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { API_BASE_URL } from "../.././constants/config";
+
 
 const Navbar = ({ originalstyle = false }) => {
-  const baseUrl =
-    process.env.NEXT_PUBLIC_BASE_URL || "https://movwise.digitalcloudies.in/";
+
   const pathname = usePathname();
 
   const links = [
@@ -52,10 +53,10 @@ const Navbar = ({ originalstyle = false }) => {
 
         {/* Register button */}
         <Link
-          href={`${baseUrl}/auth/registeruser`}
+          href={`${API_BASE_URL}/auth/registeruser`}
           className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
         >
-          Register <span className="ml-2">→</span>
+          Get Quote <span className="ml-2">→</span>
         </Link>
       </nav>
     </header>

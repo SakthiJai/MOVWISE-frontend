@@ -5,6 +5,8 @@ import { RiArrowDropDownLine } from "react-icons/ri";
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { API_BASE_URL } from "../.././constants/config";
+
 
 export default function Comparequotes() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -15,8 +17,6 @@ export default function Comparequotes() {
     setIsDropdownOpen(!isDropdownOpen);
     // console.log(isDropdownOpen);
   }
-  // const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://movwise.digitalcloudies.in/';
-    const baseUrl = 'https://movwise.digitalcloudies.in/';
 
 
   return (
@@ -330,7 +330,7 @@ export default function Comparequotes() {
 </button>
 
               <Link
-                    href={`${baseUrl}/components/propertydetails`}
+                    href={`${API_BASE_URL}/components/propertydetails`}
                 className="font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full bg-[#1E5C3B] text-[#EDF4EF]"
               >
                 Continue
