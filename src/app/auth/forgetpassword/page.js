@@ -22,7 +22,7 @@ const handleLogin = async (e) => {
   }
 
   try {
-    const res = await fetch("/api/sendemail", {   
+    const res = await fetch("/api/sendemailotp", {   
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email: username }),

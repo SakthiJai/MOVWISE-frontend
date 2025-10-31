@@ -19,14 +19,14 @@ const baseUrl = API_BASE_URL;
   const router = useRouter();
 
   const data = {
-    Legalcosts: [
+    "Legalcosts": [
       { id: 1, name: "OUR ESTIMATED FEES", type: 1 },
       { id: 2, name: "FEE TO ACT FOR THE LENDER (PER LENDER)", type: 0 },
       { id: 3, name: "STAMP DUTY FORM (IF APPLICABLE-PER TITLE)", type: 0 },
       { id: 4, name: "BANK TRANSFER FEES (PER TRANSFER)", type: 0 },
       { id: 5, name: "ADMIN & POSTAGE COSTS", type: 0 },
     ],
-    Disbursement: [
+    "Disbursement": [
       { id: 6, name: "LAND REGISTRY FEE", type: 1 },
       { id: 7, name: "SEARCHES (TBC-DEPENDS ON LOCAL AUTHORITY)", type: 0 },
       { id: 8, name: "ID CHECKS(PER PERSON)", type: 0 },
@@ -46,12 +46,28 @@ const baseUrl = API_BASE_URL;
   const [formValues, setFormValues] = useState({}); // structure: { category: { itemId: [ {min,max,price}, ... ] } }
   const [errors, setErrors] = useState({}); // keyed by `${key}-${itemId}-${rowIndex}-field` and add errors `${key}-${itemId}-add`
   const [lockedIndex, setLockedIndex] = useState({}); // locks previous items when Next pressed: { category: lockedUpToIndex }
-   let [showbelow,setshowbelow]=useState(true) 
+const [showbelow, setshowbelow] = useState({});
 
   // Toggle accordion open/close
-  const toggleAccordion = (key) => {
-    setOpenAccordion(openAccordion === key ? null : key);
-  };
+ const toggleAccordion = (key) => {
+  setOpenAccordion((prev) => {
+    const isSame = prev === key;
+    if (!isSame) {
+      // Accordion is opening — check if rows exist
+      setFormValues((prevValues) => {
+        if (!prevValues[key] || prevValues[key].length === 0) {
+          return {
+            ...prevValues,
+            [key]: [{ itemId: "", min: "", max: "", price: "" }],
+          };
+        }
+        return prevValues;
+      });
+    }
+    return isSame ? null : key;
+  });
+};
+
 
   // Show next item AND lock earlier items for this category
   const handleItemClick = (key, index) => {
@@ -141,8 +157,11 @@ const handleInputChange = (key, rowIndex, field, value) => {
 
   // Add a new empty row for a specific item — blocked if an existing row's max is empty
 const addRow = (key) => {
-setshowbelow(false);
-    console.log(  showbelow)
+  setshowbelow((prev) => ({
+    ...prev,
+    [key]: false, // hide only for this accordion
+  }));
+
   setFormValues((prev) => {
     const rows = prev[key] || [];
     return {
@@ -153,8 +172,8 @@ setshowbelow(false);
       ],
     };
   });
-
 };
+
 
 
 
@@ -676,11 +695,7 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
       
     ))}
 
-   {showbelow &&  <button
-      onClick={() => addRow(key)}
-      className="text-green-600 text-sm border px-3 py-1 rounded mt-2"
-    >
-   <PlusCircle size={22} />    </button>}
+
   </div>
 )}
 

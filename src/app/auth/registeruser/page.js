@@ -60,7 +60,7 @@ export default function Register() {
   
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#eaeaea] px-4 font">
+    <div className="min-h-screen flex items-center justify-center  px-4 font bg-white">
       <div className="bg-white shadow-2xl grid md:grid-cols-12 overflow-hidden w-3/5 rounded-lg">
         {/* Left Section */}
         <div className="bg-gradient-to-r from-[#27a277] to-[#27a277] col-span-5 text-white flex flex-col justify-center items-center p-8">

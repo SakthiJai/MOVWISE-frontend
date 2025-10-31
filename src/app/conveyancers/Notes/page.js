@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
 export default function EditorPage() {
-  const [value, setValue] = useState("<p>Hello from Tailwind Editor!</p>");
+  const [value, setValue] = useState("");
     const router = useRouter();
 
 
@@ -153,17 +153,16 @@ const formats = [
         <Link href="/" className="other-page">Home</Link>
         <span>/</span>
         <span className="other-page">Company Details</span>
+                <span>/</span>
+
         <Link href="/" className="live-page">Notes</Link>
         <span>/</span>
       </nav>
 
       <h1 className="text-[24px] font-semibold font-Outfit text-[#1B1D21]">
-        Share your Company Details
+        Share your Notes Details
       </h1>
-      <p className="mt-1 text-[14px] leading-5 text-[#6B7280] font-Outfit font-regular">
-        By completing this form your details are shared with up to 5 firms
-        providing the quotes, but absolutely no one else.
-      </p>
+     
 
       {/* 🧠 Scrollable Editor Section */}
       <div className="mt-6 bg-gray-50 rounded-2xl p-6">
