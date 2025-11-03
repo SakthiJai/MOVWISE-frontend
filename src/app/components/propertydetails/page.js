@@ -1,462 +1,312 @@
-"use client"
-import React, { useState } from 'react'
-import Navbar from "../../parts/navbar/page";// app/personal-details/page.js
-import Link from 'next/link';
-import { useRouter } from "next/navigation";
-import { API_BASE_URL } from "../.././constants/config";
+"use client";
+import React, { useState } from "react";
+import { Check, X, MapPin } from "lucide-react";
+import Navbar from "../../parts/navbar/page";
+
+// --- START: Stubbed/Placeholder Components & Hooks for single-file environment ---
+// Placeholder for external component
 
 
-export default function PropertyDetails() {
+// Placeholder for next/navigation/Link
+const Link = ({ href, children, className }) => (
+  <a href={href} className={className} onClick={(e) => e.preventDefault()}>
+    {children}
+  </a>
+);
 
+// Placeholder for next/navigation/useRouter
+const useRouter = () => ({
+  back: () => console.log("Navigation: Going back..."),
+});
+// --- END: Stubbed/Placeholder Components & Hooks ---
+
+export default function App() {
   const router = useRouter();
-  const [selected, setSelected] = useState(null);
+
+  // Initial state for the toggle buttons
+  const [scheme, setScheme] = useState("no");
+  const [mortgage, setMortgage] = useState("yes");
+  const [newBuild, setNewBuild] = useState("no");
+  const [sharedOwnership, setSharedOwnership] = useState("no");
 
   return (
-
-    <div className="min-h-screen bg-white antialiased">
-      {/* Header */}
+    <div className="min-h-screen bg-white antialiased font-inter">
       <Navbar />
 
-      {/* Main */}
-      <main className="mx-auto max-w-[1200px]  pt-10 ">
-        <div className="flex gap-12">
+      <main className="pt-8 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col lg:flex-row gap-8">
           {/* Left stepper */}
-          <aside className="relative w-[400px] font   rounded-[40px] overflow-hidden bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)]
-shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
-            <div className="absolute inset-0 p-8">
-              {/* Step 1 (completed) */}
+          <aside className="bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-full lg:min-h-[600px] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white  lg:sticky lg:top-8">
+            <div className="p-6">
+              {/* Step 1 */}
               <div className="flex items-start">
                 <div className="relative mr-4">
-                  <div className="w-11 h-11 rounded-full border-[2px] border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                      <path d="M20 7L9 18l-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
+                  <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
+                    <Check size={18} />
                   </div>
-                  <div className="absolute left-[22px] top-[44px] w-[2px] h-[56px] bg-[#CFE3CF]" />
+                  <div className="absolute left-[19px] top-[40px] w-[2px] h-[50px] bg-[#CFE3CF]" />
                 </div>
                 <div>
-                  <div className="text-[12px] font-semibold tracking-wide text-[#1E1E1E]">STEP 1</div>
-                  <div className="text-[20px] font-extrabold text-[#1E1E1E] leading-tight">Personal Details</div>
-                  <div className="text-[12px] font-medium text-[#2D7C57] mt-1">Completed</div>
+                  <div className="text-xs font-semibold text-[#1E1E1E]">STEP 1</div>
+                  <div className="text-lg font-extrabold text-[#1E1E1E]">Personal Details</div>
+                  <div className="text-xs text-[#2D7C57] mt-1">Completed</div>
                 </div>
               </div>
 
-              {/* Step 2 (in progress) */}
-              <div className="flex items-start mt-8">
+              {/* Step 2 (Current) */}
+              <div className="flex items-start mt-6">
                 <div className="relative mr-4">
-                  <div className="w-11 h-11 rounded-full border-[2px] border-[#1E5C3B] bg-white text-[#1E5C3B] flex items-center justify-center">
-                    <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
-                      <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" strokeWidth="2" />
-                      <circle cx="10" cy="10" r="3" fill="currentColor" />
-                    </svg>
+                  <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-white text-[#1E5C3B] flex items-center justify-center">
+                    <div className="w-4 h-4 rounded-full bg-[#1E5C3B]" />
                   </div>
-                  <div className="absolute left-[22px] top-[44px] w-[2px] h-[56px] bg-[#E4E4E7]" />
+                  <div className="absolute left-[19px] top-[40px] w-[2px] h-[50px] bg-gray-200" />
                 </div>
                 <div>
-                  <div className="text-[12px] font-semibold tracking-wide text-[#1E1E1E]">STEP 2</div>
-                  <div className="text-[20px] font-extrabold text-[#1E1E1E] leading-tight">Property Details</div>
-                  <div className="text-[12px] font-medium text-[#A38320] mt-1">In Progress</div>
+                  <div className="text-xs font-semibold text-[#1E1E1E]">STEP 2</div>
+                  <div className="text-lg font-extrabold text-[#1E1E1E]">Property Details</div>
+                  <div className="text-xs text-[#A38320] mt-1">In Progress</div>
                 </div>
               </div>
 
               {/* Step 3 */}
-              <div className="flex items-start mt-8">
+              <div className="flex items-start mt-6">
                 <div className="mr-4">
-                  <div className="w-11 h-11 rounded-full border-[2px] border-[#B7B7B7] bg-white text-[#B7B7B7] flex items-center justify-center">
-                    <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
-                      <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" strokeWidth="2" />
-                    </svg>
+                  <div className="w-10 h-10 rounded-full border-2 border-gray-300 text-gray-400 flex items-center justify-center">
+                    <div className="w-3 h-3 rounded-full border-2 border-gray-300"></div>
                   </div>
                 </div>
                 <div>
-                  <div className="text-[12px] font-semibold tracking-wide text-[#1E1E1E]">STEP 3</div>
-                  <div className="text-[20px] font-bold text-[#1E1E1E]  leading-tight">Compare Quotes</div>
+                  <div className="text-xs font-semibold text-[#1E1E1E]">STEP 3</div>
+                  <div className="text-lg font-bold text-[#1E1E1E]">Compare Quotes</div>
                 </div>
               </div>
             </div>
-
-            {/* Decorative wave */}
-            <div
-              aria-hidden="true"
-              className="absolute inset-x-0 bottom-0 h-[45%]"
-              style={{
-                background:
-                  'radial-gradient(120% 80% at 0% 100%, rgba(178,196,160,0.45) 0%, rgba(178,196,160,0.25) 35%, transparent 70%)',
-              }}
-            />
           </aside>
 
-          {/* Right: form card */}
-          <section className="flex-1 ">
-            <div className="rounded-[18px] border border-[#EDF0F2] shadow-[0_6px_24px_rgba(16,24,40,0.04)] bg-white max-w-[760px] h-[500px] overflow-y-auto">
-              <div className="p-8">
-                {/* Breadcrumb */}
-                <nav className="text-[13px] text-[#6B7280] mb-4 flex items-center gap-4" aria-label="Breadcrumb">
-                  <Link href="/" className=" other-page">Home</Link>
-                  <span>/</span>
-                  <span className="other-page">Personal Details</span>
-                  <span>/</span>
+          {/* Right Form */}
+          <section className="flex-1 bg-white border border-gray-200 shadow-xl rounded-2xl p-4 sm:p-8 lg:p-10">
+            <nav
+              className="text-sm text-gray-500 mb-6 flex flex-wrap items-center gap-2"
+              aria-label="Breadcrumb"
+            >
+              <Link href="/" className="hover:text-[#1E5C3B]">Home</Link>
+              <span>/</span>
+              <span>Personal Details</span>
+              <span>/</span>
+              <span className="text-[#1E5C3B] font-medium">Property Details</span>
+            </nav>
 
-                  <span className="live-page">Property Details</span>
-                </nav>
+            <h1 className="text-3xl font-bold text-gray-900">
+              Share your Property Details
+            </h1>
+            <p className="mt-2 text-sm text-gray-600">
+              We need a few details about the property to get you the most accurate quotes.
+            </p>
 
-                <h1 className="text-[24px] font-semibold font-Outfit text-[#1B1D21] font ">Share your Property Details</h1>
-                <p className="mt-1 text-[14px] leading-5 text-[#6B7280] font-Outfit font-regular font">
-                  By completing this form your details are shared with up to 5 firms providing the quotes, but absolutely no one else.
-                </p>
-
-                <form className="mt-6">
-                  {/* Row 1: Address + Price */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="address" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">Property address:</label>
-
-                      <div className="relative">
-                        <input
-                          id="address"
-                          name="address"
-                          defaultValue="24 Arab Street, Singapore"
-                          className=" block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
-                        />
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B7280]">
-                          {/* location icon placeholder */}
-                          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                            <path d="M12 21s7-6.2 7-11a7 7 0 10-14 0c0 4.8 7 11 7 11z" stroke="currentColor" strokeWidth="1.6" />
-                            <circle cx="12" cy="10" r="2.5" stroke="currentColor" strokeWidth="1.6" />
-                          </svg>
-                        </span>
-                      </div>
-                    </div>
-                    <div>
-                      <label htmlFor="price" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">Agreed sale price:</label>
-                      <div className="relative w-full">
-                        {/* Prefix container for £ and icon */}
-                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 space-x-1 text-[#111827]">
-                          <span className="text-[14px] font-semibold">£</span>
-                          <svg width="10" height="10" viewBox="0 0 20 20" aria-hidden="true" className="text-[#6B7280]">
-                            <path d="M6 8l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="2" />
-                          </svg>
-                        </div>
-
-                        {/* Input field */}
-                        <input
-                          id="price"
-                          name="price"
-                          defaultValue="9876543210"
-                          className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] pl-10 pr-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2 font-semibold"
-                        />
-                      </div>
-
-
-                    </div>
-                  </div>
-
-                  {/* Row 2: Bedrooms + Property type */}
-                  <div className="grid grid-cols-2 gap-4 mt-4">
-                    <div>
-                      <label className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">Number of Bedrooms:</label>
-                      <div className="relative">
-                        <input
-                          defaultValue="1 bed"
-                          className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21]   font-semibold font"
-                          readOnly
-                        />
-                        <button type="button" className="absolute right-0 bottom-2 h-[44px] w-[44px] grid place-items-center text-[#1E1E1E] font-bold">
-                          +
-                        </button>
-                        <button type="button" className="absolute right-0 top-3 h-[44px] w-[44px] grid place-items-center text-[#1E1E1E] font-bold">
-                          –
-                        </button>
-                      </div>
-                    </div>
-
-
-                    <div>
-
-                      <label htmlFor="currentstage" className='block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font'>
-                        Property type:
-                      </label>
-                      <select name="currentstage" id="currentstage " className='block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font'>
-                        <option value="Flat">Flat
-                        </option>
-                        <option value="Terraced">Terraced
-                        </option>
-                        <option value="Semi-detached">Semi-detached
-                        </option>
-                        <option value="Detached">Detached
-                        </option>
-                      </select>
-
-                    </div>
-                  </div>
-
-                  {/* Row 3: Tenure */}
-                  <div className="grid grid-cols-2 gap-4 mt-4">
-                    <div>
-                      <label htmlFor="tenure" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">Leasehold or freehold?</label>
-                      <div className="relative ">
-                        <input
-                          id="tenure"
-                          name="tenure"
-                          defaultValue="Freehold"
-                          className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
-                          readOnly
-                        />
-                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B7280]">
-                          <svg width="16" height="16" viewBox="0 0 20 20" aria-hidden="true">
-                            <path d="M6 8l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="2" />
-                          </svg>
-                        </span>
-                      </div>
-                    </div>
-                    <div>
-
-                      <label htmlFor="currentstage" className='block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font'>
-                        What stage are you at?
-                      </label>
-                      <select name="currentstage" id="currentstage " className='block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font'>
-                        <option value="Just researching or budgeting">Just researching or budgeting
-                        </option>
-                        <option value="Have made an offer">Have made an offer
-                        </option>
-                        <option value="Purchase agreed">Purchase agreed
-                        </option>
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* row4 */}
-
-                  <div className="grid grid-cols-2 gap-4 mt-4">
-                        <div>
-
-                      <label htmlFor="currentstage" className='block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font'>
-                        Mortgage Lender (If Known)                        </label>
-                      <select name="currentstage" id="currentstage " className='block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font'>
-                        <option value="Flat">Not Known
-                        </option>
-                        <option value="Terraced">Not required
-                        </option>
-                        <option value="Semi-detached">Lender Name
-                        </option>
-                        <option value="Detached">Look up
-                        </option>
-                      </select>
-
-                    </div>
-
-                   
-
-
-                    <div>
-
-                      <label htmlFor="currentstage" className='block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font'>
-                        Buy to Let
-                      </label>
-                      <select name="currentstage" id="currentstage " className='block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font'>
-                        <option value="" disabled selected>Select Property Type</option>
-                        <option value="yes - personal name">yes - personal name
-                        </option>
-                        <option value="Yes Company name">Yes Company name
-                        </option>
-                        <option value="No">No
-                        </option>
-
-                      </select>
-
-                    </div>
-
-                  </div>
-
-                  {/* row5 */}
-
-                  <div className="grid grid-cols-2 gap-4 mt-4">
-                    <div>
-                      <label className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1">
-                        Using Government Right to Buy scheme?
-                      </label>
-                      <div className="grid grid-cols-2 gap-3">
-                        <button
-                          type="button"
-                          onClick={() => setSelected("yes")}
-                          className={`h-[44px] rounded-[10px] border text-[14px] font-semibold transition-all duration-200 ${selected === "yes"
-                              ? "bg-emerald-500 text-white border-emerald-500"
-                              : "border-[#D1D5DB] text-[#1B1D21] hover:bg-emerald-50 hover:border-emerald-400"
-                            }`}
-                        >
-                          Yes
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setSelected("no")}
-                          className={`h-[44px] rounded-[10px] border text-[14px] font-semibold transition-all duration-200 ${selected === "no"
-                              ? "bg-red-500 text-white border-red-500"
-                              : "border-[#D1D5DB] text-[#1B1D21] hover:bg-red-50 hover:border-red-400"
-                            }`}
-                        >
-                          No
-                        </button>
-                      </div>
-                    </div>
-
-
-                    <div>
-                      <label className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1">
-                        Obtaining a mortgage?
-                      </label>
-                      <div className="grid grid-cols-2 gap-3">
-                        <button
-                          type="button"
-                          onClick={() => setSelected("yes")}
-                          className={`h-[44px] rounded-[10px] border text-[14px] font-semibold transition-all duration-200 ${selected === "yes"
-                              ? "bg-emerald-500 text-white border-emerald-500"
-                              : "border-[#D1D5DB] text-[#1B1D21] hover:bg-emerald-50 hover:border-emerald-400"
-                            }`}
-                        >
-                          Yes
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setSelected("no")}
-                          className={`h-[44px] rounded-[10px] border text-[14px] font-semibold transition-all duration-200 ${selected === "no"
-                              ? "bg-red-500 text-white border-red-500"
-                              : "border-[#D1D5DB] text-[#1B1D21] hover:bg-red-50 hover:border-red-400"
-                            }`}
-                        >
-                          No
-                        </button>
-                      </div>
-                    </div>
-
-                  </div>
-
-                  {/* row 6 */}
-
-                  <div className="grid grid-cols-2 gap-4 mt-4">
-                    <div>
-                      <label className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1">
-                        New Build
-                      </label>
-                      <div className="grid grid-cols-2 gap-3">
-                        <button
-                          type="button"
-                          onClick={() => setSelected("yes")}
-                          className={`h-[44px] rounded-[10px] border text-[14px] font-semibold transition-all duration-200 ${selected === "yes"
-                              ? "bg-emerald-500 text-white border-emerald-500"
-                              : "border-[#D1D5DB] text-[#1B1D21] hover:bg-emerald-50 hover:border-emerald-400"
-                            }`}
-                        >
-                          Yes
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setSelected("no")}
-                          className={`h-[44px] rounded-[10px] border text-[14px] font-semibold transition-all duration-200 ${selected === "no"
-                              ? "bg-red-500 text-white border-red-500"
-                              : "border-[#D1D5DB] text-[#1B1D21] hover:bg-red-50 hover:border-red-400"
-                            }`}
-                        >
-                          No
-                        </button>
-                      </div>
-                    </div>
-
-
-                      <div>
-                      <label className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1">
-                        Shared Ownership via housing association?
-                      </label>
-                      <div className="grid grid-cols-2 gap-3">
-                        <button
-                          type="button"
-                          onClick={() => setSelected("yes")}
-                          className={`h-[44px] rounded-[10px] border text-[14px] font-semibold transition-all duration-200 ${selected === "yes"
-                              ? "bg-emerald-500 text-white border-emerald-500"
-                              : "border-[#D1D5DB] text-[#1B1D21] hover:bg-emerald-50 hover:border-emerald-400"
-                            }`}
-                        >
-                          Yes
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setSelected("no")}
-                          className={`h-[44px] rounded-[10px] border text-[14px] font-semibold transition-all duration-200 ${selected === "no"
-                              ? "bg-red-500 text-white border-red-500"
-                              : "border-[#D1D5DB] text-[#1B1D21] hover:bg-red-50 hover:border-red-400"
-                            }`}
-                        >
-                          No
-                        </button>
-                      </div>
-                    </div>
-
-                  </div>
-                  {/* row 7 */}
-
-                  <div className="grid grid-cols-2 gap-4 mt-5">
-                            
-                      <div>
-
-                      <label htmlFor="currentstage" className='block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font'>
-                        Are you receiving a "gifted deposit" for the property that you are purchasing? If so, how many "gifted deposits" will be involved in this purchase?                   </label>
-                      <select name="currentstage" id="currentstage " className='block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font'>
-                        <option value="1">1 Gifted deposit
-
-                        </option>
-                        <option value="2">2 Gifted deposit
-                        </option>
-                        <option value="3">3 Gifted deposit
-                        </option>
-                        <option value="4">4 Gifted deposit
-                        </option>
-                      </select>
-
-                    </div>
-
-
-                    <div>
-
-                      <label htmlFor="currentstage" className='block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font'></label>
-                      In addition to English, do you prefer a quote from a solicitor who can speak to you in your first language?                        <select name="currentstage" id="currentstage " className='block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font'>
-                        <option value="1">1 Gifted deposit
-
-                        </option>
-                        <option value="2">2 Gifted deposit
-                        </option>
-                        <option value="3">3 Gifted deposit
-                        </option>
-                        <option value="4">4 Gifted deposit
-                        </option>
-                      </select>
-
-                    </div>
-
-                  </div>
-                </form>
+            <form className="mt-8 space-y-10">
+              {/* 🏡 PURCHASE DETAILS */}
+              <div className="space-y-6">
+                <h2 className="text-xl font-bold text-gray-900 border-b-2 border-[#1E5C3B] pb-2 flex items-center gap-2">
+                  <span className="text-2xl">🏡</span> PURCHASE DETAILS
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <Input
+                    label="Property address:"
+                    defaultValue="24 Arab Street, Singapore"
+                    icon={<MapPin size={16} />}
+                  />
+                  <Input
+                    label="Agreed purchase price:"
+                    defaultValue="987,654"
+                    prefix="£"
+                  />
+                  <Input
+                    label="Number of Bedrooms:"
+                    defaultValue="2"
+                    type="number"
+                  />
+                  <Select
+                    label="Property type:"
+                    options={["Flat", "Terraced", "Semi-detached", "Detached"]}
+                  />
+                  <Input
+                    label="Leasehold or freehold?"
+                    defaultValue="Freehold"
+                    readOnly
+                  />
+                  <ButtonGroup
+                    label="New build?"
+                    selected={newBuild}
+                    setSelected={setNewBuild}
+                  />
+                </div>
               </div>
-            </div>
 
-            {/* Bottom actions */}
-            <div className="mt-14 flex justify-end gap-4 max-w-[760px] ">
+              {/* 💰 PURCHASE FINANCE */}
+              <div className="space-y-6">
+                <h2 className="text-xl font-bold text-gray-900 border-b-2 border-[#1E5C3B] pb-2 flex items-center gap-2">
+                  <span className="text-2xl">💰</span> PURCHASE FINANCE
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <Select
+                    label="Buy to Let?"
+                    options={["No", "Yes - Personal name", "Yes - Company name"]}
+                  />
+                  <ButtonGroup
+                    label="Using Government Right to Buy scheme?"
+                    selected={scheme}
+                    setSelected={setScheme}
+                  />
+                  <ButtonGroup
+                    label="Obtaining a mortgage?"
+                    selected={mortgage}
+                    setSelected={setMortgage}
+                  />
+                  <Select
+                    label="Mortgage Lender (If Known)"
+                    options={["Not Known", "Not required", "Lender Name", "Look up"]}
+                  />
+                  <Select
+                    label="Receiving a gifted deposit?"
+                    options={["None", "1 Gifted deposit", "2 Gifted deposit", "3 Gifted deposit"]}
+                  />
+                  <ButtonGroup
+                    label="Shared Ownership via housing association?"
+                    selected={sharedOwnership}
+                    setSelected={setSharedOwnership}
+                  />
+                </div>
+              </div>
+
+              {/* 🌐 SPECIAL INSTRUCTIONS */}
+              <div className="space-y-6">
+                <h2 className="text-xl font-bold text-gray-900 border-b-2 border-[#1E5C3B] pb-2 flex items-center gap-2">
+                  <span className="text-2xl">🌐</span> SPECIAL INSTRUCTIONS
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <Select
+                    label="Prefer solicitor in your first language?"
+                    options={["No Preference", "Yes", "Maybe"]}
+                  />
+                  <Textarea label="Special instructions (Optional)" />
+                </div>
+              </div>
+            </form>
+
+            <div className="mt-12 flex justify-end gap-4">
               <button
                 onClick={() => router.back()}
-                className="font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1B1D21]"
+                className="font-semibold text-base h-[48px] px-8 rounded-full border border-gray-300 bg-white text-gray-800 shadow-md hover:bg-gray-50 transition duration-150"
               >
                 Back
               </button>
-
               <Link
                 href="/components/comparequotes"
-                className="  font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full bg-[#1E5C3B] text-[#EDF4EF]"
+                className="font-semibold text-base h-[48px] px-8 rounded-full bg-[#1E5C3B] text-white shadow-lg hover:bg-[#16472F] flex items-center justify-center transition duration-150"
               >
-                Continue to Compare Quotes →
+                Continue &rarr;
               </Link>
             </div>
           </section>
         </div>
       </main>
     </div>
-
-  )
+  );
 }
 
+/* 🔧 Reusable Form Components */
+const Input = ({ label, defaultValue, readOnly, prefix, icon, type = "text" }) => (
+  // ADDED: flex flex-col h-full to make the container fill the grid cell vertically
+  <div className="flex flex-col h-full">
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      {label}
+    </label>
+    {/* ADDED: mt-auto to push the input field to the bottom of the container */}
+    <div className="relative mt-auto">
+      {(prefix || icon) && (
+        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+          {prefix || icon}
+        </span>
+      )}
+      <input
+        type={type}
+        defaultValue={defaultValue}
+        readOnly={readOnly}
+        className={`block w-full h-[44px] rounded-xl border border-gray-300 ${
+          prefix || icon ? "pl-10" : "pl-4"
+        } pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors`}
+      />
+    </div>
+  </div>
+);
+
+const Select = ({ label, options }) => (
+  // ADDED: flex flex-col h-full to make the container fill the grid cell vertically
+  <div className="flex flex-col h-full">
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      {label}
+    </label>
+    {/* ADDED: mt-auto to push the select field to the bottom of the container */}
+    <select className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10 mt-auto">
+      {options.map((opt) => (
+        <option key={opt}>{opt}</option>
+      ))}
+    </select>
+  </div>
+);
+
+const Textarea = ({ label, defaultValue = "" }) => (
+  <div className="md:col-span-2">
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      {label}
+    </label>
+    <textarea
+      defaultValue={defaultValue}
+      rows={4}
+      className="block w-full rounded-xl border border-gray-300 p-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
+    />
+  </div>
+);
+
+/* 🚀 REVISED ButtonGroup Component for subtle, modern selection */
+const ButtonGroup = ({ label, selected, setSelected }) => (
+  // ADDED: flex flex-col h-full to make the container fill the grid cell vertically
+  <div className="flex flex-col h-full">
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      {label}
+    </label>
+    {/* ADDED: mt-auto to push the button group container to the bottom of the cell */}
+    <div className="grid grid-cols-2 gap-3 mt-auto">
+      {/* Option: YES */}
+      <button
+        type="button"
+        onClick={() => setSelected("yes")}
+        // Set height to 44px to match inputs, subtle shadow for depth
+        className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+          selected === "yes"
+            // Selected: Light cool tint and primary brand color border
+            ? "border-[#1E5C3B] bg-[#EEF4F2] text-[#1E5C3B]"
+            // Unselected: White background, gray border
+            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+        }`}
+      >
+        <span>Yes</span>
+      </button>
+
+      {/* Option: NO */}
+      <button
+        type="button"
+        onClick={() => setSelected("no")}
+        className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+          selected === "no"
+            // Selected: Light cool tint and primary brand color border (Consistent style for both choices)
+            ? "border-[#1E5C3B] bg-[#EEF4F2] text-[#1E5C3B]"
+            // Unselected: White background, gray border
+            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+        }`}
+      >
+        <span>No</span>
+      </button>
+    </div>
+  </div>
+);
