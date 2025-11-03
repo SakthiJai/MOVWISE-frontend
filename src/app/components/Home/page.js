@@ -5,16 +5,57 @@ import Image from 'next/image';
 import Navbar from '../../parts/navbar/page';
 import Link from 'next/link';
 import { Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
+import {
+  Scale,
+  Languages,
+  UserCheck,
+  Repeat,
+  Cloud,
+  Zap,
+} from "lucide-react";
 import { API_BASE_URL } from "../.././constants/config";
 
 // --- Utility Components for Icons and Buttons (simplified) ---
-const FeatureIcon = ({ icon, title, description }) => (
-  <div className="text-center p-4 bg-gray-50 rounded-lg shadow-sm">
-    <div className="text-3xl text-emerald-600 mb-2">{icon}</div>
-    <h3 className="font-semibold text-lg">{title}</h3>
-    <p className="text-sm text-gray-600">{description}</p>
-  </div>
-);
+const iconColors = {
+  Scale: "text-blue-500",       // Trust / legal = blue
+  Languages: "text-purple-500", // Communication = purple
+  UserCheck: "text-emerald-500",// Verified professionals = green
+  Repeat: "text-indigo-500",    // Smart automation = indigo
+  Cloud: "text-sky-500",        // Cloud / tech = sky blue
+  Zap: "text-amber-500",        // Speed = amber/yellow
+};
+const icons = {
+  Scale,
+  Languages,
+  UserCheck,
+  Repeat,
+  Cloud,
+  Zap,
+};
+const FeatureIcon = ({ icon, title, description }) => {
+  const Icon = icons[icon];
+  const iconColor = iconColors[icon] || "text-gray-500";
+
+  return (
+    <div className="text-center p-6 bg-white rounded-xl border border-gray-200 shadow-sm 
+                    transition-all duration-300 hover:bg-amber-50 hover:border-amber-300 
+                    hover:shadow-lg hover:scale-[1.03]">
+      <div className="flex justify-center mb-4">
+        <Icon
+          className={`h-10 w-10 ${iconColor} transition-colors duration-300 hover:text-amber-600`}
+        />
+      </div>
+      <h3 className="font-bold text-lg text-gray-900 transition-colors duration-300 hover:text-amber-700">
+        {title}
+      </h3>
+      <p className="text-sm text-gray-600 transition-colors duration-300 hover:text-amber-800">
+        {description}
+      </p>
+    </div>
+  );
+};
+
+
 
 const PrimaryCTA = ({ text }) => (
   // Primary Action colour: Emerald Green
@@ -32,7 +73,7 @@ export default function HomePage() {
       </Head>
 
       {/* --- 1. HEADER / NAVIGATION --- */}
-      <div className='bg-white shadow-md sticky top-0 p-4 '>
+      <div className='bg-white shadow-md sticky top-0 p-4 z-50'>
          <Navbar originalstyle={true} />
       </div>
 
@@ -56,14 +97,14 @@ export default function HomePage() {
           </div>
           {/* Image Placeholder */}
        <div className="hidden md:block">
-  {/* <div className="relative bg-gray-200 h-96 rounded-xl shadow-lg overflow-hidden">
+  <div className="relative    h-96 rounded-xl  overflow-hidden">
     <Image
-      src="/homepagedesign.jpeg"
+      src="/homepage.png"
       alt="conveyancing"
       fill
-      className="object-cover rounded-xl"
+      className="object-cover rounded-xl "
     />
-  </div> */}
+  </div>
 </div>
 
         </div>
@@ -110,25 +151,57 @@ export default function HomePage() {
       {/* ---------------------------------------------------------------------------------- */}
 
       {/* --- 4. WHY CHOOSE MOVWISE? --- */}
-      <section id="why-choose" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">Why Choose MovWise?</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            <FeatureIcon icon="⚖️" title="Transparent Pricing" description="Instant fixed quotes with no hidden extras. See exactly what you'll pay upfront." />
-            {/* Highlight the USP using the Accent colour (Amber Yellow) for attention */}
-            <div className="text-center p-4 bg-amber-50 rounded-lg shadow-md border-2 border-amber-300">
-                <div className="text-3xl text-amber-600 mb-2">💬</div>
-                <h3 className="font-semibold text-lg">Multilingual Support</h3>
-                <p className="text-sm text-gray-700">Get explanations in your preferred language. We speak Tamil, Hindi, Spanish & more.</p>
-            </div>
-            <FeatureIcon icon="🧑‍💼" title="Verified Professionals" description="Every conveyancer is regulated by the SRA or CLC for your peace of mind." />
-            <FeatureIcon icon="🔁" title="Smart Matching" description="We pair you with firms experienced in your specific property type and location." />
-            <FeatureIcon icon="☁️" title="Secure Case Tracking" description="Monitor your conveyancing progress 24/7 through our secure cloud portal." />
-            
-            <FeatureIcon icon="⚡" title="Faster Exchange Times" description="Our proactive platform and dedicated support streamline the legal process." />
-          </div>
-        </div>
-      </section>
+
+
+  <section id="why-choose" className="py-20 bg-white">
+  <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">
+      Why Choose MovWise?
+    </h2>
+
+    <div className="grid md:grid-cols-3 gap-8">
+    <FeatureIcon
+  icon="Scale"
+  title="Transparent Pricing"
+  description="Instant fixed quotes with no hidden extras. See exactly what you'll pay upfront."
+/>
+
+<FeatureIcon
+  icon="Languages"
+  title="Multilingual Support"
+  description="Get explanations in your preferred language — we speak Tamil, Hindi, Spanish & more."
+/>
+
+<FeatureIcon
+  icon="UserCheck"
+  title="Verified Professionals"
+  description="Every conveyancer is regulated by the SRA or CLC for your peace of mind."
+/>
+
+<FeatureIcon
+  icon="Repeat"
+  title="Smart Matching"
+  description="We pair you with firms experienced in your specific property type and location."
+/>
+
+<FeatureIcon
+  icon="Cloud"
+  title="Secure Case Tracking"
+  description="Monitor your conveyancing progress 24/7 through our secure cloud portal."
+/>
+
+<FeatureIcon
+  icon="Zap"
+  title="Faster Exchange Times"
+  description="Our proactive platform and dedicated support streamline the legal process."
+/>
+
+    </div>
+  </div>
+</section>
+
+  
+
 
       {/* ---------------------------------------------------------------------------------- */}
 
@@ -251,12 +324,12 @@ export default function HomePage() {
             </details>
             <details className="p-4 rounded-lg bg-gray-50 border border-gray-200">
               <summary className="font-semibold text-lg cursor-pointer text-emerald-700">Q: Do I have to pay to get a quote?</summary>
-              <p className="mt-2 pl-4 text-gray-700"> No it&apos;s 100% free to compare quotes and contact conveyancers through MovWise. 
+              <p className="mt-2 pl-4 text-gray-700"> No it&apos;s <strong>100% free</strong> to compare quotes and contact conveyancers through MovWise. 
   You only pay the firm you instruct.</p>
             </details>
             <details className="p-4 rounded-lg bg-gray-50 border border-gray-200">
               <summary className="font-semibold text-lg cursor-pointer text-emerald-700">Q: How secure is my data?</summary>
-              <p className="mt-2 pl-4 text-gray-700">A: MovWise uses encrypted servers and complies fully with <em>UK GDPR standards</em> to protect your personal and property data.</p>
+              <p className="mt-2 pl-4 text-gray-700">A: MovWise uses encrypted servers and complies fully with <strong>UK GDPR standards</strong> to protect your personal and property data.</p>
             </details>
             <details className="p-4 rounded-lg bg-gray-50 border border-gray-200">
               <summary className="font-semibold text-lg cursor-pointer text-emerald-700">Q: Can I access my documents anytime?</summary>

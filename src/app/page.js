@@ -19,7 +19,6 @@ import { API_BASE_URL } from "./constants/config";
 export default function Home() {
   
   const apiUrl = API_BASE_URL
-const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
 
 console.log(apiUrl)
 

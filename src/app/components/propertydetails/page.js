@@ -1,23 +1,24 @@
 "use client"
-import React from 'react'
-import  Navbar  from "../../parts/navbar/page";// app/personal-details/page.js
+import React, { useState } from 'react'
+import Navbar from "../../parts/navbar/page";// app/personal-details/page.js
 import Link from 'next/link';
 import { useRouter } from "next/navigation";
 import { API_BASE_URL } from "../.././constants/config";
 
 
-export default function PropertyDetails ()  {
+export default function PropertyDetails() {
 
   const router = useRouter();
+  const [selected, setSelected] = useState(null);
 
   return (
-    
-         <div className="min-h-screen bg-white antialiased">
+
+    <div className="min-h-screen bg-white antialiased">
       {/* Header */}
-         <Navbar/>
+      <Navbar />
 
       {/* Main */}
-      <main className="mx-auto max-w-[1200px]  pt-10">
+      <main className="mx-auto max-w-[1200px]  pt-10 ">
         <div className="flex gap-12">
           {/* Left stepper */}
           <aside className="relative w-[400px] font   rounded-[40px] overflow-hidden bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)]
@@ -54,7 +55,7 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
                 <div>
                   <div className="text-[12px] font-semibold tracking-wide text-[#1E1E1E]">STEP 2</div>
                   <div className="text-[20px] font-extrabold text-[#1E1E1E] leading-tight">Property Details</div>
-                  <div className="text-[12px] font-medium text-[#A38320] mt-1">In Progress</div>  
+                  <div className="text-[12px] font-medium text-[#A38320] mt-1">In Progress</div>
                 </div>
               </div>
 
@@ -86,16 +87,16 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
           </aside>
 
           {/* Right: form card */}
-          <section className="flex-1">
-            <div className="rounded-[18px] border border-[#EDF0F2] shadow-[0_6px_24px_rgba(16,24,40,0.04)] bg-white max-w-[760px]">
+          <section className="flex-1 ">
+            <div className="rounded-[18px] border border-[#EDF0F2] shadow-[0_6px_24px_rgba(16,24,40,0.04)] bg-white max-w-[760px] h-[500px] overflow-y-auto">
               <div className="p-8">
                 {/* Breadcrumb */}
                 <nav className="text-[13px] text-[#6B7280] mb-4 flex items-center gap-4" aria-label="Breadcrumb">
                   <Link href="/" className=" other-page">Home</Link>
                   <span>/</span>
                   <span className="other-page">Personal Details</span>
-                   <span>/</span>
-               
+                  <span>/</span>
+
                   <span className="live-page">Property Details</span>
                 </nav>
 
@@ -109,6 +110,7 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="address" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">Property address:</label>
+
                       <div className="relative">
                         <input
                           id="address"
@@ -127,23 +129,23 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
                     </div>
                     <div>
                       <label htmlFor="price" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">Agreed sale price:</label>
-                     <div className="relative w-full">
-  {/* Prefix container for £ and icon */}
-  <div className="absolute inset-y-0 left-0 flex items-center pl-3 space-x-1 text-[#111827]">
-    <span className="text-[14px] font-semibold">£</span>
-    <svg width="10" height="10" viewBox="0 0 20 20" aria-hidden="true" className="text-[#6B7280]">
-      <path d="M6 8l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="2" />
-    </svg>
-  </div>
+                      <div className="relative w-full">
+                        {/* Prefix container for £ and icon */}
+                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 space-x-1 text-[#111827]">
+                          <span className="text-[14px] font-semibold">£</span>
+                          <svg width="10" height="10" viewBox="0 0 20 20" aria-hidden="true" className="text-[#6B7280]">
+                            <path d="M6 8l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="2" />
+                          </svg>
+                        </div>
 
-  {/* Input field */}
-  <input
-    id="price"
-    name="price"
-    defaultValue="9876543210"
-    className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] pl-10 pr-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2 font-semibold"
-  />
-</div>
+                        {/* Input field */}
+                        <input
+                          id="price"
+                          name="price"
+                          defaultValue="9876543210"
+                          className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] pl-10 pr-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2 font-semibold"
+                        />
+                      </div>
 
 
                     </div>
@@ -167,14 +169,37 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
                         </button>
                       </div>
                     </div>
+
+
                     <div>
-                      <label htmlFor="ptype" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">Property type:</label>
-                      <div className="relative">
+
+                      <label htmlFor="currentstage" className='block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font'>
+                        Property type:
+                      </label>
+                      <select name="currentstage" id="currentstage " className='block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font'>
+                        <option value="Flat">Flat
+                        </option>
+                        <option value="Terraced">Terraced
+                        </option>
+                        <option value="Semi-detached">Semi-detached
+                        </option>
+                        <option value="Detached">Detached
+                        </option>
+                      </select>
+
+                    </div>
+                  </div>
+
+                  {/* Row 3: Tenure */}
+                  <div className="grid grid-cols-2 gap-4 mt-4">
+                    <div>
+                      <label htmlFor="tenure" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">Leasehold or freehold?</label>
+                      <div className="relative ">
                         <input
-                          id="ptype"
-                          name="ptype"
-                          defaultValue="Semi Detached"
-                          className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21]   font-semibold font"
+                          id="tenure"
+                          name="tenure"
+                          defaultValue="Freehold"
+                          className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
                           readOnly
                         />
                         <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B7280]">
@@ -184,44 +209,244 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
                         </span>
                       </div>
                     </div>
+                    <div>
+
+                      <label htmlFor="currentstage" className='block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font'>
+                        What stage are you at?
+                      </label>
+                      <select name="currentstage" id="currentstage " className='block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font'>
+                        <option value="Just researching or budgeting">Just researching or budgeting
+                        </option>
+                        <option value="Have made an offer">Have made an offer
+                        </option>
+                        <option value="Purchase agreed">Purchase agreed
+                        </option>
+                      </select>
+                    </div>
                   </div>
 
-                  {/* Row 3: Tenure */}
+                  {/* row4 */}
+
+                  <div className="grid grid-cols-2 gap-4 mt-4">
+                        <div>
+
+                      <label htmlFor="currentstage" className='block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font'>
+                        Mortgage Lender (If Known)                        </label>
+                      <select name="currentstage" id="currentstage " className='block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font'>
+                        <option value="Flat">Not Known
+                        </option>
+                        <option value="Terraced">Not required
+                        </option>
+                        <option value="Semi-detached">Lender Name
+                        </option>
+                        <option value="Detached">Look up
+                        </option>
+                      </select>
+
+                    </div>
+
+                   
+
+
+                    <div>
+
+                      <label htmlFor="currentstage" className='block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font'>
+                        Buy to Let
+                      </label>
+                      <select name="currentstage" id="currentstage " className='block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font'>
+                        <option value="" disabled selected>Select Property Type</option>
+                        <option value="yes - personal name">yes - personal name
+                        </option>
+                        <option value="Yes Company name">Yes Company name
+                        </option>
+                        <option value="No">No
+                        </option>
+
+                      </select>
+
+                    </div>
+
+                  </div>
+
+                  {/* row5 */}
+
                   <div className="grid grid-cols-2 gap-4 mt-4">
                     <div>
-                       <label htmlFor="tenure" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">Leasehold or freehold?</label>
-                    <div className="relative ">
-                      <input
-                        id="tenure"
-                        name="tenure"
-                        defaultValue="Freehold"
-                        className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
-                        readOnly
-                      />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6B7280]">
-                        <svg width="16" height="16" viewBox="0 0 20 20" aria-hidden="true">
-                          <path d="M6 8l4 4 4-4" fill="none" stroke="currentColor" strokeWidth="2" />
-                        </svg>
-                      </span>
+                      <label className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1">
+                        Using Government Right to Buy scheme?
+                      </label>
+                      <div className="grid grid-cols-2 gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setSelected("yes")}
+                          className={`h-[44px] rounded-[10px] border text-[14px] font-semibold transition-all duration-200 ${selected === "yes"
+                              ? "bg-emerald-500 text-white border-emerald-500"
+                              : "border-[#D1D5DB] text-[#1B1D21] hover:bg-emerald-50 hover:border-emerald-400"
+                            }`}
+                        >
+                          Yes
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSelected("no")}
+                          className={`h-[44px] rounded-[10px] border text-[14px] font-semibold transition-all duration-200 ${selected === "no"
+                              ? "bg-red-500 text-white border-red-500"
+                              : "border-[#D1D5DB] text-[#1B1D21] hover:bg-red-50 hover:border-red-400"
+                            }`}
+                        >
+                          No
+                        </button>
+                      </div>
                     </div>
+
+
+                    <div>
+                      <label className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1">
+                        Obtaining a mortgage?
+                      </label>
+                      <div className="grid grid-cols-2 gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setSelected("yes")}
+                          className={`h-[44px] rounded-[10px] border text-[14px] font-semibold transition-all duration-200 ${selected === "yes"
+                              ? "bg-emerald-500 text-white border-emerald-500"
+                              : "border-[#D1D5DB] text-[#1B1D21] hover:bg-emerald-50 hover:border-emerald-400"
+                            }`}
+                        >
+                          Yes
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSelected("no")}
+                          className={`h-[44px] rounded-[10px] border text-[14px] font-semibold transition-all duration-200 ${selected === "no"
+                              ? "bg-red-500 text-white border-red-500"
+                              : "border-[#D1D5DB] text-[#1B1D21] hover:bg-red-50 hover:border-red-400"
+                            }`}
+                        >
+                          No
+                        </button>
+                      </div>
                     </div>
-                   
+
+                  </div>
+
+                  {/* row 6 */}
+
+                  <div className="grid grid-cols-2 gap-4 mt-4">
+                    <div>
+                      <label className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1">
+                        New Build
+                      </label>
+                      <div className="grid grid-cols-2 gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setSelected("yes")}
+                          className={`h-[44px] rounded-[10px] border text-[14px] font-semibold transition-all duration-200 ${selected === "yes"
+                              ? "bg-emerald-500 text-white border-emerald-500"
+                              : "border-[#D1D5DB] text-[#1B1D21] hover:bg-emerald-50 hover:border-emerald-400"
+                            }`}
+                        >
+                          Yes
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSelected("no")}
+                          className={`h-[44px] rounded-[10px] border text-[14px] font-semibold transition-all duration-200 ${selected === "no"
+                              ? "bg-red-500 text-white border-red-500"
+                              : "border-[#D1D5DB] text-[#1B1D21] hover:bg-red-50 hover:border-red-400"
+                            }`}
+                        >
+                          No
+                        </button>
+                      </div>
+                    </div>
+
+
+                      <div>
+                      <label className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1">
+                        Shared Ownership via housing association?
+                      </label>
+                      <div className="grid grid-cols-2 gap-3">
+                        <button
+                          type="button"
+                          onClick={() => setSelected("yes")}
+                          className={`h-[44px] rounded-[10px] border text-[14px] font-semibold transition-all duration-200 ${selected === "yes"
+                              ? "bg-emerald-500 text-white border-emerald-500"
+                              : "border-[#D1D5DB] text-[#1B1D21] hover:bg-emerald-50 hover:border-emerald-400"
+                            }`}
+                        >
+                          Yes
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setSelected("no")}
+                          className={`h-[44px] rounded-[10px] border text-[14px] font-semibold transition-all duration-200 ${selected === "no"
+                              ? "bg-red-500 text-white border-red-500"
+                              : "border-[#D1D5DB] text-[#1B1D21] hover:bg-red-50 hover:border-red-400"
+                            }`}
+                        >
+                          No
+                        </button>
+                      </div>
+                    </div>
+
+                  </div>
+                  {/* row 7 */}
+
+                  <div className="grid grid-cols-2 gap-4 mt-5">
+                            
+                      <div>
+
+                      <label htmlFor="currentstage" className='block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font'>
+                        Are you receiving a "gifted deposit" for the property that you are purchasing? If so, how many "gifted deposits" will be involved in this purchase?                   </label>
+                      <select name="currentstage" id="currentstage " className='block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font'>
+                        <option value="1">1 Gifted deposit
+
+                        </option>
+                        <option value="2">2 Gifted deposit
+                        </option>
+                        <option value="3">3 Gifted deposit
+                        </option>
+                        <option value="4">4 Gifted deposit
+                        </option>
+                      </select>
+
+                    </div>
+
+
+                    <div>
+
+                      <label htmlFor="currentstage" className='block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font'></label>
+                      In addition to English, do you prefer a quote from a solicitor who can speak to you in your first language?                        <select name="currentstage" id="currentstage " className='block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font'>
+                        <option value="1">1 Gifted deposit
+
+                        </option>
+                        <option value="2">2 Gifted deposit
+                        </option>
+                        <option value="3">3 Gifted deposit
+                        </option>
+                        <option value="4">4 Gifted deposit
+                        </option>
+                      </select>
+
+                    </div>
+
                   </div>
                 </form>
               </div>
             </div>
 
-           {/* Bottom actions */}
-            <div className="mt-30 flex justify-end gap-4 max-w-[760px] ">
+            {/* Bottom actions */}
+            <div className="mt-14 flex justify-end gap-4 max-w-[760px] ">
               <button
-  onClick={() => router.back()}
-  className="font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1B1D21]"
->
-  Back
-</button>
+                onClick={() => router.back()}
+                className="font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1B1D21]"
+              >
+                Back
+              </button>
 
               <Link
-                href={`${API_BASE_URL}/components/comparequotes`}
+                href="/components/comparequotes"
                 className="  font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full bg-[#1E5C3B] text-[#EDF4EF]"
               >
                 Continue to Compare Quotes →
@@ -231,7 +456,7 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
         </div>
       </main>
     </div>
-      
+
   )
 }
 

@@ -56,7 +56,7 @@ const Navbar = ({ originalstyle = false }) => {
           href={`${API_BASE_URL}/auth/registeruser`}
           className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
         >
-          Get Quote <span className="ml-2">→</span>
+          Get Quote 
         </Link>
       </nav>
     </header>
