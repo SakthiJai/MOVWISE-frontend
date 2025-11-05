@@ -288,7 +288,7 @@ export default function HomePage() {
       {/* ---------------------------------------------------------------------------------- */}
 
       {/* --- 7. ABOUT MOVWISE SECTION --- */}
-      <section id="about" className="py-20 bg-gray-50">
+      {/* <section id="about" className="py-20 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">About MovWise</h2>
           <div className="grid md:grid-cols-2 gap-12">
@@ -309,7 +309,7 @@ export default function HomePage() {
             </div>
           </div>
         </div>
-      </section>
+      </section> */}
 
       {/* ---------------------------------------------------------------------------------- */}
 

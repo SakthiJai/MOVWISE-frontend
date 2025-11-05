@@ -6,7 +6,7 @@ import Footer from '../../parts/Footer/footer';
 import Image from 'next/image';
 import Navbar from '../../parts/navbar/page';
 import Link from 'next/link';
- import { CheckCircleIcon,BookOpenIcon, ClockIcon, CloudIcon, PrinterIcon} from 'lucide-react';
+ import { CheckCircleIcon,BookOpenIcon, ClockIcon, CloudIcon, PrinterIcon, FileSearch} from 'lucide-react';
 
 export default function ServicePage() {
   // Keywords relevant to the content:
@@ -37,6 +37,11 @@ const services = [
     description: "The choice to receive printed copies of all final legal documents.", 
     icon: PrinterIcon 
   },
+  {
+    title: "Detailed Case Review",
+    description: "Every submission is thoroughly reviewed to catch inconsistencies before they reach authorities.",
+    icon: FileSearch
+    },
 ];
 
   return (
@@ -47,7 +52,7 @@ const services = [
        <div className='bg-white shadow-md fixed w-full z-50 top-0 p-4  '>
          <Navbar originalstyle={true} />
       </div>
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gray-50 py-12 mt-10">
       {/* Hidden element for SEO keywords (Metadata would be in the <Head> component in a real Next.js page) */}
       <div className="hidden">{keywords}</div> 
 
