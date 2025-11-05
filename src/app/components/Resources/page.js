@@ -50,7 +50,7 @@ export default function ResourcePage() {
       </div>
 
       {/* Main Content */}
-      <div className="min-h-screen bg-gray-50 font-sans p-4 sm:p-8">
+      {/* <div className="min-h-screen bg-gray-50 font-sans p-4 sm:p-8">
         <section className="max-w-6xl mx-auto text-center mb-16">
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-800 mb-6">
             Our Core Values
@@ -75,10 +75,10 @@ export default function ResourcePage() {
               </div>
             ))}
           </div>
-        </section>
+        </section> */}
 
         {/* 📝 Summary Note Section */}
-        <section className="max-w-5xl mx-auto bg-white shadow-lg rounded-2xl p-8 mt-10 text-center border-t-4 border-amber-500">
+        {/* <section className="max-w-5xl mx-auto bg-white shadow-lg rounded-2xl p-8 mt-10 text-center border-t-4 border-amber-500">
           <h2 className="text-2xl font-bold text-gray-800 mb-4">
             Summary Note
           </h2>
@@ -91,7 +91,7 @@ export default function ResourcePage() {
             stressful and more confident.
           </p>
         </section>
-      </div>
+      </div> */}
 
            <Footer/>
     
