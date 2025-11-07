@@ -4,6 +4,7 @@ import Navbar from "../../parts/navbar/page";
 import { Check, MapPin,ChevronDown } from "lucide-react";
 import { FaBuilding, FaHome, FaWarehouse } from "react-icons/fa";
 import { MdHolidayVillage } from "react-icons/md"; // Material icon
+import Select from "react-select";
 
 
 const Link = ({ href, children, className }) => (
@@ -17,10 +18,91 @@ const useRouter = () => ({
 });
 
 export default function App() {
+
+    const [selectedLenders, setSelectedLenders] = useState([]);
+    const lenders = [
+  { id: 1, lenders_name: "Lender A" },
+  { id: 2, lenders_name: "Lender B" },
+  { id: 3, lenders_name: "Lender C" },
+  { id: 4, lenders_name: "Lender D" },
+  { id: 5, lenders_name: "Lender E" },
+  { id: 6, lenders_name: "Lender F" },
+  { id: 7, lenders_name: "Lender G" },
+  { id: 8, lenders_name: "Lender H" },
+  { id: 9, lenders_name: "Lender I" },
+  { id: 10, lenders_name: "Lender J" },
+];
+
+  // Convert lenders into react-select format
+  const options_l = lenders.map((lender) => ({
+    value: lender.id,
+    label: lender.lenders_name,
+  }));
+
+  const handleChange_l = (selectedOptions) => {
+    setSelectedLenders(selectedOptions);
+    const ids = selectedOptions.map(item => item.value);
+    console.log("Selected lenders:", ids);
+    handleChange("Lenders",ids)
+  };
+
+
+  const [formData, setFormData] = useState({
+    sharedOwnership: "",
+            existingMortgage: "",
+            "languages":[]
+  });
+  
+  const [errors, setErrors] = useState({});
+
+  const handleChange = (name, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // simple validation
+    let newErrors = {};
+
+    // if (!formData.name.trim()) {
+    //   newErrors.name = "Name is required";
+    // }
+
+    // if (!formData.lender) {
+    //   newErrors.lender = "Please select a lender";
+    // }
+
+    setErrors(newErrors);
+
+    // if no errors, submit
+    if (Object.keys(newErrors).length === 0) {
+      console.log("✅ Form submitted:", formData);
+      alert("Form submitted successfully!");
+          setModalopen(true)
+
+    }
+
+  };
+
     const [modalopen, setModalopen] = useState(false);
       const [languagepreference, setlanguagepreference] = useState(" ");
       const [language, setLanguage] = useState([]);
-            const lang=["English","Spanish","French","German","Chinese","Hindi","Arabic","Portuguese","Russian","Japanese"]
+            const lang=[
+  { id: 1, language_name: "English" },
+  { id: 2, language_name: "Spanish" },
+  { id: 3, language_name: "French" },
+  { id: 4, language_name: "German" },
+  { id: 5, language_name: "Chinese" },
+  { id: 6, language_name: "Hindi" },
+  { id: 7, language_name: "Arabic" },
+  { id: 8, language_name: "Portuguese" },
+  { id: 9, language_name: "Russian" },
+  { id: 10, language_name: "Japanese" },
+];
 
       function   handlelanguagechange(e){
       console.log(e.target.value);
@@ -28,9 +110,10 @@ export default function App() {
           setLanguage([]); 
        }
 
-       function languagecheckboxchange(item,checked){
+       function languagecheckboxchange(item,checked,id){
     if(checked){
 setLanguage(prev => [...prev, item]);
+handleChange("languages",[...formData.languages, id])
 console.log(language);
 
     }
@@ -46,7 +129,6 @@ console.log(language);
 
      const tenureOptions = ["Leasehold", "Freehold"];
 
-     const [bedrooms, setBedrooms] = useState("");
 
      const options = ["1", "2", "3", "4", "5+"];
 
@@ -58,10 +140,7 @@ console.log(language);
           { label: "Detached", icon: <FaWarehouse size={22} color="#DC3545" /> },
         ];
 
-            const [formData, setFormData] = useState({
-            sharedOwnership: "",
-            existingMortgage: "",
-        });
+         
         
         const router = useRouter();
         const [sharedOwnership, setSharedOwnership] = useState("");
@@ -161,14 +240,15 @@ console.log(language);
                             </span>
                             <input
                                 id="address"
+                                name="address"
                                 type="text"
                                 defaultValue="24 Arab Street, Singapore"
                                 className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
+                              onChange={(e)=>{handleChange("address",e.target.value)}}
                             />
                             </div>
                         </div>
 
-                        {/* 2. Agreed SALES Price (Inline Input with Prefix) */}
                         <div className="flex flex-col h-full">
                             <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
                             Property value:
@@ -180,8 +260,9 @@ console.log(language);
                             <input
                                 id="price"
                                 type="number"
-                                defaultValue="250000"
                                 className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
+                            name="Propertyvalue"
+                            onChange={(e)=>{handleChange("Propertyvalue",e.target.value)}}
                             />
                             </div>
                         </div>
@@ -197,11 +278,10 @@ console.log(language);
                                 <button
                                     key={opt}
                                     type="button"
-                                    onClick={() => setBedrooms(opt)}
-                                    className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm
+ onClick={() => handleChange("no_of_bedrooms", opt)}                 
+                    className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm
                                     ${
-                                        bedrooms === opt
-                                        ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+   formData.no_of_bedrooms === opt                                        ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
                                         : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                                     }`}
                                 >
@@ -223,9 +303,9 @@ console.log(language);
                                     <button
                                     key={opt}
                                     type="button"
-                                    onClick={() => setTenure(opt)}
+                                    onClick={() => handleChange("Tenure",opt)}
                                     className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-                                        tenure === opt
+                                     formData.Tenure === opt
                                         ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
                                         : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                                     }`}
@@ -246,10 +326,10 @@ console.log(language);
                                 <button
                                 key={opt.label}
                                 type="button"
-                                onClick={() => setPropertyType(opt.label)}
+                                onClick={()=> handleChange ( "property_type",opt.label)}
                                 className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 transition-all duration-200 shadow-sm w-[170.76px]
                                     ${
-                                    propertyType === opt.label
+                                   formData.property_type === opt.label
                                         ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
                                         : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                                     }`}
@@ -282,14 +362,28 @@ console.log(language);
                     <label htmlFor="b2l" className="block text-sm font-medium text-gray-700 mb-1">
                       Buy to Let?
                     </label>
-                    <div className="relative mt-auto">
-                        <select id="b2l" className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10">
-                            {["Please select","No", "Yes - Personal name", "Yes - Company name"].map((opt) => (
-                                <option key={opt} value={opt}>{opt}</option>
-                            ))}
-                        </select>
-                         <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"/>
-                    </div>
+                <div className="relative mt-auto">
+  <select
+    name="buy_to_let"
+    id="b2l"
+    value={formData.buy_to_let || ""}  // ✅ controlled value
+    onChange={(e) => handleChange("buy_to_let", e.target.value)}  // ✅ update formData
+    className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"
+  >
+    {["Please select", "No", "Yes - Personal name", "Yes - Company name"].map(
+      (opt) => (
+        <option key={opt} value={opt}>
+          {opt}
+        </option>
+      )
+    )}
+  </select>
+
+  <ChevronDown
+    size={16}
+    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+  />
+</div>
                   </div>
 
                   {/* 11. Shared Ownership? (Inline ButtonGroup) */}
@@ -300,9 +394,9 @@ console.log(language);
                     <div className="grid grid-cols-2 gap-3 mt-auto">
                       <button
                         type="button"
-                        onClick={() => setSharedOwnership("yes")}
+                        onClick={(e) => handleChange("ownership_housing_asso",1)}
                         className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-                          sharedOwnership === "yes"
+                        formData.ownership_housing_asso === 1
                             ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
                             : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                         }`}
@@ -311,9 +405,9 @@ console.log(language);
                       </button>
                       <button
                         type="button"
-                        onClick={() => setSharedOwnership("no")}
+                        onClick={(e) => handleChange("ownership_housing_asso",0)}
                         className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-                          sharedOwnership === "no"
+                          formData.ownership_housing_asso === 0
                             ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
                             : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                         }`}
@@ -322,20 +416,38 @@ console.log(language);
                       </button>
                     </div>
                   </div>
+<div className="flex flex-col h-full">
+  <label
+    htmlFor="b2l"
+    className="block text-sm font-medium text-gray-700 mb-1"
+  >
+    Mortgage Lender
+  </label>
 
-                  <div className="flex flex-col h-full">
-                    <label htmlFor="b2l" className="block text-sm font-medium text-gray-700 mb-1">
-                        Mortgage Lender
-                    </label>
-                    <div className="relative mt-auto">
-                        <select id="b2l" className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10">
-                            {["Please select","Not Known", "Not Required", "Lender Name Look Up"].map((opt) => (
-                                <option key={opt} value={opt}>{opt}</option>
-                            ))}
-                        </select>
-                         <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"/>
-                    </div>
-                  </div>
+  <div className="relative mt-auto">
+    <select
+      id="b2l"
+      name="mortgage_lender"
+      value={formData.mortgage_lender || ""} // ✅ controlled value
+      onChange={(e) => handleChange("mortgage_lender", e.target.value)} // ✅ updates formData
+      className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"
+    >
+      {["Please select", "Not Known", "Not Required", "Lender Name Look Up"].map(
+        (opt) => (
+          <option key={opt} value={opt}>
+            {opt}
+          </option>
+        )
+      )}
+    </select>
+
+    <ChevronDown
+      size={16}
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+    />
+  </div>
+</div>
+
 
                 </div>
               </div> {/* End PURCHASE FINANCE */}
@@ -359,30 +471,49 @@ console.log(language);
 
   {/* Show only when needed */}
   {(languagepreference === "Yes" || languagepreference === "Maybe") && (
-    <div className="mt-2">
-      <label className="block text-sm font-semibold text-gray-800 mb-2">
-        Select preferred language(s)
-      </label>
+<div className="mt-2">
+  <label className="block text-sm font-semibold text-gray-800 mb-2">
+    Select preferred language(s)
+  </label>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 border border-gray-200 p-3 rounded-lg bg-gray-50">
-        {lang.map((item, index) => (
-          <label
-            key={index}
-            className="flex items-center gap-2 p-2 rounded-md cursor-pointer hover:bg-green-50 transition"
-          >
-            <input
-              type="checkbox"
-              value={item}
-              onChange={(e) => languagecheckboxchange(item, e.target.checked)}
-              className="accent-[#1E5C3B] w-4 h-4"
-            />
-            <span className="text-gray-800 text-sm font-medium">{item}</span>
-          </label>
-        ))}
-      </div>
-    </div>
+  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 border border-gray-200 p-3 rounded-lg bg-gray-50">
+    {lang.map((item) => (
+      <label
+        key={item.id}
+        className="flex items-center gap-2 p-2 rounded-md cursor-pointer hover:bg-green-50 transition"
+      >
+        <input
+          type="checkbox"
+          value={item.language_name}
+          onChange={(e) => languagecheckboxchange(item.language_name, e.target.checked,item.id)}
+          className="accent-[#1E5C3B] w-4 h-4"
+        />
+        <span className="text-gray-800 text-sm font-medium">
+          {item.language_name}
+        </span>
+      </label>
+    ))}
+  </div>
+ 
+</div>
+
   )}
 </div>
+
+ <div className="max-w-md mx-auto mt-5">
+      <label className="block text-sm font-semibold text-gray-800 mb-2">
+        Select Lenders
+      </label>
+      <Select
+        options={options_l}
+        isMulti
+        value={selectedLenders}
+        onChange={handleChange_l}
+        placeholder="Choose lenders..."
+        className="text-black"
+
+      />
+    </div>
               
                     {/* 🌐 SPECIAL INSTRUCTIONS */}
   
@@ -391,6 +522,8 @@ console.log(language);
     Special instructions (Optional)
   </label>
   <textarea
+  name="specal_instruction"
+  onChange={(e)=>handleChange("specal_instruction",e.target.value)}
     className="w-full border border-gray-300 rounded-lg px-3 py-2 h-28 resize-none focus:outline-none focus:ring-2 focus:ring-[#1E5C3B] text-black placeholder-black"
     placeholder="Enter any special instructions..."
   ></textarea>
@@ -458,12 +591,13 @@ console.log(language);
                     >
                         Back
                     </button>
-                    <Link
-                        href="/components/comparequotes"
+                    <button 
+                    type="submit"
+                    onClick={handleSubmit}
                         className="font-semibold text-base h-[48px] px-8 rounded-full bg-[#1E5C3B] text-white shadow-lg hover:bg-[#16472F] flex items-center justify-center transition duration-150"
                     >
                         Continue &rarr;
-                    </Link>
+                    </button>
                     </div>
                 </section>
                 </div>

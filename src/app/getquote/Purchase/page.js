@@ -2,19 +2,68 @@
 
 
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Navbar from "../../parts/navbar/page";
 import { Check, MapPin, ChevronDown } from "lucide-react";
 import { FaBuilding, FaHome, FaWarehouse } from "react-icons/fa";
 import { MdHolidayVillage } from "react-icons/md"; // Material icon
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
+import Select from 'react-select';
+import dynamic from "next/dynamic";
+import Lenderselection from "../../parts/selectlenders/Lenderselection"
+import Link from "next/link";
+
+const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      borderRadius: "0.5rem", // rounded-xl
+      borderColor: state.isFocused ? "#1E5C3B" : "#D1D5DB", // focus green, default gray
+      boxShadow: state.isFocused ? "0 0 0 1px #1E5C3B" : "none",
+      "&:hover": {
+        borderColor: "#1E5C3B",
+      },
+      minHeight: "40px",
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: "black ", // Tailwind gray-500
+    }),
+    multiValue: (provided) => ({
+      ...provided,
+      backgroundColor: "#DCFCE7", // light green background
+      borderRadius: "0.25rem",
+    }),
+    multiValueLabel: (provided) => ({
+      ...provided,
+      color: "#166534", // dark green text
+      fontWeight: 500,
+    }),
+    multiValueRemove: (provided) => ({
+      ...provided,
+      color: "#166534",
+      ":hover": {
+        backgroundColor: "#BBF7D0",
+        color: "#166534",
+      },
+    }),
+    menu: (provided) => ({
+      ...provided,
+      borderRadius: "0.5rem",
+      overflow: "hidden",
+    }),
+    option: (provided, state) => ({
+      ...provided,
+      backgroundColor: state.isSelected
+        ? "#DCFCE7"
+        : state.isFocused
+        ? "#ECFDF5"
+        : "white",
+      color: "#111827",
+      cursor: "pointer",
+    }),
+  };
 
 
-const Link = ({ href, children, className }) => (
-  <a href={href} className={className} onClick={(e) => e.preventDefault()}>
-    {children}
-  </a>
-);
 
 const useRouter = () => ({
   back: () => console.log("Navigation: Going back..."),
@@ -24,6 +73,34 @@ const useRouter = () => ({
 
   
 export default function App() {
+
+const Select = dynamic(() => import("react-select"), { ssr: false });
+ const lenders = useMemo(
+  ()=>[
+    { "id": 1, "lenders_name": "Lender A" },
+    { "id": 2, "lenders_name": "Lender B" },
+    { "id": 3, "lenders_name": "Lender C" },
+    { "id": 4, "lenders_name": "Lender D" },
+    { "id": 5, "lenders_name": "Lender E" },
+    { "id": 6, "lenders_name": "Lender F" },
+    { "id": 7, "lenders_name": "Lender G" },
+    { "id": 8, "lenders_name": "Lender H" },
+    { "id": 9, "lenders_name": "Lender I" },
+    { "id": 10, "lenders_name": "Lender J" }
+  ]
+ ) 
+
+  const lender_options = lenders.map((lender) => ({
+  value: lender.id,
+  label: lender.lenders_name
+}));
+const [selectedOptions, setSelectedOptions] = useState([]);
+
+ const handleChange = (selected) => {
+    setSelectedOptions(selected || []);
+  };
+
+
   const [query, setQuery] = useState("");
 
  const addressapi = async (query) => {
@@ -57,22 +134,23 @@ useEffect(() => {
   return () => clearTimeout(timeout);
 }, [query]);
 
-
   
 const [addresssuggestion,setaddressuggestion]=useState([]);
   const [modalopen, setModalopen] = useState(false);
   const [languagepreference, setlanguagepreference] = useState(" ");
   const [language, setLanguage] = useState([]);
 
- const {handleSubmit, register,  watch, setValue, trigger, formState: { errors, }  } = useForm();
+ const {handleSubmit, register,  watch, setValue, trigger,  control, formState: { errors, }  } = useForm();
   const formValues = watch();
+
   const onsubmit = (data) => {
     localStorage.setItem("myFormData", JSON.stringify(formValues));
         setModalopen(true);
-
+const lenderid=formValues.lenders_id?.map((lenders)=> lenders.value)||[]
     // Create payload
     const payload = {
-
+...data,
+lenders_id: lenderid,
     };
     console.log("✅ Payload:", payload);
   };
@@ -747,7 +825,8 @@ console.log()
               {/* 🌐 SPECIAL INSTRUCTIONS */}
 
               {/* Prefer solicitor in your first language */}
-              <div className="space-y-4">
+              <div className="grid grid-cols-2 gap-4 "> 
+                    <div className="space-y-4">
                 {/* Label + Main dropdown */}
                 <div>
                   <label className="block text-sm font-semibold text-gray-800 mb-1">
@@ -791,6 +870,38 @@ console.log()
                   </div>
                 )}
               </div>
+           <div className="">
+        <label className="block text-black font-medium ">
+          Select Lenders:
+        </label>
+
+        <Controller
+          name="lenders_id"
+          control={control}
+          rules={{ required: "Please select lender name" }}
+          render={({ field }) => (
+            <Select
+              {...field}
+              isMulti
+              options={lender_options}
+              placeholder="Select lenders..."
+              styles={customStyles}
+              value={field.value || []}
+              onChange={(selected) => field.onChange(selected)}
+            />
+          )}
+        />
+
+        {errors.lenders_id && (
+          <p className="text-red-500 text-sm mt-1">
+            {errors.lenders_id.message}
+          </p>
+        )}
+      </div>
+      {/* <Lenderselection control={control} errors={errors} /> */}
+
+              </div>
+          
 
               {/* Special instructions */}
               <div>
