@@ -4,22 +4,22 @@ import Navbar from "../../parts/navbar/page";
 import { Check, MapPin,ChevronDown } from "lucide-react";
 import { FaBuilding, FaHome, FaWarehouse } from "react-icons/fa";
 import { MdHolidayVillage } from "react-icons/md"; // Material icon
-import Select from "react-select";
+import NextLink from 'next/link';
+import { API_BASE_URL } from "../../constants/config";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+
+// import Select from "react-select";
 
 
-const Link = ({ href, children, className }) => (
-  <a href={href} className={className} onClick={(e) => e.preventDefault()}>
-    {children}
-  </a>
-);
 
-const useRouter = () => ({
-  back: () => console.log("Navigation: Going back..."),
-});
+
+
 
 export default function App() {
 
     const [selectedLenders, setSelectedLenders] = useState([]);
+    const [loginformshow,setloginformshow]=useState(false)
     const lenders = [
   { id: 1, lenders_name: "Lender A" },
   { id: 2, lenders_name: "Lender B" },
@@ -504,17 +504,18 @@ console.log(language);
       <label className="block text-sm font-semibold text-gray-800 mb-2">
         Select Lenders
       </label>
-      <Select
+      {/* <Select
         options={options_l}
+          instanceId="lenders-select"
         isMulti
         value={selectedLenders}
         onChange={handleChange_l}
         placeholder="Choose lenders..."
         className="text-black"
 
-      />
+      /> */}
     </div>
-              
+          
                     {/* 🌐 SPECIAL INSTRUCTIONS */}
   
 <div>
@@ -542,13 +543,16 @@ console.log(language);
           </p>
         </div>
 
-        <button className="mt-8 mx-auto bg-white text-[#1E5C3B] font-semibold px-8 py-2 rounded-full hover:bg-gray-100 transition-all duration-200 shadow-md">
+        <Link
+        type="button"
+ href="/components/personaldetails" 
+         className="mt-8 mx-auto bg-white text-[#1E5C3B] font-semibold px-8 py-2 rounded-full hover:bg-gray-100 transition-all duration-200 shadow-md">
           Sign Up
-        </button>
+        </Link>
       </div>
 
       {/* RIGHT SIDE (Content Section - 70%) */}
-      <div className="relative p-8 flex flex-col justify-center text-center md:text-left">
+    {!loginformshow &&  ( <div className="relative p-8 flex flex-col justify-center text-center md:text-left">
         {/* Close Button */}
         <button
           onClick={() => setModalopen(false)}
@@ -564,20 +568,82 @@ console.log(language);
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <button
-            onClick={() => alert('Proceeding as Logged-in User')}
-            className="bg-[#1E5C3B] text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-all duration-200 shadow-sm"
-          >
-            Continue as Logged-in User
-          </button>
-          <button
-            onClick={() => alert('Proceeding as Guest User')}
-            className="border border-[#1E5C3B] text-[#1E5C3B] px-6 py-3 rounded-lg hover:bg-[#1E5C3B] hover:text-white transition-all duration-200 shadow-sm"
+      <button
+  // use your actual route path
+  className="border border-[#1E5C3B] text-[#1E5C3B] px-6 py-3 rounded-lg hover:bg-[#1E5C3B] hover:text-white transition-all duration-200 shadow-sm flex items-center justify-center"
+onClick={()=>{setloginformshow(true)}}
+>
+  Continue as Logged-in User
+</button>
+          <Link
+ href="/components/comparequotes"
+             className="border border-[#1E5C3B] text-[#1E5C3B] px-6 py-3 rounded-lg hover:bg-[#1E5C3B] hover:text-white transition-all duration-200 shadow-sm"
           >
             Continue as Guest User
-          </button>
+          </Link>
         </div>
+      </div>)}
+   {loginformshow && (
+  <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 rounded-xl shadow-md p-6">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        alert("Logged in successfully!");
+      }}
+      className="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg border border-gray-200"
+    >
+      <h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">
+        Welcome Back 👋
+      </h2>
+
+      {/* Email */}
+      <div className="mb-5">
+        <label
+          htmlFor="email"
+          className="block text-sm font-semibold text-gray-700 mb-2"
+        >
+          Email Address
+        </label>
+        <input
+          id="email"
+          type="email"
+          required
+          placeholder="Enter your email"
+          className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
+        />
       </div>
+
+      {/* Password */}
+      <div className="mb-6">
+        <label
+          htmlFor="password"
+          className="block text-sm font-semibold text-gray-700 mb-2"
+        >
+          Password
+        </label>
+        <input
+          id="password"
+          type="password"
+          required
+          placeholder="Enter your password"
+          autoComplete="current-password"
+          className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
+        />
+      </div>
+
+      {/* Submit Button */}
+      <button
+        type="submit"
+        className="w-full bg-[#1E5C3B] text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-all duration-200 shadow-md"
+      >
+        Login
+      </button>
+
+    
+    </form>
+  </div>
+)}
+
     </div>
   </div>
 )}
@@ -605,5 +671,3 @@ console.log(language);
             </div>
         );
         }
-
-     

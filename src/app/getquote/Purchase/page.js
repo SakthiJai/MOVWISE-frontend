@@ -12,6 +12,8 @@ import Select from 'react-select';
 import dynamic from "next/dynamic";
 import Lenderselection from "../../parts/selectlenders/Lenderselection"
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 
 const customStyles = {
     control: (provided, state) => ({
@@ -65,14 +67,16 @@ const customStyles = {
 
 
 
-const useRouter = () => ({
-  back: () => console.log("Navigation: Going back..."),
-});
+
 
 
 
   
 export default function App() {
+
+
+const router = useRouter();
+
 
 const Select = dynamic(() => import("react-select"), { ssr: false });
  const lenders = useMemo(
@@ -104,20 +108,20 @@ const [selectedOptions, setSelectedOptions] = useState([]);
   const [query, setQuery] = useState("");
 
  const addressapi = async (query) => {
-  if (!query) return;
+  // if (!query) return;
 
-  try {
-    const res = await fetch(`https://api.postcodes.io/postcodes?q=${query}`);
-    const data = await res.json();
+  // try {
+  //   const res = await fetch(`https://api.postcodes.io/postcodes?q=${query}`);
+  //   const data = await res.json();
 
-    if (data.status === 200 && data.result) {
-      console.log("Matching results:", data.result);
-    } else {
-      console.log("No matching results found");
-    }
-  } catch (err) {
-    console.error("API error:", err);
-  }
+  //   if (data.status === 200 && data.result) {
+  //     console.log("Matching results:", data.result);
+  //   } else {
+  //     console.log("No matching results found");
+  //   }
+  // } catch (err) {
+  //   console.error("API error:", err);
+  // }
 };
 
 
@@ -197,7 +201,6 @@ lenders_id: lenderid,
   }
 
 console.log()
-  const router = useRouter();
 
   // Initial state for the toggle buttons
   const [scheme, setScheme] = useState("yes");
@@ -875,7 +878,7 @@ console.log()
           Select Lenders:
         </label>
 
-        <Controller
+        {/* <Controller
           name="lenders_id"
           control={control}
           rules={{ required: "Please select lender name" }}
@@ -890,7 +893,7 @@ console.log()
               onChange={(selected) => field.onChange(selected)}
             />
           )}
-        />
+        /> */}
 
         {errors.lenders_id && (
           <p className="text-red-500 text-sm mt-1">
@@ -927,7 +930,10 @@ console.log()
                         </p>
                       </div>
 
-                      <button className="mt-8 mx-auto bg-white text-[#1E5C3B] font-semibold px-8 py-2 rounded-full hover:bg-gray-100 transition-all duration-200 shadow-md">
+                      <button
+                            onClick={() => router.push("/components/personaldetails")} // 👈 redirect to your route
+ 
+                       className="mt-8 mx-auto bg-white text-[#1E5C3B] font-semibold px-8 py-2 rounded-full hover:bg-gray-100 transition-all duration-200 shadow-md">
                         Sign Up
                       </button>
                     </div>
@@ -949,18 +955,18 @@ console.log()
                       </p>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <button
-                          onClick={() => alert('Proceeding as Logged-in User')}
-                          className="bg-[#1E5C3B] text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-all duration-200 shadow-sm"
-                        >
-                          Continue as Logged-in User
-                        </button>
-                        <button
-                          onClick={() => alert('Proceeding as Guest User')}
-                          className="border border-[#1E5C3B] text-[#1E5C3B] px-6 py-3 rounded-lg hover:bg-[#1E5C3B] hover:text-white transition-all duration-200 shadow-sm"
-                        >
+                          <button
+      onClick={() => router.push("/components/personaldetails")} // 👈 redirect to your route
+      className="bg-[#1E5C3B] text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-all duration-200 shadow-sm"
+    >
+      Continue as Logged-in User
+    </button>
+                         <Link
+                         href="/components/comparequotes/"
+                         className="bg-[#1E5C3B] text-white px-4 py-2 rounded-lg"
+    >
                           Continue as Guest User
-                        </button>
+                        </Link>
                       </div>
                     </div>
                   </div>
@@ -973,8 +979,8 @@ console.log()
 
             <div className="mt-12 flex justify-end gap-4">
               <button
-                onClick={() => router.back()}
-                className="font-semibold text-base h-[48px] px-8 rounded-full border border-gray-300 bg-white text-gray-800 shadow-md hover:bg-gray-50 transition duration-150"
+   onClick={() => router.back()}              
+     className="font-semibold text-base h-[48px] px-8 rounded-full border border-gray-300 bg-white text-gray-800 shadow-md hover:bg-gray-50 transition duration-150"
               >
                 Back
               </button>

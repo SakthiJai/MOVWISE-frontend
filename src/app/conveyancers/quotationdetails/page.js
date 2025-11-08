@@ -1,11 +1,13 @@
 "use client"
 import Link from "next/link";
 import  Navbar  from "../../parts/navbar/page";// app/personal-details/page.js
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { PlusCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { API_BASE_URL } from "../.././constants/config";
+import { API_ENDPOINTS, getData, postData } from "../../auth/API/api";
+
 
 
 // export const metadata = {
@@ -17,29 +19,23 @@ export default function Quotationdetails() {
 // console.log(API_BASE_URL);
 
   const router = useRouter();
+  const [data,setdata]=useState([]);
+  
+  useEffect(() => {
+    // Fetch data example
+    async function fetchQuotes() {
+      const quotes = await getData(API_ENDPOINTS.conveyancingQuotes);
+      console.log("Fetched quotes:", quotes.data);
+      setdata(quotes.data)
+      
+    }
 
-  const data = {
-    "Legalcosts": [
-      { id: 1, name: "OUR ESTIMATED FEES", type: 1 },
-      { id: 2, name: "FEE TO ACT FOR THE LENDER (PER LENDER)", type: 0 },
-      { id: 3, name: "STAMP DUTY FORM (IF APPLICABLE-PER TITLE)", type: 0 },
-      { id: 4, name: "BANK TRANSFER FEES (PER TRANSFER)", type: 0 },
-      { id: 5, name: "ADMIN & POSTAGE COSTS", type: 0 },
-    ],
-    "Disbursement": [
-      { id: 6, name: "LAND REGISTRY FEE", type: 1 },
-      { id: 7, name: "SEARCHES (TBC-DEPENDS ON LOCAL AUTHORITY)", type: 0 },
-      { id: 8, name: "ID CHECKS(PER PERSON)", type: 0 },
-      { id: 9, name: "INFOTRACK SDLT SUBMISSION FEE", type: 0 },
-      { id: 10, name: "LAND CHARGES SEARCH (PER TITLE)", type: 0 },
-      { id: 11, name: "BANKRUPTCY SEARCH (PER PERSON)", type: 0 },
-    ],
-    "Rate of stamp duty": [
-      { id: 12, name: "FIRST TIME BUYER", type: 1 },
-      { id: 13, name: "STANDARD RATE", type: 1 },
-      { id: 14, name: "HIGHER RATE", type: 1 },
-    ],
-  };
+    
+
+    fetchQuotes();
+  }, []);
+
+
 
   const [openAccordion, setOpenAccordion] = useState(null);
   const [visibleItemIndex, setVisibleItemIndex] = useState({});
