@@ -27,17 +27,21 @@ export default function Companyregistration() {
   const [image, setImage] = useState("");
 
   // ✅ Unified handleChange function
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+ const handleChange = (e) => {
+  const { name, value } = e.target;
 
-    // For phone number: allow only digits and limit to 12
-    if (name === "phone") {
-      const numericValue = value.replace(/\D/g, "").slice(0, 12);
-      setFormData((prev) => ({ ...prev, [name]: numericValue }));
-    } else {
-      setFormData((prev) => ({ ...prev, [name]: value }));
-    }
-  };
+  // Handle phone separately
+  if (name === "phone") {
+    const numericValue = value.replace(/\D/g, "").slice(0, 12);
+    setFormData((prev) => ({ ...prev, [name]: numericValue }));
+  } else {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  }
+
+  // ✅ Clear error for this specific field
+  setErrors((prev) => ({ ...prev, [name]: "" }));
+};
+
 
   // ✅ Validation function
   const validate = () => {
@@ -54,6 +58,7 @@ export default function Companyregistration() {
     }
 
     setErrors(newErrors);
+    console.log(errors)
     return Object.keys(newErrors).length === 0;
   };
 
@@ -115,6 +120,7 @@ export default function Companyregistration() {
     if (Object.keys(newErrors).length === 0) {
       router.push(`${API_BASE_URL}/conveyancers/quotationdetails`);
     }
+    console.log(errors)
   };
 
   return (
