@@ -153,7 +153,7 @@ export default function HomePage() {
 
         </div>
       </section>
-        <div className="  px-6 py-14 mt-5.5">
+        <div className="  px-6 py-14 mt-5.5" id='quote_type'>
         <h1 className="text-4xl font-extrabold text-center text-gray-900 mb-3 tracking-tight">
           Choose Your Quote Type
         </h1>

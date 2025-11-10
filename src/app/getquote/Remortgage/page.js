@@ -8,6 +8,8 @@ import NextLink from 'next/link';
 import { API_BASE_URL } from "../../constants/config";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
+import Select from "react-select";
 
 // import Select from "react-select";
 
@@ -43,15 +45,40 @@ export default function App() {
     setSelectedLenders(selectedOptions);
     const ids = selectedOptions.map(item => item.value);
     console.log("Selected lenders:", ids);
-    handleChange("Lenders",ids)
+    handleChange("lender",ids)
   };
 
 
   const [formData, setFormData] = useState({
-    sharedOwnership: "",
-            existingMortgage: "",
-            "languages":[]
+   
+  
+  "address":  "",
+  "property_value": 0,
+  "no_of_bedrooms": "3",
+  "property_type": "",
+  "leasehold_or_free": "",
+  "buy_to_let": "no",
+  "mortgage_lender": "not required",
+  "ownership_housing_asso": 1,
+  "languages": [],
+  "specal_instruction": "",
+  "user_id":[],
+  "lender":[],
+        
   });
+
+  const [loginformdata, setloginformdata] = useState({
+  email: "",
+  password: "",
+});
+
+function handleloginformchange(name, value) {
+  setloginformdata((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+}
+
   
   const [errors, setErrors] = useState({});
 
@@ -82,6 +109,7 @@ export default function App() {
     if (Object.keys(newErrors).length === 0) {
       console.log("✅ Form submitted:", formData);
       alert("Form submitted successfully!");
+
           setModalopen(true)
 
     }
@@ -144,6 +172,37 @@ console.log(language);
         
         const router = useRouter();
         const [sharedOwnership, setSharedOwnership] = useState("");
+
+  async function logindata() {
+
+  try {
+    console.log(loginformdata)
+    const loginResponse = await postData(API_ENDPOINTS.login, loginformdata);
+    console.log("Login response:", loginResponse);
+
+    if (loginResponse.code === 200) {
+      const userId = loginResponse.user?.id; // <-- get it from API response
+console.log(userId)
+      if (userId) {
+        // ✅ Update formData
+      const updatedForm = {
+    ...formData,
+    "user_id": userId,
+  };
+
+  // ✅ Update React state
+  setFormData(updatedForm);
+    localStorage.setItem("getquote", JSON.stringify(updatedForm));
+
+      }
+
+      router.push("/components/comparequotes");
+    }
+  } catch (error) {
+    console.error("Error logging in:", error);
+  }
+}
+
 
         return (
             <div className="min-h-screen bg-white antialiased font-inter font-outfit">
@@ -261,8 +320,8 @@ console.log(language);
                                 id="price"
                                 type="number"
                                 className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
-                            name="Propertyvalue"
-                            onChange={(e)=>{handleChange("Propertyvalue",e.target.value)}}
+                            name="property_value"
+                            onChange={(e)=>{handleChange("property_value",Number(e.target.value))}}
                             />
                             </div>
                         </div>
@@ -303,9 +362,9 @@ console.log(language);
                                     <button
                                     key={opt}
                                     type="button"
-                                    onClick={() => handleChange("Tenure",opt)}
+                                    onClick={() => handleChange("leasehold_or_free",opt)}
                                     className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-                                     formData.Tenure === opt
+                                     formData.leasehold_or_free === opt
                                         ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
                                         : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                                     }`}
@@ -504,16 +563,16 @@ console.log(language);
       <label className="block text-sm font-semibold text-gray-800 mb-2">
         Select Lenders
       </label>
-      {/* <Select
+      <Select
         options={options_l}
           instanceId="lenders-select"
         isMulti
-        value={selectedLenders}
+        value={selectedLenders} 
         onChange={handleChange_l}
         placeholder="Choose lenders..."
         className="text-black"
 
-      /> */}
+      />
     </div>
           
                     {/* 🌐 SPECIAL INSTRUCTIONS */}
@@ -530,6 +589,9 @@ console.log(language);
   ></textarea>
 </div>
 
+
+  
+                    </form>
  {modalopen && (
   <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
     <div className="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-3xl h-[500px] grid grid-cols-1 md:grid-cols-[35%_65%] animate-scale-in relative">
@@ -583,12 +645,13 @@ onClick={()=>{setloginformshow(true)}}
           </Link>
         </div>
       </div>)}
-   {loginformshow && (
+{loginformshow && (
   <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 rounded-xl shadow-md p-6">
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        alert("Logged in successfully!");
+        logindata();
+       
       }}
       className="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg border border-gray-200"
     >
@@ -606,9 +669,12 @@ onClick={()=>{setloginformshow(true)}}
         </label>
         <input
           id="email"
+          name="email"
           type="email"
           required
           placeholder="Enter your email"
+          value={loginformdata.email || ""}
+          onChange={(e) => handleloginformchange("email", e.target.value)}
           className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
         />
       </div>
@@ -623,9 +689,12 @@ onClick={()=>{setloginformshow(true)}}
         </label>
         <input
           id="password"
+          name="password"
           type="password"
           required
           placeholder="Enter your password"
+          value={loginformdata.password || ""}
+          onChange={(e) => handleloginformchange("password", e.target.value)}
           autoComplete="current-password"
           className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
         />
@@ -638,18 +707,14 @@ onClick={()=>{setloginformshow(true)}}
       >
         Login
       </button>
-
-    
     </form>
   </div>
 )}
 
+
     </div>
   </div>
 )}
-  
-                    </form>
-
                     <div className="mt-12 flex justify-end gap-4">
                     <button
                         onClick={() => router.back()}

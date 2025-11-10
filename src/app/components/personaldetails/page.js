@@ -31,14 +31,39 @@ export default function Personaldetails() {
           
 
   async function register() {
-      try {
-        const response = await postData(API_ENDPOINTS.register,formdata);
-        console.log("register:", response.data);
-        setuser(response.data); 
-      } catch (error) {
-        console.error("Error fetching quotes:", error);
+  try {
+    const response = await postData(API_ENDPOINTS.register, formdata);
+    console.log("Register API Response:", response);
+
+    // ✅ Access code & user from response directly (no `.data`)
+    if (response.code === 201) {
+      const userId = response.user?.id;
+      console.log("🧩 Extracted userId:", userId);
+
+      if (userId) {
+        // ✅ Get existing getquote data
+        const quotesdata = JSON.parse(localStorage.getItem("getquote") || "{}");
+
+        // ✅ Merge user_id into that data
+        const updatedForm = {
+          ...quotesdata,
+          user_id: userId,
+        };
+
+        // ✅ Update React state and localStorage
+        setFormData(updatedForm);
+        localStorage.setItem("getquote", JSON.stringify(updatedForm));
       }
+
+      // ✅ Navigate after saving
+      router.push("/components/comparequotes");
+    } else {
+      console.warn("⚠️ Registration did not return code 201:", response);
     }
+  } catch (error) {
+    console.error("🚨 Error fetching quotes:", error);
+  }
+}
 
   return (
     <div className="min-h-screen bg-white antialiased font">
