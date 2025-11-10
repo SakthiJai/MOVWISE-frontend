@@ -4,32 +4,86 @@ import Link from "next/link";
 import Navbar from "../../parts/navbar/page";
 import { API_BASE_URL } from "../../constants/config";
 import React, { useState } from "react";
-import { Pencil } from "lucide-react";
+import { Languages, Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Footer from "../../parts/Footer/footer";
 
+import { useFormStore } from "../../store/useFormStore";
 
 export default function Companyregistration() {
 
  
 
   const router = useRouter();
-
+   const { updateCompanyData } = useFormStore();
   // Form data state
   const [formData, setFormData] = useState({
-    Name: "",
-    phone: "",
+    company_name: "",
+    phone_number: "",
     email: "",
     c_website: "",
+  
+    languages:[],
   });
+  const [languagepreference, setlanguagepreference] = useState(" ");
+  const [language, setLanguage] = useState([]);
+   const lang=[
+    { id: 1, language_name: "English" },
+    { id: 2, language_name: "Spanish" },
+    { id: 3, language_name: "French" },
+    { id: 4, language_name: "German" },
+    { id: 5, language_name: "Chinese" },
+    { id: 6, language_name: "Hindi" },
+    { id: 7, language_name: "Arabic" },
+    { id: 8, language_name: "Portuguese" },
+    { id: 9, language_name: "Russian" },
+    { id: 10, language_name: "Japanese" },
+  ];
 
+  
+  function handlelanguagechange(e) {
+    console.log(e.target.value);
+    setlanguagepreference(e.target.value);
+    setLanguage([]);
+  }
+
+  function languagecheckboxchange(item,checked,id){
+    if(checked){
+setLanguage(prev => [...prev, item]);
+handle_l_change("languages",[...formData.languages, id])
+console.log(language);
+
+    }
+    else{
+      setLanguage(prev=>prev.filter(lang=>lang!==item))
+    }
+        
+      
+       }
+
+ function handle_l_change(key,id){
+console.log(key,id)
+setFormData((prev)=>({...prev, [key]:id}))
+console.log(formData)
+  }
   // Error & Image states
   const [errors, setErrors] = useState({});
   const [image, setImage] = useState("");
 
   // ✅ Unified handleChange function
- const handleChange = (e) => {
-  const { name, value } = e.target;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+  setErrors((prev) => ({
+    ...prev,
+    [name]: "",
+  }));    // For phone number: allow only digits and limit to 12
+    if (name === "phone_number") {
+      const numericValue = value.replace(/\D/g, "").slice(0, 12);
+      setFormData((prev) => ({ ...prev, [name]: numericValue }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+  
 
   // Handle phone separately
   if (name === "phone") {
@@ -41,21 +95,21 @@ export default function Companyregistration() {
 
   // ✅ Clear error for this specific field
   setErrors((prev) => ({ ...prev, [name]: "" }));
-};
 
+  }
 
   // ✅ Validation function
   const validate = () => {
     const newErrors = {};
 
-    if (!formData.phone) {
-      newErrors.phone = "Phone number is required";
-    } else if (!/^\d+$/.test(formData.phone)) {
-      newErrors.phone = "Phone number must contain only digits";
-    } else if (formData.phone.length < 10) {
-      newErrors.phone = "Phone number must be at least 10 digits";
-    } else if (formData.phone.length > 12) {
-      newErrors.phone = "Phone number cannot exceed 12 digits";
+    if (!formData.phone_number) {
+      newErrors.phone_number = "Phone number is required";
+    } else if (!/^\d+$/.test(formData.phone_number)) {
+      newErrors.phone_number = "Phone number must contain only digits";
+    } else if (formData.phone_number.length < 10) {
+      newErrors.phone_number = "Phone number must be at least 10 digits";
+    } else if (formData.phone_number.length > 12) {
+      newErrors.phone_number = "Phone number cannot exceed 12 digits";
     }
 
     setErrors(newErrors);
@@ -78,27 +132,38 @@ export default function Companyregistration() {
     const file = e.target.files[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => setImage(reader.result);
+      reader.onloadend = () => {
+        const base64String = reader.result;
+        setImage(base64String); // ✅ for preview
+  console.log(base64String)
+        // ✅ also set inside form data
+        setFormData((prev) => ({
+          ...prev,
+          logo: base64String, // <-- your required key
+        }));
+      };
+      
       reader.readAsDataURL(file);
     }
   };
 
   // Handle Continue button click
   const handleContinue = () => {
+    console.log("inside continue")
     const newErrors = {};
 
     // Name validation
-    if (!formData.Name.trim()) {
-      newErrors.Name = "Company name is required";
-    } else if (formData.Name.trim().length < 3) {
-      newErrors.Name = "Name must be at least 3 characters";
+    if (!formData.company_name.trim()) {
+      newErrors.company_name = "Company name is required";
+    } else if (formData.company_name.trim().length < 3) {
+      newErrors.company_name = "Name must be at least 3 characters";
     }
 
     // Phone validation
-    if (!formData.phone.trim()) {
-      newErrors.phone = "Phone number is required";
-    } else if (!/^[0-9]{10}$/.test(formData.phone)) {
-      newErrors.phone = "Enter a valid 10-digit phone number";
+    if (!formData.phone_number.trim()) {
+      newErrors.phone_number = "Phone number is required";
+    } else if (!/^[0-9]{10}$/.test(formData.phone_number)) {
+      newErrors.phone_number = "Enter a valid 10-digit phone number";
     }
 
     // Email validation
@@ -116,9 +181,11 @@ export default function Companyregistration() {
     }
 
     setErrors(newErrors);
-
+console.log(errors);
     // Navigate only if valid
     if (Object.keys(newErrors).length === 0) {
+      updateCompanyData({ ...formData, logo: image });
+      console.log("inside navigation")
       router.push(`${API_BASE_URL}/conveyancers/quotationdetails`);
     }
     console.log(errors)
@@ -212,13 +279,13 @@ export default function Companyregistration() {
                       </label>
                       <input
                         id="Name"
-                        name="Name"
-                        value={formData.Name}
+                        name="company_name"
+                        value={formData.company_name}
                         onChange={handleChange}
                         placeholder="Enter Company name"
-                        className={`block w-full h-[44px] rounded-[10px] border ${errors.Name ? "border-red-500" : "border-[#D1D5DB]"}  text-[#1B1D21] placeholder-[#1B1D21] px-3 text-[14px] focus:outline-none`}
+                        className={`block w-full h-[44px] rounded-[10px] border ${errors.company_name ? "border-red-500" : "border-[#D1D5DB]"}  text-[#1B1D21] placeholder-[#1B1D21] px-3 text-[14px] focus:outline-none`}
                       />
-                      {errors.Name && <p className="text-red-500 text-[12px] mt-1">{errors.Name}</p>}
+                      {errors.company_name && <p className="text-red-500 text-[12px] mt-1">{errors.company_name}</p>}
                     </div>
 
                     <div>
@@ -230,8 +297,8 @@ export default function Companyregistration() {
   </label>
   <input
     id="phone"
-    name="phone"
-    value={formData.phone}
+    name="phone_number"
+    value={formData.phone_number}
     onChange={(e) => {
       const value = e.target.value;
       // Allow only numbers and limit to 12 digits
@@ -241,11 +308,11 @@ export default function Companyregistration() {
     }}
     placeholder="Enter Phone number"
     className={`block w-full h-[44px] rounded-[10px] text-[#1B1D21] placeholder-[#1B1D21] border ${
-      errors.phone ? "border-red-500" : "border-[#D1D5DB]"
+      errors.phone_number ? "border-red-500" : "border-[#D1D5DB]"
     } px-3 text-[14px] focus:outline-none`}
   />
-  {errors.phone && (
-    <p className="text-red-500 text-[12px] mt-1">{errors.phone}</p>
+  {errors.phone_number && (
+    <p className="text-red-500 text-[12px] mt-1">{errors.phone_number}</p>
   )}
 </div>
                   </div>
@@ -312,6 +379,60 @@ export default function Companyregistration() {
                       </div>
                       {errors.logo && <p className="text-red-500 text-[12px] mt-1">{errors.logo}</p>}
                     </div>
+                    <div className="mt-2">
+  <div className="space-y-4">
+  {/* Label + Main dropdown */}
+  <div>
+    <label className="block text-sm font-semibold text-gray-800 mb-1">
+      Prefer solicitor in your first language?
+    </label>
+    <select
+      className="text-black placeholder-black w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1E5C3B]"
+      onChange={handlelanguagechange}
+      value={languagepreference}
+    >
+      <option value="">Please select</option>
+      <option>No Preference</option>
+      <option>Yes</option>
+      <option>Maybe</option>
+    </select>
+  </div>
+
+  {/* Show only when needed */}
+  {(languagepreference === "Yes" || languagepreference === "Maybe") && (
+<div className="mt-2">
+  <label className="block text-sm font-semibold text-gray-800 mb-2">
+    Select preferred language(s)
+  </label>
+
+  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 border border-gray-200 p-3 rounded-lg bg-gray-50">
+    {lang.map((item,index) => (
+      <label
+        key={item.id}
+        className="flex items-center gap-2 p-2 rounded-md cursor-pointer hover:bg-green-50 transition"
+      >
+        <input
+          type="checkbox"
+          key={index}
+          value={item.language_name}
+          onChange={(e) => languagecheckboxchange(item.language_name, e.target.checked,item.id)}
+          className="accent-[#1E5C3B] w-4 h-4"
+        />
+        <span className="text-gray-800 text-sm font-medium">
+          {item.language_name}
+        </span>
+      </label>
+    ))}
+  </div>
+ 
+</div>
+
+  )}
+</div>
+
+ 
+ 
+</div>
                   </div>
                 </form>
               </div>
@@ -341,4 +462,4 @@ export default function Companyregistration() {
     <Footer />
     </div>
   );
-}
+};

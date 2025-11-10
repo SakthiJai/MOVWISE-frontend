@@ -149,7 +149,7 @@ const [errors, setErrors] = useState({});
       setSelectedLenders(selectedOptions);
       const ids = selectedOptions.map(item => item.value);
       console.log("Selected lenders:", ids);
-      handleChange("Lenders",ids)
+      handleChange("lender",ids)
     };
   
 
@@ -293,6 +293,7 @@ if(!formData.buy_to_let){
   ];  const [formData, setFormData] = useState({
 
     "languages": [],
+    "type_id":2,
   });
 
   const [loginformdata, setloginformdata] = useState({
@@ -423,7 +424,9 @@ console.log(language);
           id="stages"
           value={formData.stages}
           onChange={(e) => handleChange("stages", e.target.value)}
-          className={`block w-full h-[44px] rounded-xl border px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10`}
+          className={`block w-full h-[44px] rounded-xl border px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10 ${
+            errors.stages ? "border-red-500" : "border-gray-300"
+          }`}
         >
           <option value="">Please select</option>
           <option value="Initial Stage">Initial Stage</option>

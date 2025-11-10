@@ -11,9 +11,12 @@ export const API_ENDPOINTS = {
   login:`${BASE_URL}/login`,
     remortages:`${BASE_URL}/remortgages`,
     sales:`${BASE_URL}/sales`,
+    createQuote:`${BASE_URL}/create-quote`,
+    service:`${BASE_URL}/create-services`,
 
+
+}
   // add more endpoints here
-};
 
 
 export const getData = async (url) => {

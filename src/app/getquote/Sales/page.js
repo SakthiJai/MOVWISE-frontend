@@ -538,6 +538,7 @@ export default function App() {
   languages:"",
   specal_instruction:"",
   lender:"",  
+  type_id:1,
 });
 
 const [errors, setErrors] = useState({});

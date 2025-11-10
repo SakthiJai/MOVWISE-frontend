@@ -8,15 +8,41 @@ import Swal from "sweetalert2";
 import { API_BASE_URL } from "../.././constants/config";
 import { API_ENDPOINTS, getData, postData } from "../../auth/API/api";
 
-
+import { useFormStore } from "../../store/useFormStore";
 
 // export const metadata = {
 //   title: 'Quotationdetails | Movwise',
 //   description: 'Share your Personal Details',
 // };
 
+
+
 export default function Quotationdetails() {
+
+  const [includeVat, setIncludeVat] = useState(null); // null, true, or false
+const [vatPercent, setVatPercent] = useState(""); // String or number
+
+
+ const getFilledRowCount = () => {
+  return Object.values(formValues).reduce((sum, rows) => {
+    return sum + (rows || []).filter(row =>
+      row.itemId &&
+      // For type=1, both min and price must be present
+      ((row.type === 1 && row.min && row.price) ||
+      // For type=0, price must be present
+      (row.type !== 1 && row.price))
+    ).length;
+  }, 0);
+};
+const isAccordionFilled = (key) => {
+  const rows = formValues[key] || [];
+  return rows.some(row => row.itemId);
+};
+
 // console.log(API_BASE_URL);
+const { companyData, updateQuotationData } = useFormStore();
+console.log("✅ Company Data from previous step:", companyData);
+
 
   const router = useRouter();
   const [data,setdata]=useState([]);
@@ -35,6 +61,84 @@ export default function Quotationdetails() {
     fetchQuotes();
   }, []);
 
+  // const quotes=
+  // {
+  //   "legal costs": [
+  //       {
+  //           "id": 1,
+  //           "name": "our estimated fees",
+  //           "type": 1
+  //       },
+  //       {
+  //           "id": 2,
+  //           "name": "fee to act for the lender (per lender)",
+  //           "type": 0
+  //       },
+  //       {
+  //           "id": 3,
+  //           "name": "stamp duty form (if applicable-per title)",
+  //           "type": 0
+  //       },
+  //       {
+  //           "id": 4,
+  //           "name": "bank transfer fees (per transfer)",
+  //           "type": 0
+  //       },
+  //       {
+  //           "id": 5,
+  //           "name": "admin & postage costs\n",
+  //           "type": 0
+  //       }
+  //   ],
+  //   "disbursement": [
+  //       {
+  //           "id": 6,
+  //           "name": "land registry fee",
+  //           "type": 1
+  //       },
+  //       {
+  //           "id": 7,
+  //           "name": "searches (tbc-depends on local authority)",
+  //           "type": 0
+  //       },
+  //       {
+  //           "id": 8,
+  //           "name": "id checks(per person)",
+  //           "type": 0
+  //       },
+  //       {
+  //           "id": 9,
+  //           "name": "infotrack sdlt submission fee",
+  //           "type": 0
+  //       },
+  //       {
+  //           "id": 10,
+  //           "name": "land charges search (per title)",
+  //           "type": 0
+  //       },
+  //       {
+  //           "id": 11,
+  //           "name": "bankruptcy search (per person)",
+  //           "type": 0
+  //       }
+  //   ],
+  //   "rate of stampduty": [
+  //       {
+  //           "id": 12,
+  //           "name": "first time buyer",
+  //           "type": 1
+  //       },
+  //       {
+  //           "id": 13,
+  //           "name": "standard rate",
+  //           "type": 1
+  //       },
+  //       {
+  //           "id": 14,
+  //           "name": "higher rate",
+  //           "type": 1
+  //       }
+  //   ]};
 
 
   const [openAccordion, setOpenAccordion] = useState(null);
@@ -231,7 +335,7 @@ const validateRows = (key, itemId) => {
 
 
   // Build API payload: convert empty max -> null, use item.id as typeid
- const buildApiPayload = () => {
+const buildApiPayload = () => {
   let payload = {};
 
   Object.keys(formValues).forEach((category) => {
@@ -241,8 +345,9 @@ const validateRows = (key, itemId) => {
       min: r.min === "" || r.min === undefined ? null : Number(r.min),
       max: r.max === "" || r.max === undefined ? null : Number(r.max),
       price: r.price === "" || r.price === undefined ? null : Number(r.price),
+      vat: r.includeVat ? 1 : 0,
+      ...(r.includeVat ? { vat_percent: Number(r.vatPercent ?? 0), type: 80 } : {}),
     }));
-
     payload[category] = formattedRows;
   });
 
@@ -250,8 +355,33 @@ const validateRows = (key, itemId) => {
 };
 
 
+
+
   // Submit: validate every visible item (or all items) and if valid, build payload
 const handleSubmit = () => {
+  // Check at least one row in each accordion
+  const emptyAccordions = Object.keys(formValues).filter(key => !isAccordionFilled(key));
+  if (emptyAccordions.length > 0) {
+    Swal.fire({
+      icon: "warning",
+      title: "Missing Item",
+      text: `Please add at least one item in each section: ${emptyAccordions.join(", ")}`,
+      confirmButtonColor: "#f59e0b",
+    });
+    return;
+  }
+
+  // Check at least 3 filled rows overall
+  const filledRowCount = getFilledRowCount();
+  if (filledRowCount < 3) {
+    Swal.fire({
+      icon: "warning",
+      title: "Not Enough Items",
+      text: "Please fill in at least 3 items in total before submitting.",
+      confirmButtonColor: "#f59e0b",
+    });
+    return;
+  }
   let allValid = true;
   let tempErrors = {};
 
@@ -394,7 +524,7 @@ if (!allValid) {
 
   const payload = buildApiPayload();
   console.log("✅ Final Payload:", payload);
-
+  updateQuotationData(payload);
   Swal.fire({
     icon: "success",
     title: "Success!",
@@ -565,135 +695,134 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
       </button>
 
       {/* Accordion Content */}
-  {openAccordion === key && (
-  <div className="p-4 bg-white transition-all">
-    {(formValues[key] || []).map((row, rowIndex) => (
-      <div key={rowIndex} className="mb-4 border-b pb-3">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
-          {/* Dropdown */}
-          <div>
-            <select
-              value={row.itemId}
-              onChange={(e) =>
-                handleInputChange(key, rowIndex, "itemId", e.target.value)
-              }
-              className={`border p-2 rounded w-full text-black ${
-                errors[`${key}-${rowIndex}-itemId`] ? "border-red-500" : ""
-              }`}
-            >
-              <option value="">-- Select Item --</option>
-              {data[key].map((item) => (
-                <option key={item.id} value={item.id} className="font">
-                  {item.name}
-                </option>
-              ))}
-            </select>
-            {errors[`${key}-${rowIndex}-itemId`] && (
-              <p className="text-red-600 text-sm mt-1">
-                {errors[`${key}-${rowIndex}-itemId`]}
-              </p>
-            )}
-          </div>
+{openAccordion === key && (
+  <div className="p-3 bg-white transition-all">
+    {(formValues[key] || []).map((row, rowIndex) => {
+      // Per-row VAT state, or fallback to defaults
+      const includeVat = row.includeVat ?? false;
+      const vatPercent = row.vatPercent ?? "";
 
-          {/* ✅ Show Min & Max only if selected item has type=1 */}
-          {(() => {
-            const selectedItem = data[key].find(
-              (i) => i.id === Number(row.itemId)
-            );
-            if (selectedItem?.type === 1) {
-              return (
-                <>
-                  <div>
-                    <input
-                      type="number"
-                      placeholder="Min"
-                      value={row.min || ""}
-                      onChange={(e) => {
-                        handleInputChange(
-                          key,
-                          rowIndex,
-                          "min",
-                          e.target.value
-                        );
-                      }}
-                      className={`border p-2 rounded w-full text-black ${
-                        errors[`${key}-${rowIndex}-min`] ? "border-red-500" : ""
-                      }`}
-                    />
-                    {errors[`${key}-${rowIndex}-min`] && (
-                      <p className="text-red-600 text-sm mt-1">
-                        {errors[`${key}-${rowIndex}-min`]}
-                      </p>
-                    )}
-                  </div>
+      const selectedItem = data[key].find(i => i.id === Number(row.itemId));
 
-                  <div>
-                    <input
-                      type="number"
-                      placeholder="Max (optional)"
-                      value={row.max || ""}
-                      onChange={(e) => {
-                        handleInputChange(
-                          key,
-                          rowIndex,
-                          "max",
-                          e.target.value
-                        );
-                      }}
-                      className={`border p-2 rounded w-full text-black ${
-                        errors[`${key}-${rowIndex}-max`] ? "border-red-500" : ""
-                      }`}
-                    />
-                    {errors[`${key}-${rowIndex}-max`] && (
-                      <p className="text-red-600 text-sm mt-1">
-                        {errors[`${key}-${rowIndex}-max`]}
-                      </p>
-                    )}
-                  </div>
-                </>
-              );
-            }
-            return null;
-          })()}
+      return (
+ <div
+  className="flex flex-row items-center gap-3 border-b border-gray-200 pb-2 mb-2 bg-white hover:bg-gray-50 transition-colors"
+  key={rowIndex}
+>
+  {/* Dropdown */}
+  <div className="flex flex-col">
+    <select
+      value={row.itemId}
+      onChange={e => handleInputChange(key, rowIndex, "itemId", e.target.value)}
+      className={`border border-gray-300 rounded px-2 py-1 w-40 text-black text-sm bg-white focus:ring-2 focus:ring-blue-200 focus:border-blue-400 ${errors[`${key}-${rowIndex}-itemId`] ? "border-red-500" : ""}`}
+    >
+      <option value="">-- Select Item --</option>
+      {data[key].map(item => (
+        <option key={item.id} value={item.id}>
+          {item.name}
+        </option>
+      ))}
+    </select>
+    {errors[`${key}-${rowIndex}-itemId`] && (
+      <span className="text-xs text-red-600">{errors[`${key}-${rowIndex}-itemId`]}</span>
+    )}
+  </div>
 
-          {/* Price */}
-        <div>
-  <div className="flex flex-row gap-3 items-stretch">
+  {/* Min & Max if type=1 */}
+  {selectedItem?.type === 1 && (
+    <>
+      <div className="flex flex-col">
+        <input
+          type="number"
+          placeholder="Min"
+          value={row.min || ""}
+          onChange={e => handleInputChange(key, rowIndex, "min", e.target.value)}
+          className={`border border-gray-300 rounded px-2 py-1 w-16 text-black text-sm bg-white focus:ring-2 focus:ring-blue-200 focus:border-blue-400 ${errors[`${key}-${rowIndex}-min`] ? "border-red-500" : ""}`}
+        />
+        {errors[`${key}-${rowIndex}-min`] && (
+          <span className="text-xs text-red-600">{errors[`${key}-${rowIndex}-min`]}</span>
+        )}
+      </div>
+      <div className="flex flex-col">
+        <input
+          type="number"
+          placeholder="Max"
+          value={row.max || ""}
+          onChange={e => handleInputChange(key, rowIndex, "max", e.target.value)}
+          className={`border border-gray-300 rounded px-2 py-1 w-16 text-black text-sm bg-white focus:ring-2 focus:ring-blue-200 focus:border-blue-400 ${errors[`${key}-${rowIndex}-max`] ? "border-red-500" : ""}`}
+        />
+        {errors[`${key}-${rowIndex}-max`] && (
+          <span className="text-xs text-red-600">{errors[`${key}-${rowIndex}-max`]}</span>
+        )}
+      </div>
+    </>
+  )}
+
+  {/* Price input */}
+  <div className="flex flex-col">
     <input
       type="number"
       placeholder="Charge"
       value={row.price || ""}
-      onChange={(e) =>
-        handleInputChange(key, rowIndex, "price", e.target.value)
-      }
-      className={`border p-1 rounded w-full text-black ${
-        errors[`${key}-${rowIndex}-price`] ? "border-red-500" : ""
-      }`}
+      onChange={e => handleInputChange(key, rowIndex, "price", e.target.value)}
+      className={`border border-gray-300 rounded px-2 py-1 w-13 text-black text-sm bg-white focus:ring-2 focus:ring-blue-200 focus:border-blue-400 ${errors[`${key}-${rowIndex}-price`] ? "border-red-500" : ""}`}
     />
-
-    <button
-      onClick={() => addRow(key)}
-      className="text-green-600 text-sm border rounded flex items-center justify-center px-3 py-2 h-full"
-    >
-      <PlusCircle size={22} />
-    </button>
+    {errors[`${key}-${rowIndex}-price`] && (
+      <span className="text-xs text-red-600">{errors[`${key}-${rowIndex}-price`]}</span>
+    )}
   </div>
 
-  {errors[`${key}-${rowIndex}-price`] && (
-    <p className="text-red-600 text-sm mt-1">
-      {errors[`${key}-${rowIndex}-price`]}
-    </p>
-  )}
+  {/* VAT */}
+  <span className="flex flex-row items-center gap-2 ml-2">
+    <label className="text-xs font-medium text-gray-700">VAT?</label>
+    <button
+      type="button"
+      className={`px-2 py-[2px] rounded text-xs border text-black ${includeVat ? "bg-green-100 border-green-700" : "bg-white border-gray-300"} hover:bg-green-700`}
+      onClick={() => handleInputChange(key, rowIndex, "includeVat", true)}
+    >
+      Yes
+    </button>
+    <button
+      type="button"
+      className={`px-2 py-[2px] rounded text-xs border text-black ${includeVat === false ? "bg-red-100 border-red-400" : "bg-white border-gray-300"} hover:bg-red-700`}
+      onClick={() => handleInputChange(key, rowIndex, "includeVat", false)}
+    >
+      No
+    </button>
+    {includeVat && (
+      <div className="flex flex-col ml-1">
+        <input
+          type="number"
+          min="0"
+          max="100"
+          step="0.01"
+          value={vatPercent}
+          onChange={e => handleInputChange(key, rowIndex, "vatPercent", e.target.value)}
+          placeholder="%"
+          className={`w-12 border border-gray-300 rounded px-1 py-[2px] placeholder:text-black text-xs bg-white focus:ring-2 focus:ring-blue-200 focus:border-blue-400 ${errors[`${key}-${rowIndex}-vatPercent`] ? "border-red-500" : ""}`}
+        />
+        {errors[`${key}-${rowIndex}-vatPercent`] && (
+          <span className="text-xs text-red-600">{errors[`${key}-${rowIndex}-vatPercent`]}</span>
+        )}
+      </div>
+    )}
+  </span>
+
+  {/* Add row button */}
+  <button
+    onClick={() => addRow(key)}
+    className="text-green-600 text-xs border border-gray-300 rounded px-2 py-1 h-full ml-2 flex items-center hover:bg-gray-100"
+  >
+    <PlusCircle size={18} />
+  </button>
 </div>
 
-        </div>
-      </div>
-      
-    ))}
 
-
+      );
+    })}
   </div>
 )}
+
 
 
     </div>

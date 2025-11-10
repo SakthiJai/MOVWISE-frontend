@@ -54,16 +54,17 @@ export default function App() {
   
   "address":  "",
   "property_value": 0,
-  "no_of_bedrooms": "",
+  "number_of_peoples": "",
   "property_type": "",
   "leasehold_or_free": "",
   "buy_to_let": "",
   "mortgage_lender": "not required",
   "ownership_housing_asso": 1,
   "languages": [],
-  "specal_instruction": "",
+  "special_instruction": "",
   "user_id":[],
   "lender":[],
+  "type_id":3
         
   });
 
@@ -117,8 +118,8 @@ function handleloginformchange(name, value) {
         newErrors.property_value = "property_value must be a positive number";
       }
 
- if(!formData.no_of_bedrooms){
-  newErrors.no_of_bedrooms="please select a no. of bedrooms"
+ if(!formData.number_of_peoples){
+  newErrors.number_of_peoples="please select a no. of bedrooms"
  }
   if(!formData.property_type){
   newErrors.property_type="please select a property_type"
@@ -376,10 +377,10 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                                 <button
                                     key={opt}
                                     type="button"
-                                    onClick={() => handleChange("no_of_bedrooms", opt)}                 
+                                    onClick={() => handleChange("number_of_peoples", opt)}                 
                                     className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm
                                     ${
-                                    formData.no_of_bedrooms === opt  ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+                                    formData.number_of_peoples === opt  ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
                                         : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                                     }`}
                                 >
@@ -659,8 +660,8 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
     Special instructions (Optional)
   </label>
   <textarea
-  name="specal_instruction"
-  onChange={(e)=>handleChange("specal_instruction",e.target.value)}
+  name="special_instruction"
+  onChange={(e)=>handleChange("special_instruction",e.target.value)}
     className="w-full border border-gray-300 rounded-lg px-3 py-2 h-28 resize-none focus:outline-none focus:ring-2 focus:ring-[#1E5C3B] text-black placeholder-black"
     placeholder="Enter any special instructions..."
   ></textarea>

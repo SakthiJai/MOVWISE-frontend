@@ -31,7 +31,7 @@ useEffect(() => {
 
   async function qutesdata(formData) {
     try {
-      const response = await postData(API_ENDPOINTS.remortages, formData);
+      const response = await postData(API_ENDPOINTS.service, formData);
       console.log("✅ Remortgage API Response:", response);
     } catch (error) {
       console.error("❌ Failed to post remortgage:", error);

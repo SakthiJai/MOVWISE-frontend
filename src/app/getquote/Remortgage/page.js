@@ -219,6 +219,7 @@ console.log(userId)
       const updatedForm = {
     ...formData,
     "user_id": userId,
+    "type_id":4
   };
 
   // ✅ Update React state
