@@ -13,6 +13,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
+import Footer from "../../parts/Footer/footer";
 
 
 const customStyles = {
@@ -222,9 +223,11 @@ const [addresssuggestion,setaddressuggestion]=useState([]);
     newErrors.address="please select a address"
   }
 
-  if(!formData.purchase_price){
-    newErrors.purchase_price="please select a purchaseprice"
-  }
+  if (!formData.purchase_price) {
+        newErrors.purchase_price = "purchase_price  is required";
+      } else if (Number(formData.purchase_price) <= 0) {
+        newErrors.purchase_price = "purchase_price must be a positive number";
+      }
 
  if(!formData.no_of_bedrooms){
   newErrors.no_of_bedrooms="please select a no. of bedrooms"
@@ -260,9 +263,9 @@ if(!formData.buy_to_let){
     }
 
   };
-  const [tenure, setTenure] = useState("");
+  const [leasehold_or_free, setleasehold_or_free] = useState("");
 
-  const tenureOptions = ["Leasehold", "Freehold"];
+  const leasehold_or_freeOptions = ["Leasehold", "Freehold"];
 
   const [bedrooms, setBedrooms] = useState("");
 
@@ -324,6 +327,7 @@ console.log(language);
 
 
   return (
+    <div>
     <div className="min-h-screen bg-white antialiased font-inter font-outfit">
       <div className='sticky top-0 z-50'>
         <Navbar />
@@ -331,7 +335,7 @@ console.log(language);
       <main className="pt-8 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left stepper */}
-          <aside className="z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-full lg:max-h-[600px] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white   lg:top-22">
+          <aside className="z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-50% lg:max-h-[600px] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white   lg:top-22">
             <div className="p-6">
               {/* Step 1 */}
               <div className="flex items-start">
@@ -402,26 +406,24 @@ console.log(language);
 
             <form className="mt-8 space-y-10" >
               {/* 🏡 PURCHASE DETAILS */}
-              <div className="space-y-6">
+              <div className="space-y-6 mb-4">
                 <h2 className="text-xl font-bold text-gray-900 border-b-2 border-[#1E5C3B] pb-2 flex items-center gap-2">
                   <span className="text-2xl">🏡</span> PURCHASE DETAILS
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
                 <div className="flex flex-col">
         <label
           htmlFor="stages"
           className="block text-sm font-medium text-gray-700 mb-1"
         >
-          Select Stage:
+          Select Stage:<span className="text-red-500">*</span>
         </label>
 
         <select
           id="stages"
           value={formData.stages}
           onChange={(e) => handleChange("stages", e.target.value)}
-          className={`block w-full h-[44px] rounded-xl border px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10 ${
-            errors.stages ? "border-red-500" : "border-gray-300"
-          }`}
+          className={`block w-full h-[44px] rounded-xl border px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10`}
         >
           <option value="">Please select</option>
           <option value="Initial Stage">Initial Stage</option>
@@ -434,15 +436,18 @@ console.log(language);
           <option value="Sale agreed">Sale agreed</option>
         </select>
 
-        {errors.stages && (
-          <p className="text-red-500 text-sm mt-1">{errors.stages}</p>
-        )}
+ <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+   errors.stages ? "text-red-500 opacity-100" : "opacity-0"
+}`}>
+  {errors.stages || "placeholder"} {/* placeholder keeps same height */}
+</p>
+
       </div>
 
                   {/* 1. Property Address (Inline Input) */}
                    <div className="flex flex-col h-full">
                                              <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-                                             Property address:
+                                             Property address:<span className="text-red-500">*</span>
                                              </label>
                                              <div className="relative mt-auto">
                                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
@@ -456,16 +461,18 @@ console.log(language);
                                                onChange={(e)=>{handleChange("address",e.target.value)}}
                                              />
                                              </div>
-                                                                                 {errors.address && (
-    <p className="text-red-500 text-sm mt-1">{errors.address}</p>
-  )}
+ <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+   errors.address ? "text-red-500 opacity-100" : "opacity-0"
+}`}>
+  {errors.address || "placeholder"} {/* placeholder keeps same height */}
+</p>
                                          </div>
      
 
                   {/* 2. Agreed purchase Price (Inline Input with Prefix) */}
                   <div className="flex flex-col h-full">
   <label htmlFor="purchase_price" className="block text-sm font-medium text-gray-700 mb-1">
-    Agreed purchase price:
+    Agreed purchase price:<span className="text-red-500">*</span>
   </label>
 
   <div className="relative mt-auto">
@@ -486,22 +493,22 @@ console.log(language);
           setErrors({ ...errors, purchase_price: "" });
         }
       }}
-      className={`block w-full h-[44px] rounded-xl border pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors ${
-        errors.purchase_price ? "border-red-500" : "border-gray-300"
-      }`}
+      className={`block w-full h-[44px] rounded-xl border pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors `}
     />
   </div>
 
-  {errors.purchase_price && (
-    <p className="text-red-500 text-sm mt-1">{errors.purchase_price}</p>
-  )}
+ <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+   errors.purchase_price ? "text-red-500 opacity-100" : "opacity-0"
+}`}>
+  {errors.purchase_price || "placeholder"} {/* placeholder keeps same height */}
+</p>
 </div>
 
 
                   {/* 3. Number of Bedrooms (Inline Select) */}
                   <div className="flex flex-col h-full">
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Number of Bedrooms:
+                                Number of Bedrooms:<span className="text-red-500">*</span>
                             </label>
 
                             <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 mt-auto">
@@ -520,9 +527,11 @@ console.log(language);
                                 </button>
                                 ))}
                             </div>
-                            {errors.no_of_bedrooms && (
-    <p className="text-red-500 text-sm mt-1">{errors.no_of_bedrooms}</p>
-  )}
+ <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+   errors.no_of_bedrooms ? "text-red-500 opacity-100" : "opacity-0"
+}`}>
+  {errors.no_of_bedrooms || "placeholder"} {/* placeholder keeps same height */}
+</p>
                             </div> 
 
                   {/* 4. Leasehold or Freehold (Inline Select) */}
@@ -530,16 +539,16 @@ console.log(language);
                             {/* Leasehold / Freehold Section */}
                             <div className="flex flex-col h-full">
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Leasehold or Freehold?
+                                Leasehold or Freehold?<span className="text-red-500">*</span>
                                 </label>
                                 <div className="grid grid-cols-2 gap-3 mt-auto">
-                                {tenureOptions.map((opt) => (
+                                {leasehold_or_freeOptions.map((opt) => (
                                     <button
                                     key={opt}
                                     type="button"
                                     onClick={() => handleChange("leasehold_or_free",opt)}
                                     className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-                                     formData.Tenure === opt
+                                     formData.leasehold_or_free === opt
                                         ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
                                         : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                                     }`}
@@ -548,11 +557,13 @@ console.log(language);
                                     </button>
                                 ))}
                                 </div>
+                                 <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+   errors.leasehold_or_free ? "text-red-500 opacity-100" : "opacity-0"
+}`}>
+  {errors.leasehold_or_free || "placeholder"} {/* placeholder keeps same height */}
+</p>
                                 </div>
-                  {errors.leasehold_or_free&&(
-                                  <p className="text-red-500 text-sm mt-1">{errors.leasehold_or_free}</p>
 
-                            )}
                             </div>
 
                             <div>
@@ -596,6 +607,7 @@ console.log(language);
       <span>No</span>
     </button>
   </div>
+  <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
 
 
 </div>
@@ -606,10 +618,10 @@ console.log(language);
                 <div>
                   <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Property Type:
+                            Property Type:<span className="text-red-500">*</span>
                             </label>
 
-                            <div className="flex flex-wrap  gap-4">
+                            <div className="flex flex-wrap  gap-9">
                             {propertyTypeOptions.map((opt) => (
                                 <button
                                 key={opt.label}
@@ -633,10 +645,12 @@ console.log(language);
                                 </button>
                             ))}
                             </div>
-                            {errors.property_type&&(
-                                  <p className="text-red-500 text-sm mt-1">{errors.property_type}</p>
-
-                            )}
+                           
+ <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+   errors.property_type ? "text-red-500 opacity-100" : "opacity-0"
+}`}>
+  {errors.property_type || "placeholder"} {/* placeholder keeps same height */}
+</p>
 </div>
 
                 </div>
@@ -647,12 +661,12 @@ console.log(language);
                 <h2 className="text-xl font-bold text-gray-900 border-b-2 border-[#1E5C3B] pb-2 flex items-center gap-2">
                   <span className="text-2xl">💰</span> PURCHASE FINANCE
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
 
                   {/* 6. Buy to Let? (Inline Select) */}
            <div className="flex flex-col h-full">
                              <label htmlFor="b2l" className="block text-sm font-medium text-gray-700 mb-1">
-                               Buy to Let?
+                               Buy to Let?<span className="text-red-500">*</span>
                              </label>
                          <div className="relative mt-auto">
            <select
@@ -676,10 +690,11 @@ console.log(language);
              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
            />
          </div>
-          {errors.buy_to_let&&(
-                                  <p className="text-red-500 text-sm mt-1">{errors.buy_to_let}</p>
-
-                            )}
+ <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+   errors.buy_to_let ? "text-red-500 opacity-100" : "opacity-0"
+}`}>
+  {errors.buy_to_let || "placeholder"} {/* placeholder keeps same height */}
+</p>
                            </div>
 
 
@@ -725,9 +740,7 @@ console.log(language);
     </button>
   </div>
 
-  {errors.govt_buy_scheme && (
-    <p className="text-red-500 text-sm mt-1">{errors.govt_buy_scheme}</p>
-  )}
+<p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
 </div>
 
 
@@ -773,10 +786,7 @@ console.log(language);
       <span>No</span>
     </button>
   </div>
-
-  {errors.obtaining_mortgage && (
-    <p className="text-red-500 text-sm mt-1">{errors.obtaining_mortgage}</p>
-  )}
+<p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
 </div>
 
 
@@ -812,6 +822,7 @@ console.log(language);
                  size={16}
                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
                />
+               <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
              </div>
            </div>
 
@@ -849,9 +860,7 @@ console.log(language);
     />
   </div>
 
-  {errors.gift_deposit && (
-    <p className="text-red-500 text-sm mt-1">{errors.gift_deposit}</p>
-  )}
+<p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
 </div>
 
 
@@ -898,9 +907,7 @@ console.log(language);
     </button>
   </div>
 
-  {errors.ownership_housing_asso && (
-    <p className="text-red-500 text-sm mt-1">{errors.ownership_housing_asso}</p>
-  )}
+<p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
 </div>
 
 
@@ -912,6 +919,7 @@ console.log(language);
               {/* Prefer solicitor in your first language */}
               <div className="space-y-4">
   {/* Label + Main dropdown */}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
   <div>
     <label className="block text-sm font-semibold text-gray-800 mb-1">
       Prefer solicitor in your first language?
@@ -926,9 +934,28 @@ console.log(language);
       <option>Yes</option>
       <option>Maybe</option>
     </select>
+    <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
   </div>
 
-  {/* Show only when needed */}
+ 
+
+
+  <div className="flex flex-col h-full">
+      <label className="block text-sm font-semibold text-gray-800 mb-2">
+        Select Lenders
+      </label>
+       <Select
+        options={options_l}
+          instanceId="lenders-select"
+        isMulti
+        value={selectedLenders}
+        onChange={handleChange_l}
+        placeholder="Choose lenders..."
+        className="text-black"
+
+      /> 
+      <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
+    </div> {/* Show only when needed */}
   {(languagepreference === "Yes" || languagepreference === "Maybe") && (
 <div className="mt-2">
   <label className="block text-sm font-semibold text-gray-800 mb-2">
@@ -957,24 +984,7 @@ console.log(language);
  
 </div>
 
-  )}
-</div>
-
- <div className="max-w-md mx-auto mt-5">
-      <label className="block text-sm font-semibold text-gray-800 mb-2">
-        Select Lenders
-      </label>
-       <Select
-        options={options_l}
-          instanceId="lenders-select"
-        isMulti
-        value={selectedLenders}
-        onChange={handleChange_l}
-        placeholder="Choose lenders..."
-        className="text-black"
-
-      /> 
-    </div>
+  )}</div></div>
           
                     {/* 🌐 SPECIAL INSTRUCTIONS */}
   
@@ -1136,7 +1146,8 @@ onClick={()=>{setloginformshow(true)}}
           </section>
         </div>
       </main>
-
+      </div>
+<Footer />
     </div>
   );
 }

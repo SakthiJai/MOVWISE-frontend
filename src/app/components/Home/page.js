@@ -1,7 +1,7 @@
 // This file is assumed to be in a Next.js project (e.g., app/page.tsx)
 "use client";
 import Head from 'next/head';
-import Footer from '../Footer';
+import Footer from "../../parts/Footer/footer";
 import Image from 'next/image';
 import Navbar from '../../parts/navbar/page';
 import Link from 'next/link';
@@ -153,7 +153,7 @@ export default function HomePage() {
 
         </div>
       </section>
-        <div className="  px-6 py-14 mt-5.5" id='quote_type'>
+        <div className=" scroll-mt-24 px-6 py-14 mt-5.5" id='quote_type'>
         <h1 className="text-4xl font-extrabold text-center text-gray-900 mb-3 tracking-tight">
           Choose Your Quote Type
         </h1>
@@ -420,7 +420,7 @@ export default function HomePage() {
       {/* ---------------------------------------------------------------------------------- */}
 
       {/* --- 9. CONTACT SECTION --- */}
-      <section id="contact" className="py-16 bg-emerald-50">
+      <section id="contact" className=" scroll-mt-24 py-16 bg-emerald-50">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold text-emerald-800 mb-4">We&apos;re Here to Help!</h2>
           <p className="text-gray-700 text-lg mb-8">We&apos;re happy to help! Get in touch with our multilingual support team for assistance.</p>
@@ -472,81 +472,7 @@ export default function HomePage() {
       {/* ---------------------------------------------------------------------------------- */}
 
       {/* --- 12. FOOTER --- */}
-      <footer className="bg-gray-800 text-gray-400 py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        {/* Grid Section */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 border-b border-gray-700 pb-8 text-center md:text-left">
-          
-          {/* Quick Links */}
-          <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Quick Links</h3>
-            <ul className="space-y-2">
-              <li><a href="#" className="hover:text-amber-500">Home</a></li>
-              <li><a href="#" className="hover:text-amber-500">Get Quotes</a></li>
-              <li><a href="#solicitors" className="hover:text-amber-500">For Solicitors</a></li>
-              <li><a href="#about" className="hover:text-amber-500">About Us</a></li>
-              <li><a href="#contact" className="hover:text-amber-500">Contact</a></li>
-            </ul>
-          </div>
-
-          {/* Legal */}
-          <div>
-            <h3 className="text-lg font-semibold text-white mb-4">Legal</h3>
-            <ul className="space-y-2">
-              <li><a href="#" className="hover:text-amber-500">Privacy Policy</a></li>
-              <li><a href="#" className="hover:text-amber-500">Terms of Use</a></li>
-              <li><a href="#" className="hover:text-amber-500">Cookie Policy</a></li>
-              <li><a href="#" className="hover:text-amber-500">Complaints Procedure</a></li>
-            </ul>
-          </div>
-
-          {/* Trust & Social */}
-          <div className="flex flex-col items-center md:items-end justify-between">
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-4">Trust & Compliance</h3>
-              <div className="flex flex-wrap justify-center md:justify-end gap-2 mb-6">
-                <span className="text-amber-500 font-semibold border border-amber-500 px-3 py-1 text-sm rounded">
-                  SRA Compliant
-                </span>
-                <span className="text-amber-500 font-semibold border border-amber-500 px-3 py-1 text-sm rounded">
-                  GDPR Certified
-                </span>
-                <span className="text-amber-500 font-semibold border border-amber-500 px-3 py-1 text-sm rounded">
-                  SSL Secured
-                </span>
-              </div>
-            </div>
-
-            {/* Social Icons */}
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-3 text-center md:text-right">
-                Connect With Us
-              </h3>
-              <div className="flex justify-center md:justify-end space-x-4">
-                <a href="#" className="p-3 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition">
-                  <Facebook className="w-5 h-5" />
-                </a>
-                <a href="#" className="p-3 bg-sky-500 text-white rounded-full hover:bg-sky-600 transition">
-                  <Twitter className="w-5 h-5" />
-                </a>
-                <a href="#" className="p-3 bg-blue-700 text-white rounded-full hover:bg-blue-800 transition">
-                  <Linkedin className="w-5 h-5" />
-                </a>
-                <a href="#" className="p-3 bg-pink-500 text-white rounded-full hover:bg-pink-600 transition">
-                  <Instagram className="w-5 h-5" />
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Bottom Footer */}
-        <div className="pt-8 text-center text-sm">
-          <p>&copy; {new Date().getFullYear()} MovWise. All rights reserved.</p>
-        </div>
-      </div>
-    </footer>
+     <Footer />
       {/* <Footer/> */}
     </div>
   );

@@ -6,6 +6,7 @@ import { API_BASE_URL } from "../../constants/config";
 import React, { useState } from "react";
 import { Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Footer from "../../parts/Footer/footer";
 
 
 export default function Companyregistration() {
@@ -124,6 +125,7 @@ export default function Companyregistration() {
   };
 
   return (
+    <div>
     <div className="min-h-screen bg-white antialiased  font-outfit">
       {/* Navbar */}
       <Navbar />
@@ -335,6 +337,8 @@ export default function Companyregistration() {
           </section>
         </div>
       </main>
+    </div>
+    <Footer />
     </div>
   );
 }

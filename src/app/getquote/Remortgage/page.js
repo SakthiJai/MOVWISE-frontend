@@ -10,7 +10,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
 import Select from "react-select";
-
+import Footer from "../../parts/Footer/footer";
 // import Select from "react-select";
 
 
@@ -54,10 +54,10 @@ export default function App() {
   
   "address":  "",
   "property_value": 0,
-  "no_of_bedrooms": "3",
+  "no_of_bedrooms": "",
   "property_type": "",
   "leasehold_or_free": "",
-  "buy_to_let": "no",
+  "buy_to_let": "",
   "mortgage_lender": "not required",
   "ownership_housing_asso": 1,
   "languages": [],
@@ -87,34 +87,65 @@ function handleloginformchange(name, value) {
       ...prev,
       [name]: value,
     }));
+
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
+
+  
   const handleSubmit = (e) => {
     e.preventDefault();
 
     // simple validation
     let newErrors = {};
 
-    // if (!formData.name.trim()) {
-    //   newErrors.name = "Name is required";
-    // }
+ 
+  
+  if(!formData.languages){
+    newErrors.languages="please select a language"
+  }
 
-    // if (!formData.lender) {
-    //   newErrors.lender = "Please select a lender";
-    // }
+     
+      if (!formData.address.trim()) {
+        newErrors.address = "Property address is required";
+      } else if (formData.address.trim().length < 5) {
+        newErrors.address = "Address must be at least 5 characters";
+      }
+    
+      
+      if (!formData.property_value) {
+        newErrors.property_value = "property_value  is required";
+      } else if (Number(formData.property_value) <= 0) {
+        newErrors.property_value = "property_value must be a positive number";
+      }
 
+ if(!formData.no_of_bedrooms){
+  newErrors.no_of_bedrooms="please select a no. of bedrooms"
+ }
+  if(!formData.property_type){
+  newErrors.property_type="please select a property_type"
+ }
+   if(!formData.leasehold_or_free){
+  newErrors.leasehold_or_free="please select a leasehold_or_free"
+ }
+
+if(!formData.buy_to_let){
+  newErrors.buy_to_let="please select buy_to_let"
+}
     setErrors(newErrors);
+    console.log(errors)
 
     // if no errors, submit
     if (Object.keys(newErrors).length === 0) {
       console.log("✅ Form submitted:", formData);
       alert("Form submitted successfully!");
-
           setModalopen(true)
 
     }
 
   };
+
+   
 
     const [modalopen, setModalopen] = useState(false);
       const [languagepreference, setlanguagepreference] = useState(" ");
@@ -158,7 +189,7 @@ console.log(language);
      const tenureOptions = ["Leasehold", "Freehold"];
 
 
-     const options = ["1", "2", "3", "4", "5+"];
+     const options = ["1", "2", "3", "4","5","5+"];
 
      const [propertyType, setPropertyType] = useState("");
         const propertyTypeOptions = [
@@ -205,6 +236,7 @@ console.log(userId)
 
 
         return (
+          <div>
             <div className="min-h-screen bg-white antialiased font-inter font-outfit">
         <div className='sticky top-0 z-50'>
                        <Navbar />
@@ -213,7 +245,7 @@ console.log(userId)
             <main className="pt-8 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex flex-col lg:flex-row gap-8">
                 {/* Left stepper */}
-                   <aside className="z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-full lg:max-h-[600px] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white   lg:top-22">
+                   <aside className="z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-50% lg:max-h-[600px] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white   lg:top-22">
                                  <div className="p-6">
                                  {/* Step 1 */}
                                  <div className="flex items-start">
@@ -286,12 +318,12 @@ console.log(userId)
                         <h2 className="text-xl font-bold text-gray-900 border-b-2 border-[#1E5C3B] pb-2 flex items-center gap-2">
                         <span className="text-2xl">🏡</span>REMORTGAGE DETAILS
                         </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
 
                         {/* 1. Property Address (Inline Input) */}
                         <div className="flex flex-col h-full">
                             <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-                            Property address:
+                            Property address:<span className="text-red-500">*</span>
                             </label>
                             <div className="relative mt-auto">
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
@@ -301,16 +333,21 @@ console.log(userId)
                                 id="address"
                                 name="address"
                                 type="text"
-                                defaultValue="24 Arab Street, Singapore"
                                 className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
                               onChange={(e)=>{handleChange("address",e.target.value)}}
                             />
                             </div>
+  <p
+className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+   errors.address ? "text-red-500 opacity-100" : "opacity-0"
+}`}>
+  {errors.address || "placeholder"} {/* placeholder keeps same height */}
+</p>
                         </div>
 
                         <div className="flex flex-col h-full">
                             <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
-                            Property value:
+                            Property value:<span className="text-red-500">*</span>
                             </label>
                             <div className="relative mt-auto">
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold text-lg">
@@ -324,12 +361,18 @@ console.log(userId)
                             onChange={(e)=>{handleChange("property_value",Number(e.target.value))}}
                             />
                             </div>
+  <p
+className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+   errors.property_value ? "text-red-500 opacity-100" : "opacity-0"
+}`}>
+  {errors.property_value || "placeholder"} {/* placeholder keeps same height */}
+</p>
                         </div>
 
                         {/* 3. Number of Bedrooms (Inline Select) */}
                         <div className="flex flex-col h-full">
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Number of Bedrooms:
+                                Number of Bedrooms:<span className="text-red-500">*</span>
                             </label>
 
                             <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 mt-auto">
@@ -348,6 +391,12 @@ console.log(userId)
                                 </button>
                                 ))}
                             </div>
+  <p
+className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+   errors.no_of_bedrooms ? "text-red-500 opacity-100" : "opacity-0"
+}`}>
+  {errors.no_of_bedrooms || "placeholder"} {/* placeholder keeps same height */}
+</p>
                             </div>
                     
                         {/* 4. Leasehold or Freehold (Inline Select) */}
@@ -355,7 +404,7 @@ console.log(userId)
                             {/* Leasehold / Freehold Section */}
                             <div className="flex flex-col h-full">
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Leasehold or Freehold?
+                                Leasehold or Freehold?<span className="text-red-500">*</span>
                                 </label>
                                 <div className="grid grid-cols-2 gap-3 mt-auto">
                                 {tenureOptions.map((opt) => (
@@ -373,14 +422,20 @@ console.log(userId)
                                     </button>
                                 ))}
                                 </div>
+  <p
+className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+   errors.leasehold_or_free ? "text-red-500 opacity-100" : "opacity-0"
+}`}>
+  {errors.leasehold_or_free || "placeholder"} {/* placeholder keeps same height */}
+</p>
                                 </div>
                             </div>
                         </div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Property Type:
+                        <label className="block text-sm font-medium text-gray-700 mb-1 ">
+                            Property Type:<span className="text-red-500">*</span>
                             </label>
 
-                            <div className="flex flex-wrap  gap-4">
+                            <div className="flex flex-wrap gap-9">
                             {propertyTypeOptions.map((opt) => (
                                 <button
                                 key={opt.label}
@@ -405,21 +460,26 @@ console.log(userId)
                             ))}
                             </div>
 
-                        
+  <p
+className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+   errors.property_type ? "text-red-500 opacity-100" : "opacity-0"
+}`}>
+  {errors.property_type || "placeholder"} {/* placeholder keeps same height */}
+</p>
                         
                         </div>
 
                          {/* 💰 PURCHASE FINANCE */}
-              <div className="space-y-6">
+              <div className="space-y-6 mb-4">
                 <h2 className="text-xl font-bold text-gray-900 border-b-2 border-[#1E5C3B] pb-2 flex items-center gap-2">
                   <span className="text-2xl">💰</span> PURCHASE FINANCE
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
 
                   {/* 6. Buy to Let? (Inline Select) */}
                   <div className="flex flex-col h-full">
                     <label htmlFor="b2l" className="block text-sm font-medium text-gray-700 mb-1">
-                      Buy to Let?
+                      Buy to Let?<span className="text-red-500">*</span>
                     </label>
                 <div className="relative mt-auto">
   <select
@@ -443,6 +503,12 @@ console.log(userId)
     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
   />
 </div>
+  <p
+className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+   errors.buy_to_let ? "text-red-500 opacity-100" : "opacity-0"
+}`}>
+  {errors.buy_to_let || "placeholder"} {/* placeholder keeps same height */}
+</p>
                   </div>
 
                   {/* 11. Shared Ownership? (Inline ButtonGroup) */}
@@ -474,6 +540,9 @@ console.log(userId)
                         <span>No</span>
                       </button>
                     </div>
+                      <p
+className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
+></p>
                   </div>
 <div className="flex flex-col h-full">
   <label
@@ -505,6 +574,9 @@ console.log(userId)
       className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
     />
   </div>
+    <p
+className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
+></p>
 </div>
 
 
@@ -512,6 +584,7 @@ console.log(userId)
               </div> {/* End PURCHASE FINANCE */}
               <div className="space-y-4">
   {/* Label + Main dropdown */}
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
   <div>
     <label className="block text-sm font-semibold text-gray-800 mb-1">
       Prefer solicitor in your first language?
@@ -526,10 +599,35 @@ console.log(userId)
       <option>Yes</option>
       <option>Maybe</option>
     </select>
+    <p
+className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
+></p>
   </div>
 
   {/* Show only when needed */}
-  {(languagepreference === "Yes" || languagepreference === "Maybe") && (
+ 
+
+
+ <div className="flex flex-col h-full">
+      <label className="block text-sm font-semibold text-gray-800 mb-2">
+        Select Lenders
+      </label>
+      <Select
+        options={options_l}
+          instanceId="lenders-select"
+        isMulti
+        value={selectedLenders} 
+        onChange={handleChange_l}
+        placeholder="Choose lenders..."
+        className="text-black"
+
+      />
+        <p
+className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
+></p>
+    </div>
+    
+     {(languagepreference === "Yes" || languagepreference === "Maybe") && (
 <div className="mt-2">
   <label className="block text-sm font-semibold text-gray-800 mb-2">
     Select preferred language(s)
@@ -557,23 +655,7 @@ console.log(userId)
 </div>
 
   )}
-</div>
-
- <div className="max-w-md mx-auto mt-5">
-      <label className="block text-sm font-semibold text-gray-800 mb-2">
-        Select Lenders
-      </label>
-      <Select
-        options={options_l}
-          instanceId="lenders-select"
-        isMulti
-        value={selectedLenders} 
-        onChange={handleChange_l}
-        placeholder="Choose lenders..."
-        className="text-black"
-
-      />
-    </div>
+    </div></div>
           
                     {/* 🌐 SPECIAL INSTRUCTIONS */}
   
@@ -733,6 +815,8 @@ onClick={()=>{setloginformshow(true)}}
                 </section>
                 </div>
             </main>
+            </div>
+            <Footer />
             </div>
         );
         }

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { API_BASE_URL } from "../.././constants/config";
 import { API_ENDPOINTS, getData, postData } from "../../auth/API/api";
 import { useState } from "react";
+import Footer from "../../parts/Footer/footer";
 
 
 
@@ -66,6 +67,8 @@ export default function Personaldetails() {
 }
 
   return (
+
+    <div>
     <div className="min-h-screen bg-white antialiased font">
       {/* Top bar */}
   
@@ -264,7 +267,8 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
           </section>
         </div>
       </main>
-      
+      </div>
+      <Footer />
     </div>
   );
 }
