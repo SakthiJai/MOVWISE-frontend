@@ -52,12 +52,12 @@ const Navbar = ({ originalstyle = false }) => {
         })}
 
         {/* Register button */}
-        <Link
-          href={`${API_BASE_URL}/getquote`}
+        <button
+          href="quote_type"
           className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
         >
           Get Quote 
-        </Link>
+        </button>
       </nav>
     </header>
   );

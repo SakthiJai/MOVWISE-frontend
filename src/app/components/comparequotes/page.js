@@ -1,11 +1,12 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '../../parts/navbar/page';
 import { RiArrowDropDownLine } from "react-icons/ri";
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { API_BASE_URL } from "../.././constants/config";
+import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
 
 
 export default function Comparequotes() {
@@ -18,6 +19,25 @@ export default function Comparequotes() {
     // console.log(isDropdownOpen);
   }
 
+  
+
+useEffect(() => {
+  const data = localStorage.getItem("getquote");
+
+  if (data) {
+    const parsedData = JSON.parse(data); // ✅ convert string → object
+    qutesdata(parsedData);
+  }
+
+  async function qutesdata(formData) {
+    try {
+      const response = await postData(API_ENDPOINTS.remortages, formData);
+      console.log("✅ Remortgage API Response:", response);
+    } catch (error) {
+      console.error("❌ Failed to post remortgage:", error);
+    }
+  }
+}, []);
 
   return (
     <div className="min-h-screen bg-white antialiased">

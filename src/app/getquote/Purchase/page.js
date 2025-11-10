@@ -10,8 +10,10 @@ import { MdHolidayVillage } from "react-icons/md"; // Material icon
 import { Controller, useForm } from "react-hook-form";
 import Select from 'react-select';
 import dynamic from "next/dynamic";
-import Lenderselection from "../../parts/selectlenders/Lenderselection"
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
+
 
 const customStyles = {
     control: (provided, state) => ({
@@ -65,30 +67,72 @@ const customStyles = {
 
 
 
-const useRouter = () => ({
-  back: () => console.log("Navigation: Going back..."),
-});
+
 
 
 
   
 export default function App() {
 
+
+  async function logindata() {
+  
+    try {
+      console.log(loginformdata)
+      const loginResponse = await postData(API_ENDPOINTS.login, loginformdata);
+      console.log("Login response:", loginResponse);
+  
+      if (loginResponse.code === 200) {
+        const userId = loginResponse.user?.id; // <-- get it from API response
+  console.log(userId)
+        if (userId) {
+          // ✅ Update formData
+        const updatedForm = {
+      ...formData,
+      "user_id": userId,
+    };
+  
+    // ✅ Update React state
+    setFormData(updatedForm);
+      localStorage.setItem("getquote", JSON.stringify(updatedForm));
+  
+        }
+  
+        router.push("/components/comparequotes");
+      }
+    } catch (error) {
+      console.error("Error logging in:", error);
+    }
+  }
+
+const router = useRouter();
+
+function handleloginformchange(name, value) {
+  setloginformdata((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+}
+
 const Select = dynamic(() => import("react-select"), { ssr: false });
- const lenders = useMemo(
-  ()=>[
-    { "id": 1, "lenders_name": "Lender A" },
-    { "id": 2, "lenders_name": "Lender B" },
-    { "id": 3, "lenders_name": "Lender C" },
-    { "id": 4, "lenders_name": "Lender D" },
-    { "id": 5, "lenders_name": "Lender E" },
-    { "id": 6, "lenders_name": "Lender F" },
-    { "id": 7, "lenders_name": "Lender G" },
-    { "id": 8, "lenders_name": "Lender H" },
-    { "id": 9, "lenders_name": "Lender I" },
-    { "id": 10, "lenders_name": "Lender J" }
-  ]
- ) 
+const lenders = [
+  { id: 1, lenders_name: "Lender A" },
+  { id: 2, lenders_name: "Lender B" },
+  { id: 3, lenders_name: "Lender C" },
+  { id: 4, lenders_name: "Lender D" },
+  { id: 5, lenders_name: "Lender E" },
+  { id: 6, lenders_name: "Lender F" },
+  { id: 7, lenders_name: "Lender G" },
+  { id: 8, lenders_name: "Lender H" },
+  { id: 9, lenders_name: "Lender I" },
+  { id: 10, lenders_name: "Lender J" },
+];
+
+  // Convert lenders into react-select format
+  const options_l = lenders.map((lender) => ({
+    value: lender.id,
+    label: lender.lenders_name,
+  }));
 
   const lender_options = lenders.map((lender) => ({
   value: lender.id,
@@ -96,28 +140,48 @@ const Select = dynamic(() => import("react-select"), { ssr: false });
 }));
 const [selectedOptions, setSelectedOptions] = useState([]);
 
- const handleChange = (selected) => {
-    setSelectedOptions(selected || []);
-  };
+const [errors, setErrors] = useState({});
+
+    const [selectedLenders, setSelectedLenders] = useState([]);
+
+    const handleChange_l = (selectedOptions) => {
+      setSelectedLenders(selectedOptions);
+      const ids = selectedOptions.map(item => item.value);
+      console.log("Selected lenders:", ids);
+      handleChange("Lenders",ids)
+    };
+  
+
+const handleChange = (field, value) => {
+  setFormData((prev) => ({
+    ...prev,
+    [field]: value,
+  }));
+
+  // Clear error immediately when user types/selects valid input
+  if (errors[field]) {
+    setErrors((prev) => ({ ...prev, [field]: "" }));
+  }
+};
 
 
   const [query, setQuery] = useState("");
 
  const addressapi = async (query) => {
-  if (!query) return;
+  // if (!query) return;
 
-  try {
-    const res = await fetch(`https://api.postcodes.io/postcodes?q=${query}`);
-    const data = await res.json();
+  // try {
+  //   const res = await fetch(`https://api.postcodes.io/postcodes?q=${query}`);
+  //   const data = await res.json();
 
-    if (data.status === 200 && data.result) {
-      console.log("Matching results:", data.result);
-    } else {
-      console.log("No matching results found");
-    }
-  } catch (err) {
-    console.error("API error:", err);
-  }
+  //   if (data.status === 200 && data.result) {
+  //     console.log("Matching results:", data.result);
+  //   } else {
+  //     console.log("No matching results found");
+  //   }
+  // } catch (err) {
+  //   console.error("API error:", err);
+  // }
 };
 
 
@@ -140,21 +204,62 @@ const [addresssuggestion,setaddressuggestion]=useState([]);
   const [languagepreference, setlanguagepreference] = useState(" ");
   const [language, setLanguage] = useState([]);
 
- const {handleSubmit, register,  watch, setValue, trigger,  control, formState: { errors, }  } = useForm();
-  const formValues = watch();
 
-  const onsubmit = (data) => {
-    localStorage.setItem("myFormData", JSON.stringify(formValues));
-        setModalopen(true);
-const lenderid=formValues.lenders_id?.map((lenders)=> lenders.value)||[]
-    // Create payload
-    const payload = {
-...data,
-lenders_id: lenderid,
-    };
-    console.log("✅ Payload:", payload);
+  
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    // simple validation
+    let newErrors = {};
+
+ 
+  
+  if(!formData.languages){
+    newErrors.languages="please select a language"
+  }
+
+  if(!formData.address){
+    newErrors.address="please select a address"
+  }
+
+  if(!formData.purchase_price){
+    newErrors.purchase_price="please select a purchaseprice"
+  }
+
+ if(!formData.no_of_bedrooms){
+  newErrors.no_of_bedrooms="please select a no. of bedrooms"
+ }
+  if(!formData.property_type){
+  newErrors.property_type="please select a property_type"
+ }
+   if(!formData.leasehold_or_free){
+  newErrors.leasehold_or_free="please select a leasehold_or_free"
+ }
+
+  if(!formData.new_build){
+  newErrors.new_build="please select a new_build"
+ }
+if(!formData.property_type){
+  newErrors.property_type="please select property_type"
+}
+
+
+
+if(!formData.buy_to_let){
+  newErrors.buy_to_let="please select buy_to_let"
+}
+    setErrors(newErrors);
+    console.log(errors)
+
+    // if no errors, submit
+    if (Object.keys(newErrors).length === 0) {
+      console.log("✅ Form submitted:", formData);
+      alert("Form submitted successfully!");
+          setModalopen(true)
+
+    }
+
   };
-
   const [tenure, setTenure] = useState("");
 
   const tenureOptions = ["Leasehold", "Freehold"];
@@ -171,39 +276,52 @@ lenders_id: lenderid,
     { label: "Semi-detached", icon: <MdHolidayVillage size={22} color="#FFC107" /> },
     { label: "Detached", icon: <FaWarehouse size={22} color="#DC3545" /> },
   ];
-  const lang = ["English", "Spanish", "French", "German", "Chinese", "Hindi", "Arabic", "Portuguese", "Russian", "Japanese"]
-  const [formData, setFormData] = useState({
-    sharedOwnership: "",
-    existingMortgage: "",
+  const lang=[
+    { id: 1, language_name: "English" },
+    { id: 2, language_name: "Spanish" },
+    { id: 3, language_name: "French" },
+    { id: 4, language_name: "German" },
+    { id: 5, language_name: "Chinese" },
+    { id: 6, language_name: "Hindi" },
+    { id: 7, language_name: "Arabic" },
+    { id: 8, language_name: "Portuguese" },
+    { id: 9, language_name: "Russian" },
+    { id: 10, language_name: "Japanese" },
+  ];  const [formData, setFormData] = useState({
+
+    "languages": [],
   });
 
+  const [loginformdata, setloginformdata] = useState({
+    email: "",
+    password: "",
+  });
+
+  
   function handlelanguagechange(e) {
     console.log(e.target.value);
     setlanguagepreference(e.target.value);
     setLanguage([]);
   }
 
-  function languagecheckboxchange(item, checked) {
-    if (checked) {
-      setLanguage(prev => [...prev, item]);
-      console.log(language);
+  function languagecheckboxchange(item,checked,id){
+    if(checked){
+setLanguage(prev => [...prev, item]);
+handleChange("languages",[...formData.languages, id])
+console.log(language);
 
     }
-    else {
-      setLanguage(prev => prev.filter(lang => lang !== item))
+    else{
+      setLanguage(prev=>prev.filter(lang=>lang!==item))
     }
+        
+      
+       }
+
+    const [loginformshow,setloginformshow]=useState(false)
 
 
-  }
 
-console.log()
-  const router = useRouter();
-
-  // Initial state for the toggle buttons
-  const [scheme, setScheme] = useState("yes");
-  const [mortgage, setMortgage] = useState("yes");
-  const [newBuild, setNewBuild] = useState("");
-  const [sharedOwnership, setSharedOwnership] = useState("yes");
 
   return (
     <div className="min-h-screen bg-white antialiased font-inter font-outfit">
@@ -282,191 +400,178 @@ console.log()
 
 
 
-            <form className="mt-8 space-y-10" onSubmit={handleSubmit(onsubmit)}>
+            <form className="mt-8 space-y-10" >
               {/* 🏡 PURCHASE DETAILS */}
               <div className="space-y-6">
                 <h2 className="text-xl font-bold text-gray-900 border-b-2 border-[#1E5C3B] pb-2 flex items-center gap-2">
                   <span className="text-2xl">🏡</span> PURCHASE DETAILS
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      What stage are you at?
-                    </label>
+                <div className="flex flex-col">
+        <label
+          htmlFor="stages"
+          className="block text-sm font-medium text-gray-700 mb-1"
+        >
+          Select Stage:
+        </label>
 
-                    <select
-                      id="stage"
-                      {...register("stage", { required: "Please select a stage" })}
-                      className={`block w-full h-[44px] rounded-xl border px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10 ${errors.stage ? "border-red-500" : "border-gray-300"
-                        }`}
-                    >
-                      {[
-                        "Please select",
-                        "Just researching / budgeting",
-                        "Have received an offer",
-                        "Sale agreed",
-                      ].map((opt) => (
-                        <option key={opt} value={opt === "Please select" ? "" : opt}>
-                          {opt}
-                        </option>
-                      ))}
-                    </select>
+        <select
+          id="stages"
+          value={formData.stages}
+          onChange={(e) => handleChange("stages", e.target.value)}
+          className={`block w-full h-[44px] rounded-xl border px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10 ${
+            errors.stages ? "border-red-500" : "border-gray-300"
+          }`}
+        >
+          <option value="">Please select</option>
+          <option value="Initial Stage">Initial Stage</option>
+          <option value="Just researching / budgeting">
+            Just researching / budgeting
+          </option>
+          <option value="Have received an offer">
+            Have received an offer
+          </option>
+          <option value="Sale agreed">Sale agreed</option>
+        </select>
 
-                    {errors.stage && (
-                      <p className="text-red-500 text-sm mt-1">{errors.stage.message}</p>
-                    )}
-                  </div>
+        {errors.stages && (
+          <p className="text-red-500 text-sm mt-1">{errors.stages}</p>
+        )}
+      </div>
 
                   {/* 1. Property Address (Inline Input) */}
-                  <div className="flex flex-col h-full">
-                    <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-                      Property address:
-                    </label>
-                    <div className="relative mt-auto">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                        <MapPin size={16} />
-                      </span>
-                      <input
-                        id="address"
-                        type="text"
-                        className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
-   {...register("Propertyaddress", { required: "Please enter Propertyaddress" })}
-       value={query}
-            onChange={(e) => setQuery(e.target.value)}
-                      />
-                    </div>
-                      {errors.Propertyaddress && (
-                      <p className="text-red-500 text-sm mt-1">{errors.Propertyaddress.message}</p>
-                    )}
-                  </div>
+                   <div className="flex flex-col h-full">
+                                             <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                                             Property address:
+                                             </label>
+                                             <div className="relative mt-auto">
+                                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
+                                                 <MapPin size={16} />
+                                             </span>
+                                             <input
+                                                 id="address"
+                                                 name="address"
+                                                 type="text"
+                                                 className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
+                                               onChange={(e)=>{handleChange("address",e.target.value)}}
+                                             />
+                                             </div>
+                                                                                 {errors.address && (
+    <p className="text-red-500 text-sm mt-1">{errors.address}</p>
+  )}
+                                         </div>
+     
 
                   {/* 2. Agreed purchase Price (Inline Input with Prefix) */}
                   <div className="flex flex-col h-full">
-                    <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
-                      Agreed purchase price:
-                    </label>
-                    <div className="relative mt-auto">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold text-lg">
-                        £
-                      </span>
-                      <input
-                        id="price"
-                        type="number"
-                        className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
-                     {...register("Agreedsalesprice",{required:"plese enter Agreed sales price"})}
-                     />
-                    </div>
-  {errors.Agreedsalesprice && (
-                      <p className="text-red-500 text-sm mt-1">{errors.Agreedsalesprice.message}</p>
-                    )}
-                  </div>
+  <label htmlFor="purchase_price" className="block text-sm font-medium text-gray-700 mb-1">
+    Agreed purchase price:
+  </label>
 
-                  {/* 3. Number of Bedrooms (Inline Select) */}
-                  <div className="flex flex-col h-full">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Number of Bedrooms:
-                    </label>
-                 
-<div className="">
-  <input
-    type="hidden"
-    {...register("bedrooms", { required: "Please select number of bedrooms" })}
-    value={bedrooms}
-  />
+  <div className="relative mt-auto">
+    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold text-lg">
+      £
+    </span>
 
-  <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 mt-auto">
-    {options.map((opt) => (
-    <button
-  key={opt}
-  type="button"
-  onClick={() => {
-    setBedrooms(opt);
-    setValue("bedrooms", opt); // ✅ update RHF field value
-    trigger("bedrooms"); // ✅ re-run validation immediately
-  }}
-  className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm
-    ${
-      bedrooms === opt
-        ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
-        : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-    }`}
->
-  <span>{opt}</span>
-</button>
-    ))}
+    <input
+      id="purchase_price"
+      name="purchase_price"
+      type="number"
+      value={formData.purchase_price || ""}
+      onChange={(e) => {
+        setFormData({ ...formData, purchase_price: Number( e.target.value ) });
+
+        // clear error when typing
+        if (errors.purchase_price) {
+          setErrors({ ...errors, purchase_price: "" });
+        }
+      }}
+      className={`block w-full h-[44px] rounded-xl border pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors ${
+        errors.purchase_price ? "border-red-500" : "border-gray-300"
+      }`}
+    />
   </div>
 
-  {errors.bedrooms && (
-    <p className="text-red-500 text-sm mt-1">{errors.bedrooms.message}</p>
+  {errors.purchase_price && (
+    <p className="text-red-500 text-sm mt-1">{errors.purchase_price}</p>
   )}
 </div>
 
-                  </div>
+
+                  {/* 3. Number of Bedrooms (Inline Select) */}
+                  <div className="flex flex-col h-full">
+                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Number of Bedrooms:
+                            </label>
+
+                            <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 mt-auto">
+                                {options.map((opt) => (
+                                <button
+                                    key={opt}
+                                    type="button"
+ onClick={() => handleChange("no_of_bedrooms", opt)}                 
+                    className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm
+                                    ${
+   formData.no_of_bedrooms === opt                                        ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+                                        : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                                    }`}
+                                >
+                                    <span>{opt}</span>
+                                </button>
+                                ))}
+                            </div>
+                            {errors.no_of_bedrooms && (
+    <p className="text-red-500 text-sm mt-1">{errors.no_of_bedrooms}</p>
+  )}
+                            </div> 
 
                   {/* 4. Leasehold or Freehold (Inline Select) */}
                   <div className="flex flex-col gap-6">
-  {/* Leasehold / Freehold Section */}
-  <div className="flex flex-col h-full">
-    <label className="block text-sm font-medium text-gray-700 mb-1">
-      Leasehold or Freehold?
-    </label>
+                            {/* Leasehold / Freehold Section */}
+                            <div className="flex flex-col h-full">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                Leasehold or Freehold?
+                                </label>
+                                <div className="grid grid-cols-2 gap-3 mt-auto">
+                                {tenureOptions.map((opt) => (
+                                    <button
+                                    key={opt}
+                                    type="button"
+                                    onClick={() => handleChange("leasehold_or_free",opt)}
+                                    className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+                                     formData.Tenure === opt
+                                        ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+                                        : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                                    }`}
+                                    >
+                                    {opt}
+                                    </button>
+                                ))}
+                                </div>
+                                </div>
+                  {errors.leasehold_or_free&&(
+                                  <p className="text-red-500 text-sm mt-1">{errors.leasehold_or_free}</p>
 
-    {/* Hidden input registered with react-hook-form */}
-    <input
-      type="hidden"
-      {...register("tenure", { required: "Please select leasehold or freehold" })}
-      value={tenure}
-    />
+                            )}
+                            </div>
 
-    <div className="grid grid-cols-2 gap-3 mt-auto">
-      {tenureOptions.map((opt) => (
-        <button
-          key={opt}
-          type="button"
-          onClick={() => {setTenure(opt)
-         setValue("tenure", opt); 
-    trigger("tenure");
-        }}
-          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-            tenure === opt
-              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
-              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-          }`}
-        >
-          {opt}
-        </button>
-      ))}
-    </div>
+                            <div>
 
-    {errors.tenure && (
-      <p className="text-red-500 text-sm mt-1">{errors.tenure.message}</p>
-    )}
-  </div>
-</div>
-
-
-                  <div>
   <label className="block text-sm font-medium text-gray-700 mb-1">
     New build?
   </label>
-
-  {/* Hidden input for React Hook Form tracking */}
-  <input
-    type="hidden"
-    {...register("newBuild", { required: "Please select if this is a new build" })}
-    value={newBuild}
-  />
 
   <div className="grid grid-cols-2 gap-3 mt-auto">
     <button
       type="button"
       onClick={() => {
-        setNewBuild("yes");
-        setValue("newBuild", "yes"); // ✅ update react-hook-form value
-        trigger("newBuild"); // ✅ re-run validation to clear error
+        setFormData({ ...formData, new_build: 1 }); // ✅ store numeric 1
+        if (errors.new_build) {
+          setErrors({ ...errors, new_build: "" }); // clear error
+        }
       }}
       className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-        newBuild === "yes"
+        formData.new_build === 1
           ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
           : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
       }`}
@@ -477,12 +582,13 @@ console.log()
     <button
       type="button"
       onClick={() => {
-        setNewBuild("no");
-        setValue("newBuild", "no"); // ✅ update react-hook-form value
-        trigger("newBuild"); // ✅ re-run validation to clear error
+        setFormData({ ...formData, new_build: 0 }); // ✅ store numeric 0
+        if (errors.new_build) {
+          setErrors({ ...errors, new_build: "" }); // clear error
+        }
       }}
       className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-        newBuild === "no"
+        formData.new_build === 0
           ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
           : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
       }`}
@@ -491,57 +597,46 @@ console.log()
     </button>
   </div>
 
-  {errors.newBuild && (
-    <p className="text-red-500 text-sm mt-1">{errors.newBuild.message}</p>
-  )}
+
 </div>
+
 
                 </div>
               
                 <div>
                   <div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">
-    Property Type
-  </label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Property Type:
+                            </label>
 
-  {/* ✅ Hidden input registered with React Hook Form */}
-  <input
-    type="hidden"
-    {...register("propertyType", { required: "Please select a property type" })}
-    value={propertyType}
-  />
+                            <div className="flex flex-wrap  gap-4">
+                            {propertyTypeOptions.map((opt) => (
+                                <button
+                                key={opt.label}
+                                type="button"
+                                onClick={()=> handleChange ( "property_type",opt.label)}
+                                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 transition-all duration-200 shadow-sm w-[170.76px]
+                                    ${
+                                   formData.property_type === opt.label
+                                        ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+                                        : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                                    }`}
+                                >
+                                <span
+                                    className={`${
+                                    propertyType === opt.label ? "text-[#1E5C3B]" : "text-gray-700"
+                                    } text-[18px]`}
+                                >
+                                    {opt.icon}
+                                </span>
+                                <span className="text-sm font-semibold">{opt.label}</span>
+                                </button>
+                            ))}
+                            </div>
+                            {errors.property_type&&(
+                                  <p className="text-red-500 text-sm mt-1">{errors.property_type}</p>
 
-  <div className="flex flex-wrap gap-8.5 w-auto">
-    {propertyTypeOptions.map((opt) => (
-      <button
-        key={opt.label}
-        type="button"
-        onClick={() => {setPropertyType(opt.label);
-          setValue("propertyType",opt.label);
-          trigger("propertyType");
-        }}
-        className={`flex items-center  gap-2 mr-1 px-5  py-3 rounded-xl border-2 transition-all duration-200 shadow-sm w-[170.76px]
-          ${
-            propertyType === opt.label
-              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
-              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-          }`}
-      >
-        <span
-          className={`${
-            propertyType === opt.label ? "text-[#1E5C3B]" : "text-gray-700"
-          } text-[18px]`}
-        >
-          {opt.icon}
-        </span>
-        <span className="text-sm font-semibold">{opt.label}</span>
-      </button>
-    ))}
-  </div>
-
-  {errors.propertyType && (
-    <p className="text-red-500 text-sm mt-1">{errors.propertyType.message}</p>
-  )}
+                            )}
 </div>
 
                 </div>
@@ -555,70 +650,59 @@ console.log()
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
 
                   {/* 6. Buy to Let? (Inline Select) */}
-                 <div className="flex flex-col h-full">
-  <label
-    htmlFor="b2l"
-    className="block text-sm font-medium text-gray-700 mb-1"
-  >
-    Buy to Let?
-  </label>
+           <div className="flex flex-col h-full">
+                             <label htmlFor="b2l" className="block text-sm font-medium text-gray-700 mb-1">
+                               Buy to Let?
+                             </label>
+                         <div className="relative mt-auto">
+           <select
+             name="buy_to_let"
+             id="b2l"
+             value={formData.buy_to_let || ""}  // ✅ controlled value
+             onChange={(e) => handleChange("buy_to_let", e.target.value)}  // ✅ update formData
+             className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"
+           >
+             {["Please select", "No", "Yes - Personal name", "Yes - Company name"].map(
+               (opt) => (
+                 <option key={opt} value={opt}>
+                   {opt}
+                 </option>
+               )
+             )}
+           </select>
+         
+           <ChevronDown
+             size={16}
+             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+           />
+         </div>
+          {errors.buy_to_let&&(
+                                  <p className="text-red-500 text-sm mt-1">{errors.buy_to_let}</p>
 
-  <div className="relative mt-auto">
-    <select
-      id="b2l"
-      {...register("buyToLet", { required: "Please select an option" })}
-      defaultValue=""
-      className={`block w-full h-[44px] rounded-xl border px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10 ${
-        errors.buyToLet ? "border-red-500" : "border-gray-300"
-      }`}
-    >
-      <option value="">Please select</option>
-      {["No", "Yes - Personal name", "Yes - Company name"].map((opt) => (
-        <option key={opt} value={opt}>
-          {opt}
-        </option>
-      ))}
-    </select>
-
-    <ChevronDown
-      size={16}
-      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
-    />
-  </div>
-
-  {errors.buyToLet && (
-    <p className="text-red-500 text-sm mt-1">{errors.buyToLet.message}</p>
-  )}
-</div>
+                            )}
+                           </div>
 
 
                   {/* 7. Government Right to Buy scheme? (Inline ButtonGroup) */}
-       <div className="flex flex-col h-full">
+                  <div className="flex flex-col h-full">
   <label className="block text-sm font-medium text-gray-700 mb-1">
     Using Government Right to Buy scheme?
   </label>
 
-  {/* Hidden input for validation */}
-  <input
-    type="hidden"
-    {...register("scheme", { required: "Please select Yes or No" })}
-    value={scheme}
-  />
-
   <div className="grid grid-cols-2 gap-3 mt-auto">
     <button
       type="button"
       onClick={() => {
-        setScheme("yes");
-        setValue("scheme", "yes", { shouldValidate: true });
-        trigger("scheme");
+        setFormData({ ...formData, govt_buy_scheme: 1 }); // ✅ store 1 for yes
+        if (errors.govt_buy_scheme) {
+          setErrors({ ...errors, govt_buy_scheme: "" }); // clear error
+        }
       }}
-      className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm
-        ${
-          scheme === "yes"
-            ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
-            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-        }`}
+      className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+        formData.govt_buy_scheme === 1
+          ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+          : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+      }`}
     >
       <span>Yes</span>
     </button>
@@ -626,54 +710,48 @@ console.log()
     <button
       type="button"
       onClick={() => {
-        setScheme("no");
-        setValue("scheme", "no", { shouldValidate: true });
-        trigger("scheme");
+        setFormData({ ...formData, govt_buy_scheme: 0 }); // ✅ store 0 for no
+        if (errors.govt_buy_scheme) {
+          setErrors({ ...errors, govt_buy_scheme: "" }); // clear error
+        }
       }}
-      className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm
-        ${
-          scheme === "no"
-            ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
-            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-        }`}
+      className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+        formData.govt_buy_scheme === 0
+          ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+          : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+      }`}
     >
       <span>No</span>
     </button>
   </div>
 
-  {errors.scheme && (
-    <p className="text-red-500 text-sm mt-1">{errors.scheme.message}</p>
+  {errors.govt_buy_scheme && (
+    <p className="text-red-500 text-sm mt-1">{errors.govt_buy_scheme}</p>
   )}
 </div>
 
 
 
-            <div className="flex flex-col h-full">
+
+<div className="flex flex-col h-full">
   <label className="block text-sm font-medium text-gray-700 mb-1">
     Obtaining a mortgage?
   </label>
 
-  {/* Hidden input for React Hook Form validation */}
-  <input
-    type="hidden"
-    {...register("mortgage", { required: "Please select Yes or No" })}
-    value={mortgage}
-  />
-
   <div className="grid grid-cols-2 gap-3 mt-auto">
     <button
       type="button"
       onClick={() => {
-        setMortgage("yes");
-        setValue("mortgage", "yes", { shouldValidate: true });
-        trigger("mortgage");
+        setFormData({ ...formData, obtaining_mortgage: 1 }); // ✅ store 1 for yes
+        if (errors.obtaining_mortgage) {
+          setErrors({ ...errors, obtaining_mortgage: "" }); // clear error on change
+        }
       }}
-      className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm
-        ${
-          mortgage === "yes"
-            ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
-            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-        }`}
+      className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+        formData.obtaining_mortgage === 1
+          ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+          : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+      }`}
     >
       <span>Yes</span>
     </button>
@@ -681,71 +759,83 @@ console.log()
     <button
       type="button"
       onClick={() => {
-        setMortgage("no");
-        setValue("mortgage", "no", { shouldValidate: true });
-        trigger("mortgage");
+        setFormData({ ...formData, obtaining_mortgage: 0 }); // ✅ store 0 for no
+        if (errors.obtaining_mortgage) {
+          setErrors({ ...errors, obtaining_mortgage: "" });
+        }
       }}
-      className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm
-        ${
-          mortgage === "no"
-            ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
-            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-        }`}
+      className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+        formData.obtaining_mortgage === 0
+          ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+          : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+      }`}
     >
       <span>No</span>
     </button>
   </div>
 
-  {errors.mortgage && (
-    <p className="text-red-500 text-sm mt-1">{errors.mortgage.message}</p>
+  {errors.obtaining_mortgage && (
+    <p className="text-red-500 text-sm mt-1">{errors.obtaining_mortgage}</p>
   )}
 </div>
+
 
 
 
                   {/* 9. Mortgage Lender (Inline Select) */}
-                <div className="flex flex-col h-full">
-  <label htmlFor="lender" className="block text-sm font-medium text-gray-700 mb-1">
-    Mortgage Lender (If Known)
-  </label>
-
-  <div className="relative mt-auto">
-    <select
-      id="lender"
-      {...register("lender", { required: "Please select a lender option" })}
-      defaultValue=""
-      className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"
-    >
-      <option value="" disabled>Select...</option>
-      {["Not Known", "Not required", "Lender Name", "Look up"].map((opt) => (
-        <option key={opt} value={opt}>{opt}</option>
-      ))}
-    </select>
-
-    <ChevronDown
-      size={16}
-      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
-    />
-  </div>
-
-  {errors.lender && (
-    <p className="text-red-500 text-sm mt-1">{errors.lender.message}</p>
-  )}
-</div>
+           <div className="flex flex-col h-full">
+             <label
+               htmlFor="b2l"
+               className="block text-sm font-medium text-gray-700 mb-1"
+             >
+               Mortgage Lender
+             </label>
+           
+             <div className="relative mt-auto">
+               <select
+                 id="b2l"
+                 name="mortgage_lender"
+                 value={formData.mortgage_lender || ""} // ✅ controlled value
+                 onChange={(e) => handleChange("mortgage_lender", e.target.value)} // ✅ updates formData
+                 className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"
+               >
+                 {["Please select", "Not Known", "Not Required", "Lender Name Look Up"].map(
+                   (opt) => (
+                     <option key={opt} value={opt}>
+                       {opt}
+                     </option>
+                   )
+                 )}
+               </select>
+           
+               <ChevronDown
+                 size={16}
+                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+               />
+             </div>
+           </div>
 
 
                   {/* 10. Receiving a gifted deposit? (Inline Select) */}
-              <div className="flex flex-col h-full">
-  <label htmlFor="gifted_deposit" className="block text-sm font-medium text-gray-700 mb-1">
+                  <div className="flex flex-col h-full">
+  <label htmlFor="gift_deposit" className="block text-sm font-medium text-gray-700 mb-1">
     Receiving a gifted deposit?
   </label>
 
   <div className="relative mt-auto">
     <select
-      id="gifted_deposit"
-      {...register("gifted_deposit", { required: "Please select a gifted deposit option" })}
-      defaultValue=""
-      className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"
+      id="gift_deposit"
+      name="gift_deposit"
+      value={formData.gift_deposit || ""}
+      onChange={(e) => {
+        setFormData({ ...formData, gift_deposit: e.target.value });
+        if (errors.gift_deposit) {
+          setErrors({ ...errors, gift_deposit: "" });
+        }
+      }}
+      className={`block w-full h-[44px] rounded-xl border px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10 ${
+        errors.gift_deposit ? "border-red-500" : "border-gray-300"
+      }`}
     >
       <option value="" disabled>Select...</option>
       {["None", "1 Gifted deposit", "2 Gifted deposit", "3 Gifted deposit"].map((opt) => (
@@ -759,39 +849,33 @@ console.log()
     />
   </div>
 
-  {errors.gifted_deposit && (
-    <p className="text-red-500 text-sm mt-1">{errors.gifted_deposit.message}</p>
+  {errors.gift_deposit && (
+    <p className="text-red-500 text-sm mt-1">{errors.gift_deposit}</p>
   )}
 </div>
 
 
+
                   {/* 11. Shared Ownership? (Inline ButtonGroup) */}
-                <div className="flex flex-col h-full">
+                  <div className="flex flex-col h-full">
   <label className="block text-sm font-medium text-gray-700 mb-1">
     Shared Ownership via housing association?
   </label>
-
-  {/* Hidden input for React Hook Form validation */}
-  <input
-    type="hidden"
-    {...register("sharedOwnership", { required: "Please select Yes or No" })}
-    value={sharedOwnership}
-  />
 
   <div className="grid grid-cols-2 gap-3 mt-auto">
     <button
       type="button"
       onClick={() => {
-        setSharedOwnership("yes");
-        setValue("sharedOwnership", "yes");
-        trigger("sharedOwnership");
+        setFormData({ ...formData, ownership_housing_asso: 1 });
+        if (errors.ownership_housing_asso) {
+          setErrors({ ...errors, ownership_housing_asso: "" });
+        }
       }}
-      className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm
-        ${
-          sharedOwnership === "yes"
-            ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
-            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-        }`}
+      className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+        formData.ownership_housing_asso === 1
+          ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+          : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+      }`}
     >
       <span>Yes</span>
     </button>
@@ -799,25 +883,26 @@ console.log()
     <button
       type="button"
       onClick={() => {
-        setSharedOwnership("no");
-        setValue("sharedOwnership", "no");
-        trigger("sharedOwnership");
+        setFormData({ ...formData, ownership_housing_asso: 0 });
+        if (errors.ownership_housing_asso) {
+          setErrors({ ...errors, ownership_housing_asso: "" });
+        }
       }}
-      className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm
-        ${
-          sharedOwnership === "no"
-            ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
-            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-        }`}
+      className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+        formData.ownership_housing_asso === 0
+          ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+          : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+      }`}
     >
       <span>No</span>
     </button>
   </div>
 
-  {errors.sharedOwnership && (
-    <p className="text-red-500 text-sm mt-1">{errors.sharedOwnership.message}</p>
+  {errors.ownership_housing_asso && (
+    <p className="text-red-500 text-sm mt-1">{errors.ownership_housing_asso}</p>
   )}
 </div>
+
 
                 </div>
               </div> {/* End PURCHASE FINANCE */}
@@ -825,171 +910,229 @@ console.log()
               {/* 🌐 SPECIAL INSTRUCTIONS */}
 
               {/* Prefer solicitor in your first language */}
-              <div className="grid grid-cols-2 gap-4 "> 
-                    <div className="space-y-4">
-                {/* Label + Main dropdown */}
-                <div>
-                  <label className="block text-sm font-semibold text-gray-800 mb-1">
-                    Prefer solicitor in your first language?
-                  </label>
-                  <select
-                    className="text-black placeholder-black w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1E5C3B]"
-                    onChange={handlelanguagechange}
-                    value={languagepreference}
-                  >
-                    <option value="">Please select</option>
-                    <option>No Preference</option>
-                    <option>Yes</option>
-                    <option>Maybe</option>
-                  </select>
-                </div>
+              <div className="space-y-4">
+  {/* Label + Main dropdown */}
+  <div>
+    <label className="block text-sm font-semibold text-gray-800 mb-1">
+      Prefer solicitor in your first language?
+    </label>
+    <select
+      className="text-black placeholder-black w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1E5C3B]"
+      onChange={handlelanguagechange}
+      value={languagepreference}
+    >
+      <option value="">Please select</option>
+      <option>No Preference</option>
+      <option>Yes</option>
+      <option>Maybe</option>
+    </select>
+  </div>
 
-                {/* Show only when needed */}
-                {(languagepreference === "Yes" || languagepreference === "Maybe") && (
-                  <div className="mt-2">
-                    <label className="block text-sm font-semibold text-gray-800 mb-2">
-                      Select preferred language(s)
-                    </label>
+  {/* Show only when needed */}
+  {(languagepreference === "Yes" || languagepreference === "Maybe") && (
+<div className="mt-2">
+  <label className="block text-sm font-semibold text-gray-800 mb-2">
+    Select preferred language(s)
+  </label>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 border border-gray-200 p-3 rounded-lg bg-gray-50">
-                      {lang.map((item, index) => (
-                        <label
-                          key={index}
-                          className="flex items-center gap-2 p-2 rounded-md cursor-pointer hover:bg-green-50 transition"
-                        >
-                          <input
-                            type="checkbox"
-                            value={item}
-                            onChange={(e) => languagecheckboxchange(item, e.target.checked)}
-                            className="accent-[#1E5C3B] w-4 h-4"
-                          />
-                          <span className="text-gray-800 text-sm font-medium">{item}</span>
-                        </label>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-           <div className="">
-        <label className="block text-black font-medium ">
-          Select Lenders:
-        </label>
-
-        <Controller
-          name="lenders_id"
-          control={control}
-          rules={{ required: "Please select lender name" }}
-          render={({ field }) => (
-            <Select
-              {...field}
-              isMulti
-              options={lender_options}
-              placeholder="Select lenders..."
-              styles={customStyles}
-              value={field.value || []}
-              onChange={(selected) => field.onChange(selected)}
-            />
-          )}
+  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 border border-gray-200 p-3 rounded-lg bg-gray-50">
+    {lang.map((item,index) => (
+      <label
+        key={item.id}
+        className="flex items-center gap-2 p-2 rounded-md cursor-pointer hover:bg-green-50 transition"
+      >
+        <input
+          type="checkbox"
+          key={index}
+          value={item.language_name}
+          onChange={(e) => languagecheckboxchange(item.language_name, e.target.checked,item.id)}
+          className="accent-[#1E5C3B] w-4 h-4"
         />
+        <span className="text-gray-800 text-sm font-medium">
+          {item.language_name}
+        </span>
+      </label>
+    ))}
+  </div>
+ 
+</div>
 
-        {errors.lenders_id && (
-          <p className="text-red-500 text-sm mt-1">
-            {errors.lenders_id.message}
-          </p>
-        )}
-      </div>
-      {/* <Lenderselection control={control} errors={errors} /> */}
+  )}
+</div>
 
-              </div>
+ <div className="max-w-md mx-auto mt-5">
+      <label className="block text-sm font-semibold text-gray-800 mb-2">
+        Select Lenders
+      </label>
+       <Select
+        options={options_l}
+          instanceId="lenders-select"
+        isMulti
+        value={selectedLenders}
+        onChange={handleChange_l}
+        placeholder="Choose lenders..."
+        className="text-black"
+
+      /> 
+    </div>
           
+                    {/* 🌐 SPECIAL INSTRUCTIONS */}
+  
+<div>
+  <label className="block text-sm font-semibold text-gray-800 mb-1">
+    Special instructions (Optional)
+  </label>
+  <textarea
+  name="specal_instruction"
+  onChange={(e)=>handleChange("specal_instruction",e.target.value)}
+    className="w-full border border-gray-300 rounded-lg px-3 py-2 h-28 resize-none focus:outline-none focus:ring-2 focus:ring-[#1E5C3B] text-black placeholder-black"
+    placeholder="Enter any special instructions..."
+  ></textarea>
+</div>
 
-              {/* Special instructions */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-800 mb-1">
-                  Special instructions (Optional)
-                </label>
-                <textarea
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 h-28 resize-none focus:outline-none focus:ring-2 focus:ring-[#1E5C3B] text-black placeholder-black"
-                  placeholder="Enter any special instructions..."
-                ></textarea>
-              </div>
 
-              {modalopen && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                  <div className="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-3xl h-[500px] grid grid-cols-1 md:grid-cols-[35%_65%] animate-scale-in relative">
+                    </form>
 
-                    {/* LEFT SIDE (Brand Section - 30%) */}
-                    <div className="text-center bg-gradient-to-br from-[#1E5C3B] to-green-600 text-white flex flex-col justify-between items-center md:items-start p-8">
-                      <div className="mt-20">
-                        <h2 className="text-3xl font-extrabold tracking-wide mb-2">MOVWISE</h2>
-                        <p className="text-sm opacity-90 leading-relaxed mt-20">
-                          Making property transactions simple, secure, and smart.
-                        </p>
-                      </div>
+                    {modalopen && (
+  <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-3xl h-[500px] grid grid-cols-1 md:grid-cols-[35%_65%] animate-scale-in relative">
+      
+      {/* LEFT SIDE (Brand Section - 30%) */}
+      <div className="text-center bg-gradient-to-br from-[#1E5C3B] to-green-600 text-white flex flex-col justify-between items-center md:items-start p-8">
+        <div className="mt-20">
+          <h2 className="text-3xl font-extrabold tracking-wide mb-2">MOVWISE</h2>
+          <p className="text-sm opacity-90 leading-relaxed mt-20">
+            Making property transactions simple, secure, and smart.
+          </p>
+        </div>
 
-                      <button className="mt-8 mx-auto bg-white text-[#1E5C3B] font-semibold px-8 py-2 rounded-full hover:bg-gray-100 transition-all duration-200 shadow-md">
-                        Sign Up
-                      </button>
+        <Link
+        type="button"
+ href="/components/personaldetails" 
+         className="mt-8 mx-auto bg-white text-[#1E5C3B] font-semibold px-8 py-2 rounded-full hover:bg-gray-100 transition-all duration-200 shadow-md">
+          Sign Up
+        </Link>
+      </div>
+
+      {/* RIGHT SIDE (Content Section - 70%) */}
+    {!loginformshow &&  ( <div className="relative p-8 flex flex-col justify-center text-center md:text-left">
+        {/* Close Button */}
+        <button
+          onClick={() => setModalopen(false)}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-3xl font-bold leading-none"
+        >
+          &times;
+        </button>
+
+        <h2 className="text-2xl font-bold text-[#1E5C3B] mb-3">Confirm Submission</h2>
+        <p className="text-gray-600 mb-8 leading-relaxed">
+          You’re about to submit your <b>Property Details</b>.  
+          Would you like to continue as a <b>logged-in user</b> or a <b>guest user</b>?
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <button
+  // use your actual route path
+  className="border border-[#1E5C3B] text-[#1E5C3B] px-6 py-3 rounded-lg hover:bg-[#1E5C3B] hover:text-white transition-all duration-200 shadow-sm flex items-center justify-center"
+onClick={()=>{setloginformshow(true)}}
+>
+  Continue as Logged-in User
+</button>
+          <Link
+ href="/components/comparequotes"
+             className="border border-[#1E5C3B] text-[#1E5C3B] px-6 py-3 rounded-lg hover:bg-[#1E5C3B] hover:text-white transition-all duration-200 shadow-sm"
+          >
+            Continue as Guest User
+          </Link>
+        </div>
+      </div>)}
+      {loginformshow && (
+  <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 rounded-xl shadow-md p-6">
+   <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        logindata();
+       
+      }}
+      className="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg border border-gray-200"
+    >
+      <h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">
+        Welcome Back 👋
+      </h2>
+
+      {/* Email */}
+      <div className="mb-5">
+        <label
+          htmlFor="email"
+          className="block text-sm font-semibold text-gray-700 mb-2"
+        >
+          Email Address
+        </label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          required
+          placeholder="Enter your email"
+          value={loginformdata.email || ""}
+          onChange={(e) => handleloginformchange("email", e.target.value)}
+          className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
+        />
+      </div>
+
+      {/* Password */}
+      <div className="mb-6">
+        <label
+          htmlFor="password"
+          className="block text-sm font-semibold text-gray-700 mb-2"
+        >
+          Password
+        </label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          required
+          placeholder="Enter your password"
+          value={loginformdata.password || ""}
+          onChange={(e) => handleloginformchange("password", e.target.value)}
+          autoComplete="current-password"
+          className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
+        />
+      </div>
+
+      {/* Submit Button */}
+      <button
+        type="submit"
+        className="w-full bg-[#1E5C3B] text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-all duration-200 shadow-md"
+      >
+        Login
+      </button>
+    </form>
+  </div>
+)}
+
+
+    </div>
+  </div>
+)}
+  
+                    <div className="mt-12 flex justify-end gap-4">
+                    <button
+                        onClick={() => router.back()}
+                        className="font-semibold text-base h-[48px] px-8 rounded-full border border-gray-300 bg-white text-gray-800 shadow-md hover:bg-gray-50 transition duration-150"
+                    >
+                        Back
+                    </button>
+                    <button 
+                    type="submit"
+                    onClick={handleSubmit}
+                        className="font-semibold text-base h-[48px] px-8 rounded-full bg-[#1E5C3B] text-white shadow-lg hover:bg-[#16472F] flex items-center justify-center transition duration-150"
+                    >
+                        Continue &rarr;
+                    </button>
                     </div>
-
-                    {/* RIGHT SIDE (Content Section - 70%) */}
-                    <div className="relative p-8 flex flex-col justify-center text-center md:text-left">
-                      {/* Close Button */}
-                      <button
-                        onClick={() => setModalopen(false)}
-                        className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-3xl font-bold leading-none"
-                      >
-                        &times;
-                      </button>
-
-                      <h2 className="text-2xl font-bold text-[#1E5C3B] mb-3">Confirm Submission</h2>
-                      <p className="text-gray-600 mb-8 leading-relaxed">
-                        You’re about to submit your <b>Property Details</b>.
-                        Would you like to continue as a <b>logged-in user</b> or a <b>guest user</b>?
-                      </p>
-
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <button
-                          onClick={() => alert('Proceeding as Logged-in User')}
-                          className="bg-[#1E5C3B] text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-all duration-200 shadow-sm"
-                        >
-                          Continue as Logged-in User
-                        </button>
-                        <button
-                          onClick={() => alert('Proceeding as Guest User')}
-                          className="border border-[#1E5C3B] text-[#1E5C3B] px-6 py-3 rounded-lg hover:bg-[#1E5C3B] hover:text-white transition-all duration-200 shadow-sm"
-                        >
-                          Continue as Guest User
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-
-
-            
-
-            <div className="mt-12 flex justify-end gap-4">
-              <button
-                onClick={() => router.back()}
-                className="font-semibold text-base h-[48px] px-8 rounded-full border border-gray-300 bg-white text-gray-800 shadow-md hover:bg-gray-50 transition duration-150"
-              >
-                Back
-              </button>
-
-              <button
-              type="submit"
-              
-
-                className="font-semibold text-base h-[48px] px-8 rounded-full bg-[#1E5C3B] text-white shadow-lg hover:bg-[#16472F] flex items-center justify-center transition duration-150"
-              >
-                Continue 
-              </button>
-              
-            </div>
-            </form>
+          
           </section>
         </div>
       </main>

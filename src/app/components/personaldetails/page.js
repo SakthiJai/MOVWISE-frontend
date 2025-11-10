@@ -3,12 +3,67 @@ import Link from "next/link";
 import  Navbar  from "../../parts/navbar/page";// app/personal-details/page.js
 import { useRouter } from "next/navigation";
 import { API_BASE_URL } from "../.././constants/config";
+import { API_ENDPOINTS, getData, postData } from "../../auth/API/api";
+import { useState } from "react";
 
 
 
 export default function Personaldetails() {
   
   const router = useRouter();
+
+  const [formdata,setFormData] = useState();
+  const [user,setuser]=useState()
+
+   const handleChange = (name, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+     function     handlesubmit(){
+          register();
+
+      console.log(formdata);
+          }
+
+          
+
+  async function register() {
+  try {
+    const response = await postData(API_ENDPOINTS.register, formdata);
+    console.log("Register API Response:", response);
+
+    // ✅ Access code & user from response directly (no `.data`)
+    if (response.code === 201) {
+      const userId = response.user?.id;
+      console.log("🧩 Extracted userId:", userId);
+
+      if (userId) {
+        // ✅ Get existing getquote data
+        const quotesdata = JSON.parse(localStorage.getItem("getquote") || "{}");
+
+        // ✅ Merge user_id into that data
+        const updatedForm = {
+          ...quotesdata,
+          user_id: userId,
+        };
+
+        // ✅ Update React state and localStorage
+        setFormData(updatedForm);
+        localStorage.setItem("getquote", JSON.stringify(updatedForm));
+      }
+
+      // ✅ Navigate after saving
+      router.push("/components/comparequotes");
+    } else {
+      console.warn("⚠️ Registration did not return code 201:", response);
+    }
+  } catch (error) {
+    console.error("🚨 Error fetching quotes:", error);
+  }
+}
 
   return (
     <div className="min-h-screen bg-white antialiased font">
@@ -110,7 +165,8 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
                       <input
                         id="firstName"
                         name="firstName"
-                        defaultValue="Jessica"
+                        onChange={(e)=>{handleChange("first_name",e.target.value)}}
+                        placeholder="Enter your Firstname"
                         className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
                       />
                     </div>
@@ -119,7 +175,9 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
                       <input
                         id="lastName"
                         name="lastName"
-                        defaultValue="Samsan"
+                        placeholder="Enter your Lastname"
+                                                onChange={(e)=>{handleChange("last_name",e.target.value)}}
+
                         className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
                       />
                     </div>
@@ -133,7 +191,9 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
                         id="email"
                         name="email"
                         type="email"
-                        defaultValue="jessica@gmail.com"
+                        placeholder="Enter your Email"
+                   onChange={(e)=>{handleChange("email",e.target.value)}}
+
                         className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
                       />
                     </div>
@@ -143,12 +203,30 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
                         <input
                           id="phone"
                           name="phone"
-                          defaultValue="+91  123456789"
+                        placeholder="Enter your Number"
+                                           onChange={(e)=>{handleChange("phone_number",e.target.value)}}
+
                           className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
                         />
                         {/* optional divider mimic for country code */}
                         <div className="pointer-events-none absolute left-[108px] top-1/2 -translate-y-1/2 h-[28px] w-px bg-[#E5E7EB]" />
                       </div>
+                    </div>
+                  </div>
+                  {/* ROW 3 */}
+                  <div className="grid grid-cols-2 gap-4 mt-4">
+                      <div>
+                      <label htmlFor="password" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">Password</label>
+                      <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        placeholder="Enter your Password"
+                        autoComplete="current-password"
+       onChange={(e)=>{handleChange("password",e.target.value)}}
+
+                        className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
+                      />
                     </div>
                   </div>
 
@@ -166,7 +244,7 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
             </div>
 
             {/* Bottom actions */}
-            <div className="mt-38 flex justify-end gap-4 max-w-[760px] ">
+            <div className="mt-24 flex justify-end gap-4 max-w-[760px] ">
          <button
   onClick={() => router.back()}
   className="font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1B1D21]"
@@ -174,12 +252,14 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
   Back
 </button>
 
-              <Link
-       href={`${API_BASE_URL}/components/propertydetails`}
+              <button
+       onClick={()=>{
+        handlesubmit()
+       }}
                 className="  font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full bg-[#1E5C3B] text-[#EDF4EF]"
               >
                 Continue to Property Details →
-              </Link>
+              </button>
             </div>
           </section>
         </div>

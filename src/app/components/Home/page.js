@@ -135,7 +135,8 @@ export default function HomePage() {
               Compare fixed-fee quotes from trusted UK conveyancers and solicitors in minutes. MovWise helps you find the right legal partner to buy, sell, or remortgage your home — faster, clearer, and smarter.
             </p>
             <div className="mt-8">
-        <Link href="components/personaldetails">      <PrimaryCTA  text="Get Your Free Quote" /></Link>
+        <Link href="components/personaldetails">   
+           <PrimaryCTA  text="Get Your Free Quote" /></Link>
             </div> 
           </div>
           {/* Image Placeholder */}
@@ -152,7 +153,7 @@ export default function HomePage() {
 
         </div>
       </section>
-        <div className="  px-6 py-14 mt-5.5">
+        <div className="  px-6 py-14 mt-5.5" id='quote_type'>
         <h1 className="text-4xl font-extrabold text-center text-gray-900 mb-3 tracking-tight">
           Choose Your Quote Type
         </h1>
