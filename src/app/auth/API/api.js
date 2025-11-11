@@ -13,6 +13,8 @@ export const API_ENDPOINTS = {
     sales:`${BASE_URL}/sales`,
     createQuote:`${BASE_URL}/create-quote`,
     service:`${BASE_URL}/create-services`,
+    quotesfilter:`${BASE_URL}/quotes/filter`,
+    compareQuotes:`${BASE_URL}/compare-quotes`,
 
 
 }

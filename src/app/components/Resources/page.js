@@ -218,7 +218,7 @@ export default function ResourcePage() {
           Water and Drainage Search
           </h2>
           <p className="text-gray-600  leading-relaxed mb-4">
-          Confirms the property's connection to mains water and sewerage systems.
+          Confirms the propertys connection to mains water and sewerage systems.
           </p>
           <h2 className="text-2xl font-bold text-gray-800 mb-4">
          Chancel Repair Search
@@ -272,7 +272,7 @@ export default function ResourcePage() {
           Legal Fees
           </h2>
           <p className="text-gray-600  leading-relaxed mb-4">
-         Your solicitor's charges for handling the legal work.
+         Your solicitors charges for handling the legal work.
           </p>
           <h2 className="text-2xl font-bold text-gray-800 mb-4">
           Disbursements
@@ -293,7 +293,7 @@ export default function ResourcePage() {
           </h2>
        
                 <p className="text-gray-600 italic text-lg leading-relaxed mb-4">
-                  &ldquo;We show you exactly what you're paying for, why it costs that much, and who you're paying it to.&rdquo;
+                  &ldquo;We show you exactly what you re paying for, why it costs that much, and who you re paying it to.&rdquo;
                 </p>
           </section>
           </section>
@@ -313,7 +313,7 @@ export default function ResourcePage() {
           Flying Freeholds
           </h2>
           <p className="text-gray-600  leading-relaxed mb-4">
-          When part of your property extends over or under a neighbour's.
+          When part of your property extends over or under a neighbours.
           </p>
           <h2 className="text-2xl font-bold text-gray-800 mb-4">
           Rights of Way
@@ -349,7 +349,7 @@ export default function ResourcePage() {
           
           <ul className="list-disc list-inside space-y-1 text-gray-600  leading-relaxed mb-4" >
             
-            <li>System called "missives"</li>
+            <li>System called missives</li>
             <li>Different search requirements</li>
             <li>Land and Buildings Transaction Tax instead of SDLT</li>
           </ul>
@@ -385,7 +385,7 @@ export default function ResourcePage() {
           
           <ul className="list-disc list-inside space-y-1 text-gray-600  leading-relaxed mb-4" >
             <li>Keep all documents organised</li>
-            <li>Don't make major financial changes</li>
+            <li>Dont make major financial changes</li>
             <li>Respond quickly to solicitor requests</li>
           </ul>
           </>

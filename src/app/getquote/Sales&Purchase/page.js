@@ -12,6 +12,13 @@ const Link = ({ href, children, className }) => (
     {children}
   </a>
 );
+useEffect(() => {
+  const storedData = localStorage.getItem("getquote");
+
+  if (storedData) {
+    setFormData(JSON.parse(storedData));
+  }
+}, []);
 
 const useRouter = () => ({
   back: () => console.log("Navigation: Going back..."),

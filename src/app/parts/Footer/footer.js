@@ -1,4 +1,5 @@
 import { Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
+import Link from "next/link";
 
 
 
@@ -15,11 +16,11 @@ export default function Footer(){
           <div>
             <h3 className="text-lg font-semibold text-white mb-4">Quick Links</h3>
             <ul className="space-y-2">
-              <li><a href="/" className="hover:text-amber-500">Home</a></li>
-              <li><a href="/#quote_type" className="hover:text-amber-500">Get Quotes</a></li>
-              <li><a href="/conveyancers/Companyregistration" className="hover:text-amber-500">For Solicitors</a></li>
-              <li><a href="/components/About" className="hover:text-amber-500">About Us</a></li>
-              <li><a href="/#contact" className="hover:text-amber-500">Contact</a></li>
+              <li><Link href="/" className="hover:text-amber-500">Home</Link></li>
+              <li><Link href="/#quote_type" className="hover:text-amber-500">Get Quotes</Link></li>
+              <li><Link href="/conveyancers/Companyregistration" className="hover:text-amber-500">For Solicitors</Link></li>
+              <li><Link href="/components/About" className="hover:text-amber-500">About Us</Link></li>
+              <li><Link href="/#contact" className="hover:text-amber-500">Contact</Link></li>
             </ul>
           </div>
 

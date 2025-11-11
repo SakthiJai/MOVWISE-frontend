@@ -704,7 +704,13 @@ console.log(userId)
     ...formData,
     "user_id": userId,
   };
+useEffect(() => {
+  const storedData = localStorage.getItem("getquote");
 
+  if (storedData) {
+    setFormData(JSON.parse(storedData));
+  }
+}, []);
   // ✅ Update React state
   setFormData(updatedForm);
     localStorage.setItem("getquote", JSON.stringify(updatedForm));

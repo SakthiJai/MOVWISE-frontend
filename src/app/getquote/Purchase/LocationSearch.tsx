@@ -1,7 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 
-export default function SearchBox() {
+export default function SearchBox({ onSelectAddress }: { onSelectAddress?: (address: string) => void }) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -27,6 +27,11 @@ export default function SearchBox() {
     setQuery(postcode); // set selected value in the input
     setResults([]); // hide suggestions
     setSelectedIndex(-1); // reset keyboard navigation
+       const address = postcode;
+        if (onSelectAddress) {
+          console.log("Address selected:", address);
+      onSelectAddress(address);
+    }
   };
 
   useEffect(() => {
@@ -60,7 +65,7 @@ export default function SearchBox() {
         value={query}
         onChange={(e) => setQuery(e.target.value)}
          onKeyDown={handleKeyDown}
-        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
+        className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 outline-none text-black"
       />
 
       {loading && <p className="mt-2 text-sm text-gray-500">Loading...</p>}
@@ -70,7 +75,7 @@ export default function SearchBox() {
           {results.map((item, idx) => (
             <li
               key={idx}
-              className="px-4 py-2 hover:bg-blue-100 cursor-pointer"
+              className="px-4 py-2 hover:bg-blue-100 cursor-pointer text-black"
             >
               {item.ccg+ " - "+item.admin_district}
             </li>

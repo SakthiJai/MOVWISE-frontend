@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Navbar from "../../parts/navbar/page";
 import { API_BASE_URL } from "../../constants/config";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Languages, Pencil } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Footer from "../../parts/Footer/footer";
@@ -12,7 +12,12 @@ import { useFormStore } from "../../store/useFormStore";
 
 export default function Companyregistration() {
 
- 
+ useEffect(()=>{
+  const storedData = localStorage.getItem("companyData");
+  if (storedData) {
+    setFormData(JSON.parse(storedData));
+  }
+ },[]);
 
   const router = useRouter();
    const { updateCompanyData } = useFormStore();
@@ -176,15 +181,14 @@ console.log(formData)
     }
 
     // Logo validation
-    if (!image) {
-      newErrors.logo = "Company logo is required";
-    }
+  
 
     setErrors(newErrors);
 console.log(errors);
     // Navigate only if valid
     if (Object.keys(newErrors).length === 0) {
       updateCompanyData({ ...formData, logo: image });
+      localStorage.setItem("companyData", JSON.stringify({ ...formData}));
       console.log("inside navigation")
       router.push(`${API_BASE_URL}/conveyancers/quotationdetails`);
     }
@@ -355,7 +359,7 @@ console.log(errors);
                   <div className="grid grid-cols-2 gap-4 mt-4">
                     <div>
                       <label htmlFor="logo" className="block text-[14px] text-[#6A7682] font-medium mb-1">
-                        Company Logo<span className = "text-red-500">*</span>
+                        Company Logo
                       </label>
                       <div className="relative w-full flex flex-col items-center">
                         <div className="relative mr-[198px]">
@@ -377,7 +381,6 @@ console.log(errors);
                           </label>
                         </div>
                       </div>
-                      {errors.logo && <p className="text-red-500 text-[12px] mt-1">{errors.logo}</p>}
                     </div>
                     <div className="mt-2">
   <div className="space-y-4">
@@ -439,7 +442,7 @@ console.log(errors);
             </div>
 
             {/* Bottom Actions */}
-            <div className="mt-28 flex justify-end gap-4 max-w-[760px]">
+            <div className="mt-20 flex justify-end gap-4 max-w-[760px]">
               <button
                 onClick={() => router.back()}
                 className="font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1B1D21]"
@@ -450,7 +453,7 @@ console.log(errors);
               <button
                 type="button"
                 onClick={handleContinue}
-                className="font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full bg-[#1E5C3B] text-[#EDF4EF]"
+                className="font-outfit mb-6  font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full bg-[#1E5C3B] text-[#EDF4EF]"
               >
                 Continue to Quotation Details →
               </button>

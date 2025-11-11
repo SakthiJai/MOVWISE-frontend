@@ -17,7 +17,6 @@ import Footer from "../../parts/Footer/footer";
 import LocationSearch from './LocationSearch';
 
 
-
 const customStyles = {
     control: (provided, state) => ({
       ...provided,
@@ -98,7 +97,6 @@ export default function App() {
     // ✅ Update React state
     setFormData(updatedForm);
       localStorage.setItem("getquote", JSON.stringify(updatedForm));
-  
         }
   
         router.push("/components/comparequotes");
@@ -160,6 +158,7 @@ const handleChange = (field, value) => {
     ...prev,
     [field]: value,
   }));
+  console.log(formData)
 
   // Clear error immediately when user types/selects valid input
   if (errors[field]) {
@@ -187,22 +186,22 @@ const handleChange = (field, value) => {
   // }
 };
 
-
 useEffect(() => {
-  if (!query) {
-    setaddressuggestion([]);
-    return;
+  const storedData = localStorage.getItem("getquote");
+
+  if (storedData) {
+    setFormData(JSON.parse(storedData));
   }
+  const datafetch = async()=>{
+const data = await getData(API_ENDPOINTS.conveyancingQuotes)
+  }
+}, []);
 
-  const timeout = setTimeout(() => {
-    addressapi(query); // pass query instead of inputValue
-  }, 2000);
 
-  return () => clearTimeout(timeout);
-}, [query]);
+
+ 
 
   
-const [addresssuggestion,setaddressuggestion]=useState([]);
   const [modalopen, setModalopen] = useState(false);
   const [languagepreference, setlanguagepreference] = useState(" ");
   const [language, setLanguage] = useState([]);
@@ -235,23 +234,21 @@ const [addresssuggestion,setaddressuggestion]=useState([]);
   newErrors.no_of_bedrooms="please select a no. of bedrooms"
  }
   if(!formData.property_type){
-  newErrors.property_type="please select a property_type"
+  newErrors.property_type="please select a property type"
  }
    if(!formData.leasehold_or_free){
-  newErrors.leasehold_or_free="please select a leasehold_or_free"
+  newErrors.leasehold_or_free="please select a leasehold or free"
  }
 
-  if(!formData.new_build){
-  newErrors.new_build="please select a new_build"
- }
+
 if(!formData.property_type){
-  newErrors.property_type="please select property_type"
+  newErrors.property_type="please select propertytype"
 }
 
 
 
 if(!formData.buy_to_let){
-  newErrors.buy_to_let="please select buy_to_let"
+  newErrors.buy_to_let="please select buy to let"
 }
     setErrors(newErrors);
     console.log(errors)
@@ -454,7 +451,13 @@ console.log(language);
                                              <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
                                              Property address:<span className="text-red-500">*</span>
                                              </label>
-                                                   <LocationSearch />
+                                                   <LocationSearch  onSelectAddress={(selectedAddress) => {
+      setFormData({ ...formData, address: selectedAddress });
+
+      if (errors.address) {
+        setErrors({ ...errors, address: "" });
+      }
+    }} />
 
                                              {/* <!--<div className="relative mt-auto">
                                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
@@ -584,9 +587,7 @@ console.log(language);
       type="button"
       onClick={() => {
         setFormData({ ...formData, new_build: 1 }); // ✅ store numeric 1
-        if (errors.new_build) {
-          setErrors({ ...errors, new_build: "" }); // clear error
-        }
+      
       }}
       className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
         formData.new_build === 1
@@ -613,9 +614,10 @@ console.log(language);
     >
       <span>No</span>
     </button>
+    
   </div>
   <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
-
+ 
 
 </div>
 
@@ -856,7 +858,7 @@ console.log(language);
       }`}
     >
       <option value="" disabled>Select...</option>
-      {["None", "1 Gifted deposit", "2 Gifted deposit", "3 Gifted deposit"].map((opt) => (
+      {[0, 1, 2, 3].map((opt) => (
         <option key={opt} value={opt}>{opt}</option>
       ))}
     </select>

@@ -11,6 +11,8 @@ import { useRouter } from "next/navigation";
 import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
 import Select from "react-select";
 import Footer from "../../parts/Footer/footer";
+import { v4 as uuidv4 } from 'uuid';
+
 // import Select from "react-select";
 
 
@@ -62,7 +64,7 @@ export default function App() {
   "ownership_housing_asso": 1,
   "languages": [],
   "specal_instruction": "",
-  "user_id":[],
+ 
   "lender":[],
         
   });
@@ -222,6 +224,14 @@ console.log(userId)
     "type_id":4
   };
 
+  useEffect(() => {
+    const storedData = localStorage.getItem("getquote");
+  
+    if (storedData) {
+      setFormData(JSON.parse(storedData));
+    }
+  }, []);
+
   // ✅ Update React state
   setFormData(updatedForm);
     localStorage.setItem("getquote", JSON.stringify(updatedForm));
@@ -233,8 +243,33 @@ console.log(userId)
   } catch (error) {
     console.error("Error logging in:", error);
   }
+
 }
 
+async function createguestuser(){
+
+ try {
+  const guest_id = uuidv4();
+console.log(guest_id);
+   
+      const updatedForm = {
+    ...formData,
+    "guest_user ": guest_id,
+    "type_id":4
+  };
+
+  // ✅ Update React state
+  setFormData(updatedForm);
+    localStorage.setItem("getquote", JSON.stringify(updatedForm));
+ router.push("/components/comparequotes");
+      }
+
+     
+    
+   catch (error) {
+    console.error("Error logging in:", error);
+  }
+}
 
         return (
           <div>
@@ -707,7 +742,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
         </button>
 
         <h2 className="text-2xl font-bold text-[#1E5C3B] mb-3">Confirm Submission</h2>
-        <p className="text-gray-600 mb-8 leading-relaxed">
+        <p className="text-gray-600 mb-8 leading-relaxed" >
           You’re about to submit your <b>Property Details</b>.  
           Would you like to continue as a <b>logged-in user</b> or a <b>guest user</b>?
         </p>
@@ -723,7 +758,7 @@ onClick={()=>{setloginformshow(true)}}
           <Link
  href="/components/comparequotes"
              className="border border-[#1E5C3B] text-[#1E5C3B] px-6 py-3 rounded-lg hover:bg-[#1E5C3B] hover:text-white transition-all duration-200 shadow-sm"
-          >
+       onClick={createguestuser}   >
             Continue as Guest User
           </Link>
         </div>

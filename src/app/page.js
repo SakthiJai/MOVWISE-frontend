@@ -26,8 +26,8 @@ console.log(apiUrl)
     
    
     <div className="bg-white">
-       <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap" rel="stylesheet">
-</link>
+       {/* <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;700&display=swap" rel="stylesheet">
+</link> */}
 
       {/*
           <Register/>  

@@ -48,7 +48,13 @@ export default function App() {
     handleChange("lender",ids)
   };
 
+useEffect(() => {
+  const storedData = localStorage.getItem("getquote");
 
+  if (storedData) {
+    setFormData(JSON.parse(storedData));
+  }
+}, []);
   const [formData, setFormData] = useState({
    
   

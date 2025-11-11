@@ -61,86 +61,6 @@ console.log("✅ Company Data from previous step:", companyData);
     fetchQuotes();
   }, []);
 
-  // const quotes=
-  // {
-  //   "legal costs": [
-  //       {
-  //           "id": 1,
-  //           "name": "our estimated fees",
-  //           "type": 1
-  //       },
-  //       {
-  //           "id": 2,
-  //           "name": "fee to act for the lender (per lender)",
-  //           "type": 0
-  //       },
-  //       {
-  //           "id": 3,
-  //           "name": "stamp duty form (if applicable-per title)",
-  //           "type": 0
-  //       },
-  //       {
-  //           "id": 4,
-  //           "name": "bank transfer fees (per transfer)",
-  //           "type": 0
-  //       },
-  //       {
-  //           "id": 5,
-  //           "name": "admin & postage costs\n",
-  //           "type": 0
-  //       }
-  //   ],
-  //   "disbursement": [
-  //       {
-  //           "id": 6,
-  //           "name": "land registry fee",
-  //           "type": 1
-  //       },
-  //       {
-  //           "id": 7,
-  //           "name": "searches (tbc-depends on local authority)",
-  //           "type": 0
-  //       },
-  //       {
-  //           "id": 8,
-  //           "name": "id checks(per person)",
-  //           "type": 0
-  //       },
-  //       {
-  //           "id": 9,
-  //           "name": "infotrack sdlt submission fee",
-  //           "type": 0
-  //       },
-  //       {
-  //           "id": 10,
-  //           "name": "land charges search (per title)",
-  //           "type": 0
-  //       },
-  //       {
-  //           "id": 11,
-  //           "name": "bankruptcy search (per person)",
-  //           "type": 0
-  //       }
-  //   ],
-  //   "rate of stampduty": [
-  //       {
-  //           "id": 12,
-  //           "name": "first time buyer",
-  //           "type": 1
-  //       },
-  //       {
-  //           "id": 13,
-  //           "name": "standard rate",
-  //           "type": 1
-  //       },
-  //       {
-  //           "id": 14,
-  //           "name": "higher rate",
-  //           "type": 1
-  //       }
-  //   ]};
-
-
   const [openAccordion, setOpenAccordion] = useState(null);
   const [visibleItemIndex, setVisibleItemIndex] = useState({});
   const [formValues, setFormValues] = useState({}); // structure: { category: { itemId: [ {min,max,price}, ... ] } }
@@ -179,6 +99,9 @@ const [showbelow, setshowbelow] = useState({});
     // lock earlier items (hide their Add / Next buttons)
    
   }
+  useEffect(()=>{
+    console.log("Form Values Updated:", formValues);
+  })
   // Update field for a specific row of a specific item
 const handleInputChange = (key, rowIndex, field, value) => {
   setFormValues((prev) => {
@@ -799,7 +722,7 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
           value={vatPercent}
           onChange={e => handleInputChange(key, rowIndex, "vatPercent", e.target.value)}
           placeholder="%"
-          className={`w-12 border border-gray-300 rounded px-1 py-[2px] placeholder:text-black text-xs bg-white focus:ring-2 focus:ring-blue-200 focus:border-blue-400 ${errors[`${key}-${rowIndex}-vatPercent`] ? "border-red-500" : ""}`}
+          className={`w-12 border border-gray-300 rounded px-1 py-[2px] text-black placeholder:text-black text-xs bg-white focus:ring-2 focus:ring-blue-200 focus:border-blue-400 ${errors[`${key}-${rowIndex}-vatPercent`] ? "border-red-500" : ""}`}
         />
         {errors[`${key}-${rowIndex}-vatPercent`] && (
           <span className="text-xs text-red-600">{errors[`${key}-${rowIndex}-vatPercent`]}</span>
