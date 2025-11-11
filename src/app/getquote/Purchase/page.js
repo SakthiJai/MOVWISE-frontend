@@ -14,6 +14,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
 import Footer from "../../parts/Footer/footer";
+import LocationSearch from './LocationSearch';
+
 
 
 const customStyles = {
@@ -452,7 +454,9 @@ console.log(language);
                                              <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
                                              Property address:<span className="text-red-500">*</span>
                                              </label>
-                                             <div className="relative mt-auto">
+                                                   <LocationSearch />
+
+                                             {/* <!--<div className="relative mt-auto">
                                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
                                                  <MapPin size={16} />
                                              </span>
@@ -463,7 +467,7 @@ console.log(language);
                                                  className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
                                                onChange={(e)=>{handleChange("address",e.target.value)}}
                                              />
-                                             </div>
+                                             </div>--> */}
  <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
    errors.address ? "text-red-500 opacity-100" : "opacity-0"
 }`}>
