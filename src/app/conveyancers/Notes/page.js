@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useFormStore } from "../../store/useFormStore";
 import { API_ENDPOINTS, postData } from "../../auth/API/api";
+import Footer from "../../parts/Footer/footer";
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
 export default function EditorPage() {
@@ -98,6 +99,7 @@ console.log(payload);
     }
   }
   return (
+    <div>
     <div className="min-h-screen bg-white antialiased font">
       <Navbar />
       <main className="mx-auto max-w-[1200px] pt-10">
@@ -168,6 +170,8 @@ console.log(payload);
           </section>
         </div>
       </main>
+      </div>
+      <Footer />
     </div>
   );
 }

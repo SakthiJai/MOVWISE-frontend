@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../../parts/navbar/page";
 import { Check, MapPin,ChevronDown } from "lucide-react";
 import { FaBuilding, FaHome, FaWarehouse } from "react-icons/fa";
@@ -712,13 +712,13 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
                     </form>
  {modalopen && (
   <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    <div className="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-3xl h-[500px] grid grid-cols-1 md:grid-cols-[35%_65%] animate-scale-in relative">
+    <div className=" bg-gradient-to-br  from-[#1E5C3B] to-green-600 text-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-3xl h-[500px] grid grid-cols-1 md:grid-cols-[35%_65%] animate-scale-in relative">
       
       {/* LEFT SIDE (Brand Section - 30%) */}
-      <div className="text-center bg-gradient-to-br from-[#1E5C3B] to-green-600 text-white flex flex-col justify-between items-center md:items-start p-8">
+      <div className="text-center bg-white  flex flex-col items-center md:items-start p-8">
         <div className="mt-20">
-          <h2 className="text-3xl font-extrabold tracking-wide mb-2">MOVWISE</h2>
-          <p className="text-sm opacity-90 leading-relaxed mt-20">
+          <h2 className="text-3xl font-extrabold tracking-wide mb-2  bg-white text-[#1E5C3B]">MOVWISE</h2>
+          <p className="text-1xl opacity-90 leading-relaxed mt-20  bg-white text-[#1E5C3B]">
             Making property transactions simple, secure, and smart.
           </p>
         </div>
@@ -726,7 +726,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
         <Link
         type="button"
  href="/components/personaldetails" 
-         className="mt-8 mx-auto bg-white text-[#1E5C3B] font-semibold px-8 py-2 rounded-full hover:bg-gray-100 transition-all duration-200 shadow-md">
+         className="mt-18 mx-auto bg-[#1E5C3B] text-white font-semibold px-8 py-2 rounded-full transition-all duration-200 shadow-md">
           Sign Up
         </Link>
       </div>
@@ -741,8 +741,8 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
           &times;
         </button>
 
-        <h2 className="text-2xl font-bold text-[#1E5C3B] mb-3">Confirm Submission</h2>
-        <p className="text-gray-600 mb-8 leading-relaxed" >
+        <h2 className="text-2xl font-bold text-white mb-3">Confirm Submission</h2>
+        <p className="text-white mb-8 leading-relaxed" >
           You’re about to submit your <b>Property Details</b>.  
           Would you like to continue as a <b>logged-in user</b> or a <b>guest user</b>?
         </p>
@@ -750,21 +750,31 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <button
   // use your actual route path
-  className="border border-[#1E5C3B] text-[#1E5C3B] px-6 py-3 rounded-lg hover:bg-[#1E5C3B] hover:text-white transition-all duration-200 shadow-sm flex items-center justify-center"
+  className="border border-white text-white px-6 py-3 rounded-lg hover:bg-white hover:text-[#1E5C3B]  transition-all duration-200 shadow-sm flex items-center justify-center"
 onClick={()=>{setloginformshow(true)}}
 >
-  Continue as Logged-in User
+   Logged-in User
 </button>
           <Link
  href="/components/comparequotes"
-             className="border border-[#1E5C3B] text-[#1E5C3B] px-6 py-3 rounded-lg hover:bg-[#1E5C3B] hover:text-white transition-all duration-200 shadow-sm"
+             className="border border-white text-white px-6 py-3 rounded-lg hover:bg-white hover:text-[#1E5C3B] transition-all duration-200 shadow-sm"
        onClick={createguestuser}   >
-            Continue as Guest User
+             Guest User
+          </Link>
+          </div>
+          <div>
+          <Link
+    href="/auth/forgetpassword"
+    className="absolute mt-2 right-6 text-white hover:underline text-sm"
+  >
+             Forget Password
           </Link>
         </div>
+        
+
       </div>)}
 {loginformshow && (
-  <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 rounded-xl shadow-md p-6">
+  <div className="flex justify-center items-center min-h-[70vh]  rounded-xl shadow-md p-6">
     <form
       onSubmit={(e) => {
         e.preventDefault();
@@ -773,6 +783,12 @@ onClick={()=>{setloginformshow(true)}}
       }}
       className="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg border border-gray-200"
     >
+      <button
+          onClick={() => setModalopen(false)}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-3xl font-bold leading-none"
+        >
+          &times;
+        </button>
       <h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">
         Welcome Back 👋
       </h2>
