@@ -1,786 +1,658 @@
 "use client"
 import Link from "next/link";
-import  Navbar  from "../../parts/navbar/page";// app/personal-details/page.js
+import Navbar from "../../parts/navbar/page";
 import { useEffect, useState } from "react";
-import { PlusCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import { API_BASE_URL } from "../.././constants/config";
-import { API_ENDPOINTS, getData, postData } from "../../auth/API/api";
-
+import { API_ENDPOINTS, getData } from "../../auth/API/api";
+import { Check, Plus, PlusCircle, Trash, Trash2, X } from "lucide-react";
 import { useFormStore } from "../../store/useFormStore";
 
-// export const metadata = {
-//   title: 'Quotationdetails | Movwise',
-//   description: 'Share your Personal Details',
-// };
-
-
-
 export default function Quotationdetails() {
-
-  const [includeVat, setIncludeVat] = useState(null); // null, true, or false
-const [vatPercent, setVatPercent] = useState(""); // String or number
-
-
- const getFilledRowCount = () => {
-  return Object.values(formValues).reduce((sum, rows) => {
-    return sum + (rows || []).filter(row =>
-      row.itemId &&
-      // For type=1, both min and price must be present
-      ((row.type === 1 && row.min && row.price) ||
-      // For type=0, price must be present
-      (row.type !== 1 && row.price))
-    ).length;
-  }, 0);
-};
-const isAccordionFilled = (key) => {
-  const rows = formValues[key] || [];
-  return rows.some(row => row.itemId);
-};
-
-// console.log(API_BASE_URL);
-const { companyData, updateQuotationData } = useFormStore();
-console.log("✅ Company Data from previous step:", companyData);
-
-
+  const { updateQuotationData } = useFormStore();
   const router = useRouter();
-  const [data,setdata]=useState([]);
-  
+
+  const [data, setData] = useState({});
+  const [formValues, setFormValues] = useState({});
+  const [errors, setErrors] = useState({});
+const [selectedItems, setSelectedItems] = useState({});
+  // Fetch quotes and initialize form values
   useEffect(() => {
-    // Fetch data example
     async function fetchQuotes() {
       const quotes = await getData(API_ENDPOINTS.conveyancingQuotes);
-      console.log("Fetched quotes:", quotes.data);
-      setdata(quotes.data)
-      
+      setData(quotes.data);
+
+      const initialFormValues = {};
+      Object.keys(quotes.data).forEach((key) => {
+        if (quotes.data[key].length === 0) return;
+        const rows = [];
+        quotes.data[key].forEach(item => {
+          if (item.type === 1) {
+            // Five fixed rows with item name
+            for (let i = 0; i < 5; i++) {
+              rows.push({
+                itemId: String(item.id),
+                min: "",
+                max: "",
+                price: "",
+                includeVat: false,
+                isFixedName: true,
+                label: item.name
+              });
+            }
+            // Sixth row "Others"
+           
+          } else {
+            // type=0 rows with price and vat only
+            rows.push({
+              itemId: String(item.id),
+              price: "",
+              includeVat: false,
+              isFixedName: false,
+              label: item.name
+            });
+          }
+        });
+        initialFormValues[key] = rows;
+      });
+      setFormValues(initialFormValues);
     }
-
-    
-
     fetchQuotes();
   }, []);
 
-  const [openAccordion, setOpenAccordion] = useState(null);
-  const [visibleItemIndex, setVisibleItemIndex] = useState({});
-  const [formValues, setFormValues] = useState({}); // structure: { category: { itemId: [ {min,max,price}, ... ] } }
-  const [errors, setErrors] = useState({}); // keyed by `${key}-${itemId}-${rowIndex}-field` and add errors `${key}-${itemId}-add`
-  const [lockedIndex, setLockedIndex] = useState({}); // locks previous items when Next pressed: { category: lockedUpToIndex }
-const [showbelow, setshowbelow] = useState({});
-
-  // Toggle accordion open/close
- const toggleAccordion = (key) => {
-  setOpenAccordion((prev) => {
-    const isSame = prev === key;
-    if (!isSame) {
-      // Accordion is opening — check if rows exist
-      setFormValues((prevValues) => {
-        if (!prevValues[key] || prevValues[key].length === 0) {
-          return {
-            ...prevValues,
-            [key]: [{ itemId: "", min: "", max: "", price: "" }],
-          };
-        }
-        return prevValues;
-      });
-    }
-    return isSame ? null : key;
-  });
-};
-
-
-  // Show next item AND lock earlier items for this category
-  const handleItemClick = (key, index) => {
-    setVisibleItemIndex((prev) => ({
-      ...prev,
-      [key]: index + 1,
-    }));
-
-    // lock earlier items (hide their Add / Next buttons)
-   
-  }
-  useEffect(()=>{
-    console.log("Form Values Updated:", formValues);
-  })
-  // Update field for a specific row of a specific item
-const handleInputChange = (key, rowIndex, field, value) => {
-  setFormValues((prev) => {
+  // Handle input change with VAT sync logic
+ const handleInputChange = (key, rowIndex, field, value) => {
+  setFormValues(prev => {
     const updated = { ...prev };
     const rows = [...(updated[key] || [])];
     const row = { ...rows[rowIndex] };
 
-    if (field === "itemId") {
-      const selectedItem = data[key].find((i) => i.id === Number(value));
+    if (field === "includeVat") {
+      row.includeVat = value;
 
-      // 🔹 Reset dependent fields when dropdown changes
-      row.itemId = value;
-      row.type = selectedItem?.type || 0;
-      row.min = "";
-      row.max = "";
-      row.price = "";
-
-      // 🔹 Remove all previous validation errors for this row
-      setErrors((prevErrors) => {
-        const newErrors = { ...prevErrors };
-        Object.keys(newErrors).forEach((errKey) => {
-          if (errKey.startsWith(`${key}-${rowIndex}-`)) {
-            delete newErrors[errKey];
-          }
-        });
-        return newErrors;
-      });
+      // Sync VAT with next rows if enabled
+      const currentItemId = row.itemId;
+      for (let i = 0; i < rows.length; i++) {
+        if (rows[i].itemId === currentItemId) {
+          rows[i] = { ...rows[i], includeVat: value };
+        }
+      }
+    
     } else {
-      // Normal field update
+      
       row[field] = value;
 
-      // 🔹 Dynamic error clearing logic (real-time)
-      setErrors((prevErrors) => {
-        const newErrors = { ...prevErrors };
-        const errorKey = `${key}-${rowIndex}-${field}`;
-        const selectedItem = data[key].find((i) => i.id === Number(row.itemId));
-        const itemType = selectedItem?.type || 0;
-
-        if (field === "min") {
-          if (value !== "" && !isNaN(value)) delete newErrors[errorKey];
-          if (row.max && Number(value) < Number(row.max)) {
-            delete newErrors[`${key}-${rowIndex}-max`]; // remove max error if now valid
-          }
+      // 🧠 Auto-adjust next row.min when current row.max changes
+      if (field === "max" && value !== "" && !isNaN(value)) {
+        const nextRow = rows[rowIndex + 1];
+        if (nextRow && nextRow.min !== undefined) {
+          // Set next row's min = current max + 1
+          nextRow.min = String(Number(value) + 1);
         }
+      }
 
-        if (field === "max") {
-          if (value !== "" && !isNaN(value) && Number(value) > Number(row.min)) {
-            delete newErrors[errorKey];
-            delete newErrors[`${key}-${rowIndex}-min`];
-          }
-        }
-
-        if (field === "price") {
-          if (value !== "" && !isNaN(value)) delete newErrors[errorKey];
-        }
-
-        if (field === "itemId" && value) {
-          delete newErrors[errorKey];
-        }
-
-        return newErrors;
-      });
+      // 🧠 (Optional) Auto-correct current row.min if it’s greater than max
+      if (field === "min" && row.max !== "" && Number(value) >= Number(row.max)) {
+        row.max = String(Number(value) + 1);
+      }
     }
 
     rows[rowIndex] = row;
     updated[key] = rows;
     return updated;
   });
-};
 
-
-
-
-
-
-
-  // Add a new empty row for a specific item — blocked if an existing row's max is empty
-const addRow = (key) => {
-  setshowbelow((prev) => ({
-    ...prev,
-    [key]: false, // hide only for this accordion
-  }));
-
-  setFormValues((prev) => {
-    const rows = prev[key] || [];
-    return {
-      ...prev,
-      [key]: [
-        ...rows,
-        { itemId: "", min: "", max: "", price: "" },
-      ],
-    };
+  // Clear validation error for that field
+  setErrors(prevErrors => {
+    const newErrors = { ...prevErrors };
+    const errorKey = `${key}-${rowIndex}-${field}`;
+    if (newErrors[errorKey]) delete newErrors[errorKey];
+    return newErrors;
   });
 };
 
 
+  // Delete row handler
+  const handleDeleteRow = (key, rowIndex) => {
+    setFormValues(prev => {
+      const updated = { ...prev };
+      const rows = [...(updated[key] || [])];
+      rows.splice(rowIndex, 1);
+      updated[key] = rows;
+      return updated;
+    });
+    // Remove errors related to deleted row
+    setErrors(prev => {
+      const newErrors = { ...prev };
+      Object.keys(newErrors).forEach(errKey => {
+        if (errKey.startsWith(`${key}-${rowIndex}-`)) delete newErrors[errKey];
+      });
+      return newErrors;
+    });
+  };
+
+  // Add new row only for type=1 category
+const handleAddRow = (category, selectedItem) => {
+  setFormValues(prev => {
+    const updated = { ...prev };
+    const rows = [...(updated[category] || [])];
+
+    // Get last row if it exists
+    const lastRow = rows.length > 0 ? rows[rows.length - 1] : null;
+
+    // Auto-start range at lastRow.max + 1 if available
+    const nextMin =
+      lastRow && lastRow.max !== "" && !isNaN(lastRow.max)
+        ? String(Number(lastRow.max) + 1)
+        : "";
+
+    const newRow = {
+      itemId: String(selectedItem.id),
+      min: nextMin,
+      max: "",
+      price: "",
+      includeVat: lastRow ? lastRow.includeVat : false, // carry over VAT state
+      isFixedName: false,
+      label: selectedItem.name,
+    };
+
+    rows.push(newRow);
+    updated[category] = rows;
+    return updated;
+  });
+  setSelectedItems(prev => ({ ...prev, [category]: null }));
+};
 
 
 
-  // Validate rows for an item — used on submit or when explicitly validating
-const validateRows = (key, itemId) => {
-  const rows = formValues[key]?.[itemId] || [];
-  let newErrors = {};
 
-  // ✅ Always start fresh for this specific item
-  const filteredErrors = Object.fromEntries(
-    Object.entries(errors).filter(([errKey]) => !errKey.startsWith(`${key}-${itemId}-`))
-  );
+  // Check overlapping ranges in array of rows (type=1)
+const checkOverlapOrGapInCategory = (rows) => {
+  const ranges = rows
+    .map((r, idx) => ({ idx, min: Number(r.min), max: Number(r.max) }))
+    .sort((a, b) => a.min - b.min);
 
-  rows.forEach((row, index) => {
-    const isEmptyRow =
-      (!row.min && !row.max && !row.price) ||
-      (row.min === "" && row.max === "" && row.price === "");
+  let overlapFound = false;
+  let gapFound = false;
+  let overlapIndexes = [];
+  let gapIndexes = [];
 
-    const isOpenEndedRow = row.max === "" || row.max === undefined;
+  for (let i = 0; i < ranges.length - 1; i++) {
+    const current = ranges[i];
+    const next = ranges[i + 1];
 
-    if (isEmptyRow) {
-      newErrors[`${key}-${itemId}-${index}-min`] = "Min is required";
-      newErrors[`${key}-${itemId}-${index}-price`] = "Price is required";
-      return;
+    // Overlap
+    if (current.max >= next.min) {
+      overlapFound = true;
+      overlapIndexes.push(i, i + 1);
     }
 
-    // Required checks
-    if (row.min === "" || row.min === undefined)
-      newErrors[`${key}-${itemId}-${index}-min`] = "Min is required";
-    if (row.price === "" || row.price === undefined)
-      newErrors[`${key}-${itemId}-${index}-price`] = "Price is required";
+    // Gap
+    if (current.max + 1 < next.min) {
+      gapFound = true;
+      gapIndexes.push(i, i + 1);
+    }
+  }
 
-    // Logical order checks
-    if (!isOpenEndedRow && row.min !== "" && row.min !== undefined) {
-      if (Number(row.min) >= Number(row.max)) {
-        newErrors[`${key}-${itemId}-${index}-max`] = "Max should be > Min";
+  return { overlapFound, gapFound, overlapIndexes, gapIndexes };
+};
+
+
+
+
+  // Validate rows before submit
+const validateAllRows = () => {
+  let tempErrors = {};
+  let allValid = true;
+
+  Object.keys(formValues).forEach((key) => {
+    const rows = formValues[key] || [];
+
+    rows.forEach((row, idx) => {
+      const prefix = `${key}-${idx}`;
+      const itemType = data[key]?.find(i => String(i.id) === String(row.itemId))?.type;
+
+      const hasMin = row.min !== "" && row.min !== undefined;
+      const hasMax = row.max !== "" && row.max !== undefined;
+      const hasPrice = row.price !== "" && row.price !== undefined;
+
+      // ✅ Completely empty row → skip validation
+      if (!hasMin && !hasMax && !hasPrice) return;
+
+      // 🔹 For Type 1: must have min, max, and price logic
+      if (itemType === 1) {
+        if ((hasMin && !hasMax) || (!hasMin && hasMax)) {
+          tempErrors[`${prefix}-max`] = "Both Min and Max are required";
+          allValid = false;
+        }
+
+        if (hasMin && hasMax && Number(row.min) >= Number(row.max)) {
+          tempErrors[`${prefix}-max`] = "Max must be greater than Min";
+          allValid = false;
+        }
+
+        if (hasMin && Number(row.min) < 0) {
+          tempErrors[`${prefix}-min`] = "Min must be ≥ 0";
+          allValid = false;
+        }
+
+        if (hasMax && Number(row.max) < 0) {
+          tempErrors[`${prefix}-max`] = "Max must be ≥ 0";
+          allValid = false;
+        }
+
+        if (hasPrice && Number(row.price) < 0) {
+          tempErrors[`${prefix}-price`] = "Price must be ≥ 0";
+          allValid = false;
+        }
+
+        if (hasMin && hasMax && !hasPrice) {
+          tempErrors[`${prefix}-price`] = "Price is required when Min & Max are filled";
+          allValid = false;
+        }
+
+      } else {
+        // 🔹 Type 0 → Only price is needed
+        if (!hasPrice) {
+          tempErrors[`${prefix}-price`] = "Charge is required";
+          allValid = false;
+        } else if (Number(row.price) < 0) {
+          tempErrors[`${prefix}-price`] = "Charge must be ≥ 0";
+          allValid = false;
+        }
+      }
+    });
+
+    // 🔹 Overlap and gap check (only for type=1)
+    const type1Rows = rows.filter(r => {
+      const t = data[key]?.find(i => String(i.id) === String(r.itemId))?.type;
+      return t === 1 && r.min !== "" && r.max !== "";
+    });
+
+    if (type1Rows.length > 1) {
+      const { overlapFound, gapFound, overlapIndexes, gapIndexes } =
+        checkOverlapOrGapInCategory(type1Rows);
+
+      if (overlapFound) {
+        overlapIndexes.forEach((idx) => {
+          const realIndex = rows.indexOf(type1Rows[idx]);
+          tempErrors[`${key}-${realIndex}-min`] = "Overlapping ranges found";
+        });
+        allValid = false;
+      }
+
+      if (gapFound) {
+        gapIndexes.forEach((idx) => {
+          const realIndex = rows.indexOf(type1Rows[idx]);
+          tempErrors[`${key}-${realIndex}-max`] = "Gap found before next range";
+        });
+        allValid = false;
       }
     }
-
-    // No negative numbers
-    if (row.min !== "" && Number(row.min) < 0)
-      newErrors[`${key}-${itemId}-${index}-min`] = "Min must be ≥ 0";
-    if (row.max !== "" && Number(row.max) < 0)
-      newErrors[`${key}-${itemId}-${index}-max`] = "Max must be ≥ 0";
-    if (row.price !== "" && Number(row.price) < 0)
-      newErrors[`${key}-${itemId}-${index}-price`] = "Price must be ≥ 0";
   });
 
-  // ✅ Merge safely — React will detect change
-  setErrors({ ...filteredErrors, ...newErrors });
-
-  // Return validity
-  return Object.keys(newErrors).length === 0;
+  setErrors(tempErrors);
+  return allValid;
 };
 
 
 
-
-
-  // Build API payload: convert empty max -> null, use item.id as typeid
-const buildApiPayload = () => {
+  // Build API payload on submit
+  const buildApiPayload = () => {
   let payload = {};
 
-  Object.keys(formValues).forEach((category) => {
+  Object.keys(formValues).forEach(category => {
     const rows = formValues[category] || [];
-    const formattedRows = rows.map((r) => ({
-      typeid: Number(r.itemId),
+
+    // Filter out empty rows (no min, max, or price)
+    const filledRows = rows.filter(r =>
+      (r.min !== "" && r.min !== undefined) ||
+      (r.max !== "" && r.max !== undefined) ||
+      (r.price !== "" && r.price !== undefined)
+    );
+
+    // Map only filled rows
+    payload[category] = filledRows.map(r => ({
+      typeid: r.itemId === "others" ? null : Number(r.itemId),
       min: r.min === "" || r.min === undefined ? null : Number(r.min),
       max: r.max === "" || r.max === undefined ? null : Number(r.max),
       price: r.price === "" || r.price === undefined ? null : Number(r.price),
       vat: r.includeVat ? 1 : 0,
-      ...(r.includeVat ? { vat_percent: Number(r.vatPercent ?? 0), type: 80 } : {}),
     }));
-    payload[category] = formattedRows;
   });
 
   return payload;
 };
 
 
+  // Submit handler
+  const handleSubmit = () => {
+    // Check at least one row filled per category
+   const emptyCategories = Object.keys(formValues).filter(key => {
+  const rows = formValues[key] || [];
 
-
-  // Submit: validate every visible item (or all items) and if valid, build payload
-const handleSubmit = () => {
-  // Check at least one row in each accordion
-  const emptyAccordions = Object.keys(formValues).filter(key => !isAccordionFilled(key));
-  if (emptyAccordions.length > 0) {
-    Swal.fire({
-      icon: "warning",
-      title: "Missing Item",
-      text: `Please add at least one item in each section: ${emptyAccordions.join(", ")}`,
-      confirmButtonColor: "#f59e0b",
-    });
-    return;
-  }
-
-  // Check at least 3 filled rows overall
-  const filledRowCount = getFilledRowCount();
-  if (filledRowCount < 3) {
-    Swal.fire({
-      icon: "warning",
-      title: "Not Enough Items",
-      text: "Please fill in at least 3 items in total before submitting.",
-      confirmButtonColor: "#f59e0b",
-    });
-    return;
-  }
-  let allValid = true;
-  let tempErrors = {};
-
-    const isCompletelyEmpty = Object.values(formValues).every((rows) =>
-    (rows || []).every(
-      (row) =>
-        !row.itemId &&
-        (row.min === "" || row.min === undefined) &&
-        (row.max === "" || row.max === undefined) &&
-        (row.price === "" || row.price === undefined)
-    )
+  // A filled row means any of min, max, or price is entered
+  const hasFilledRow = rows.some(r =>
+    (r.min && r.min !== "") ||
+    (r.max && r.max !== "") ||
+    (r.price && r.price !== "")
   );
 
-  if (isCompletelyEmpty) {
-    Swal.fire({
-      icon: "warning",
-      title: "Empty Form",
-      text: "Please fill in at least one item before submitting.",
-      confirmButtonColor: "#f59e0b", // amber
-    });
-    return;
-  }
+  return !hasFilledRow; // category is empty if no row is filled
+});
 
-  Object.keys(formValues).forEach((key) => {
-    const rows = formValues[key] || [];
-
-    // 🧩 Track duplicates for type=0
-    const type0ItemIds = new Set();
-
-    rows.forEach((row, index) => {
-      const isEmptyRow =
-        (!row.min && !row.max && !row.price && !row.itemId) ||
-        (row.min === "" && row.max === "" && row.price === "" && !row.itemId);
-
-      if (!row.itemId) {
-        tempErrors[`${key}-${index}-itemId`] = "Item selection is required";
-        allValid = false;
-        return;
-      }
-
-      const selectedItem = data[key].find((i) => i.id === Number(row.itemId));
-      const itemType = selectedItem?.type || 0;
-
-      // 🚫 Prevent same type=0 item selection multiple times
-      if (itemType === 0) {
-        if (type0ItemIds.has(row.itemId)) {
-          tempErrors[`${key}-${index}-itemId`] =
-            "This item can only be selected once";
-          allValid = false;
-        } else {
-          type0ItemIds.add(row.itemId);
-        }
-      }
-
-      // ✅ Case 1 — Empty row
-      if (isEmptyRow) {
-        if (itemType === 1) {
-          tempErrors[`${key}-${index}-min`] = "Min is required";
-        }
-        tempErrors[`${key}-${index}-price`] = "Price is required";
-        allValid = false;
-        return;
-      }
-
-      // ✅ Case 2 — Required fields for type=1
-      if (itemType === 1) {
-        if (row.min === "" || row.min === undefined) {
-          tempErrors[`${key}-${index}-min`] = "Min is required";
-          allValid = false;
-        }
-
-        if (row.price === "" || row.price === undefined) {
-          tempErrors[`${key}-${index}-price`] = "Price is required";
-          allValid = false;
-        }
-
-        // ✅ Case 3 — Open-ended max only for last row of same item
-        const sameItemRows = rows.filter((r) => r.itemId === row.itemId);
-        const hasAnotherOpen = sameItemRows.filter((r) => !r.max).length > 1;
-
-        if (!row.max && hasAnotherOpen) {
-          tempErrors[`${key}-${index}-max`] =
-            "Only one open-ended Max allowed per item";
-          allValid = false;
-        }
-
-        // ✅ Case 4 — Min < Max (if max exists)
-        if (row.max && Number(row.min) >= Number(row.max)) {
-          tempErrors[`${key}-${index}-max`] = "Max must be greater than Min";
-          allValid = false;
-        }
-        if (!row.max) {
-  const isLast = index === rows.length - 1;
-  if (!isLast) {
-    tempErrors[`${key}-${index}-max`] = "Empty Max allowed only in last range";
-    allValid = false;
-  }
-}
-      } else {
-        // ✅ For type=0: only price required
-        if (row.price === "" || row.price === undefined) {
-          tempErrors[`${key}-${index}-price`] = "Price is required";
-          allValid = false;
-        }
-      }
-      // Ensure only last range can have empty max
-
-
-    });
-
-    // ✅ Check overlapping ranges (type=1 only)
-    const type1Rows = (rows || []).filter((r) => {
-      const selected = data[key].find((i) => i.id === Number(r.itemId));
-      return selected?.type === 1;
-    });
-
-   const overlapFound = hasOverlap(type1Rows);
-if (overlapFound) {
-  allValid = false;
-  type1Rows.forEach((r, idx) => {
-    tempErrors[`${key}-${idx}-min`] =
-      tempErrors[`${key}-${idx}-min`] || "Overlapping ranges found";
-  });
-}
-
-  });
-
-  setErrors(tempErrors);
-
-if (!allValid) {
-    Swal.fire({
-      icon: "error",
-      title: "Validation Error",
-      text: "Please correct the highlighted fields before submitting.",
-      confirmButtonColor: "#dc2626", // red
-    });
-    console.log("❌ Validation Errors:", tempErrors);
-    return;
-  }
-
-  const payload = buildApiPayload();
-  console.log("✅ Final Payload:", payload);
-  updateQuotationData(payload);
+if (emptyCategories.length > 0) {
   Swal.fire({
-    icon: "success",
-    title: "Success!",
-    text: "Your form was submitted successfully.",
-    confirmButtonColor: "#16a34a", // green
-  }).then(() => {
-    router.push("/conveyancers/Notes/");
+    icon: "warning",
+    title: "Missing Data",
+    text: `Please fill at least one row in: ${emptyCategories.join(", ")}`,
+    confirmButtonColor: "#f59e0b",
   });
-};
-
-
-
-
-
-
-
-// ✅ Prevent overlapping min–max for same item
-// Check for overlapping ranges within same itemId
-const hasOverlap = (rows) => {
-  const rangesByItem = {};
-
-  rows.forEach((row, index) => {
-    if (!row.itemId || row.min === "" || row.min === undefined) return;
-    const itemKey = row.itemId;
-    if (!rangesByItem[itemKey]) rangesByItem[itemKey] = [];
-    const min = Number(row.min);
-    const max = row.max === "" || row.max === undefined ? Infinity : Number(row.max);
-    rangesByItem[itemKey].push({ index, min, max });
-  });
-
-  for (const itemId in rangesByItem) {
-    const ranges = rangesByItem[itemId].sort((a, b) => a.min - b.min);
-    for (let i = 0; i < ranges.length - 1; i++) {
-      const current = ranges[i];
-      const next = ranges[i + 1];
-      if (current.max > next.min) {
-        // Found an overlap — return true
-        return true;
-      }
+  return; // stop submit
+}
+    if (!validateAllRows()) {
+      Swal.fire({
+        icon: "error",
+        title: "Validation Error",
+        text: "Please correct the highlighted fields before submitting.",
+        confirmButtonColor: "#dc2626",
+      });
+      return;
     }
-  }
 
-  return false; // ✅ No overlaps
-};
+    const payload = buildApiPayload();
+    updateQuotationData(payload);
 
-
-
-
-
-
-
-
+    Swal.fire({
+      icon: "success",
+      title: "Success!",
+      text: "Your form was submitted successfully.",
+      confirmButtonColor: "#16a34a",
+    }).then(() => {
+      router.push("/conveyancers/Notes/");
+    });
+  };
 
   return (
-
-   <div className="min-h-screen bg-white antialiased font">
+    <div className="min-h-screen bg-white antialiased font container ">
       {/* Header */}
-         <Navbar/>
+      <div className='sticky top-0 z-50'>
+        <Navbar />
+      </div>
 
-      {/* Main */}
-      <main className="mx-auto max-w-[1200px]  pt-10">
-        <div className="flex gap-12">
-          {/* Left stepper */}
-          <aside className="relative w-[400px] font   rounded-[40px] overflow-hidden bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)]
-shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
-            <div className="absolute inset-0 p-8">
-              {/* Step 1 (completed) */}
-              <div className="flex items-start">
-                <div className="relative mr-4">
-                  <div className="w-11 h-11 rounded-full border-[2px] border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                      <path d="M20 7L9 18l-5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                  </div>
-                  <div className="absolute left-[22px] top-[44px] w-[2px] h-[56px] bg-[#CFE3CF]" />
-                </div>
-                <div>
-                  <div className="text-[12px] font-semibold tracking-wide text-[#1E1E1E]">STEP 1</div>
-                  <div className="text-[20px] font-extrabold text-[#1E1E1E] leading-tight">Company  Details</div>
-                  <div className="text-[12px] font-medium text-[#2D7C57] mt-1">Completed</div>
-                </div>
+      {/* Sidebar steps */}
+       <aside className="z-49 fixed mx-[20px] ml-20 top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-50% lg:max-h-[600px] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white lg:top-22">
+        <div className="p-6">
+          {/* Step 1 */}
+          <div className="flex items-start">
+            <div className="relative mr-4">
+              <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
+                <Check size={18} />
               </div>
+              <div className="absolute left-[19px] top-[40px] w-[2px] h-[50px] bg-[#CFE3CF]" />
+            </div>
+            <div>
+              <div className="text-xs font-semibold text-[#1E1E1E]">STEP 1</div>
+                                <div className="font-outfit text-[15px] text-gray-900 font-semibold">Company registration</div>
 
-              {/* Step 2 (in progress) */}
-              <div className="flex items-start mt-8">
-                <div className="relative mr-4">
-                  <div className="w-11 h-11 rounded-full border-[2px] border-[#1E5C3B] bg-white text-[#1E5C3B] flex items-center justify-center">
-                    <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
-                      <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" strokeWidth="2" />
-                      <circle cx="10" cy="10" r="3" fill="currentColor" />
-                    </svg>
-                  </div>
-                  <div className="absolute left-[22px] top-[44px] w-[2px] h-[56px] bg-[#E4E4E7]" />
-                </div>
-                <div>
-                  <div className="text-[12px] font-semibold tracking-wide text-[#1E1E1E]">STEP 2</div>
-                  <div className="text-[20px] font-extrabold text-[#1E1E1E] leading-tight">Quotation   Details</div>
-                  <div className="text-[12px] font-medium text-[#A38320] mt-1">In Progress</div>  
-                </div>
+                                    <div className="text-[12px] font-medium text-[#2D7C57] mt-1">Completed</div>
+            </div>
+          </div>
+
+          {/* Step 2 (Current) */}
+          <div className="flex items-start mt-6">
+            <div className="relative mr-4">
+              <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-white text-[#1E5C3B] flex items-center justify-center">
+                <div className="w-4 h-4 rounded-full bg-[#1E5C3B]" />
               </div>
+              <div className="absolute left-[19px] top-[40px] w-[2px] h-[50px] bg-gray-200" />
+            </div>
+            <div>
+              <div className="text-xs font-semibold text-[#1E1E1E]">STEP 2</div>
+                                              <div className="font-outfit text-[15px] text-gray-900 font-semibold">Price details</div>
+              <div className="text-xs text-[#A38320] mt-1">In Progress</div>
 
-              {/* Step 3 */}
-              <div className="flex items-start mt-8">
-                <div className="mr-4">
-                  <div className="w-11 h-11 rounded-full border-[2px] border-[#B7B7B7] bg-white text-[#B7B7B7] flex items-center justify-center">
-                    <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
-                      <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" strokeWidth="2" />
-                    </svg>
-                  </div>
-                </div>
-                <div>
-                  <div className="text-[12px] font-semibold tracking-wide text-[#1E1E1E]">STEP 3</div>
-                  <div className="text-[20px] font-bold text-[#1E1E1E]  leading-tight">Notes Section</div>
-                </div>
+            </div>
+          </div>
+
+          {/* Step 3 */}
+          <div className="flex items-start mt-6">
+            <div className="mr-4">
+              <div className="w-10 h-10 rounded-full border-2 border-gray-300 text-gray-400 flex items-center justify-center">
+                <div className="w-3 h-3 rounded-full border-2 border-gray-300"></div>
               </div>
             </div>
+            <div>
+              <div className="text-xs font-semibold text-[#1E1E1E]">STEP 3</div>
+                                                            <div className="font-outfit text-[15px] text-gray-900 font-semibold">Notes</div>
 
-            {/* Decorative wave */}
-            <div
-              aria-hidden="true"
-              className="absolute inset-x-0 bottom-0 h-[45%]"
-              style={{
-                background:
-                  'radial-gradient(120% 80% at 0% 100%, rgba(178,196,160,0.45) 0%, rgba(178,196,160,0.25) 35%, transparent 70%)',
-              }}
-            />
-          </aside>
+            </div>
+          </div>
+        </div>
+      </aside>
 
-          {/* Right: form card */}
-          <section className="flex-1">
-           <div
-  className="rounded-[18px] border border-[#EDF0F2] shadow-[0_6px_24px_rgba(16,24,40,0.04)] 
-  bg-white max-w-[760px] h-[520px] overflow-y-auto"
->
-  <div className="p-8">
-    {/* Breadcrumb */}
-    <nav
-      className="text-[13px] text-[#6B7280] mb-4 flex items-center gap-4"
-      aria-label="Breadcrumb"
-    >
-      <Link href="/" className="other-page">
-        Home
-      </Link>
-      <span>/</span>
-      <span className="other-page">Company Details</span>
-      <span>/</span>
-      <span className="live-page">Quotation Details</span>
-    </nav>
+      {/* Main content */}
+<main className="pt-10 ml-105 mr-30 mx-auto   ">
+  
+  <div className=" bg-white shadow-md rounded-2xl p-8 border w-[900px] border-gray-100">
+    <div className="mx-auto w-[800px]">
+      <nav className="text-[13px] text-[#6B7280] mb-1 flex items-center gap-4" aria-label="Breadcrumb">
+                  <span className="other-page hidden sm:inline">Company registration</span>
+                  <span className="hidden sm:inline">/</span>
+                  <span className="other-page hidden sm:inline">Price details</span>
+                  <span>/</span>
+                  <span className="live-page whitespace-nowrap">Notes</span>
+                </nav>
+    {Object.keys(data).map((category) => {
+      if (!formValues[category]) return null;
 
-    <h1 className="text-[24px] font-semibold font-Outfit text-[#1B1D21]">
-      Share your Quotation Details
-    </h1>
-    <p className="mt-1 text-[14px] leading-5 text-[#6B7280] font-Outfit">
-      By completing this form your details are shared with up to 5 firms
-      providing the quotes, but absolutely no one else.
-    </p>
-
-  <div className="max-w-2xl mx-auto p-4">
-  {Object.keys(data).map((key) => (
-    <div key={key} className="border rounded-lg mb-4 shadow-sm overflow-hidden">
-      {/* Accordion Header */}
-      <button
-        onClick={() => toggleAccordion(key)}
-        className="w-full flex justify-between items-center p-4 font-semibold text-gray-800"
-      >
-        {key}
-        <span>{openAccordion === key ? "-" : "+"}</span>
-      </button>
-
-      {/* Accordion Content */}
-{openAccordion === key && (
-  <div className="p-3 bg-white transition-all">
-    {(formValues[key] || []).map((row, rowIndex) => {
-      // Per-row VAT state, or fallback to defaults
-      const includeVat = row.includeVat ?? false;
-      const vatPercent = row.vatPercent ?? "";
-
-      const selectedItem = data[key].find(i => i.id === Number(row.itemId));
+      const hasType1 = data[category]?.some((item) => item.type === 1);
 
       return (
- <div
-  className="flex flex-row items-center gap-3 border-b border-gray-200 pb-2 mb-2 bg-white hover:bg-gray-50 transition-colors"
-  key={rowIndex}
->
-  {/* Dropdown */}
-  <div className="flex flex-col">
-    <select
-      value={row.itemId}
-      onChange={e => handleInputChange(key, rowIndex, "itemId", e.target.value)}
-      className={`border border-gray-300 rounded px-2 py-1 w-40 text-black text-sm bg-white focus:ring-2 focus:ring-blue-200 focus:border-blue-400 ${errors[`${key}-${rowIndex}-itemId`] ? "border-red-500" : ""}`}
-    >
-      <option value="">-- Select Item --</option>
-      {data[key].map(item => (
-        <option key={item.id} value={item.id}>
-          {item.name}
-        </option>
-      ))}
-    </select>
-    {errors[`${key}-${rowIndex}-itemId`] && (
-      <span className="text-xs text-red-600">{errors[`${key}-${rowIndex}-itemId`]}</span>
-    )}
-  </div>
+        <div
+          key={category}
+          className="border rounded-lg mb-6 shadow-sm overflow-hidden bg-white  p-5"
+        >
+        
+          {/* 🏷️ Category title */}
+          <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
+            {category}
+          </div>
 
-  {/* Min & Max if type=1 */}
-  {selectedItem?.type === 1 && (
-    <>
-      <div className="flex flex-col">
-        <input
-          type="number"
-          placeholder="Min"
-          value={row.min || ""}
-          onChange={e => handleInputChange(key, rowIndex, "min", e.target.value)}
-          className={`border border-gray-300 rounded px-2 py-1 w-16 text-black text-sm bg-white focus:ring-2 focus:ring-blue-200 focus:border-blue-400 ${errors[`${key}-${rowIndex}-min`] ? "border-red-500" : ""}`}
-        />
-        {errors[`${key}-${rowIndex}-min`] && (
-          <span className="text-xs text-red-600">{errors[`${key}-${rowIndex}-min`]}</span>
-        )}
-      </div>
-      <div className="flex flex-col">
-        <input
-          type="number"
-          placeholder="Max"
-          value={row.max || ""}
-          onChange={e => handleInputChange(key, rowIndex, "max", e.target.value)}
-          className={`border border-gray-300 rounded px-2 py-1 w-16 text-black text-sm bg-white focus:ring-2 focus:ring-blue-200 focus:border-blue-400 ${errors[`${key}-${rowIndex}-max`] ? "border-red-500" : ""}`}
-        />
-        {errors[`${key}-${rowIndex}-max`] && (
-          <span className="text-xs text-red-600">{errors[`${key}-${rowIndex}-max`]}</span>
-        )}
-      </div>
-    </>
-  )}
+          {/* 🧮 Table header */}
+          <div className="grid grid-cols-[1.5fr_0.7fr_0.7fr_0.8fr_0.6fr_0.8fr] items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
+            <div>Type</div>
+            <div className="text-center">Min</div>
+            <div className="text-center">Max</div>
+            <div className="text-center">Charge</div>
+            <div className="text-center">VAT</div>
+            <div className="text-center">Action</div>
+          </div>
 
-  {/* Price input */}
-  <div className="flex flex-col">
-    <input
-      type="number"
-      placeholder="Charge"
-      value={row.price || ""}
-      onChange={e => handleInputChange(key, rowIndex, "price", e.target.value)}
-      className={`border border-gray-300 rounded px-2 py-1 w-13 text-black text-sm bg-white focus:ring-2 focus:ring-blue-200 focus:border-blue-400 ${errors[`${key}-${rowIndex}-price`] ? "border-red-500" : ""}`}
-    />
-    {errors[`${key}-${rowIndex}-price`] && (
-      <span className="text-xs text-red-600">{errors[`${key}-${rowIndex}-price`]}</span>
-    )}
-  </div>
+          {/* 🧾 Rows */}
+          {formValues[category].map((row, ri) => {
+            const matchedItem =
+              row.itemId !== "others"
+                ? data[category]?.find((i) => String(i.id) === row.itemId)
+                : null;
+            const itemType =
+              matchedItem?.type ?? (row.itemId === "others" ? 1 : 0);
+            const itemName = row.label ?? matchedItem?.name ?? "Unknown";
 
-  {/* VAT */}
-  <span className="flex flex-row items-center gap-2 ml-2">
-    <label className="text-xs font-medium text-gray-700">VAT?</label>
-    <button
-      type="button"
-      className={`px-2 py-[2px] rounded text-xs border text-black ${includeVat ? "bg-green-100 border-green-700" : "bg-white border-gray-300"} hover:bg-green-700`}
-      onClick={() => handleInputChange(key, rowIndex, "includeVat", true)}
-    >
-      Yes
-    </button>
-    <button
-      type="button"
-      className={`px-2 py-[2px] rounded text-xs border text-black ${includeVat === false ? "bg-red-100 border-red-400" : "bg-white border-gray-300"} hover:bg-red-700`}
-      onClick={() => handleInputChange(key, rowIndex, "includeVat", false)}
-    >
-      No
-    </button>
-    {includeVat && (
-      <div className="flex flex-col ml-1">
-        <input
-          type="number"
-          min="0"
-          max="100"
-          step="0.01"
-          value={vatPercent}
-          onChange={e => handleInputChange(key, rowIndex, "vatPercent", e.target.value)}
-          placeholder="%"
-          className={`w-12 border border-gray-300 rounded px-1 py-[2px] text-black placeholder:text-black text-xs bg-white focus:ring-2 focus:ring-blue-200 focus:border-blue-400 ${errors[`${key}-${rowIndex}-vatPercent`] ? "border-red-500" : ""}`}
-        />
-        {errors[`${key}-${rowIndex}-vatPercent`] && (
-          <span className="text-xs text-red-600">{errors[`${key}-${rowIndex}-vatPercent`]}</span>
-        )}
-      </div>
-    )}
-  </span>
+            return (
+              <div
+                key={ri}
+                className="grid grid-cols-[1.5fr_0.7fr_0.7fr_0.8fr_0.6fr_0.8fr] items-center text-sm border-b border-gray-200 hover:bg-gray-50 transition-colors px-3 py-2"
+              >
+                {/* Item Name */}
+                <div className="text-gray-700 font-medium truncate">
+                  {itemName}
+                </div>
 
-  {/* Add row button */}
-  <button
-    onClick={() => addRow(key)}
-    className="text-green-600 text-xs border border-gray-300 rounded px-2 py-1 h-full ml-2 flex items-center hover:bg-gray-100"
-  >
-    <PlusCircle size={18} />
-  </button>
-</div>
+                {/* Min */}
+                <div className="flex justify-center">
+                  {itemType === 1 ? (
+                    <div className="flex flex-col items-center">
+                      <input
+                        type="number"
+                        placeholder="Min"
+                        value={row.min ||""}
+                        onChange={(e) =>
+                          handleInputChange(category, ri, "min", e.target.value)
+                        }
+                        className={`border rounded px-1.5 py-0.5 w-16 text-sm text-center text-black bg-white ${
+                          errors[`${category}-${ri}-min`]
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        }`}
+                      />
+                      {errors[`${category}-${ri}-min`] && (
+                        <span className="text-[10px] text-red-600 mt-0.5">
+                          {errors[`${category}-${ri}-min`]}
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-gray-400 text-center">—</div>
+                  )}
+                </div>
 
+                {/* Max */}
+                <div className="flex justify-center">
+                  {itemType === 1 ? (
+                    <div className="flex flex-col items-center">
+                      <input
+                        type="number"
+                        placeholder="Max"
+                        value={row.max || ""}
+                        onChange={(e) =>
+                          handleInputChange(category, ri, "max", e.target.value)
+                        }
+                        className={`border rounded px-1.5 py-0.5 w-16 text-sm text-center text-black bg-white ${
+                          errors[`${category}-${ri}-max`]
+                            ? "border-red-500"
+                            : "border-gray-300"
+                        }`}
+                      />
+                      {errors[`${category}-${ri}-max`] && (
+                        <span className="text-[10px] text-red-600 mt-0.5">
+                          {errors[`${category}-${ri}-max`]}
+                        </span>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-gray-400 text-center">—</div>
+                  )}
+                </div>
 
+                {/* Charge */}
+                <div className="flex justify-center">
+                  <div className="flex flex-col items-center">
+                    <input
+                      type="number"
+                      placeholder="Charge"
+                      value={row.price || ""}
+                      onChange={(e) =>
+                        handleInputChange(category, ri, "price", e.target.value)
+                      }
+                      className={`border rounded px-1.5 py-0.5 w-20 text-sm text-center text-black bg-white ${
+                        errors[`${category}-${ri}-price`]
+                          ? "border-red-500"
+                          : "border-gray-300"
+                      }`}
+                    />
+                    {errors[`${category}-${ri}-price`] && (
+                      <span className="text-[10px] text-red-600 mt-0.5">
+                        {errors[`${category}-${ri}-price`]}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* VAT */}
+                <div className="flex justify-center">
+                  <input
+                    type="checkbox"
+                    checked={row.includeVat}
+                    onChange={(e) =>
+                      handleInputChange(
+                        category,
+                        ri,
+                        "includeVat",
+                        e.target.checked
+                      )
+                    }
+                    className="w-4 h-4 accent-green-600"
+                  />
+                </div>
+
+                {/* Delete */}
+                <div className="flex justify-center">
+                  <button
+                    type="button"
+                    className="text-red-600 hover:text-red-800 text-xs border border-black hover:border-red-700 rounded px-2 py-0.5"
+                    onClick={() => handleDeleteRow(category, ri)}
+                  >
+    <X  className="w-4 h-4 text-black hover:text-red-700" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+
+          {/* ➕ Add Row (Dropdown) */}
+          {hasType1 && (
+            <div className="flex justify-end mt-3 px-3 pb-3">
+              
+              <select
+                className="border border-green-300  py-1 rounded text-sm text-green-800 "
+                 value={selectedItems[category] || ""}
+                onChange={(e) => {
+                 
+                  const selectedId = e.target.value;
+                  const selectedItem = data[category].find(
+                    (i) => i.id === Number(selectedId)
+                  );
+                  if (selectedItem) handleAddRow(category, selectedItem);
+                }}
+              >
+                <option value="" className="text-green-800">Add Row </option>
+                {data[category]
+                  .filter((i) => i.type === 1)
+                  .map((i) => (
+                    <option key={i.id} value={i.id}>
+                      {i.name}
+                    </option>
+                  ))}
+              </select>
+          
+            </div>
+          )}
+        </div>
       );
     })}
   </div>
-)}
-
-
-
     </div>
-  ))}
-</div>
- {/* <button  className="mt-4 bg-blue-600 text-white px-4 py-2 rounded w-full">
-        Submit
-      </button> */}
+  
+
+  {/* ✅ Footer Buttons */}
+  <div className=" m-10 flex justify-end gap-4 max-w-screen">
+    <button
+      onClick={() => router.back()}
+      className="font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1B1D21]"
+    >
+      Back
+    </button>
+    <button
+      onClick={handleSubmit}
+      className="font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full bg-[#1E5C3B] text-[#EDF4EF]"
+    >
+      Continue to Notes Section →
+    </button>
   </div>
+</main>
 
 
-</div>
-
-
-           {/* Bottom actions */}
-            <div className="mt-10 flex justify-end gap-4 max-w-[760px] ">
-                   <button
-  onClick={() => router.back()}
-  className="font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1B1D21]"
->
-  Back
-</button>
-              <button
-              onClick={handleSubmit}
-                className="  font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full bg-[#1E5C3B] text-[#EDF4EF]"
-              >
-                Continue to Notes Section →
-              </button>
-            </div>
-          </section>
-        </div>
-      </main>
     </div>
-
-  //  
   );
-
 }
