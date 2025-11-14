@@ -11,6 +11,7 @@ import { Check } from "lucide-react";
 
 
 
+
 const staticQuotesData = [
   {
     company_id: 2,
@@ -47,6 +48,7 @@ export default function Comparequotes() {
 
   // State to hold companies data (initialized with static data)
   const [quotesData, setQuotesData] = useState(staticQuotesData);
+
   // Track which card dropdown is open (by quote_id)
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
   // Popup modal visibility and selected company state
@@ -85,7 +87,12 @@ useEffect(() => {
   async function qutesdata(formData) {
     try {
       const response = await postData(API_ENDPOINTS.service, formData);
-      console.log("✅ Remortgage API Response:", response.code);
+      console.log("✅ Remortgage API Response:", response.data.id);
+      const propety_id = response.data.id;
+      console.log("property_id",propety_id);//property_id
+      
+     const userid = formData.user_id || formData["guest_user "]; // note the space
+console.log("User ID or Guest ID:", userid);// user_id
       if (response.code === 200) {
         try{
             const filterPayload = formData.user_id
@@ -94,7 +101,23 @@ useEffect(() => {
 
         const quoteResponse = await postData(API_ENDPOINTS.quotesfilter, filterPayload);
         console.log("✅ Quotes Filter API Response:", quoteResponse);
-        }
+  const { company_id } = quoteResponse.data;
+   console.log("companyid", company_id);
+
+  // 4️⃣ Extract the specific fields you want
+    if (quoteResponse.status == true) {
+      const { company_id } = quoteResponse.data;
+   console.log("companyid", company_id);
+
+      // Return them for later use
+      return { company_id };
+    } else {
+      console.warn("⚠️ No data object found in quoteResponse");
+      return null;
+    }
+      
+  }
+        
         
         catch(error){
           console.error("❌ Failed to post services:", error);

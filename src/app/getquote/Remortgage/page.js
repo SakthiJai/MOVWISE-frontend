@@ -723,12 +723,15 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
           </p>
         </div>
 
-        <Link
+        <button
         type="button"
- href="/components/personaldetails" 
+        onClick={()=>{
+          setloginformshow(true)
+          router.push("/components/personaldetails")
+        }}
          className="mt-18 mx-auto bg-[#1E5C3B] text-white font-semibold px-8 py-2 rounded-full transition-all duration-200 shadow-md">
           Sign Up
-        </Link>
+        </button>
       </div>
 
       {/* RIGHT SIDE (Content Section - 70%) */}
@@ -741,26 +744,32 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
           &times;
         </button>
 
-        <h2 className="text-2xl font-bold text-white mb-3">Confirm Submission</h2>
+        <h2 className="text-2xl font-bold text-white mb-3">Became a Member</h2>
         <p className="text-white mb-8 leading-relaxed" >
           You’re about to submit your <b>Property Details</b>.  
-          Would you like to continue as a <b>logged-in user</b> or a <b>guest user</b>?
+          Please to continue as a <b>Sign in</b> or proceed as a <b>Guest</b>?
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 mt-6 gap-4">
       <button
   // use your actual route path
-  className="border border-white text-white px-6 py-3 rounded-lg hover:bg-white hover:text-[#1E5C3B]  transition-all duration-200 shadow-sm flex items-center justify-center"
-onClick={()=>{setloginformshow(true)}}
+  className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
+          onClick={()=>{setloginformshow(true)}}
 >
-   Logged-in User
+    Sign in 
 </button>
-          <Link
- href="/components/comparequotes"
-             className="border border-white text-white px-6 py-3 rounded-lg hover:bg-white hover:text-[#1E5C3B] transition-all duration-200 shadow-sm"
-       onClick={createguestuser}   >
-             Guest User
-          </Link>
+ {/* <Link
+          href="/components/comparequotes"
+          className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
+           onClick={createguestuser} >
+         
+        </Link> */}
+ <Link
+          href="/components/comparequotes"
+          className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
+           onClick={createguestuser} >
+          Guest 
+        </Link>
           </div>
           <div>
           <Link
@@ -769,8 +778,25 @@ onClick={()=>{setloginformshow(true)}}
   >
              Forget Password
           </Link>
+          
+
         </div>
-        
+<div class="w-full flex justify-center mt-15">
+  <button
+    class="inline-flex items-center gap-2 
+           px-5 py-2 border border-gray-300 
+           rounded-full bg-white hover:bg-gray-50 
+           transition shadow-sm">
+    
+    <img
+      src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+      class="w-5 h-5"
+      alt="Google" />
+
+    <span class="text-gray-700 font-medium">Sign in with Google</span>
+  </button>
+</div>
+
 
       </div>)}
 {loginformshow && (

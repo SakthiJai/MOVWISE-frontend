@@ -9,6 +9,8 @@ import Footer from "../../parts/Footer/footer";
 
 
 
+
+
 export default function Personaldetails() {
   
   const router = useRouter();
@@ -23,11 +25,27 @@ export default function Personaldetails() {
     }));
   };
 
-     function     handlesubmit(){
-          register();
+     async function handlesubmit() {
+  const response = await postData(API_ENDPOINTS.register, formdata);
+    console.log("REGISTER RESPONSE → ", response);
 
-      console.log(formdata);
-          }
+  if (!response) return;
+
+  // If status === 0 → inactive → show popup
+  if (response.status === 0) {
+    setPopupMessage("Please check your email for activation.");
+    setShowPopup(true);
+  }
+
+  // If status === 1 → active → redirect to login page
+  if (response.status === 1) {
+      router.push("/auth/login");
+  }
+}
+
+
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupMessage, setPopupMessage] = useState("");
 
           
 
@@ -90,17 +108,16 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
                       <circle cx="10" cy="10" r="3" fill="currentColor" />
                     </svg>
                   </div>
-                  <div className="absolute left-[22px] top-[44px] w-[2px] h-[56px] bg-[#CFE3CF]" />
+                  <div />
                 </div>
                 <div>
                   <div className="text-[12px] font-semibold pesonaldetails-steps font-gilroy">STEP 1</div>
                   <div className="font-outfit text-[20px] text-gray-900 font-semibold ">Personal Details</div>
-                  <div className="text-[12px]   mt-1 font-semibold font-gilroy  text-[#A38320]">In Progress</div>
                 </div>
               </div>
 
               {/* Step 2 */}
-              <div className="flex items-start mt-8">
+              {/* <div className="flex items-start mt-8">
                 <div className="relative mr-4">
                   <div className="w-11 h-11 rounded-full border-[2px] border-[#B7B7B7] bg-white text-[#B7B7B7] flex items-center justify-center">
                     <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
@@ -113,10 +130,10 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
                   <div className="text-[12px] font-semibold pesonaldetails-steps font-gilroy ">STEP 2</div>
                   <div className="font-outfit text-[20px] text-gray-900 font-semibold ">Property Details</div>
                 </div>
-              </div>
+              </div> */}
 
               {/* Step 3 */}
-              <div className="flex items-start mt-8">
+              {/* <div className="flex items-start mt-8">
                 <div className="mr-4">
                   <div className="w-11 h-11 rounded-full border-[2px] border-[#B7B7B7] bg-white text-[#B7B7B7] flex items-center justify-center">
                     <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
@@ -129,7 +146,7 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
                   
                   <div className="font-outfit text-[20px] text-gray-900 font-semibold ">Compare Quotes</div>
                 </div>
-              </div>
+              </div> */}
             </div>
 
             {/* Decorative wave */}
@@ -256,15 +273,32 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
 </button>
 
               <button
+              
        onClick={()=>{
         handlesubmit()
        }}
                 className="  font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full bg-[#1E5C3B] text-[#EDF4EF]"
               >
-                Continue to Property Details →
+                Sign in →
               </button>
             </div>
           </section>
+        </div>
+        <div>
+          {showPopup && (
+  <div className="fixed inset-0 bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded-xl shadow-lg w-80 text-center">
+      <p className="text-gray-800 font-medium mb-4">{popupMessage}</p>
+
+      <button
+        onClick={() => setShowPopup(false)}
+        className="bg-[#13815D] text-white px-4 py-2 rounded-md"
+      >
+        OK
+      </button>
+    </div>
+  </div>
+)}
         </div>
       </main>
       </div>
