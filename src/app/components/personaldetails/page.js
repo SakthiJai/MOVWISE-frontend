@@ -4,7 +4,7 @@ import  Navbar  from "../../parts/navbar/page";// app/personal-details/page.js
 import { useRouter } from "next/navigation";
 import { API_BASE_URL } from "../.././constants/config";
 import { API_ENDPOINTS, getData, postData } from "../../auth/API/api";
-import { useState } from "react";
+import { useState, useEffect  } from "react";
 import Footer from "../../parts/Footer/footer";
 
 
@@ -34,18 +34,33 @@ export default function Personaldetails() {
   // If status === 0 → inactive → show popup
   if (response.status === 0) {
     setPopupMessage("Please check your email for activation.");
-    setShowPopup(true);
+  setShowPopup(true);
+  setShouldRedirect(false); 
   }
 
   // If status === 1 → active → redirect to login page
   if (response.status === 1) {
-      router.push("/auth/login");
+      setPopupMessage("Email already registered and account is active. Go to login page.");
+  setShowPopup(true);
+  setShouldRedirect(true); // redirect after closing popup
+  localStorage.setItem("loginshow", "true");
+setloginformshow(true);
+setModalopen(true); 
+
   }
 }
 
 
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
+const [shouldRedirect, setShouldRedirect] = useState(false);
+
+useEffect(() => {
+  if (!showPopup && shouldRedirect) {
+    router.back();
+  }
+}, [showPopup, shouldRedirect, router]);
+
 
           
 

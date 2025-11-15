@@ -12,6 +12,7 @@ import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
 import Select from "react-select";
 import Footer from "../../parts/Footer/footer";
 import { v4 as uuidv4 } from 'uuid';
+import Image from "next/image";
 
 // import Select from "react-select";
 
@@ -21,9 +22,26 @@ import { v4 as uuidv4 } from 'uuid';
 
 
 export default function App() {
+    const [loginformshow,setloginformshow]=useState(false)
+
+    useEffect(() => {
+    const storedData = localStorage.getItem("getquote");
+   const loginShow = localStorage.getItem("loginshow") === "true";
+  if (loginShow) {
+    setloginformshow(true);
+    loginformshow(true); // make sure modal is open
+    localStorage.removeItem("loginshow"); // optional, to show only once
+  }
+
+  
+    if (storedData) {
+      setFormData(JSON.parse(storedData));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
 
     const [selectedLenders, setSelectedLenders] = useState([]);
-    const [loginformshow,setloginformshow]=useState(false)
     const lenders = [
   { id: 1, lenders_name: "Lender A" },
   { id: 2, lenders_name: "Lender B" },
@@ -224,13 +242,7 @@ console.log(userId)
     "type_id":4
   };
 
-  useEffect(() => {
-    const storedData = localStorage.getItem("getquote");
-  
-    if (storedData) {
-      setFormData(JSON.parse(storedData));
-    }
-  }, []);
+
 
   // ✅ Update React state
   setFormData(updatedForm);
@@ -735,7 +747,8 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
       </div>
 
       {/* RIGHT SIDE (Content Section - 70%) */}
-    {!loginformshow &&  ( <div className="relative p-8 flex flex-col justify-center text-center md:text-left">
+    {!loginformshow &&  (
+       <div className="relative p-8 flex flex-col justify-center text-center md:text-left">
         {/* Close Button */}
         <button
           onClick={() => setModalopen(false)}
@@ -788,7 +801,9 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
            rounded-full bg-white hover:bg-gray-50 
            transition shadow-sm">
     
-    <img
+    <Image
+    width={10}
+    height={10}
       src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
       class="w-5 h-5"
       alt="Google" />
@@ -798,7 +813,8 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
 </div>
 
 
-      </div>)}
+      </div>
+    )}
 {loginformshow && (
   <div className="flex justify-center items-center min-h-[70vh]  rounded-xl shadow-md p-6">
     <form
