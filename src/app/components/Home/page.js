@@ -84,11 +84,7 @@ export default function HomePage() {
       icon: <Home className="w-10 h-10 text-[#256041]" />,
       desc: "Buying your dream property",
     },
-    {
-      label: "Sales",
-      icon: <ShoppingBag className="w-10 h-10 text-[#256041]" />,
-      desc: "Selling your property quickly",
-    },
+  
     {
       label: "Sales & Purchase",
       icon: <Repeat className="w-10 h-10 text-[#256041]" />,
@@ -221,7 +217,7 @@ export default function HomePage() {
             </div>
           </div>
           <div className="text-center mt-12">
-           <Link href={`${API_BASE_URL}/auth/login`}> <PrimaryCTA text="Start My Quote"  /></Link>
+           {/* <Link href="components/personaldetails"> <PrimaryCTA text="Start My Quote"  /></Link> */}
           </div>
         </div>
       </section>
@@ -451,10 +447,11 @@ export default function HomePage() {
           </p>
           <div className="mt-8">
             {/* Secondary CTA colour: Amber Yellow */}
+          <Link href="/conveyancers/Companyregistration" className='cursor-pointer'>
             <button className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-bold py-3 px-8 rounded-lg shadow-xl transition duration-300">
-             <Link href="/conveyancers/Companyregistration"> Join as a Partner →</Link>
+              Join as a Partner →
 
-            </button>
+            </button></Link>
           </div>
         </div> 
       </section>

@@ -2,70 +2,70 @@
 
 
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { use, useEffect, useMemo, useState } from "react";
 import Navbar from "../../parts/navbar/page";
 import { Check, MapPin, ChevronDown } from "lucide-react";
 import { FaBuilding, FaHome, FaWarehouse } from "react-icons/fa";
 import { MdHolidayVillage } from "react-icons/md"; // Material icon
-import { Controller, useForm } from "react-hook-form";
 import Select from 'react-select';
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
 import Footer from "../../parts/Footer/footer";
 import LocationSearch from './LocationSearch';
+import { v4 as uuidv4 } from 'uuid';
 
 
-const customStyles = {
-    control: (provided, state) => ({
-      ...provided,
-      borderRadius: "0.5rem", // rounded-xl
-      borderColor: state.isFocused ? "#1E5C3B" : "#D1D5DB", // focus green, default gray
-      boxShadow: state.isFocused ? "0 0 0 1px #1E5C3B" : "none",
-      "&:hover": {
-        borderColor: "#1E5C3B",
-      },
-      minHeight: "40px",
-    }),
-    placeholder: (provided) => ({
-      ...provided,
-      color: "black ", // Tailwind gray-500
-    }),
-    multiValue: (provided) => ({
-      ...provided,
-      backgroundColor: "#DCFCE7", // light green background
-      borderRadius: "0.25rem",
-    }),
-    multiValueLabel: (provided) => ({
-      ...provided,
-      color: "#166534", // dark green text
-      fontWeight: 500,
-    }),
-    multiValueRemove: (provided) => ({
-      ...provided,
-      color: "#166534",
-      ":hover": {
-        backgroundColor: "#BBF7D0",
-        color: "#166534",
-      },
-    }),
-    menu: (provided) => ({
-      ...provided,
-      borderRadius: "0.5rem",
-      overflow: "hidden",
-    }),
-    option: (provided, state) => ({
-      ...provided,
-      backgroundColor: state.isSelected
-        ? "#DCFCE7"
-        : state.isFocused
-        ? "#ECFDF5"
-        : "white",
-      color: "#111827",
-      cursor: "pointer",
-    }),
-  };
+// const customStyles = {
+//     control: (provided, state) => ({
+//       ...provided,
+//       borderRadius: "0.5rem", // rounded-xl
+//       borderColor: state.isFocused ? "#1E5C3B" : "#D1D5DB", // focus green, default gray
+//       boxShadow: state.isFocused ? "0 0 0 1px #1E5C3B" : "none",
+//       "&:hover": {
+//         borderColor: "#1E5C3B",
+//       },
+//       minHeight: "40px",
+//     }),
+//     placeholder: (provided) => ({
+//       ...provided,
+//       color: "black ", // Tailwind gray-500
+//     }),
+//     multiValue: (provided) => ({
+//       ...provided,
+//       backgroundColor: "#DCFCE7", // light green background
+//       borderRadius: "0.25rem",
+//     }),
+//     multiValueLabel: (provided) => ({
+//       ...provided,
+//       color: "#166534", // dark green text
+//       fontWeight: 500,
+//     }),
+//     multiValueRemove: (provided) => ({
+//       ...provided,
+//       color: "#166534",
+//       ":hover": {
+//         backgroundColor: "#BBF7D0",
+//         color: "#166534",
+//       },
+//     }),
+//     menu: (provided) => ({
+//       ...provided,
+//       borderRadius: "0.5rem",
+//       overflow: "hidden",
+//     }),
+//     option: (provided, state) => ({
+//       ...provided,
+//       backgroundColor: state.isSelected
+//         ? "#DCFCE7"
+//         : state.isFocused
+//         ? "#ECFDF5"
+//         : "white",
+//       color: "#111827",
+//       cursor: "pointer",
+//     }),
+//   };
+
 
 
 
@@ -75,6 +75,55 @@ const customStyles = {
 
   
 export default function App() {
+const [lender, setLender] = useState([
+  { value: "Not Required", label: "Not Required", id: 0 },
+]);
+const [lang, setLang] = useState ([
+  { value: "Not Required", label: "Not Required", id: 0 },
+]);
+
+const [formData, setFormData] = useState({
+
+    "languages": [],
+    "type_id":2,
+  });
+  async function createguestuser(){
+  
+   try {
+    const guest_id = uuidv4();
+  console.log(guest_id);
+     
+        const updatedForm = {
+      ...formData,
+      "guest_user ": guest_id,
+      "type_id":2
+    };
+  
+    // ✅ Update React state
+    setFormData(updatedForm);
+      localStorage.setItem("getquote", JSON.stringify(updatedForm));
+   router.push("/components/comparequotes");
+        }
+  
+       
+      
+     catch (error) {
+      console.error("Error logging in:", error);
+    }
+  }
+  
+useEffect(() => {
+  const storedData = localStorage.getItem("getquote");
+
+
+  if (storedData) {
+    setFormData(JSON.parse(storedData));
+  }
+ 
+  fetchPropertyTypes();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+}, []);
+
 
 
   async function logindata() {
@@ -88,7 +137,7 @@ export default function App() {
         const userId = loginResponse.user?.id; // <-- get it from API response
   console.log(userId)
         if (userId) {
-          // ✅ Update formData
+
         const updatedForm = {
       ...formData,
       "user_id": userId,
@@ -115,43 +164,37 @@ function handleloginformchange(name, value) {
   }));
 }
 
-const Select = dynamic(() => import("react-select"), { ssr: false });
-const lenders = [
-  { id: 1, lenders_name: "Lender A" },
-  { id: 2, lenders_name: "Lender B" },
-  { id: 3, lenders_name: "Lender C" },
-  { id: 4, lenders_name: "Lender D" },
-  { id: 5, lenders_name: "Lender E" },
-  { id: 6, lenders_name: "Lender F" },
-  { id: 7, lenders_name: "Lender G" },
-  { id: 8, lenders_name: "Lender H" },
-  { id: 9, lenders_name: "Lender I" },
-  { id: 10, lenders_name: "Lender J" },
-];
 
+ 
   // Convert lenders into react-select format
-  const options_l = lenders.map((lender) => ({
-    value: lender.id,
-    label: lender.lenders_name,
-  }));
+ 
 
-  const lender_options = lenders.map((lender) => ({
-  value: lender.id,
-  label: lender.lenders_name
-}));
+ 
 const [selectedOptions, setSelectedOptions] = useState([]);
+  const [stageOptions, setStageOptions] = useState([]);
 
 const [errors, setErrors] = useState({});
 
     const [selectedLenders, setSelectedLenders] = useState([]);
+const handleChange_l = (selectedOptions = []) => {
+  // Check if "Not Required" is among selected options
+  const hasNotRequired = selectedOptions.some(
+    (option) => option.value === "Not Required"
+  );
 
-    const handleChange_l = (selectedOptions) => {
-      setSelectedLenders(selectedOptions);
-      const ids = selectedOptions.map(item => item.value);
-      console.log("Selected lenders:", ids);
-      handleChange("lender",ids)
-    };
-  
+  if (hasNotRequired) {
+    // Clear all selections if "Not Required" is chosen
+    setSelectedLenders([{ value: "Not Required", label: "Not Required", id: 0 }]);
+    setLender([])
+    handleChange("lender", [0]);
+  } else {
+    setSelectedLenders(selectedOptions);
+    const ids = selectedOptions.map((item) => item.id);
+    console.log("Selected lenders:", ids);
+    handleChange("lender", ids);
+  }
+};
+
 
 const handleChange = (field, value) => {
   setFormData((prev) => ({
@@ -186,21 +229,48 @@ const handleChange = (field, value) => {
   // }
 };
 
-useEffect(() => {
-  const storedData = localStorage.getItem("getquote");
+const[,setlang]=useState  ([])
 
-  if (storedData) {
-    setFormData(JSON.parse(storedData));
-  }
-  const datafetch = async()=>{
-const data = await getData(API_ENDPOINTS.conveyancingQuotes)
-  }
-}, []);
+   
+    const fetchPropertyTypes = async () => {
+         console.log(lender)
+      try {
+        const data = await getData(API_ENDPOINTS.compareQuotes);
+       const lenderData = await getData(API_ENDPOINTS.lenders);
+       const languages = await getData(API_ENDPOINTS.languages);
+        setlang( languages.users)
+   console.log(lenderData)
+    if (Array.isArray(lenderData.users)) {
+      const lenderOptions = lenderData.users.map((l) => ({
+        value: l.lenders_name,
+        label: l.lenders_name,
+        id: l.id,
+      }));
+         console.log(lenderOptions)
 
+           setLender([{ value: "Not Required", id: 0,label: "Not Required" }, ...lenderOptions]);
+               console.log(lender)
 
+        
+    }
+    
+        if (data.propertyTypes && Array.isArray(data.propertyTypes)) {
+          const mappedOptions = data.propertyTypes.map((item) => ({
+            id: item.id,
+            label: item.property_type,
+            icon: getIconForType(item.property_type),
+          }));
+          setPropertyTypeOptions(mappedOptions);
+        }
+        if(data.purchaseStages && Array.isArray(data.purchaseStages)){
+          setStageOptions(data.purchaseStages);
+        }
 
- 
-
+      } catch (error) {
+        console.error("Failed to load property types:", error);
+      }
+    };
+ const [propertyTypeOptions, setPropertyTypeOptions] = useState([]);
   
   const [modalopen, setModalopen] = useState(false);
   const [languagepreference, setlanguagepreference] = useState(" ");
@@ -272,28 +342,44 @@ if(!formData.buy_to_let){
   const options = ["1", "2", "3", "4", "5", "5+"];
 
   const [propertyType, setPropertyType] = useState("");
-  const propertyTypeOptions = [
-    { label: "Flat", icon: <FaBuilding size={22} color="#007BFF" /> },
-    { label: "Terraced", icon: <FaHome size={22} color="#28A745" /> },
-    { label: "Semi-detached", icon: <MdHolidayVillage size={22} color="#FFC107" /> },
-    { label: "Detached", icon: <FaWarehouse size={22} color="#DC3545" /> },
-  ];
-  const lang=[
-    { id: 1, language_name: "English" },
-    { id: 2, language_name: "Spanish" },
-    { id: 3, language_name: "French" },
-    { id: 4, language_name: "German" },
-    { id: 5, language_name: "Chinese" },
-    { id: 6, language_name: "Hindi" },
-    { id: 7, language_name: "Arabic" },
-    { id: 8, language_name: "Portuguese" },
-    { id: 9, language_name: "Russian" },
-    { id: 10, language_name: "Japanese" },
-  ];  const [formData, setFormData] = useState({
 
-    "languages": [],
-    "type_id":2,
-  });
+  // const propertyTypeOptions = [
+  //   { label: "Flat", icon: <FaBuilding size={22} color="#007BFF" /> },
+  //   { label: "Terraced", icon: <FaHome size={22} color="#28A745" /> },
+  //   { label: "Semi-detached", icon: <MdHolidayVillage size={22} color="#FFC107" /> },
+  //   { label: "Detached", icon: <FaWarehouse size={22} color="#DC3545" /> },
+  // ];
+
+  const getIconForType = (type) => {
+  switch (type.toLowerCase()) {
+    case "flat":
+      return <FaBuilding size={22} color="#007BFF" />;
+    case "terraced":
+      return <FaHome size={22} color="#28A745" />;
+    case "semidetached":
+    case "semi-detached":
+      return <MdHolidayVillage size={22} color="#FFC107" />;
+    case "detached":
+      return <FaWarehouse size={22} color="#DC3545" />;
+    default:
+      return <FaHome size={22} color="#6c757d" />; // default gray icon
+  }
+};
+
+ 
+
+  // const lang=[
+  //   { id: 1, language_name: "English" },
+  //   { id: 2, language_name: "Spanish" },
+  //   { id: 3, language_name: "French" },
+  //   { id: 4, language_name: "German" },
+  //   { id: 5, language_name: "Chinese" },
+  //   { id: 6, language_name: "Hindi" },
+  //   { id: 7, language_name: "Arabic" },
+  //   { id: 8, language_name: "Portuguese" },
+  //   { id: 9, language_name: "Russian" },
+  //   { id: 10, language_name: "Japanese" },
+  // ]; 
 
   const [loginformdata, setloginformdata] = useState({
     email: "",
@@ -427,6 +513,10 @@ console.log(language);
             errors.stages ? "border-red-500" : "border-gray-300"
           }`}
         >
+             {stageOptions.map((stage) => (
+              <option key={stage.id} value={stage.purchase_stage} >{stage.purchase_stage}</option>
+             ))} 
+{/* 
           <option value="">Please select</option>
           <option value="Initial Stage">Initial Stage</option>
           <option value="Just researching / budgeting">
@@ -435,7 +525,7 @@ console.log(language);
           <option value="Have received an offer">
             Have received an offer
           </option>
-          <option value="Sale agreed">Sale agreed</option>
+          <option value="Sale agreed">Sale agreed</option> */}
         </select>
 
  <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
@@ -633,7 +723,7 @@ console.log(language);
                             <div className="flex flex-wrap  gap-9">
                             {propertyTypeOptions.map((opt) => (
                                 <button
-                                key={opt.label}
+                                key={opt.id}
                                 type="button"
                                 onClick={()=> handleChange ( "property_type",opt.label)}
                                 className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 transition-all duration-200 shadow-sm w-[170.76px]
@@ -650,7 +740,8 @@ console.log(language);
                                 >
                                     {opt.icon}
                                 </span>
-                                <span className="text-sm font-semibold">{opt.label}</span>
+                                <span className="text-sm font-semibold">{opt.label
+}</span>
                                 </button>
                             ))}
                             </div>
@@ -802,7 +893,7 @@ console.log(language);
 
 
                   {/* 9. Mortgage Lender (Inline Select) */}
-           <div className="flex flex-col h-full">
+           {/* <div className="flex flex-col h-full">
              <label
                htmlFor="b2l"
                className="block text-sm font-medium text-gray-700 mb-1"
@@ -833,7 +924,7 @@ console.log(language);
                />
                <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
              </div>
-           </div>
+           </div> */}
 
 
                   {/* 10. Receiving a gifted deposit? (Inline Select) */}
@@ -954,7 +1045,7 @@ console.log(language);
         Select Lenders
       </label>
        <Select
-        options={options_l}
+        options={lender}
           instanceId="lenders-select"
         isMulti
         value={selectedLenders}
@@ -1057,10 +1148,10 @@ onClick={()=>{setloginformshow(true)}}
 >
   Continue as Logged-in User
 </button>
-          <Link
- href="/components/comparequotes"
-             className="border border-[#1E5C3B] text-[#1E5C3B] px-6 py-3 rounded-lg hover:bg-[#1E5C3B] hover:text-white transition-all duration-200 shadow-sm"
-          >
+              <Link
+         href="/components/comparequotes"
+                     className="border border-[#1E5C3B] text-[#1E5C3B] px-6 py-3 rounded-lg hover:bg-[#1E5C3B] hover:text-white transition-all duration-200 shadow-sm"
+               onClick={createguestuser}   >
             Continue as Guest User
           </Link>
         </div>

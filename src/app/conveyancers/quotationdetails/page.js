@@ -5,8 +5,9 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { API_ENDPOINTS, getData } from "../../auth/API/api";
-import { Check, Plus, PlusCircle, Trash, Trash2, X } from "lucide-react";
+import { Check, ListPlus, Plus, PlusCircle, Trash, Trash2, X } from "lucide-react";
 import { useFormStore } from "../../store/useFormStore";
+import { MdAdd } from "react-icons/md";
 
 export default function Quotationdetails() {
   const { updateQuotationData } = useFormStore();
@@ -16,6 +17,11 @@ export default function Quotationdetails() {
   const [formValues, setFormValues] = useState({});
   const [errors, setErrors] = useState({});
 const [selectedItems, setSelectedItems] = useState({});
+
+
+
+
+
   // Fetch quotes and initialize form values
   useEffect(() => {
     async function fetchQuotes() {
@@ -413,8 +419,20 @@ if (emptyCategories.length > 0) {
     });
   };
 
+  const [legalcostrows, setLegalcostrows] = useState([Array(1),Array(1),Array(1),Array(1),Array(1)]);
+  const [PurchasTransactionSupplementsrows, setPurchasTransactionSupplementsrows] = useState([Array(1)]);
+
+  const handle_addrow=()=>{
+    setLegalcostrows([...legalcostrows,Array(1)])
+  }
+
+  const handlesuplement=(e)=>{
+console.log(e.target.value);
+  }
+
+
   return (
-    <div className="min-h-screen bg-white antialiased font container  ">
+    <div className="min-h-screen bg-white antialiased font   ">
       {/* Header */}
       <div className='sticky top-0 z-50'>
         <Navbar />
@@ -423,9 +441,9 @@ if (emptyCategories.length > 0) {
  
 
 
-<main className="pt-10    ">
+<main className="pt-10  w-auto  grid grid-cols-12  ">
   
-  <div className=" bg-white shadow-md rounded-2xl p-8 border w-[1100px] border-gray-100 mx-auto ">
+  <div className=" bg-white shadow-md rounded-2xl p-8 border col-span-12  border-gray-100  ">
     <div className="mx-auto w-[1000px]">
       <nav className="text-[13px] text-[#6B7280] mb-5 flex items-center gap-4" aria-label="Breadcrumb">
             <span className="other-page hidden sm:inline">Home</span>
@@ -435,7 +453,7 @@ if (emptyCategories.length > 0) {
                   <span className="live-page hidden sm:inline">Price Breakdown</span>
                  
                 </nav>
-    {Object.keys(data).map((category) => {
+    {/* {Object.keys(data).map((category) => {
       if (!formValues[category]) return null;
 
       const hasType1 = data[category]?.some((item) => item.type === 1);
@@ -446,12 +464,10 @@ if (emptyCategories.length > 0) {
           className="border rounded-lg mb-6 shadow-sm overflow-hidden bg-white  p-5"
         >
         
-          {/* 🏷️ Category title */}
           <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
             {category}
           </div>
 
-          {/* 🧮 Table header */}
           <div className="grid grid-cols-[1.5fr_0.7fr_0.7fr_0.8fr_0.6fr_0.8fr] items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
             <div>Type</div>
             <div className="text-center">Min €</div>
@@ -461,7 +477,6 @@ if (emptyCategories.length > 0) {
             <div className="text-center">Action</div>
           </div>
 
-          {/* 🧾 Rows */}
          {formValues[category].map((row, ri) => {
   const matchedItem =
     row.itemId !== "others"
@@ -478,16 +493,13 @@ if (emptyCategories.length > 0) {
 
   return (
     <div key={ri}>
-      {/* ================= ROW ================= */}
       <div className="grid grid-cols-[1.5fr_0.7fr_0.7fr_0.8fr_0.6fr_0.8fr] items-center text-sm
                       border-b border-gray-200 hover:bg-gray-50 transition-colors px-3 py-2">
 
-        {/* ------- Item Name ------- */}
         <div className="text-gray-700 text-sm truncate">
           {itemName.charAt(0).toUpperCase() + itemName.slice(1)}
         </div>
 
-        {/* ------- Min ------- */}
         <div className="flex justify-center">
           {itemType === 1 ? (
             <div className="flex flex-col items-center">
@@ -515,7 +527,6 @@ if (emptyCategories.length > 0) {
           )}
         </div>
 
-        {/* ------- Max ------- */}
         <div className="flex justify-center">
           {itemType === 1 ? (
             <div className="flex flex-col items-center">
@@ -543,7 +554,6 @@ if (emptyCategories.length > 0) {
           )}
         </div>
 
-        {/* ------- Price ------- */}
         <div className="flex justify-center">
           <div className="flex flex-col items-center">
             <input
@@ -567,7 +577,6 @@ if (emptyCategories.length > 0) {
           </div>
         </div>
 
-        {/* ------- VAT ------- */}
         <div className="flex justify-center">
           <input
             type="checkbox"
@@ -584,7 +593,6 @@ if (emptyCategories.length > 0) {
           />
         </div>
 
-        {/* ------- Delete ------- */}
         <div className="flex justify-center">
           <button
             type="button"
@@ -596,7 +604,6 @@ if (emptyCategories.length > 0) {
         </div>
       </div>
 
-      {/* ================= ADD ROW BUTTON ================= */}
       {showAddButton && (
         <div className="flex justify-end mt-2 mb-3 pr-3">
           <select
@@ -629,13 +636,113 @@ if (emptyCategories.length > 0) {
         
         </div>
       );
-    })}
+    })} */}
   </div>
+
+<div className="border rounded-lg mb-6 shadow-sm overflow-hidden bg-white p-5">
+  <div>
+ <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
+    Legal Fees
+  </div>
+
+  {/* Header */}
+  <div className="grid grid-cols-[0.6fr_0.7fr_0.7fr_0.8fr_0.6fr_0.8fr_0.4fr] items-center 
+                  text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
+
+    <div className="text-center">Min €</div>
+    <div className="text-center">Max €</div>
+    <div className="text-center">Purchase Leasehold €</div>
+    <div className="text-center">Purchase Freehold €</div>
+    <div className="text-center">Sales Leasehold €</div>
+    <div className="text-center">Sales Freehold €</div>
+    <div>Action</div>
+  </div>
+
+  {/* Input Row */}
+    {legalcostrows.map((_, i) => (
+  <div key={i} className="grid grid-cols-[0.5fr_0.5fr_0.5fr_0.6fr_0.6fr_0.6fr_0.2fr] items-center 
+                  text-sm border-b border-gray-200 hover:bg-gray-50 transition-colors px-3 py-2 gap-3">
+
+    <input type="number" placeholder="Min" className="border border-gray-400 rounded  py-0.5  text-sm text-center text-black bg-white"  />
+    <input type="number" placeholder="Max" className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black" />
+    <input type="number" placeholder="Purchase Leasehold" className="border  border-gray-400 rounded py-0.5 w-full text-sm text-center text-black" />
+    <input type="number" placeholder="Purchase Freehold" className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black" />
+    <input type="number" placeholder="Sales Leasehold" className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black" />
+    <input type="number" placeholder="Sales Freehold" className="border border-gray-400  rounded py-0.5 w-full text-sm text-center text-black" />
+ {
+  i==legalcostrows.length-1&&(
+  <button className="text-green-500 border-green-400" onClick={handle_addrow}> <Plus
+   /> </button>
+
+  )
+ }
+ 
+ </div>
+
+))}
+
+  </div>
+ 
+
+<div className="mt-10">
+
+<div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
+Transaction Supplement Fees  </div>
+
+<div className="grid grid-cols-[1fr_1fr_1fr_1fr] items-center 
+                  text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
+
+    <div className="text-center">Suplement Type €</div>
+    <div className="text-center">Fee Amount €</div>
+    <div className="text-center">Description </div>
+    <div className="text-center">Action</div>
+
+    
+  </div>
+
+ {PurchasTransactionSupplementsrows.map((_, i) => (
+  <div key={i} className="grid grid-cols-[1fr_1fr_1fr_1fr] items-center 
+                  text-sm border-b border-gray-200 hover:bg-gray-50 transition-colors px-3 py-2 gap-3">
+
+<select name="purhcase_trans_suplement" className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black" onChange={handlesuplement}>
+  <option>Select Suplement Type</option>
+  <option>Leasehold Enfranchisement</option>
+  <option>Shared Ownership</option>
+  <option>Help to Buy</option>
+  <option>others</option>
+  </select>
+
+    <input type="number" placeholder="Max" className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black" />
+    <input type="number" placeholder="Purchase Leasehold" className="border  border-gray-400 rounded py-0.5 w-full text-sm text-center text-black" />
+    <button className="text-red-900 border-red-700">Remove</button>
+ {
+  i==PurchasTransactionSupplementsrows.length-1&&(
+    <div className="flex justify-center mt-2 mb-3 pr-3">
+       <button className="text-green-500 border-green-400" onClick={()=>{setPurchasTransactionSupplementsrows([...PurchasTransactionSupplementsrows,Array(1)]
+)}}> <Plus
+   /> </button>
+
+    </div>
+ 
+  )
+ }
+ 
+ </div>
+
+))}
+
+                  </div>
+</div>
+
+
     </div>
   
 
   {/* ✅ Footer Buttons */}
-  <div className=" m-10 flex justify-end gap-4 max-w-screen">
+ 
+</main>
+
+ <div className=" m-10 flex justify-end gap-4 max-w-screen">
     <button
       onClick={() => router.back()}
       className="font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1B1D21]"
@@ -649,9 +756,6 @@ if (emptyCategories.length > 0) {
       Continue to Notes Section →
     </button>
   </div>
-</main>
-
-
     </div>
   );
 }
