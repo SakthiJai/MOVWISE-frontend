@@ -9,6 +9,9 @@ import { useRouter } from "next/navigation";
 import Footer from "../../parts/Footer/footer";
 
 import { useFormStore } from "../../store/useFormStore";
+import Select from "react-select";
+import { API_ENDPOINTS, getData, postData } from "../../auth/API/api";
+import { set } from "react-hook-form";
 
 export default function Companyregistration() {
 
@@ -19,6 +22,10 @@ export default function Companyregistration() {
   }
  },[]);
 
+ const [lang, setLang] = useState ([
+   { value: "Not Required", label: "Not Required", id: 0 },
+ ]);
+
   const router = useRouter();
    const { updateCompanyData } = useFormStore();
   // Form data state
@@ -27,30 +34,55 @@ export default function Companyregistration() {
     phone_number: "",
     email: "",
     c_website: "",
-  
+  SRAorCLC : "",
     languages:[],
   });
   const [languagepreference, setlanguagepreference] = useState(" ");
   const [language, setLanguage] = useState([]);
-   const lang=[
-    { id: 1, language_name: "English" },
-    { id: 2, language_name: "Spanish" },
-    { id: 3, language_name: "French" },
-    { id: 4, language_name: "German" },
-    { id: 5, language_name: "Chinese" },
-    { id: 6, language_name: "Hindi" },
-    { id: 7, language_name: "Arabic" },
-    { id: 8, language_name: "Portuguese" },
-    { id: 9, language_name: "Russian" },
-    { id: 10, language_name: "Japanese" },
-  ];
+   const [selectedLanguage, setSelectedLanguage] = useState([]); 
 
-  
-  function handlelanguagechange(e) {
-    console.log(e.target.value);
-    setlanguagepreference(e.target.value);
-    setLanguage([]);
+   const fetchlanguages = async () => {
+    try {
+      const  languages = await getData(API_ENDPOINTS.languages)
+      console.log("Languages response:", languages);
+           setLanguage( languages.users)
+   console.log(languages.users)
+   if(Array.isArray(languages.users)){
+      const languageOptions = languages.users.map((l) => ({
+        value: l.language_name,
+        label: l.language_name,
+        id: l.id,
+      }));
+      setLanguage([{ value: "Not Required", id: 0,label: "Not Required" }, ...languageOptions]);
+   }
+    }
+    catch (error) {
+      console.error("Error fetching languages:", error);
+    }
+  };
+  useEffect(() => {
+    fetchlanguages();
+  }, []);
+   
+
+const handleChangeLang = (selectedOptions = []) => {
+     const hasNotRequired = selectedOptions.some(
+    (option) => option.value === "Not Required"
+  );
+ if (hasNotRequired) {
+    // Keep only "Not Required" selected
+    const notRequiredOption = lang.find(opt => opt.value === "Not Required");
+    setSelectedLanguage([notRequiredOption]);
+    console.log("Selected language: [0]");
+    handleChange("languages", [0]);
+  } else {
+    // Normal behavior for other lenders
+    setSelectedLanguage(selectedOptions);
+    const ids = selectedOptions.map(item => item.id);
+    console.log("Selected languages:", ids);
+    handleChange("languages", ids);
   }
+}
 
   function languagecheckboxchange(item,checked,id){
     if(checked){
@@ -76,7 +108,15 @@ console.log(formData)
   const [image, setImage] = useState("");
 
   // ✅ Unified handleChange function
-  const handleChange = (e) => {
+    const handleChange = (key,id, e) => {
+  // If called from input event
+ if(key && id){
+  const name = key;
+  const value = id;
+  setFormData((prev) => ({ ...prev, [name]: value }));
+ }
+  else{
+
     const { name, value } = e.target;
   setErrors((prev) => ({
     ...prev,
@@ -101,6 +141,7 @@ console.log(formData)
   // ✅ Clear error for this specific field
   setErrors((prev) => ({ ...prev, [name]: "" }));
 
+  }
   }
 
   // ✅ Validation function
@@ -194,68 +235,50 @@ console.log(errors);
     }
     console.log(errors)
   };
+  const [selectedJurisdictions, setSelectedJurisdictions] = useState([]);
+
+const jurisdictions = [
+  { value: "Scotland", label: "Scotland" },
+  { value: "Wales", label: "Wales" },
+  { value: "Northern Ireland", label: "Northern Ireland" },
+  { value: "England", label: "England" },
+];
+const serviceoptions = [
+  { value: "Purchase", label: "Purchase" },
+  { value: "Sales", label: "Sales" },
+  { value: "Purchase and Sales", label: "Purchase and Sales" },
+  { value: "Remortgage", label: "Remortgage" },
+];
+
+const toggleJurisdiction = (selectedOptions) => {
+  setSelectedJurisdictions(selectedOptions);
+
+  // Extract only values to store in formData
+  const values = selectedOptions.map(opt => opt.value);
+
+  handleChange("region_covered", values);
+};
+
+const [selectedServices, setSelectedServices] = useState([]);
+
+const togglesercice = (selectedOptions) => {
+  setSelectedServices(selectedOptions);
+  const values = selectedOptions.map(opt => opt.value);
+  handleChange("services_offered", values);
+}
+
 
   return (
     <div>
-    <div className="min-h-screen bg-white antialiased  font-outfit">
+    <div className="min-h-screen bg-white antialiased  font-outfit mb-5">
       {/* Navbar */}
       <Navbar />
+<main className="grid grid-cols-12 pt-10">
+  <div className="flex gap-12 col-span-8 col-start-3 ">
 
-      <main className="mx-auto max-w-[1200px] pt-10">
-        <div className="flex gap-12">
+
           {/* Left Side Stepper */}
-          <aside className="relative w-[400px] rounded-[40px] overflow-hidden bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
-            <div className="absolute inset-0 p-8">
-              {/* Step 1 */}
-              <div className="flex items-start">
-                <div className="relative mr-4">
-                  <div className="w-11 h-11 rounded-full border-[2px] border-[#1E5C3B] bg-white flex items-center justify-center text-[#1E5C3B]">
-                    <svg width="20" height="20" viewBox="0 0 20 20">
-                      <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" strokeWidth="2" />
-                      <circle cx="10" cy="10" r="3" fill="currentColor" />
-                    </svg>
-                  </div>
-                  <div className="absolute left-[22px] top-[44px] w-[2px] h-[56px] bg-[#CFE3CF]" />
-                </div>
-                <div>
-                  <div className="text-[12px] font-semibold font-gilroy">STEP 1</div>
-                  <div className="font-outfit text-[20px] text-gray-900 font-semibold">Company Details</div>
-                  <div className="text-[12px] mt-1 font-semibold font-gilroy text-[#A38320]">In Progress</div>
-                </div>
-              </div>
-
-              {/* Step 2 */}
-              <div className="flex items-start mt-8">
-                <div className="relative mr-4">
-                  <div className="w-11 h-11 rounded-full border-[2px] border-[#B7B7B7] bg-white text-[#B7B7B7] flex items-center justify-center">
-                    <svg width="20" height="20" viewBox="0 0 20 20">
-                      <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" strokeWidth="2" />
-                    </svg>
-                  </div>
-                  <div className="absolute left-[22px] top-[44px] w-[2px] h-[56px] bg-[#E4E4E7]" />
-                </div>
-                <div>
-                  <div className="text-[12px] font-semibold font-gilroy">STEP 2</div>
-                  <div className="font-outfit text-[20px] text-gray-900 font-semibold">Quotation Details</div>
-                </div>
-              </div>
-
-              {/* Step 3 */}
-              <div className="flex items-start mt-8">
-                <div className="mr-4">
-                  <div className="w-11 h-11 rounded-full border-[2px] border-[#B7B7B7] bg-white text-[#B7B7B7] flex items-center justify-center">
-                    <svg width="20" height="20" viewBox="0 0 20 20">
-                      <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" strokeWidth="2" />
-                    </svg>
-                  </div>
-                </div>
-                <div>
-                  <div className="text-[12px] font-semibold font-gilroy">STEP 3</div>
-                  <div className="font-outfit text-[20px] text-gray-900 font-semibold">Notes Section</div>
-                </div>
-              </div>
-            </div>
-          </aside>
+        
 
           {/* Right Side Form */}
           <section className="flex-1">
@@ -265,7 +288,8 @@ console.log(errors);
                 <nav className="text-[13px] text-[#6B7280] mb-4 flex items-center gap-4">
                   <Link href="/" className="other-page">Home</Link>
                   <span>/</span>
-                  <span className="live-page">Company Details</span>
+                  <span className="live-page">Company registration</span>
+                  
                 </nav>
 
                 <h1 className="text-[24px] font-semibold font-Outfit text-[#1B1D21]">Share your Company Details</h1>
@@ -279,7 +303,7 @@ console.log(errors);
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="Name" className="block text-[14px] text-[#6A7682] font-medium mb-1">
-                        Name<span className = "text-red-500">*</span>
+                      Firm Name<span className = "text-red-500">*</span>
                       </label>
                       <input
                         id="Name"
@@ -354,113 +378,174 @@ console.log(errors);
                       />
                     </div>
                   </div>
-
-                  {/* Row 3 - Logo Upload */}
-                  <div className="grid grid-cols-2 gap-4 mt-4">
+<div className="grid grid-cols-2 gap-4 mt-4">
                     <div>
-                      <label htmlFor="logo" className="block text-[14px] text-[#6A7682] font-medium mb-1">
-                        Company Logo
+                      <label htmlFor="Name" className="block text-[14px] text-[#6A7682] font-medium mb-1">
+                   SRA/CLC Number <span className = "text-red-500">*</span>
                       </label>
-                      <div className="relative w-full flex flex-col items-center">
-                        <div className="relative mr-[198px]">
-                          <div
-                            className={`w-[120px] h-[120px] rounded-full border ${errors.logo ? "border-red-500" : "border-gray-300"} bg-center bg-cover flex items-center justify-center text-gray-400 text-sm`}
-                            style={{ backgroundImage: image ? `url(${image})` : "none" }}
-                          >
-                            {!image && <span>Upload logo</span>}
-                          </div>
-                          <input
-                            type="file"
-                            id="imageUpload"
-                            accept=".png, .jpg, .jpeg"
-                            onChange={handleImageChange}
-                            className="hidden text-[#1B1D21] placeholder-[#1B1D21]"
-                          />
-                          <label htmlFor="imageUpload" className="absolute -top-3 -right-3 hover:bg-gray-300 text-black p-2 rounded-full cursor-pointer shadow-md">
-                            <Pencil size={14} />
-                          </label>
-                        </div>
-                      </div>
+                      <input
+                        id="Name"
+                        name="SRA/CLC  *"
+value={formData?.SRAorCLC || ""}
+                        onChange={handleChange}
+                        placeholder="Enter Company name"
+                        className={`block w-full h-[44px] rounded-[10px] border ${errors.company_name ? "border-red-500" : "border-[#D1D5DB]"}  text-[#1B1D21] placeholder-[#1B1D21] px-3 text-[14px] focus:outline-none`}
+                      />
+                      {errors.company_name && <p className="text-red-500 text-[12px] mt-1">{errors.company_name}</p>}
                     </div>
-                    <div className="mt-2">
-  <div className="space-y-4">
-  {/* Label + Main dropdown */}
-  <div>
-    <label className="block text-sm font-semibold text-gray-800 mb-1">
-      Prefer solicitor in your first language?
-    </label>
-    <select
-      className="text-black placeholder-black w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1E5C3B]"
-      onChange={handlelanguagechange}
-      value={languagepreference}
-    >
-      <option value="">Please select</option>
-      <option>No Preference</option>
-      <option>Yes</option>
-      <option>Maybe</option>
-    </select>
-  </div>
 
-  {/* Show only when needed */}
-  {(languagepreference === "Yes" || languagepreference === "Maybe") && (
-<div className="mt-2">
-  <label className="block text-sm font-semibold text-gray-800 mb-2">
-    Select preferred language(s)
+                    <div>
+  <label
+    htmlFor="phone"
+    className="block text-[14px] text-[#6A7682] font-medium mb-1"
+  >
+    Phone No.<span className = "text-red-500">*</span>
   </label>
-
-  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 border border-gray-200 p-3 rounded-lg bg-gray-50">
-    {lang.map((item,index) => (
-      <label
-        key={item.id}
-        className="flex items-center gap-2 p-2 rounded-md cursor-pointer hover:bg-green-50 transition"
-      >
-        <input
-          type="checkbox"
-          key={index}
-          value={item.language_name}
-          onChange={(e) => languagecheckboxchange(item.language_name, e.target.checked,item.id)}
-          className="accent-[#1E5C3B] w-4 h-4"
-        />
-        <span className="text-gray-800 text-sm font-medium">
-          {item.language_name}
-        </span>
-      </label>
-    ))}
-  </div>
- 
-</div>
-
+  <input
+    id="phone"
+    name="phone_number"
+    value={formData.phone_number}
+    onChange={(e) => {
+      const value = e.target.value;
+      // Allow only numbers and limit to 12 digits
+      if (/^\d{0,10}$/.test(value)) {
+        handleChange(e);
+      }
+    }}
+    placeholder="Enter Phone number"
+    className={`block w-full h-[44px] rounded-[10px] text-[#1B1D21] placeholder-[#1B1D21] border ${
+      errors.phone_number ? "border-red-500" : "border-[#D1D5DB]"
+    } px-3 text-[14px] focus:outline-none`}
+  />
+  {errors.phone_number && (
+    <p className="text-red-500 text-[12px] mt-1">{errors.phone_number}</p>
   )}
 </div>
-
- 
- 
-</div>
                   </div>
-                </form>
-              </div>
-            </div>
 
-            {/* Bottom Actions */}
-            <div className="mt-20 flex justify-end gap-4 max-w-[760px]">
-              <button
-                onClick={() => router.back()}
-                className="font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1B1D21]"
-              >
-                Back
-              </button>
+                  {/* Row 3 - Logo Upload */}
+             <div className="grid grid-cols-2 gap-6 mt-4">
+  
+  {/* LEFT COLUMN — Jurisdictions */}
+  <div className="flex flex-col gap-2">
+    <label className="block text-sm font-medium text-gray-700">
+      Jurisdictions Covered <span className="text-red-500">*</span>
+    </label>
+
+    <Select
+      options={jurisdictions}
+      isMulti
+      name="region_covered"
+      instanceId="region-select"
+      value={selectedJurisdictions}
+      onChange={toggleJurisdiction}
+      placeholder="Choose regions..."
+      className="text-black mt-2"
+    />
+  </div>
+
+  {/* RIGHT COLUMN — Languages */}
+  <div className="flex flex-col gap-2">
+    <label className="block text-sm font-medium text-gray-700">
+      Language Preferences <span className="text-red-500">*</span>
+    </label>
+
+    <Select
+      options={language}
+      isMulti
+      instanceId="language-select"
+      value={selectedLanguage || formData.languages}
+      onChange={handleChangeLang}
+      placeholder="Choose languages..."
+      className="text-black mt-2"
+    />
+  </div>
+
+</div>
+
+       
+              
+<div className="mt-5 grid grid-cols-2 gap-4">
+ <div className="flex flex-col gap-2">
+    <label className="block text-sm font-medium text-gray-700">
+      Jurisdictions Covered <span className="text-red-500">*</span>
+    </label>
+
+    <Select
+      options={serviceoptions}
+      isMulti
+      name="region_covered"
+      instanceId="region-select"
+      value={selectedServices}
+      onChange={togglesercice}
+      placeholder="Choose regions..."
+      className="text-black mt-2"
+    />
+  </div>
+  {/* Label */}
+  <div className="flex flex-col items-center">
+<label className="text-[14px] text-[#6A7682] font-medium mb-2 block">
+    Company Logo
+  </label>
+
+  {/* Container */}
+  <div className="relative flex items-center gap-4">
+
+    {/* Logo circle */}
+    <div className="relative">
+      <div
+        className={`w-[120px] h-[120px] rounded-full border 
+        ${errors.logo ? "border-red-500" : "border-gray-300"} 
+        bg-center bg-cover flex items-center justify-center text-gray-400 text-sm`}
+        style={{ backgroundImage: image ? `url(${image})` : "none" }}
+      >
+        {!image && <span>Upload Logo</span>}
+      </div>
+
+      {/* Pencil Icon (Edit Button) */}
+      <label
+        htmlFor="imageUpload"
+        className="absolute bottom-1 right-1 bg-white hover:bg-gray-200 border rounded-full p-2 shadow cursor-pointer"
+      >
+        <Pencil size={14} className="text-gray-700" />
+      </label>
+
+      {/* Hidden Input */}
+      <input
+        type="file"
+        id="imageUpload"
+        accept=".png, .jpg, .jpeg"
+        onChange={handleImageChange}
+        className="hidden"
+      />
+    </div>
+
+  </div>
+  </div>
+  
+</div>
+     <div className="mt-20 flex justify-end gap-4 w-full ">
+            
 
               <button
                 type="button"
                 onClick={handleContinue}
                 className="font-outfit mb-6  font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full bg-[#1E5C3B] text-[#EDF4EF]"
               >
-                Continue to Quotation Details →
+                Continue to price breakdown  →
               </button>
             </div>
+                  
+                </form>
+              </div>
+            </div>
+
+         
           </section>
         </div>
       </main>
+         {/* Bottom Actions */}
+           
     </div>
     <Footer />
     </div>

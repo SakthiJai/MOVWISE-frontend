@@ -37,7 +37,9 @@ const [selectedItems, setSelectedItems] = useState({});
                 price: "",
                 includeVat: false,
                 isFixedName: true,
-                label: item.name
+                label: item.name,
+                "dynmic_row":i,
+                others:null
               });
             }
             // Sixth row "Others"
@@ -82,15 +84,7 @@ const [selectedItems, setSelectedItems] = useState({});
       
       row[field] = value;
 
-      // 🧠 Auto-adjust next row.min when current row.max changes
-      if (field === "max" && value !== "" && !isNaN(value)) {
-        const nextRow = rows[rowIndex + 1];
-        if (nextRow && nextRow.min !== undefined) {
-          // Set next row's min = current max + 1
-          nextRow.min = String(Number(value) + 1);
-        }
-      }
-
+   
       // 🧠 (Optional) Auto-correct current row.min if it’s greater than max
       if (field === "min" && row.max !== "" && Number(value) >= Number(row.max)) {
         row.max = String(Number(value) + 1);
@@ -132,17 +126,60 @@ const [selectedItems, setSelectedItems] = useState({});
   };
 
   // Add new row only for type=1 category
+// const handleAddRow = (category, selectedItem,insertIndex  ) => {
+//   console.log(formValues);
+//   setFormValues(prev => {
+//     const updated = { ...prev };
+//     const rows = [...(updated[category] || [])];
+
+//     // Get last row if it exists
+//     const lastRow = rows.length > 0 ? rows[rows.length - 1] : null;
+
+//     // Auto-start range at lastRow.max + 1 if available
+//     const nextMin =
+//       lastRow && lastRow.max !== "" && !isNaN(lastRow.max)
+//         ? String(Number(lastRow.max) + 1)
+//         : "";
+
+//     const newRow = {
+//       itemId: String(selectedItem.id),
+//       min: nextMin,
+//       max: "",
+//       price: "",
+//       includeVat: lastRow ? lastRow.includeVat : false, // carry over VAT state
+//       isFixedName: false,
+//       label: selectedItem.name,
+//     };
+
+//      if (insertIndex !== null && insertIndex >= 0 && insertIndex <= rows.length) {
+//       insertIndex; // insert after the fixed rows
+//       rows.splice(insertIndex, 0, newRow);    
+//     } else {
+//       // Fallback → add to the end
+//       rows.push(newRow);
+//     }
+
+//     updated[category] = rows;
+//     return updated;
+//   });
+//   setSelectedItems(prev => ({ ...prev, [category]: null }));
+// };
+
 const handleAddRow = (category, selectedItem) => {
   setFormValues(prev => {
     const updated = { ...prev };
     const rows = [...(updated[category] || [])];
 
-    // Get last row if it exists
-    const lastRow = rows.length > 0 ? rows[rows.length - 1] : null;
+    // Find last Type-1 row index
+    const type1LastIndex = rows.reduce((last, r, i) => {
+      const matched = data[category]?.find(i => String(i.id) === r.itemId);
+      return matched?.type === 1 ? i : last;
+    }, -1);
 
-    // Auto-start range at lastRow.max + 1 if available
+    // Build new row
+    const lastRow = rows[type1LastIndex];
     const nextMin =
-      lastRow && lastRow.max !== "" && !isNaN(lastRow.max)
+      lastRow && lastRow.max && !isNaN(lastRow.max)
         ? String(Number(lastRow.max) + 1)
         : "";
 
@@ -151,18 +188,21 @@ const handleAddRow = (category, selectedItem) => {
       min: nextMin,
       max: "",
       price: "",
-      includeVat: lastRow ? lastRow.includeVat : false, // carry over VAT state
+      includeVat: lastRow?.includeVat ?? false,
       isFixedName: false,
       label: selectedItem.name,
     };
 
-    rows.push(newRow);
+    // Insert after last Type-1 row
+    const insertAt = type1LastIndex + 1;
+    rows.splice(insertAt, 0, newRow);
+
     updated[category] = rows;
     return updated;
   });
+
   setSelectedItems(prev => ({ ...prev, [category]: null }));
 };
-
 
 
 
@@ -374,74 +414,26 @@ if (emptyCategories.length > 0) {
   };
 
   return (
-    <div className="min-h-screen bg-white antialiased font container ">
+    <div className="min-h-screen bg-white antialiased font container  ">
       {/* Header */}
       <div className='sticky top-0 z-50'>
         <Navbar />
       </div>
 
-      {/* Sidebar steps */}
-       <aside className="z-49 fixed mx-[20px] ml-20 top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-50% lg:max-h-[600px] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white lg:top-22">
-        <div className="p-6">
-          {/* Step 1 */}
-          <div className="flex items-start">
-            <div className="relative mr-4">
-              <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
-                <Check size={18} />
-              </div>
-              <div className="absolute left-[19px] top-[40px] w-[2px] h-[50px] bg-[#CFE3CF]" />
-            </div>
-            <div>
-              <div className="text-xs font-semibold text-[#1E1E1E]">STEP 1</div>
-                                <div className="font-outfit text-[15px] text-gray-900 font-semibold">Company registration</div>
+ 
 
-                                    <div className="text-[12px] font-medium text-[#2D7C57] mt-1">Completed</div>
-            </div>
-          </div>
 
-          {/* Step 2 (Current) */}
-          <div className="flex items-start mt-6">
-            <div className="relative mr-4">
-              <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-white text-[#1E5C3B] flex items-center justify-center">
-                <div className="w-4 h-4 rounded-full bg-[#1E5C3B]" />
-              </div>
-              <div className="absolute left-[19px] top-[40px] w-[2px] h-[50px] bg-gray-200" />
-            </div>
-            <div>
-              <div className="text-xs font-semibold text-[#1E1E1E]">STEP 2</div>
-                                              <div className="font-outfit text-[15px] text-gray-900 font-semibold">Price details</div>
-              <div className="text-xs text-[#A38320] mt-1">In Progress</div>
-
-            </div>
-          </div>
-
-          {/* Step 3 */}
-          <div className="flex items-start mt-6">
-            <div className="mr-4">
-              <div className="w-10 h-10 rounded-full border-2 border-gray-300 text-gray-400 flex items-center justify-center">
-                <div className="w-3 h-3 rounded-full border-2 border-gray-300"></div>
-              </div>
-            </div>
-            <div>
-              <div className="text-xs font-semibold text-[#1E1E1E]">STEP 3</div>
-                                                            <div className="font-outfit text-[15px] text-gray-900 font-semibold">Notes</div>
-
-            </div>
-          </div>
-        </div>
-      </aside>
-
-      {/* Main content */}
-<main className="pt-10 ml-105 mr-30 mx-auto   ">
+<main className="pt-10    ">
   
-  <div className=" bg-white shadow-md rounded-2xl p-8 border w-[900px] border-gray-100">
-    <div className="mx-auto w-[800px]">
-      <nav className="text-[13px] text-[#6B7280] mb-1 flex items-center gap-4" aria-label="Breadcrumb">
+  <div className=" bg-white shadow-md rounded-2xl p-8 border w-[1100px] border-gray-100 mx-auto ">
+    <div className="mx-auto w-[1000px]">
+      <nav className="text-[13px] text-[#6B7280] mb-5 flex items-center gap-4" aria-label="Breadcrumb">
+            <span className="other-page hidden sm:inline">Home</span>
+                  <span className="hidden sm:inline">/</span>
                   <span className="other-page hidden sm:inline">Company registration</span>
                   <span className="hidden sm:inline">/</span>
-                  <span className="other-page hidden sm:inline">Price details</span>
-                  <span>/</span>
-                  <span className="live-page whitespace-nowrap">Notes</span>
+                  <span className="live-page hidden sm:inline">Price Breakdown</span>
+                 
                 </nav>
     {Object.keys(data).map((category) => {
       if (!formValues[category]) return null;
@@ -462,172 +454,179 @@ if (emptyCategories.length > 0) {
           {/* 🧮 Table header */}
           <div className="grid grid-cols-[1.5fr_0.7fr_0.7fr_0.8fr_0.6fr_0.8fr] items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
             <div>Type</div>
-            <div className="text-center">Min</div>
-            <div className="text-center">Max</div>
-            <div className="text-center">Charge</div>
+            <div className="text-center">Min €</div>
+            <div className="text-center">Max €</div>
+            <div className="text-center">Charge €</div>
             <div className="text-center">VAT</div>
             <div className="text-center">Action</div>
           </div>
 
           {/* 🧾 Rows */}
-          {formValues[category].map((row, ri) => {
-            const matchedItem =
-              row.itemId !== "others"
-                ? data[category]?.find((i) => String(i.id) === row.itemId)
-                : null;
-            const itemType =
-              matchedItem?.type ?? (row.itemId === "others" ? 1 : 0);
-            const itemName = row.label ?? matchedItem?.name ?? "Unknown";
+         {formValues[category].map((row, ri) => {
+  const matchedItem =
+    row.itemId !== "others"
+      ? data[category]?.find((i) => String(i.id) === row.itemId)
+      : null;
 
-            return (
-              <div
-                key={ri}
-                className="grid grid-cols-[1.5fr_0.7fr_0.7fr_0.8fr_0.6fr_0.8fr] items-center text-sm border-b border-gray-200 hover:bg-gray-50 transition-colors px-3 py-2"
-              >
-                {/* Item Name */}
-                <div className="text-gray-700 font-medium truncate">
-                  {itemName}
-                </div>
+  const itemType =
+    matchedItem?.type ?? (row.itemId === "others" ? 1 : 0);
 
-                {/* Min */}
-                <div className="flex justify-center">
-                  {itemType === 1 ? (
-                    <div className="flex flex-col items-center">
-                      <input
-                        type="number"
-                        placeholder="Min"
-                        value={row.min ||""}
-                        onChange={(e) =>
-                          handleInputChange(category, ri, "min", e.target.value)
-                        }
-                        className={`border rounded px-1.5 py-0.5 w-16 text-sm text-center text-black bg-white ${
-                          errors[`${category}-${ri}-min`]
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        }`}
-                      />
-                      {errors[`${category}-${ri}-min`] && (
-                        <span className="text-[10px] text-red-600 mt-0.5">
-                          {errors[`${category}-${ri}-min`]}
-                        </span>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="text-gray-400 text-center">—</div>
-                  )}
-                </div>
+  const itemName = row.label ?? matchedItem?.name ?? "Unknown";
 
-                {/* Max */}
-                <div className="flex justify-center">
-                  {itemType === 1 ? (
-                    <div className="flex flex-col items-center">
-                      <input
-                        type="number"
-                        placeholder="Max"
-                        value={row.max || ""}
-                        onChange={(e) =>
-                          handleInputChange(category, ri, "max", e.target.value)
-                        }
-                        className={`border rounded px-1.5 py-0.5 w-16 text-sm text-center text-black bg-white ${
-                          errors[`${category}-${ri}-max`]
-                            ? "border-red-500"
-                            : "border-gray-300"
-                        }`}
-                      />
-                      {errors[`${category}-${ri}-max`] && (
-                        <span className="text-[10px] text-red-600 mt-0.5">
-                          {errors[`${category}-${ri}-max`]}
-                        </span>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="text-gray-400 text-center">—</div>
-                  )}
-                </div>
+  const showAddButton =
+    hasType1 && itemType === 1 && (ri + 1) % 5 === 0;
 
-                {/* Charge */}
-                <div className="flex justify-center">
-                  <div className="flex flex-col items-center">
-                    <input
-                      type="number"
-                      placeholder="Charge"
-                      value={row.price || ""}
-                      onChange={(e) =>
-                        handleInputChange(category, ri, "price", e.target.value)
-                      }
-                      className={`border rounded px-1.5 py-0.5 w-20 text-sm text-center text-black bg-white ${
-                        errors[`${category}-${ri}-price`]
-                          ? "border-red-500"
-                          : "border-gray-300"
-                      }`}
-                    />
-                    {errors[`${category}-${ri}-price`] && (
-                      <span className="text-[10px] text-red-600 mt-0.5">
-                        {errors[`${category}-${ri}-price`]}
-                      </span>
-                    )}
-                  </div>
-                </div>
+  return (
+    <div key={ri}>
+      {/* ================= ROW ================= */}
+      <div className="grid grid-cols-[1.5fr_0.7fr_0.7fr_0.8fr_0.6fr_0.8fr] items-center text-sm
+                      border-b border-gray-200 hover:bg-gray-50 transition-colors px-3 py-2">
 
-                {/* VAT */}
-                <div className="flex justify-center">
-                  <input
-                    type="checkbox"
-                    checked={row.includeVat}
-                    onChange={(e) =>
-                      handleInputChange(
-                        category,
-                        ri,
-                        "includeVat",
-                        e.target.checked
-                      )
-                    }
-                    className="w-4 h-4 accent-green-600"
-                  />
-                </div>
+        {/* ------- Item Name ------- */}
+        <div className="text-gray-700 text-sm truncate">
+          {itemName.charAt(0).toUpperCase() + itemName.slice(1)}
+        </div>
 
-                {/* Delete */}
-                <div className="flex justify-center">
-                  <button
-                    type="button"
-                    className="text-red-600 hover:text-red-800 text-xs border border-black hover:border-red-700 rounded px-2 py-0.5"
-                    onClick={() => handleDeleteRow(category, ri)}
-                  >
-    <X  className="w-4 h-4 text-black hover:text-red-700" />
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-
-          {/* ➕ Add Row (Dropdown) */}
-          {hasType1 && (
-            <div className="flex justify-end mt-3 px-3 pb-3">
-              
-              <select
-                className="border border-green-300  py-1 rounded text-sm text-green-800 "
-                 value={selectedItems[category] || ""}
-                onChange={(e) => {
-                 
-                  const selectedId = e.target.value;
-                  const selectedItem = data[category].find(
-                    (i) => i.id === Number(selectedId)
-                  );
-                  if (selectedItem) handleAddRow(category, selectedItem);
-                }}
-              >
-                <option value="" className="text-green-800">Add Row </option>
-                {data[category]
-                  .filter((i) => i.type === 1)
-                  .map((i) => (
-                    <option key={i.id} value={i.id}>
-                      {i.name}
-                    </option>
-                  ))}
-              </select>
-          
+        {/* ------- Min ------- */}
+        <div className="flex justify-center">
+          {itemType === 1 ? (
+            <div className="flex flex-col items-center">
+              <input
+                type="number"
+                placeholder="Min"
+                value={row.min || ""}
+                onChange={(e) =>
+                  handleInputChange(category, ri, "min", e.target.value)
+                }
+                className={`border rounded px-1.5 py-0.5 w-30 text-sm text-center text-black bg-white ${
+                  errors[`${category}-${ri}-min`]
+                    ? "border-red-500"
+                    : "border-gray-300"
+                }`}
+              />
+              {errors[`${category}-${ri}-min`] && (
+                <span className="text-[10px] text-red-600 mt-0.5">
+                  {errors[`${category}-${ri}-min`]}
+                </span>
+              )}
             </div>
+          ) : (
+            <div className="text-gray-400 text-center">—</div>
           )}
+        </div>
+
+        {/* ------- Max ------- */}
+        <div className="flex justify-center">
+          {itemType === 1 ? (
+            <div className="flex flex-col items-center">
+              <input
+                type="number"
+                placeholder="Max"
+                value={row.max || ""}
+                onChange={(e) =>
+                  handleInputChange(category, ri, "max", e.target.value)
+                }
+                className={`border rounded px-1.5 py-0.5 w-30 text-sm text-center text-black bg-white ${
+                  errors[`${category}-${ri}-max`]
+                    ? "border-red-500"
+                    : "border-gray-300"
+                }`}
+              />
+              {errors[`${category}-${ri}-max`] && (
+                <span className="text-[10px] text-red-600 mt-0.5">
+                  {errors[`${category}-${ri}-max`]}
+                </span>
+              )}
+            </div>
+          ) : (
+            <div className="text-gray-400 text-center">—</div>
+          )}
+        </div>
+
+        {/* ------- Price ------- */}
+        <div className="flex justify-center">
+          <div className="flex flex-col items-center">
+            <input
+              type="number"
+              placeholder="Charge"
+              value={row.price || ""}
+              onChange={(e) =>
+                handleInputChange(category, ri, "price", e.target.value)
+              }
+              className={`border rounded px-1.5 py-0.5 w-20 text-sm text-center text-black bg-white ${
+                errors[`${category}-${ri}-price`]
+                  ? "border-red-500"
+                  : "border-gray-300"
+              }`}
+            />
+            {errors[`${category}-${ri}-price`] && (
+              <span className="text-[10px] text-red-600 mt-0.5">
+                {errors[`${category}-${ri}-price`]}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* ------- VAT ------- */}
+        <div className="flex justify-center">
+          <input
+            type="checkbox"
+            checked={row.includeVat}
+            onChange={(e) =>
+              handleInputChange(
+                category,
+                ri,
+                "includeVat",
+                e.target.checked
+              )
+            }
+            className="w-4 h-4 accent-green-600"
+          />
+        </div>
+
+        {/* ------- Delete ------- */}
+        <div className="flex justify-center">
+          <button
+            type="button"
+            className="text-red-600 hover:text-red-800 text-sm hover:border-red-700 rounded px-2 py-0.5"
+            onClick={() => handleDeleteRow(category, ri)}
+          >
+            <X className="w-4 h-4 text-black hover:text-red-700" />
+          </button>
+        </div>
+      </div>
+
+      {/* ================= ADD ROW BUTTON ================= */}
+      {showAddButton && (
+        <div className="flex justify-end mt-2 mb-3 pr-3">
+          <select
+            className="border border-green-300 py-1 px-2 rounded text-sm text-green-800"
+            value={selectedItems[category] || ""}
+            onChange={(e) => {
+              const selectedId = e.target.value;
+              const selectedItem = data[category].find(
+                (i) => i.id === Number(selectedId)
+              );
+              if (selectedItem) handleAddRow(category, selectedItem);
+            }}
+          >
+            <option value="">Add Row</option>
+            {data[category]
+              .filter((i) => i.type === 1)
+              .map((i) => (
+                <option key={i.id} value={i.id}>
+                  {i.name}
+                </option>
+              ))}
+          </select>
+        </div>
+      )}
+    </div>
+  );
+})}
+
+
+        
         </div>
       );
     })}

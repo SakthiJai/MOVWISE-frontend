@@ -105,13 +105,7 @@ console.log(payload);
       <main className="mx-auto max-w-[1200px] pt-10">
         <div className="flex gap-12">
           {/* Left Stepper */}
-          <aside className="relative w-[400px] rounded-[40px] overflow-hidden bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
-            <div className="absolute inset-0 p-8">
-              {/* Steps */}
-              {/* ✅ Completed / In-progress status same as before */}
-              ...
-            </div>
-          </aside>
+         
 
           {/* Right Side */}
           <section className="flex-1 flex justify-center">
@@ -120,7 +114,9 @@ console.log(payload);
                 <nav className="text-[13px] text-[#6B7280] mb-4 flex items-center gap-4">
                   <Link href="/">Home</Link>
                   <span>/</span>
-                  <span>Company Details</span>
+                  <span>Company registration</span>
+                  <span>/</span>
+                  <span className="other-page hidden sm:inline">Price Breakdown</span>
                   <span>/</span>
                   <Link href="/conveyancers/Notes" className="live-page">
                     Notes
