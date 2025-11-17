@@ -2,6 +2,24 @@ import { Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
 import Link from "next/link";
 
 
+export const metadata = {
+  title: "Contact Movwise – We're Here to Help",
+  description:
+    "Get in touch with Movwise for customer support, conveyancing assistance, or general enquiries. Our team is here to help you with conveyancing quotes, services, and support.",
+
+  keywords: [
+    "contact conveyancing company",
+    "Movwise contact",
+    "Movwise customer service",
+    "conveyancing support"
+  ],
+
+  other: {
+    search_intent: "Navigational",
+  },
+
+};
+
 
 export default function Footer(){
     
