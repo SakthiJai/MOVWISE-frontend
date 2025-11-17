@@ -1,4 +1,3 @@
-import ResourcePage from "../../components/Resources/Resources"
 
 export const metadata = {
   title: "Movwise Blog – Conveyancing Tips & Guides",
@@ -16,6 +15,7 @@ export const metadata = {
   },
 
 };
+import ResourcePage from "../../components/Resources/Resources"
 
 export default function Resource() {
   return (

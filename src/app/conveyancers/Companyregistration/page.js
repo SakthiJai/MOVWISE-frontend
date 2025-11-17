@@ -468,7 +468,7 @@ value={formData?.SRAorCLC || ""}
 <div className="mt-5 grid grid-cols-2 gap-4">
  <div className="flex flex-col gap-2">
     <label className="block text-sm font-medium text-gray-700">
-      Jurisdictions Covered <span className="text-red-500">*</span>
+      Regions Covered <span className="text-red-500">*</span>
     </label>
 
     <Select
