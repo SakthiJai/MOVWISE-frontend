@@ -4,7 +4,7 @@ import Navbar from "../../parts/navbar/page";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
-import { API_ENDPOINTS, getData } from "../../auth/API/api";
+import { API_ENDPOINTS, getData, postData } from "../../auth/API/api";
 import { Check, ListPlus, Plus, PlusCircle, Trash, Trash2, X } from "lucide-react";
 import { useFormStore } from "../../store/useFormStore";
 import { MdAdd } from "react-icons/md";
@@ -25,413 +25,136 @@ const [selectedItems, setSelectedItems] = useState({});
 
 
 
-//   // Fetch quotes and initialize form values
-//   useEffect(() => {
-//     async function fetchQuotes() {
-//       const quotes = await getData(API_ENDPOINTS.conveyancingQuotes);
-//       setData(quotes.data);
 
-//       const initialFormValues = {};
-//       Object.keys(quotes.data).forEach((key) => {
-//         if (quotes.data[key].length === 0) return;
-//         const rows = [];
-//         quotes.data[key].forEach(item => {
-//           if (item.type === 1) {
-//             // Five fixed rows with item name
-//             for (let i = 0; i < 5; i++) {
-//               rows.push({
-//                 itemId: String(item.id),
-//                 min: "",
-//                 max: "",
-//                 price: "",
-//                 includeVat: false,
-//                 isFixedName: true,
-//                 label: item.name,
-//                 "dynmic_row":i,
-//                 others:null
-//               });
-//             }
-//             // Sixth row "Others"
-           
-//           } else {
-//             // type=0 rows with price and vat only
-//             rows.push({
-//               itemId: String(item.id),
-//               price: "",
-//               includeVat: false,
-//               isFixedName: false,
-//               label: item.name
-//             });
-//           }
-//         });
-//         initialFormValues[key] = rows;
-//       });
-//       setFormValues(initialFormValues);
-//     }
-//     fetchQuotes();
-//   }, []);
+let backend=[
+  {
+    "company_info": {}
+  },
+  {
+    "price_breakdown": [
+      {
+        "1": [
+          {
+            "fee_category_id": 1,
+            "fee_category_title": "Legal Fees",
+            "fee_category_sub_title":"Standard Conveyancing Fees (Excluding VAT)",
+            "min":100,
+            "max":null,
+            "purchasesalesehold":null,
+            "salesLeasehold":null,
+            "salesfreehold":null,
+            "status":0,
+          }
+        ],
+        "2":[
+          {
+ "fee_category_id": 2,
+            "fee_category_title": "Transaction Supplement Fees",
+            "fee_category_sub_title":"Purchase Transaction Supplements",
+            "cost":null,
+            "paidto":null,
+            "discription":null,
+            "typeid":null,
+            "status":0,
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "notes": {}
+  }
+]
+
+useEffect(() => {
+  const legalFees = backend[1]?.price_breakdown?.[0]?.["1"] || [];
+
+  const formatted = legalFees.map((item) => ({
+    min: item.min ?? "",
+    max: item.max ?? "",
+    pLease: item.purchaseLeasehold ,
+    pFree: item.purchasesalesehold ?? "",
+    sLease: item.salesLeasehold ?? "",
+    sFree: item.salesfreehold ?? "",
+    remortgage: item.remortgage ?? "",
+  }));
+
+  // If no backend rows → keep one empty row
+ 
+    setLegalcostrows(formatted);
+  
+}, []);
 
-//   // Handle input change with VAT sync logic
-//  const handleInputChange = (key, rowIndex, field, value) => {
-//   setFormValues(prev => {
-//     const updated = { ...prev };
-//     const rows = [...(updated[key] || [])];
-//     const row = { ...rows[rowIndex] };
 
-//     if (field === "includeVat") {
-//       row.includeVat = value;
 
-//       // Sync VAT with next rows if enabled
-//       const currentItemId = row.itemId;
-//       for (let i = 0; i < rows.length; i++) {
-//         if (rows[i].itemId === currentItemId) {
-//           rows[i] = { ...rows[i], includeVat: value };
-//         }
-//       }
-    
-//     } else {
-      
-//       row[field] = value;
-
-   
-//       // 🧠 (Optional) Auto-correct current row.min if it’s greater than max
-//       if (field === "min" && row.max !== "" && Number(value) >= Number(row.max)) {
-//         row.max = String(Number(value) + 1);
-//       }
-//     }
-
-//     rows[rowIndex] = row;
-//     updated[key] = rows;
-//     return updated;
-//   });
-
-//   // Clear validation error for that field
-//   setErrors(prevErrors => {
-//     const newErrors = { ...prevErrors };
-//     const errorKey = `${key}-${rowIndex}-${field}`;
-//     if (newErrors[errorKey]) delete newErrors[errorKey];
-//     return newErrors;
-//   });
-// };
-
-
-//   // Delete row handler
-//   const handleDeleteRow = (key, rowIndex) => {
-//     setFormValues(prev => {
-//       const updated = { ...prev };
-//       const rows = [...(updated[key] || [])];
-//       rows.splice(rowIndex, 1);
-//       updated[key] = rows;
-//       return updated;
-//     });
-//     // Remove errors related to deleted row
-//     setErrors(prev => {
-//       const newErrors = { ...prev };
-//       Object.keys(newErrors).forEach(errKey => {
-//         if (errKey.startsWith(`${key}-${rowIndex}-`)) delete newErrors[errKey];
-//       });
-//       return newErrors;
-//     });
-//   };
-
-//   // Add new row only for type=1 category
-// // const handleAddRow = (category, selectedItem,insertIndex  ) => {
-// //   console.log(formValues);
-// //   setFormValues(prev => {
-// //     const updated = { ...prev };
-// //     const rows = [...(updated[category] || [])];
-
-// //     // Get last row if it exists
-// //     const lastRow = rows.length > 0 ? rows[rows.length - 1] : null;
-
-// //     // Auto-start range at lastRow.max + 1 if available
-// //     const nextMin =
-// //       lastRow && lastRow.max !== "" && !isNaN(lastRow.max)
-// //         ? String(Number(lastRow.max) + 1)
-// //         : "";
-
-// //     const newRow = {
-// //       itemId: String(selectedItem.id),
-// //       min: nextMin,
-// //       max: "",
-// //       price: "",
-// //       includeVat: lastRow ? lastRow.includeVat : false, // carry over VAT state
-// //       isFixedName: false,
-// //       label: selectedItem.name,
-// //     };
-
-// //      if (insertIndex !== null && insertIndex >= 0 && insertIndex <= rows.length) {
-// //       insertIndex; // insert after the fixed rows
-// //       rows.splice(insertIndex, 0, newRow);    
-// //     } else {
-// //       // Fallback → add to the end
-// //       rows.push(newRow);
-// //     }
-
-// //     updated[category] = rows;
-// //     return updated;
-// //   });
-// //   setSelectedItems(prev => ({ ...prev, [category]: null }));
-// // };
-
-// const handleAddRow = (category, selectedItem) => {
-//   setFormValues(prev => {
-//     const updated = { ...prev };
-//     const rows = [...(updated[category] || [])];
-
-//     // Find last Type-1 row index
-//     const type1LastIndex = rows.reduce((last, r, i) => {
-//       const matched = data[category]?.find(i => String(i.id) === r.itemId);
-//       return matched?.type === 1 ? i : last;
-//     }, -1);
-
-//     // Build new row
-//     const lastRow = rows[type1LastIndex];
-//     const nextMin =
-//       lastRow && lastRow.max && !isNaN(lastRow.max)
-//         ? String(Number(lastRow.max) + 1)
-//         : "";
-
-//     const newRow = {
-//       itemId: String(selectedItem.id),
-//       min: nextMin,
-//       max: "",
-//       price: "",
-//       includeVat: lastRow?.includeVat ?? false,
-//       isFixedName: false,
-//       label: selectedItem.name,
-//     };
-
-//     // Insert after last Type-1 row
-//     const insertAt = type1LastIndex + 1;
-//     rows.splice(insertAt, 0, newRow);
-
-//     updated[category] = rows;
-//     return updated;
-//   });
-
-//   setSelectedItems(prev => ({ ...prev, [category]: null }));
-// };
-
-
-
-//   // Check overlapping ranges in array of rows (type=1)
-// const checkOverlapOrGapInCategory = (rows) => {
-//   const ranges = rows
-//     .map((r, idx) => ({ idx, min: Number(r.min), max: Number(r.max) }))
-//     .sort((a, b) => a.min - b.min);
-
-//   let overlapFound = false;
-//   let gapFound = false;
-//   let overlapIndexes = [];
-//   let gapIndexes = [];
-
-//   for (let i = 0; i < ranges.length - 1; i++) {
-//     const current = ranges[i];
-//     const next = ranges[i + 1];
-
-//     // Overlap
-//     if (current.max >= next.min) {
-//       overlapFound = true;
-//       overlapIndexes.push(i, i + 1);
-//     }
-
-//     // Gap
-//     if (current.max + 1 < next.min) {
-//       gapFound = true;
-//       gapIndexes.push(i, i + 1);
-//     }
-//   }
-
-//   return { overlapFound, gapFound, overlapIndexes, gapIndexes };
-// };
-
-
-
-
-//   // Validate rows before submit
-// const validateAllRows = () => {
-//   let tempErrors = {};
-//   let allValid = true;
-
-//   Object.keys(formValues).forEach((key) => {
-//     const rows = formValues[key] || [];
-
-//     rows.forEach((row, idx) => {
-//       const prefix = `${key}-${idx}`;
-//       const itemType = data[key]?.find(i => String(i.id) === String(row.itemId))?.type;
-
-//       const hasMin = row.min !== "" && row.min !== undefined;
-//       const hasMax = row.max !== "" && row.max !== undefined;
-//       const hasPrice = row.price !== "" && row.price !== undefined;
-
-//       // ✅ Completely empty row → skip validation
-//       if (!hasMin && !hasMax && !hasPrice) return;
-
-//       // 🔹 For Type 1: must have min, max, and price logic
-//       if (itemType === 1) {
-//         if ((hasMin && !hasMax) || (!hasMin && hasMax)) {
-//           tempErrors[`${prefix}-max`] = "Both Min and Max are required";
-//           allValid = false;
-//         }
-
-//         if (hasMin && hasMax && Number(row.min) >= Number(row.max)) {
-//           tempErrors[`${prefix}-max`] = "Max must be greater than Min";
-//           allValid = false;
-//         }
-
-//         if (hasMin && Number(row.min) < 0) {
-//           tempErrors[`${prefix}-min`] = "Min must be ≥ 0";
-//           allValid = false;
-//         }
-
-//         if (hasMax && Number(row.max) < 0) {
-//           tempErrors[`${prefix}-max`] = "Max must be ≥ 0";
-//           allValid = false;
-//         }
-
-//         if (hasPrice && Number(row.price) < 0) {
-//           tempErrors[`${prefix}-price`] = "Price must be ≥ 0";
-//           allValid = false;
-//         }
-
-//         if (hasMin && hasMax && !hasPrice) {
-//           tempErrors[`${prefix}-price`] = "Price is required when Min & Max are filled";
-//           allValid = false;
-//         }
-
-//       } else {
-//         // 🔹 Type 0 → Only price is needed
-//         if (!hasPrice) {
-//           tempErrors[`${prefix}-price`] = "Charge is required";
-//           allValid = false;
-//         } else if (Number(row.price) < 0) {
-//           tempErrors[`${prefix}-price`] = "Charge must be ≥ 0";
-//           allValid = false;
-//         }
-//       }
-//     });
-
-//     // 🔹 Overlap and gap check (only for type=1)
-//     const type1Rows = rows.filter(r => {
-//       const t = data[key]?.find(i => String(i.id) === String(r.itemId))?.type;
-//       return t === 1 && r.min !== "" && r.max !== "";
-//     });
-
-//     if (type1Rows.length > 1) {
-//       const { overlapFound, gapFound, overlapIndexes, gapIndexes } =
-//         checkOverlapOrGapInCategory(type1Rows);
-
-//       if (overlapFound) {
-//         overlapIndexes.forEach((idx) => {
-//           const realIndex = rows.indexOf(type1Rows[idx]);
-//           tempErrors[`${key}-${realIndex}-min`] = "Overlapping ranges found";
-//         });
-//         allValid = false;
-//       }
-
-//       if (gapFound) {
-//         gapIndexes.forEach((idx) => {
-//           const realIndex = rows.indexOf(type1Rows[idx]);
-//           tempErrors[`${key}-${realIndex}-max`] = "Gap found before next range";
-//         });
-//         allValid = false;
-//       }
-//     }
-//   });
-
-//   setErrors(tempErrors);
-//   return allValid;
-// };
-
-
-
-//   // Build API payload on submit
-//   const buildApiPayload = () => {
-//   let payload = {};
-
-//   Object.keys(formValues).forEach(category => {
-//     const rows = formValues[category] || [];
-
-//     // Filter out empty rows (no min, max, or price)
-//     const filledRows = rows.filter(r =>
-//       (r.min !== "" && r.min !== undefined) ||
-//       (r.max !== "" && r.max !== undefined) ||
-//       (r.price !== "" && r.price !== undefined)
-//     );
-
-//     // Map only filled rows
-//     payload[category] = filledRows.map(r => ({
-//       typeid: r.itemId === "others" ? null : Number(r.itemId),
-//       min: r.min === "" || r.min === undefined ? null : Number(r.min),
-//       max: r.max === "" || r.max === undefined ? null : Number(r.max),
-//       price: r.price === "" || r.price === undefined ? null : Number(r.price),
-//       vat: r.includeVat ? 1 : 0,
-//     }));
-//   });
-
-//   return payload;
-// };
-
-
-//   // Submit handler
-//   const handleSubmit = () => {
-//     // Check at least one row filled per category
-//    const emptyCategories = Object.keys(formValues).filter(key => {
-//   const rows = formValues[key] || [];
-
-//   // A filled row means any of min, max, or price is entered
-//   const hasFilledRow = rows.some(r =>
-//     (r.min && r.min !== "") ||
-//     (r.max && r.max !== "") ||
-//     (r.price && r.price !== "")
-//   );
-
-//   return !hasFilledRow; // category is empty if no row is filled
-// });
-
-// if (emptyCategories.length > 0) {
-//   Swal.fire({
-//     icon: "warning",
-//     title: "Missing Data",
-//     text: `Please fill at least one row in: ${emptyCategories.join(", ")}`,
-//     confirmButtonColor: "#f59e0b",
-//   });
-//   return; // stop submit
-// }
-//     if (!validateAllRows()) {
-//       Swal.fire({
-//         icon: "error",
-//         title: "Validation Error",
-//         text: "Please correct the highlighted fields before submitting.",
-//         confirmButtonColor: "#dc2626",
-//       });
-//       return;
-//     }
-
-//     const payload = buildApiPayload();
-//     updateQuotationData(payload);
-
-//     Swal.fire({
-//       icon: "success",
-//       title: "Success!",
-//       text: "Your form was submitted successfully.",
-//       confirmButtonColor: "#16a34a",
-//     }).then(() => {
-//       router.push("/conveyancers/Notes/");
-//     });
-//   };
 
 const handleSubmit = () => {
-  const validationErrors = validateRows("");
+  const hasErrors = validateRows();
 
-  if (validationErrors?.length > 0) {
-    alert(validationErrors.join("\n"));
+  if (hasErrors) {
+    alert("Please fix validation issues before submitting.");
     return;
   }
 
-  console.log("VALID DATA", legalcostrows);
-};
+  // ---------- ⭐ BUILD FINAL PAYLOAD ⭐ ----------
+  const payload = {
+    legal_fees: legalcostrows.map(r => ({
+      min: Number(r.min),
+      max: Number(r.max),
+      purchase_leasehold: Number(r.PurchaseLeasehold),
+      purchase_freehold: Number(r.PurchaseFreehold),
+      sales_leasehold: Number(r.salesLeasehold),
+      sales_freehold: Number(r.salesFreehold),
+      remortgage: Number(r.remortgage)
+    })),
+
+    purchase_transaction_supplements: PurchasTransactionSupplementsrows.map(r => ({
+      type: r.itemId === "others" ? "Others" : r.type,
+      fee_amount: Number(r.feeAmount),
+      description: r.description
+    })),
+
+    sales_transaction_supplements: SalesTransactionSupplementsrows.map(r => ({
+      type: r.itemId === "others" ? "Others" : r.type,
+      fee_amount: Number(r.feeAmount),
+      description: r.description
+    })),
+
+    disbursements: disbursementRows.map(r => ({
+      type: r.itemId === "others" ? "Others" : r.type,
+      fee_cost: Number(r.feeCost),
+      paid_to: r.paidTo,
+      transaction_type: r.transactionType
+    })),
+
+    leasehold_fees: leaseholdRows.map(r => ({
+      service: r.service,
+      fee_type: r.feeType,
+      amount: Number(r.amount),
+      paid_to: r.paidTo
+    })),
+      additional_services: {
+    indemnity_insurance_preparation: Number(indemnity),
+    sdlt_lbtt_ltt_return: Number(sdltReturn),
+    additional_legal_advice: Number(additionalAdvice)
+  },
+  Notes:notes,
+  service_level_options: {
+      expedited_service_fee: Number(serviceOptions.expedited_service_fee),
+      weekend_appointment_fee: Number(serviceOptions.weekend_appointment_fee)
+    }
+
+  };
+
+  // ----------- ⭐ Print Final Payload ----------
+  console.log("FINAL PAYLOAD:", payload);
+}
+
+const [indemnity, setIndemnity] = useState("");
+const [sdltReturn, setSdltReturn] = useState("");
+const [additionalAdvice, setAdditionalAdvice] = useState("");
+
+
 const [rowErrors, setRowErrors] = useState([]);     // errors for each row
 const [rangeErrors, setRangeErrors] = useState([]); // gap / overlap errors
 
@@ -439,7 +162,6 @@ const [rangeErrors, setRangeErrors] = useState([]); // gap / overlap errors
 const [notes, setNotes] = useState("");
 
 const [legalcostrows, setLegalcostrows] = useState([
-  { min: "", max: "", pLease: "", pFree: "", sLease: "", sFree: "" }
 ]);
   
   const handle_addrow = () => {
@@ -462,6 +184,7 @@ const [PurchasTransactionSupplementsrows, setPurchasTransactionSupplementsrows] 
     type: "",         
     feeAmount: "",
     description: "",
+    paidto:"",
   }
 ]);
 
@@ -474,60 +197,112 @@ const [SalesTransactionSupplementsrows, setSalesTransactionSupplementsrows] = us
   }
 ]);
 const validateRows = () => {
-  let rErrors = [];
-  let gErrors = [];
+const rErrors = {};
+const gErrors = {};
 
-  // prepare array
-  const rows = legalcostrows.map(r => ({
-    min: Number(r.min),
-    max: Number(r.max),
-  }));
-
-  // 1️⃣ Row-Level Validation
-  rows.forEach((r, i) => {
+  legalcostrows.forEach((row, i) => {
     const errors = {};
 
-    if (!r.min && r.min !== 0) errors.min = "Min is required";
-    if (!r.max && r.max !== 0) errors.max = "Max is required";
+    // --- MIN (always required) ---
+    if (row.min === "" || row.min === null || isNaN(row.min)) {
+      errors.min = "Min is required";
+    }
 
-    if (r.min >= r.max) errors.range = "Min must be less than Max";
+    // --- MAX (always required) ---
+    if (row.max === "" || row.max === null || isNaN(row.max)) {
+      errors.max = "Max is required";
+    }
 
-    if (r.min < 0 || r.max < 0) errors.negative = "Values cannot be negative";
+    // Range validation only if both present
+    if (!errors.min && !errors.max) {
+      if (Number(row.min) >= Number(row.max)) {
+        errors.range = "Min must be less than Max";
+      }
+    }
+
+    // Negative check
+    if (row.min < 0 || row.max < 0) {
+      errors.negative = "Values cannot be negative";
+    }
+
+    // --- OTHER FIELDS (Required only if visible) ---
+    [
+      "PurchaseLeasehold",
+      "PurchaseFreehold",
+      "salesLeasehold",
+      "salesFreehold",
+      "remortgage",
+    ].forEach((field) => {
+      if (fieldVisibility[field]) {
+        if (!row[field] && row[field] !== 0) {
+          errors[field] = `${field} is required`;
+        }
+      }
+    });
 
     rErrors[i] = errors;
   });
 
-  // 2️⃣ Remove rows with empty values before global validation
-  const sorted = [...rows].sort((a, b) => a.min - b.min);
+  // --- GLOBAL RANGE VALIDATION ---
+  const sorted = [...legalcostrows]
+  .map((row, index) => ({ ...row, index }))
+  .sort((a, b) => Number(a.min) - Number(b.min));
 
-  // 3️⃣ Check Gaps + Overlaps
-  for (let i = 0; i < sorted.length - 1; i++) {
-    const current = sorted[i];
-    const next = sorted[i + 1];
+for (let i = 0; i < sorted.length - 1; i++) {
+  const current = sorted[i];
+  const next = sorted[i + 1];
 
-    // Overlap
-    if (next.min < current.max) {
-      gErrors.push(
-        `Overlap: (${next.min} - ${next.max}) overlaps with (${current.min} - ${current.max})`
-      );
-    }
-
-    // Gap
-    if (next.min > current.max) {
-      gErrors.push(
-        `Gap found between ${current.max} and ${next.min}`
-      );
-    }
+  // Overlap
+  if (Number(next.min) <= Number(current.max)) {
+    gErrors[current.index] = gErrors[current.index] || [];
+    gErrors[current.index].push(
+      `Overlap with ${next.min} - ${next.max}`
+    );
   }
 
-  setRowErrors(rErrors);
-  setRangeErrors(gErrors);
+  // Gap
+  if (Number(next.min) > Number(current.max) + 1) {
+    gErrors[current.index] = gErrors[current.index] || [];
+    gErrors[current.index].push(
+      `Gap between ${current.max} and ${next.min}`
+    );
+  }
+}
+
+setRowErrors(rErrors);
+setRangeErrors(gErrors);
+  console.log(rErrors)
+  console.log(gErrors)
+
+  // return TRUE if errors exist
+const hasRowErrors = Object.values(rErrors).some(
+  row => Object.keys(row).length > 0
+);
+
+const hasRangeErrors = Object.values(gErrors).length > 0;
+
+return hasRowErrors || hasRangeErrors;
 };
+
+const fieldVisibility = {
+  min: true,
+  max: true,
+  PurchaseLeasehold: true,
+  PurchaseFreehold: true,   // hidden
+  salesLeasehold: true,
+  salesFreehold: true,
+  remortgage:true,       // hidden
+};
+
 
   
   const [dropdownothers, setDropdownothers] = useState(false);
   const [salesdropdownothers, setSalesdropdownothers] = useState(false);
 
+const [serviceOptions, setServiceOptions] = useState({
+  expedited_service_fee: "",
+  weekend_appointment_fee: ""
+});
 
  
 
@@ -643,7 +418,8 @@ const disbursementOptions = [
 
 const paidToOptions = [
   { value: "admin", label: "Admin" },
-  { value: "localauditor", label: "Local Auditor" },
+  { value: "local-authority", label: "local-authority " },
+  {value:"Land Registry",label:"Land Registry"}
 ];
 
 const transactionOptions = [
@@ -686,6 +462,8 @@ const handleLeaseholdField = (index, field, value) => {
 
 
 
+
+
   return (
     <div className="min-h-screen bg-white antialiased font   ">
       {/* Header */}
@@ -721,42 +499,164 @@ Standard Conveyancing Fees (Excluding VAT)
   </div>
 
   {/* Header */}
-  <div className="grid grid-cols-[0.6fr_0.7fr_0.7fr_0.8fr_0.6fr_0.8fr_0.4fr] items-center 
-                  text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
+<div className="
+  grid grid-cols-8 gap-4 w-full 
+   text-xs font-semibold text-gray-600 
+  border-b bg-gray-100 px-3 py-2
+">
 
-    <div className="text-center">Min €</div>
-    <div className="text-center">Max €</div>
-    <div className="text-center">Purchase Leasehold €</div>
-    <div className="text-center">Purchase Freehold €</div>
-    <div className="text-center">Sales Leasehold €</div>
-    <div className="text-center">Sales Freehold €</div>
+    <div className="text-center">Min £</div>
+    <div className="text-center">Max £</div>
+    <div className="text-center">Purchase Leasehold £</div>
+    <div className="text-center">Purchase Freehold £</div>
+    <div className="text-center">Sales Leasehold £</div>
+    <div className="text-center">Sales Freehold £</div>
+    <div className="text-center">Remortgage</div>
     <div className="text-center">Action</div>
   </div>
 
   {/* Input Row */}
-    {legalcostrows.map((_, i) => (
-  <div key={i} className="grid grid-cols-[0.5fr_0.5fr_0.5fr_0.6fr_0.6fr_0.6fr_0.2fr] items-center 
-                  text-sm border-b border-gray-200 hover:bg-gray-50 transition-colors px-3 py-2 gap-3">
+{legalcostrows.map((_, i) => (
+  <div
+    key={i}
+    className="    grid grid-cols-8 gap-4 w-full 
 
-    <input type="number" placeholder="Min" className="border border-gray-400 rounded  py-0.5  text-sm text-center text-black bg-white"   onChange={(e) => handleChange(i, "min", e.target.value)}
-  />
-    <input type="number" placeholder="Max" className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black"   onChange={(e) => handleChange(i, "max", e.target.value)}
- />
-    <input type="number" placeholder="Purchase Leasehold" className="border  border-gray-400 rounded py-0.5 w-full text-sm text-center text-black"   onChange={(e) => handleChange(i, "PurchaseLeasehold", e.target.value)}
- />
-    <input type="number" placeholder="Purchase Freehold" className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black"   onChange={(e) => handleChange(i, "PurchaseFreehold", e.target.value)} />
-    <input type="number" placeholder="Sales Leasehold" className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black"   onChange={(e) => handleChange(i, "salesLeasehold", e.target.value)} />
-    <input type="number" placeholder="Sales Freehold" className="border border-gray-400  rounded py-0.5 w-full text-sm text-center text-black"   onChange={(e) => handleChange(i, "salesFreehold", e.target.value)} />
- {
-  i==legalcostrows.length-1&&(
-  <button className="text-green-500 border-green-400" onClick={handle_addrow}> <Plus
-   /> </button>
+      items-start  border-b border-gray-200 
+      px-3 py-2
+    "
+  >
 
-  )
- }
- 
- </div>
+    {/* MIN */}
+    <div className="flex flex-col">
+      <input
+        type="number"
+        placeholder="Min"
+        className="border border-gray-400 rounded py-0.5 text-sm text-center text-black bg-white"
+        onChange={(e) => handleChange(i, "min", e.target.value)}
+      />
 
+      {rowErrors[i]?.min && (
+        <span className="text-red-500 text-xs">{rowErrors[i].min}</span>
+      )}
+      {rowErrors[i]?.range && (
+        <span className="text-red-500 text-xs">{rowErrors[i].range}</span>
+      )}
+      {rowErrors[i]?.negative && (
+        <span className="text-red-500 text-xs">{rowErrors[i].negative}</span>
+      )}
+      {rangeErrors[i]?.map((msg, idx) => (
+  <p key={idx} className="text-red-500 text-xs mt-1">{msg}</p>
+))}
+     
+    </div>
+
+    {/* MAX */}
+    <div className="flex flex-col">
+      <input
+        type="number"
+        placeholder="Max"
+        className="border border-gray-400 rounded py-0.5 text-sm text-center text-black"
+        onChange={(e) => handleChange(i, "max", e.target.value)}
+      />
+
+      {rowErrors[i]?.max && (
+        <span className="text-red-500 text-xs">{rowErrors[i].max}</span>
+      )}
+      {rangeErrors[i]?.map((msg, idx) => (
+  <p key={idx} className="text-red-500 text-xs mt-1">{msg}</p>
+))}
+    </div>
+
+    {/* Purchase Leasehold */}
+  {fieldVisibility.PurchaseLeasehold && (
+  <div className="flex flex-col">
+    <input
+      type="number"
+      placeholder="Purchase Leasehold"
+      className="border border-gray-400 rounded py-0.5 text-sm text-center text-black"
+      onChange={(e) => handleChange(i, "PurchaseLeasehold", e.target.value)}
+    />
+    {rowErrors[i]?.PurchaseLeasehold && (
+      <span className="text-red-500 text-xs">{rowErrors[i].PurchaseLeasehold}</span>
+    )}
+  </div>
+)}
+
+    {/* Purchase Freehold */}
+   
+    {fieldVisibility.PurchaseFreehold && (
+  <div className="flex flex-col">
+    <input
+      type="number"
+        placeholder="Purchase Freehold "
+      className="border border-gray-400 rounded py-0.5 text-sm text-center text-black"
+        onChange={(e) => handleChange(i, "PurchaseFreehold", e.target.value)}
+    />
+    {rowErrors[i]?.PurchaseFreehold && (
+      <span className="text-red-500 text-xs">{rowErrors[i].PurchaseFreehold}</span>
+    )}
+  </div>
+)}
+
+    {/* Sales Leasehold */}
+    
+        {fieldVisibility.salesLeasehold && (
+ <div className="flex flex-col">
+      <input
+        type="number"
+        placeholder="Sales Leasehold"
+        className="border border-gray-400 rounded py-0.5 text-sm text-center text-black"
+        onChange={(e) => handleChange(i, "salesLeasehold", e.target.value)}
+      />
+    {rowErrors[i]?.salesLeasehold && (
+      <span className="text-red-500 text-xs">{rowErrors[i].salesLeasehold}</span>
+    )}
+  </div>
+)}
+
+    {/* Sales Freehold */}
+
+
+          {fieldVisibility.salesFreehold && (
+ <div className="flex flex-col">
+      <input
+        type="number"
+        placeholder="Sales Freehold"
+        className="border border-gray-400 rounded py-0.5 text-sm text-center text-black"
+        onChange={(e) => handleChange(i, "salesFreehold", e.target.value)}
+      />
+    {rowErrors[i]?.salesFreehold && (
+      <span className="text-red-500 text-xs">{rowErrors[i].salesFreehold}</span>
+    )}
+  </div>
+)}
+{fieldVisibility.remortgage && (
+  <div className="flex flex-col">
+    <input
+      type="number"
+      placeholder="Remortgage"
+      className="border border-gray-400 rounded py-0.5 text-sm text-center text-black"
+      onChange={(e) => handleChange(i, "remortgage", e.target.value)}
+    />
+
+    {rowErrors[i]?.remortgage && (
+      <span className="text-red-500 text-xs">
+        {rowErrors[i].remortgage}
+      </span>
+    )}
+  </div>
+)}
+
+
+    {/* ADD BUTTON */}
+    <div className="flex justify-center items-start pt-1">
+      {i === legalcostrows.length - 1 && (
+        <button className="text-green-500" onClick={handle_addrow}>
+          <Plus />
+        </button>
+      )}
+    </div>
+  </div>
 ))}
 
   </div>
@@ -770,11 +670,12 @@ Transaction Supplement Fees  </div>
 <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
 Purchase Transaction Supplements
   </div>
-<div className="grid grid-cols-[1fr_1fr_1fr_1fr] items-center 
+<div className="grid  grid-cols-5 items-center 
                   text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
 
-    <div className="text-center">Suplement Type €</div>
-    <div className="text-center">Fee Amount €</div>
+    <div className="text-center">Suplement Type £</div>
+    <div className="text-center">Fee Amount £</div>
+    <div className="text-center">Paid To</div>
     <div className="text-center">Description </div>
     <div className="text-center">Action</div>
 
@@ -782,7 +683,7 @@ Purchase Transaction Supplements
   </div>
 
 {PurchasTransactionSupplementsrows.map((row, i) => (
-  <div key={i} className="grid grid-cols-[1fr_1fr_1fr_1fr] gap-3 px-3 py-2">
+  <div key={i} className="grid grid-cols-5 gap-3 px-3 py-2">
 
     {/* SELECT DROPDOWN or TEXTBOX */}
     {!row.isOthers ? (
@@ -802,23 +703,39 @@ Purchase Transaction Supplements
 </select>
 
     ) : (
+      <div>
       <input
+      id="suplement_type"
         type="text"
-        placeholder="Enter Supplement Type"
+        placeholder="Enter other Supplement Type"
         value={row.type}
         onChange={(e) => handleFieldChange(i, "type", e.target.value,"purchase")}
         className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black"
       />
+      </div>
     )}
 
     {/* FEE AMOUNT */}
     <input
-      type="number"
+      
       placeholder="Fee Amount"
       value={row.feeAmount}
       onChange={(e) => handleFieldChange(i, "feeAmount", e.target.value,"purchase")}
       className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black"
     />
+     <select
+        className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black  placeholder:text-gray-800"
+        value={row.paidto}
+        onChange={(e) => handleDisField(i, "paidto", e.target.value)}
+      >
+        <option value="" className="text-gray-900">Select Paid To</option>
+        {paidToOptions.map((opt) => (
+          <option key={opt.value} value={opt.value} className="text-gray-900">
+            {opt.label}
+          </option>
+        ))}
+      </select>
+    
 
     {/* DESCRIPTION */}
     <input
@@ -871,8 +788,8 @@ sales Transaction Supplements
 <div className="grid grid-cols-[1fr_1fr_1fr_1fr] items-center 
                   text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
 
-    <div className="text-center">Suplement Type €</div>
-    <div className="text-center">Fee Amount €</div>
+    <div className="text-center">Suplement Type £</div>
+    <div className="text-center">Fee Amount £</div>
     <div className="text-center">Description </div>
     <div className="text-center">Action</div>
 
@@ -899,6 +816,9 @@ sales Transaction Supplements
 </select>
 
     ) : (
+      <div>
+            <label htmlFor="suplement_type" className="text-black"> Others</label>
+
       <input
         type="text"
         placeholder="Enter Supplement Type"
@@ -906,6 +826,7 @@ sales Transaction Supplements
         onChange={(e) => handleFieldChange(i, "type", e.target.value,"sales")}
         className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black"
       />
+      </div>
     )}
 
     {/* FEE AMOUNT */}
@@ -977,8 +898,8 @@ Essential Disbursements & Third-Party Costs
   <div className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr] items-center 
       text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
 
-    <div className="text-center">Disbursement Type €</div>
-    <div className="text-center">Fee Cost €</div>
+    <div className="text-center">Disbursement Type £</div>
+    <div className="text-center">Fee Cost £</div>
     <div className="text-center">Paid To</div>
     <div className="text-center">Transaction Type</div>
     <div className="text-center">Action</div>
@@ -1005,6 +926,8 @@ Essential Disbursements & Third-Party Costs
           ))}
         </select>
       ) : (
+        <div>
+          <label className="text-black" >Others</label>
         <input
           type="text"
           placeholder="Enter Type"
@@ -1012,6 +935,7 @@ Essential Disbursements & Third-Party Costs
           onChange={(e) => handleDisField(i, "type", e.target.value)}
           className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black placeholder:text-gray-900"
         />
+        </div>
       )}
 
       {/* COST */}
@@ -1020,12 +944,12 @@ Essential Disbursements & Third-Party Costs
         placeholder="Fee Cost"
         value={row.feeCost}
         onChange={(e) => handleDisField(i, "feeCost", e.target.value)}
-        className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black placeholder:text-gray-500"
+        className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black placeholder:text-black"
       />
 
       {/* PAID TO */}
       <select
-        className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-gray-400  placeholder:text-gray-800"
+        className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black  placeholder:text-gray-800"
         value={row.paidTo}
         onChange={(e) => handleDisField(i, "paidTo", e.target.value)}
       >
@@ -1039,7 +963,7 @@ Essential Disbursements & Third-Party Costs
 
       {/* TRANSACTION TYPE */}
       <select
-        className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-gray-400  placeholder:text-gray-500"
+        className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black  placeholder:text-black"
         value={row.transactionType}
         onChange={(e) =>
           handleDisField(i, "transactionType", e.target.value)
@@ -1104,11 +1028,11 @@ Leasehold Specific Fees & Disbursements
   </div>
 
   <div className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr] items-center 
-      text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
+      text-xs font-semibold text-black border-b bg-gray-100 px-3 py-2">
 
     <div className="text-center">Leasehold Service</div>
     <div className="text-center">Fee Type</div>
-    <div className="text-center">Amount €</div>
+    <div className="text-center">Amount £</div>
     <div className="text-center">Paid To</div>
     <div className="text-center">Action</div>
 
@@ -1224,14 +1148,16 @@ Leasehold Specific Fees & Disbursements
       <label className="text-sm font-semibold text-gray-700 mb-2">
         Indemnity Insurance Handling Preparation
       </label>
+<input
+  type="number"
+  className="border p-2 rounded-md text-sm focus:ring-2 border-gray-400 outline-none focus:ring-black placeholder:text-black"
+  placeholder="Enter amount"
+  value={indemnity}
+  onChange={(e) => setIndemnity(e.target.value)}
+/>
 
-      <input
-        type="number"
-        className="border p-2 rounded-md text-sm focus:ring-2 border-gray-400   outline-none focus:ring-black placeholder:text-black"
-        placeholder="Enter amount"
-      />
 
-      <p className="text-xs text-gray-500 mt-1">
+      <p className="text-xs text-gray-900 mt-1">
         Fee for arranging indemnity policies
       </p>
     </div>
@@ -1242,13 +1168,16 @@ Leasehold Specific Fees & Disbursements
         SDLT/LBTT/LTT Return
       </label>
 
-      <input
-        type="number"
-        className="border p-2 rounded-md border-gray-400 text-sm focus:ring-2 outline-none focus:ring-black placeholder:text-black"
-        placeholder="Enter amount"
-      />
+     <input
+  type="number"
+  className="border p-2 rounded-md text-sm focus:ring-2 border-gray-400 outline-none focus:ring-black placeholder:text-black"
+  placeholder="Enter amount"
+  value={sdltReturn}
+  onChange={(e) => setSdltReturn(e.target.value)}
+/>
 
-      <p className="text-xs text-gray-500 mt-1">
+
+      <p className="text-xs text-gray-900 mt-1">
         Tax return preparation fee
       </p>
     </div>
@@ -1259,13 +1188,16 @@ Leasehold Specific Fees & Disbursements
         Additional Legal Advice
       </label>
 
-      <input
-        type="number"
-        className="border p-2 rounded-md border-gray-400 text-sm focus:ring-2  outline-none focus:ring-black placeholder:text-black"
-        placeholder="Enter amount"
-      />
+     <input
+  type="number"
+  className="border p-2 rounded-md text-sm focus:ring-2 border-gray-400 outline-none focus:ring-black placeholder:text-black"
+  placeholder="Enter amount"
+  value={additionalAdvice}
+  onChange={(e) => setAdditionalAdvice(e.target.value)}
+/>
 
-      <p className="text-xs text-gray-500 mt-1">
+
+      <p className="text-xs text-gray-900 mt-1">
         Tax return preparation fee
       </p>
     </div>
@@ -1279,7 +1211,7 @@ Leasehold Specific Fees & Disbursements
 </div>
 
 <div className="mt-10">
-  <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-green-800 text-sm uppercase  tracking-wide">
+  <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
     Service Level Options
   </div>
 
@@ -1294,7 +1226,14 @@ Leasehold Specific Fees & Disbursements
       <input
         type="number"
         placeholder="0.00"
-        className="border p-2 border-gray-400 placeholder:text-black rounded-md text-sm focus:ring-2 focus:ring-black  outline-none"
+        value={serviceOptions.expedited_service_fee}
+        onChange={(e) =>
+          setServiceOptions({
+            ...serviceOptions,
+            expedited_service_fee: e.target.value
+          })
+        }
+        className="border p-2 border-gray-400 placeholder:text-black rounded-md text-sm focus:ring-2 focus:ring-black outline-none"
       />
 
       <p className="text-xs text-gray-500 mt-1">
@@ -1311,6 +1250,13 @@ Leasehold Specific Fees & Disbursements
       <input
         type="number"
         placeholder="0.00"
+        value={serviceOptions.weekend_appointment_fee}
+        onChange={(e) =>
+          setServiceOptions({
+            ...serviceOptions,
+            weekend_appointment_fee: e.target.value
+          })
+        }
         className="border border-gray-400 p-2 placeholder:text-black rounded-md text-sm focus:ring-2 focus:ring-black outline-none"
       />
 
@@ -1324,22 +1270,22 @@ Leasehold Specific Fees & Disbursements
 
 
 
+
 </div>
 <div className="mt-10">
       <label className="block text-sm font-semibold text-gray-800 mb-2">
         Enter Additional Information
       </label>
 
-      <div className="bg-white border border-gray-300 rounded-md">
-        <ReactQuill
-          value={notes}
-          onChange={setNotes}
-          theme="snow"
-          modules={{ toolbar: false }}   // 🔥 removes toolbar
-          placeholder="Type your message here..."
-          className="min-h-[150px] text-black"
-        />
-      </div>
+   <div className="bg-white border border-gray-300 rounded-md">
+  <textarea
+    value={notes}
+    onChange={(e) => setNotes(e.target.value)}
+    placeholder="Type your message here..."
+    className="min-h-[150px] w-full text-black p-2 outline-none rounded-md"
+  ></textarea>
+</div>
+
     </div>
 
                   </div>

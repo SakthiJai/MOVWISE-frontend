@@ -393,34 +393,23 @@ value={formData?.SRAorCLC || ""}
                       />
                       {errors.company_name && <p className="text-red-500 text-[12px] mt-1">{errors.company_name}</p>}
                     </div>
+                     <div className="flex flex-col gap-2">
+    <label className="block text-sm font-medium text-[#6A7682]">
+      Language Availability <span className="text-red-500">*</span>
+    </label>
 
-                    <div>
-  <label
-    htmlFor="phone"
-    className="block text-[14px] text-[#6A7682] font-medium mb-1"
-  >
-    Phone No.<span className = "text-red-500">*</span>
-  </label>
-  <input
-    id="phone"
-    name="phone_number"
-    value={formData.phone_number}
-    onChange={(e) => {
-      const value = e.target.value;
-      // Allow only numbers and limit to 12 digits
-      if (/^\d{0,10}$/.test(value)) {
-        handleChange(e);
-      }
-    }}
-    placeholder="Enter Phone number"
-    className={`block w-full h-[44px] rounded-[10px] text-[#1B1D21] placeholder-[#1B1D21] border ${
-      errors.phone_number ? "border-red-500" : "border-[#D1D5DB]"
-    } px-3 text-[14px] focus:outline-none`}
-  />
-  {errors.phone_number && (
-    <p className="text-red-500 text-[12px] mt-1">{errors.phone_number}</p>
-  )}
-</div>
+    <Select
+      options={language}
+      isMulti
+      instanceId="language-select"
+      value={selectedLanguage || formData.languages}
+      onChange={handleChangeLang}
+      placeholder="Choose languages..."
+      className="text-black mt-2"
+    />
+  </div>
+
+         
                   </div>
 
                   {/* Row 3 - Logo Upload */}
@@ -428,7 +417,7 @@ value={formData?.SRAorCLC || ""}
   
   {/* LEFT COLUMN — Jurisdictions */}
   <div className="flex flex-col gap-2">
-    <label className="block text-sm font-medium text-gray-700">
+    <label className="block text-sm font-medium text-[#6A7682]">
       Jurisdictions Covered <span className="text-red-500">*</span>
     </label>
 
@@ -445,30 +434,10 @@ value={formData?.SRAorCLC || ""}
   </div>
 
   {/* RIGHT COLUMN — Languages */}
-  <div className="flex flex-col gap-2">
-    <label className="block text-sm font-medium text-gray-700">
-      Language Preferences <span className="text-red-500">*</span>
-    </label>
-
-    <Select
-      options={language}
-      isMulti
-      instanceId="language-select"
-      value={selectedLanguage || formData.languages}
-      onChange={handleChangeLang}
-      placeholder="Choose languages..."
-      className="text-black mt-2"
-    />
-  </div>
-
-</div>
-
-       
-              
-<div className="mt-5 grid grid-cols-2 gap-4">
- <div className="flex flex-col gap-2">
-    <label className="block text-sm font-medium text-gray-700">
-      Regions Covered <span className="text-red-500">*</span>
+ 
+<div className="flex flex-col gap-2">
+    <label className="block text-sm font-medium text-[#6A7682]">
+      Services We Offered <span className="text-red-500">*</span>
     </label>
 
     <Select
@@ -482,8 +451,14 @@ value={formData?.SRAorCLC || ""}
       className="text-black mt-2"
     />
   </div>
+</div>
+
+       
+              
+<div className="mt-5 grid grid-cols-2 gap-4">
+ 
   {/* Label */}
-  <div className="flex flex-col items-center">
+  <div className="flex flex-col items-start">
 <label className="text-[14px] text-[#6A7682] font-medium mb-2 block">
     Company Logo
   </label>
@@ -522,9 +497,7 @@ value={formData?.SRAorCLC || ""}
 
   </div>
   </div>
-  
-</div>
-     <div className="mt-20 flex justify-end gap-4 w-full ">
+       <div className="mt-20 flex justify-end gap-4 w-full ">
             
 
               <button
@@ -535,6 +508,9 @@ value={formData?.SRAorCLC || ""}
                 Continue to price breakdown  →
               </button>
             </div>
+
+</div>
+    
                   
                 </form>
               </div>

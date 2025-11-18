@@ -44,6 +44,8 @@ export default function EditorPage() {
     "code-block",
     "align",
   ];
+  const [showSuccess, setShowSuccess] = useState(false);
+
 
   // ✅ Save notes & submit final payload
   const handleSubmitAll = async () => {
@@ -54,7 +56,7 @@ export default function EditorPage() {
       ...quotationData,
       notes: value,
     };
-
+setShowSuccess(true)
 
 function normalizePayload(form) {
   // defensive defaults
@@ -87,16 +89,16 @@ function normalizePayload(form) {
 const payload = normalizePayload(finalPayload);
 console.log(payload);
 
-    try {
+  //   try {
 
-      const res = await postData(API_ENDPOINTS.createQuote,payload) 
-      console.log(res);
+  //     const res = await postData(API_ENDPOINTS.createQuote,payload) 
+  //     console.log(res);
       
 
      
-  }catch (error) {
-      console.error("Error logging in:", error);
-    }
+  // }catch (error) {
+  //     console.error("Error logging in:", error);
+  //   }
   }
   return (
     <div>
@@ -165,6 +167,29 @@ console.log(payload);
             </div>
           </section>
         </div>
+        {showSuccess && (
+  <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+    <div className="bg-white rounded-xl p-8 w-[90%] max-w-sm text-center shadow-xl">
+      <h2 className="text-xl font-semibold text-green-700">
+        Company Details Registered Successfully 🎉
+      </h2>
+
+      <p className="mt-2 text-gray-600 text-sm">
+        Your company details have been saved.
+      </p>
+
+      <button
+        onClick={() => {
+          setShowSuccess(false);
+          router.push("/conveyancers/summary"); // change route if needed
+        }}
+        className="mt-6 w-full bg-[#1E5C3B] text-white py-2 rounded-lg font-semibold"
+      >
+        Continue
+      </button>
+    </div>
+  </div>
+)}
       </main>
       </div>
       <Footer />

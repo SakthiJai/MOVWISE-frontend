@@ -5,7 +5,7 @@ import Footer from "../../parts/Footer/footer";
 import Image from 'next/image';
 import Navbar from '../../parts/navbar/page';
 import Link from 'next/link';
-import { Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
+import { Facebook, Twitter, Linkedin, Instagram,Tag } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
   Home,
@@ -24,6 +24,7 @@ import {
   Zap,
 } from "lucide-react";
 import { API_BASE_URL } from "../.././constants/config";
+import { FaSalesforce } from 'react-icons/fa';
 
 // --- Utility Components for Icons and Buttons (simplified) ---
 const iconColors = {
@@ -34,6 +35,7 @@ const iconColors = {
   Cloud: "text-sky-500",        // Cloud / tech = sky blue
   Zap: "text-amber-500",        // Speed = amber/yellow
 };
+
 const icons = {
   Scale,
   Languages,
@@ -100,6 +102,13 @@ export default function HomePage() {
       icon: <Building2 className="w-10 h-10 text-[#256041]" />,
       desc: "Changing ownership easily",
     },
+    {
+  label: "Sales",
+  icon: <Tag className="w-10 h-10 text-[#256041]" />,
+  desc: "Quick and easy property sales.",
+}
+
+    
   ];
 
   const handleSelect = (type) => {
