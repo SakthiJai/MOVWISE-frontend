@@ -159,3 +159,40 @@ font-size: small;
 .tooltip:hover .tooltiptext {
   visibility: visible;
 }
+.sticky{
+  position: fixed;
+    width: 100%;
+    /* padding: 1%; */
+    background: #fff;
+}
+
+/* Price / currency input styling for fields that show formatted GBP values */
+.poundtransform {
+  padding: 0.375rem 0.5rem; /* vertical 6px, horizontal 8px */
+  text-align: left;
+  font-variant-numeric: tabular-nums; /* keeps numbers aligned */
+
+  letter-spacing: 0.2px;
+  caret-color: #111827;
+  -moz-appearance: textfield;
+}
+
+/* optional: visually prefix with £ using a pseudo element when appropriate */
+.poundtransform--with-symbol {
+  position: relative;
+  padding-left: 1.5rem; /* make space for symbol */
+}
+.poundtransform--with-symbol::before {
+  content: '£';
+  position: absolute;
+  left: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #111827;
+  font-weight: 600;
+}
+
+/* small responsive tweak */
+@media (max-width: 640px) {
+  .poundtransform { padding: 0.25rem 0.5rem; }
+}

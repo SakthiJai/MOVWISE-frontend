@@ -106,18 +106,8 @@ const [notes, setNotes] = useState("");
    const fetchlanguages = async () => {
     try {
       const  languages = await getData(API_ENDPOINTS.languages)
-      
-
-const Companyregistrationdata = await postData(
-  API_ENDPOINTS.insertcompanydetail,
-  initialcompanydata
-);
-
-      console.log(Companyregistrationdata)
-
-      console.log("Languages response:", languages);
-           setLanguage( languages.users)
-   console.log(languages.users)
+      setLanguage( languages.users)
+   //console.log(languages.users)
    if(Array.isArray(languages.users)){
       const languageOptions = languages.users.map((l) => ({
         value: l.language_name,
@@ -166,7 +156,7 @@ const handleChangeLang = (selectedOptions = []) => {
   // If called from input event
 
   if((e.target && e.target!=undefined)){
-console.log(e.target);
+
     let { name, value } = e.target;
       setErrors((prev) => ({
     ...prev,
@@ -195,7 +185,7 @@ console.log(e.target);
     ...prev,
     [name]:value
     }))
-console.log(formData)
+
   }
 
   else{
@@ -335,18 +325,16 @@ console.log(formData)
     ) {
       newErrors.email = "Enter a valid email address";
     }
-
-    // Logo validation
-  
+    // Logo validation 
 
     setErrors(newErrors);
-console.log(errors);
+    console.log(errors);
     // Navigate only if valid
     if (Object.keys(newErrors).length === 0) {
       updateCompanyData({ ...formData, logo: image });
       localStorage.setItem("companyData", JSON.stringify({ ...formData}));
       console.log("inside navigation")
-      router.push(`${API_BASE_URL}/conveyancers/quotationdetails`);
+      router.push(`${API_BASE_URL}/quotationdetails`);
     }
     console.log(errors)
   };
@@ -637,7 +625,7 @@ const togglesercice = (selectedOptions) => {
                 onClick={handleContinue}
                 className="font-outfit mb-6  font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full bg-[#1E5C3B] text-[#EDF4EF]"
               >
-                Continue to price breakdown  →
+                Continue to Price breakdown  →
               </button>
             </div>
    

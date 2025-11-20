@@ -21,84 +21,71 @@ export default function Quotationdetails() {
   const [errors, setErrors] = useState({});
 const [selectedItems, setSelectedItems] = useState({});
 const [feeCategory, setfeeCategory] = useState({});
-const [purchaseFeeTypeList, setpurchaseFeeTypeList] = useState({});
-const [salesFeeTypeList, setsalesFeeTypeList] = useState({});
-const [standardDisbursementList, setstandardDisbursementList] = useState({});
-const [leaseholdDisbursementList, setleaseholdDisbursementList] = useState({});
-const [additionalServiceList, setadditionalServiceList] = useState({});
-
-
-let heading=[
-{
-1:{
-        fee_category_id:1,
-        title:"legalcost1",
-        sub_title:"excluding vat1"
-    },
-    2:{
-  fee_category_id:1,
-        title:"legalcost2",
-        sub_title:"excluding vat2"
-    },
-    3:{
-          fee_category_id:3,
-        title:"legalcost3",
-        sub_title:"excluding vat3"
-    },
-      4:{
-          fee_category_id:4,
-        title:"legalcost4",
-        sub_title:"excluding vat4"
-    },
-      5:{
-          fee_category_id:5,
-        title:"legalcost5",
-        sub_title:"excluding vat5"
-    }
-   } 
-]
+const [purchaseFeeTypeList, setpurchaseFeeTypeList] = useState([]);
+const [salesFeeTypeList, setsalesFeeTypeList] = useState([]);
+const [standardDisbursementList, setstandardDisbursementList] = useState([]);
+const [leaseholdDisbursementList, setleaseholdDisbursementList] = useState([]);
+const [additionalServiceList, setadditionalServiceList] = useState([]);
+const [pricingList, setpricingList] = useState([]);
+const [legalFeesError, setlegalFeesError] = useState([]);
+const [transactionFeesError, settransactionFeesError] = useState([]);
+const [disbursementFeesError, setdisbursementFeesError] = useState([]);
+const [leasedisbursementFeesError, setleasedisbursementFeesError] = useState([]);
+const [additionalServiceError, setadditionalServiceError] = useState([]);
 const [headings, setHeadings] = useState([]);
+const [formData, setformData] = useState({});
+
+useEffect(()=>{
+  const storedData = JSON.parse(localStorage.getItem("companyData"));
+  
+  if (storedData) {
+    setformData(storedData);
+    console.log(formData)
+  }
+ },[]);
+
 useEffect(() => {
-    console.log("sdsdsd");
-  //const result = Object.values(heading);
-  setHeadings(heading);
- // console.log(result)
-}, []); // empty array = run once
-useEffect(() => { 
-    async function fetchData() {
+    // Define async function inside useEffect
+    const fetchData = async () => { console.log("121212");
       try {
-        const res =await getData(API_ENDPOINTS.feecatgory);
-       
-        console.log(res.data)
-        setfeeCategory(res.data)
-        // console.log(feeCategory)
+       // setLoading(true);
+
+        // Call both APIs in parallel
+        const [response1, response2,response3] = await Promise.all([
+          getData(API_ENDPOINTS.feecatgory),
+          getData(API_ENDPOINTS.feetype+"/2"),
+          getData(API_ENDPOINTS.pricing),
+        ]);
+        const storedData = JSON.parse(localStorage.getItem("companyData"));
+        response1.data[2][0]['sub_categories']=[];
+        if(storedData['service_id']?.indexOf(1) !== -1 || storedData['service_id']?.indexOf(3) !== -1)
+        {
+           response1.data[2][0]['sub_categories'].push({"sub_category" : "Purchase Transaction Supplements"})
+        }
+        else if(storedData['service_id']?.indexOf(2) !== -1 || storedData['service_id']?.indexOf(3) !== -1)
+        {
+          response1.data[2][0]['sub_categories'].push({"sub_category" : "Sales Transaction Supplements"})
+        }
+        console.log(response1.data[2][0]['sub_categories'])
+        setfeeCategory(response1.data)
+        setpurchaseFeeTypeList(response2.purchase??[]);
+        setsalesFeeTypeList(response2.sales??[]);
+        setstandardDisbursementList(response2.standard_disbursement??[]);
+        setleaseholdDisbursementList(response2.leasehold_disbursement??[]);
+        setadditionalServiceList(response2.additional_service??[]);
+        setpricingList(response3.pricing??[])
       } catch (err) {
-        console.log("Error:", err);
+        console.error(err);
+        setError("Failed to fetch data");
+      } finally {
+        setLoading(false);
       }
-    }
+    };
 
     fetchData();
   }, []);
-  useEffect(() => { 
-    async function fetchData() {
-      try {
-        const res =await getData(API_ENDPOINTS.feetype+"/2");
-       
-        console.log(res.purchase)
-        setpurchaseFeeTypeList(res.purchase??[]);
-        setsalesFeeTypeList(res.sales??[]);
-        setstandardDisbursementList(res.standard_disbursement??[]);
-        setleaseholdDisbursementList(res.leasehold_disbursement??[]);
-        setadditionalServiceList(res.additional_service??[]);
-       
-        // console.log(feeCategory)
-      } catch (err) {
-        console.log("Error:", err);
-      }
-    }
 
-    fetchData();
-  }, []);
+
  const handlePoundChange = (e) => {
     // Check if input has class "poundtransform"
     if (!e.target.classList.contains("poundtransform")) return;
@@ -123,100 +110,7 @@ useEffect(() => {
       [name]: formatted,
     });*/
   };
-let backend = [
-{
-  "company_details": {
-    "company_name": "ABC Legal Ltd",
-    "logo": "base64string",
-    "phone_number": "9876543210",
-    "email": "info@abc.com",
-    "website": "www.abc.com",
-    "languages": [1, 2]
-  },
-  "notes": "This is a sample note for testing.",
-  "pricing":[ {
-    "1": [
-      {
-        "fees_category_id": 1,
-        "fees_category_title":"legalcost",
-        "fees_category_subtitle":"Standard Conveyancing Fees (Excluding VAT)",
-        "price_id": null,
-        "price_list": [
-          {
-            "min": 100,
-            "max": 200,
-            "purchase_leasehold": 150,
-            "purchase_freehold": 180,
-            "sales_leasehold": 120,
-            "sales_freehold": 140,
-            "remortgage": 160
-          }
-        ]
-      }
-    ],
-    "2": [
-      {
-        "fees_category_id": 2,
-        "fees_category_title1":"Transaction Supplement Fees",
-        "fees_category_subtitle1":"Purchase Transaction Supplements",
-        "fees_category_subtitle1":"sales Transaction Supplements",
-        "type_id": 1,
-        "price_list": [
-          {
-            "fee_amount": 50,
-            "paid_to": "Lawyer",
-            "description": "Purchase fee"
-          }
-        ]
-      }
-    ],
-      "3": [
-      {
-        "fees_category_id": 2,
-        "fees_category_title1":"Transaction Supplement Fees",
-        "fees_category_subtitle1":"Purchase Transaction Supplements",
-        "type_id": 1,
-        "price_list": [
-          {
-            "fee_amount": 50,
-            "paid_to": "Lawyer",
-            "description": "Purchase fee"
-          }
-        ]
-      }
-    ],
-       "4": [
-      {
-        "fees_category_id": 2,
-        "fees_category_title1":"Transaction Supplement Fees",
-        "fees_category_subtitle1":"Purchase Transaction Supplements",
-        "type_id": 1,
-        "price_list": [
-          {
-            "fee_amount": 50,
-            "paid_to": "Lawyer",
-            "description": "Purchase fee"
-          }
-        ]
-      }
-    ],
-    "5": [
-      {
-        "fees_category_id": 5,
-        "type_id": 40,
-        "price_list": [
-          {
-            "fee_amount": 75,
-            "paid_to": "Notary",
-            "description": "Sales fee"
-          }
-        ]
-      }
-    ]
-  }]
-}
 
-]
 const [pricing,setpricing]=useState()
 async function getdropdown() {
   let id={
@@ -249,39 +143,6 @@ const lesehold_specific_type= lesehold_specific_fee.map(item=>item.fee_type);
   
 }  
 
-useEffect(() => {
-//   getdropdown();
-  const pricing = backend?.[0]?.pricing?.[0];
-  const pricingcheck = backend?.[0]?.pricing?.[0] || {};
-  setpricing(pricingcheck);
-
-// console.log(pricingcheck)
-
-//   console.log("📌 FULL Pricing Object:", pricing);
-
-//   Object.keys(pricing).forEach((categoryKey) => {
-//     console.log("➡️ Category Key:", categoryKey);
-
-//     const categoryArray = pricing[categoryKey];
-//     console.log("   Category Array:", categoryArray);
-
-//     // 2️⃣ Loop inside array (each contains price_list)
-//     categoryArray.forEach((item, index) => {
-//       console.log(`   ▶ Item ${index}:`, item);
-
-//       const priceList = item.price_list;
-//       console.log("     🔸 price_list:", priceList);
-
-//       // 3️⃣ Loop through price_list items
-//       priceList.forEach((p, idx) => {
-//         console.log(`       🔹 Price Item ${idx}:`, p);
-//       });
-
-//     });
-
-//   });
-
-}, []);
 
 
 
@@ -290,67 +151,20 @@ const [feeAmount, setFeeAmount] = useState("");
 
 
 const handleSubmit = () => {
-  const hasErrors = validateRows();
+  console.log(pricingList);
+  setlegalFeesError([]);
+  const hasErrors = validatePriceList(pricingList);
 
-  if (hasErrors) {
+  if (hasErrors==false) {
     alert("Please fix validation issues before submitting.");
     return;
   }
 
-  // ---------- ⭐ BUILD FINAL PAYLOAD ⭐ ----------
-  const payload = {
-
-
-    legal_fees: legalcostrows.map(r => ({
-      min: Number(r.min),
-      max: Number(r.max),
-      purchase_leasehold: Number(r.PurchaseLeasehold),
-      purchase_freehold: Number(r.PurchaseFreehold),
-      sales_leasehold: Number(r.salesLeasehold),
-      sales_freehold: Number(r.salesFreehold),
-      remortgage: Number(r.remortgage)
-    })),
-
-    purchase_transaction_supplements: PurchasTransactionSupplementsrows.map(r => ({
-      type: r.itemId === "others" ? "Others" : r.type,
-      fee_amount: Number(r.feeAmount),
-      description: r.description
-    })),
-
-    sales_transaction_supplements: SalesTransactionSupplementsrows.map(r => ({
-      type: r.itemId === "others" ? "Others" : r.type,
-      fee_amount: Number(r.feeAmount),
-      description: r.description
-    })),
-
-    disbursements: disbursementRows.map(r => ({
-      type: r.itemId === "others" ? "Others" : r.type,
-      fee_cost: Number(r.feeCost),
-      paid_to: r.paidTo,
-      transaction_type: r.transactionType
-    })),
-
-    leasehold_fees: leaseholdRows.map(r => ({
-      service: r.service,
-      fee_type: r.feeType,
-      amount: Number(r.amount),
-      paid_to: r.paidTo
-    })),
-      additional_services: {
-  feeAmount: feeAmount,
-  selectedFee: selectedFee,
-  },
-  Notes:notes,
-  service_level_options: {
-      expedited_service_fee: Number(serviceOptions.expedited_service_fee),
-      weekend_appointment_fee: Number(serviceOptions.weekend_appointment_fee)
-    }
-
-  };
-
-  // ----------- ⭐ Print Final Payload ----------
-  console.log("FINAL PAYLOAD:", payload);
+ 
   router.push("/conveyancers/Notes/");
+}
+const regipage =()=>{
+  router.push("/conveyancers/Companyregistration/");
 }
 
 const [indemnity, setIndemnity] = useState("");
@@ -368,156 +182,231 @@ const [legalcostrows, setLegalcostrows] = useState([
     { min: "", max: "", pLease: "", pFree: "", sLease: "", sFree: "" }
 ]);
   
-  const handle_addrow = () => {
-  setLegalcostrows([
-    ...legalcostrows,
-    { min: "", max: "", pLease: "", pFree: "", sLease: "", sFree: "" }
-  ]);
+  const handle_addrow = (index) => {
+
+    setpricingList(prev =>
+      prev.map(item =>
+        item.fees_category_id === index
+          ? { ...item, price_list: [...item.price_list, {   "id": null,  "min": null, "max": null, "purchase_leasehold": null, "purchase_freehold": null,
+      "sales_leasehold": null,"sales_freehold": null, "remortgage": null, "is_delete": null, "status": null
+  }] }
+          : item
+      )
+    );
+
 };
+  const handle_transaction_sales= (index) => {
+
+    setpricingList(prev =>
+      prev.map(item =>
+        item.fees_category_id === index
+          ? { ...item, price_list: [...item.price_list, {"type_id": "",  "fee_amount": "","paid_to": "","description": "","is_delete": "","status": ""
+}] }
+          : item
+      )
+    );
+
+};
+  const handle_transaction_purchase= (index) => {
+
+    setpricingList(prev =>
+      prev.map(item =>
+        item.fees_category_id === index
+          ? { ...item, price_list: [...item.price_list,  {"type_id": "",  "fee_amount": "","paid_to": "","description": "","is_delete": "","status": ""
+}] }
+          : item
+      )
+    );
+
+};
+const handle_standard_disbursement= (index) => {
+
+    setpricingList(prev =>
+      prev.map(item =>
+        item.fees_category_id === index
+          ? { ...item, price_list: [...item.price_list,  {"type_id": "",  "fee_amount": "","paid_to": "","description": "","is_delete": "","status": ""
+}] }
+          : item
+      )
+    );
+    console.log(pricingList)
+
+};
+const handle_leasehold_disbursement= (index) => {
+
+    setpricingList(prev =>
+      prev.map(item =>
+        item.fees_category_id === index
+          ? { ...item, price_list: [...item.price_list,  {"type_id": "",  "fee_amount": "","paid_to": "","description": "","is_delete": "","status": ""
+}] }
+          : item
+      )
+    );
+
+};
+const handle_additional_service= (index) => {
+
+    setpricingList(prev =>
+      prev.map(item =>
+        item.fees_category_id === index
+          ? { ...item, price_list: [...item.price_list,  {"type_id": "",  "fee_amount": "","paid_to": "","description": "","is_delete": "","status": ""
+}] }
+          : item
+      )
+    );
+
+};
+const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
+  //const numericValue = value.replace(/[^\d.]/g, "");
+  setpricingList(prev =>
+    prev.map(item =>
+      item.fees_category_id === feesCategoryId
+        ? {
+            ...item,
+            price_list: item.price_list.map((row, i) =>
+              i === rowIndex
+                ? { ...row, [field]: value }  // update field dynamically
+                : row
+            )
+          }
+        : item
+    )
+  );
+  console.log(pricingList)
+};
+
 const handleChange = (index, field, value) => {
   const updated = [...legalcostrows];
   updated[index][field] = value;
   setLegalcostrows(updated);
 };
 
+const validatePriceList = (list) => { console.log('',list);
+  let errors=[];
+  for (let i = 0; i < list.length; i++) { 
+    if(list[i]['fees_category_id']==1)
+    {
+        for(let j=0;j<list[i]['price_list'].length;j++)
+          {
+          const { min, max } = list[i].price_list[j];
 
+          if ((min !== null && min !== "") && (max === null || max === "")) {
+            errors.push(`Row ${i + 1}: max value is required when min is present`);
+            break;
+          }
+          // Skip rows if min or max is missing (both empty)
+          if ((min === null || min === "") && (max === null || max === "")) continue;
 
-const [PurchasTransactionSupplementsrows, setPurchasTransactionSupplementsrows] = useState([
-  {
-    isOthers: false,
-    type: "",         
-    feeAmount: "",
-    description: "",
-    paidto:"",
-  }
-]);
-
-const [SalesTransactionSupplementsrows, setSalesTransactionSupplementsrows] = useState([
-  {
-    isOthers: false,  
-    type: "",
-    feeAmount: "",
-    description: "",
-    paidto:""
-  }
-]);
-const validateRows = () => {
-const rErrors = {};
-const gErrors = {};
-console.log(legalcostrows)
-
-  legalcostrows.forEach((row, i) => {
-    const errors = {};
-
-    // --- MIN (always required) ---
-    if (row.min === "" || row.min === null || isNaN(row.min)) {
-      errors.min = "Min is required";
-    }
-
-    // --- MAX (always required) ---
-    if (row.max === "" || row.max === null || isNaN(row.max)) {
-      errors.max = "Max is required";
-    }
-    // if(row.pFree===""||row.pFree===null||isNaN(row.pFree)){
-    //   errors.pFree = "PurchaseFreehold is required";
-
-    // }
-    //   if(row.pLease===""||row.pLease===null||isNaN(row.pLease)){
-    //   errors.pLease = "PurchaseLeasehold is required";
-
-    // }
-    //   if(row.sLease===""||row.sLease===null||isNaN(row.sLease)){
-    //   errors.sLease = "salesLeasehold is required";
-
-    // }
-    //   if(row.sFree===""||row.sFree===null||isNaN(row.sFree)){
-    //   errors.sFree = "salesFreehold is required";
-
-    // }
-
-    // Range validation only if both present
-    if (!errors.min && !errors.max) {
-      if (Number(row.min) >= Number(row.max)) {
-        errors.range = "Min must be less than Max";
-      }
-    }
-
-    // Negative check
-    if (row.min < 0 || row.max < 0||row.pFree||row.sFree||row.sLease||row.sFree) {
-      errors.negative = "Values cannot be negative";
-    }
-
-    // --- OTHER FIELDS (Required only if visible) ---
-    [
-      "PurchaseLeasehold",
-      "PurchaseFreehold",
-      "salesLeasehold",
-      "salesFreehold",
-      "remortgage",
-    ].forEach((field) => {
-      if (fieldVisibility[field]) {
-        if (!row[field] && row[field] !== 0) {
-          errors[field] = `${field} is required`;
+          // 2️⃣ Current row min < max
+          if (Number(min) >= Number(max)) {
+            errors.push(`Row ${i + 1}: min (${min}) should be less than max (${max})`);
+            break;
+          }
+          // 3️⃣ Min should be >= previous row's max (if not first row)
+          if (i > 0) {
+            const prevMax = list[i - 1].max;
+            if (prevMax !== null && prevMax !== "" && Number(min) < Number(prevMax)) {
+              errors.push(`Row ${i + 1}: min (${min}) should be greater than or equal to previous row's max (${prevMax})`);
+              break;
+            }
+          }
         }
-      }
-    });
+        if(errors.length>0)
+        {
+          setlegalFeesError(errors);
+          return false;
+        }
+    }
+    else if(list[i]['fees_category_id']==2)
+    {
+       let terror=[];
+          for(let j=0;j<list[i]['price_list'].length;j++)
+          {
+            const { type_id, fee_amount } = list[i].price_list[j];
+            if (type_id!='' && Number(fee_amount)<=0) {
+           
+            terror.push(`Row ${i + 1}: Fee amount is missing`);
+            //return false;
+            break;
+          }
+           
+          }
+           if(terror.length>0)
+          {
+            settransactionFeesError(terror);
+            return false;
+          }
+    }
+      else if(list[i]['fees_category_id']==3)
+    {
+       let terror3=[];
+          for(let j=0;j<list[i]['price_list'].length;j++)
+          {
+            const { type_id, fee_amount } = list[i].price_list[j];
+            if (type_id!='' && Number(fee_amount)<=0) {
+           
+            terror3.push(`Row ${i + 1}: Fee amount is missing`);
+            //return false;
+            break;
+          }
+           
+          }
+           if(terror3.length>0)
+          {
+            setdisbursementFeesError(terror3);
+            return false;
+          }
+    }
+    else if(list[i]['fees_category_id']==4)
+    {
+       let terror4=[];
+          for(let j=0;j<list[i]['price_list'].length;j++)
+          {
+            const { type_id, fee_amount } = list[i].price_list[j];
+            if (type_id!='' && Number(fee_amount)<=0) {
+           
+            terror4.push(`Row ${i + 1}: Fee amount is missing`);
+            //return false;
+            break;
+          }
+           
+          }
+           if(terror4.length>0)
+          {
+            setleasedisbursementFeesError(terror4);
+            return false;
+          }
+    }
+    else if(list[i]['fees_category_id']==5)
+    {
+       let terror5=[];
+          for(let j=0;j<list[i]['price_list'].length;j++)
+          {
+            const { type_id, fee_amount } = list[i].price_list[j];
+            if (type_id!='' && Number(fee_amount)<=0) {
+           
+            terror.push(`Row ${i + 1}: Fee amount is missing`);
+            //return false;
+            break;
+          }
+           
+          }
+           if(terror5.length>0)
+          {
+            setadditionalServiceError(terror5);
+            return false;
+          }
+    }
 
-    rErrors[i] = errors;
-  });
+    
 
-  // --- GLOBAL RANGE VALIDATION ---
-  const sorted = [...legalcostrows]
-  .map((row, index) => ({ ...row, index }))
-  .sort((a, b) => Number(a.min) - Number(b.min));
-
-for (let i = 0; i < sorted.length - 1; i++) {
-  const current = sorted[i];
-  const next = sorted[i + 1];
-
-  // Overlap
-  if (Number(next.min) <= Number(current.max)) {
-    gErrors[current.index] = gErrors[current.index] || [];
-    gErrors[current.index].push(
-      `Overlap with ${next.min} - ${next.max}`
-    );
-  }
-
-  // Gap
-  if (Number(next.min) > Number(current.max) + 1) {
-    gErrors[current.index] = gErrors[current.index] || [];
-    gErrors[current.index].push(
-      `Gap between ${current.max} and ${next.min}`
-    );
-  }
 }
 
-setRowErrors(rErrors);
-setRangeErrors(gErrors);
-  console.log(rErrors)
-  console.log(gErrors)
-
-  // return TRUE if errors exist
-const hasRowErrors = Object.values(rErrors).some(
-  row => Object.keys(row).length > 0
-);
-
-const hasRangeErrors = Object.values(gErrors).length > 0;
-
-return hasRowErrors || hasRangeErrors;
+  return true;
 };
 
-const fieldVisibility = {
- 
-  Purchase: true,
-  Sales: true,
-  
-  Remortgage:true,       // hidden
-};
-
-
-  
-  const [dropdownothers, setDropdownothers] = useState(false);
-  const [salesdropdownothers, setSalesdropdownothers] = useState(false);
+const [dropdownothers, setDropdownothers] = useState(false);
+const [salesdropdownothers, setSalesdropdownothers] = useState(false);
 
 const [serviceOptions, setServiceOptions] = useState({
   expedited_service_fee: "",
@@ -665,6 +554,14 @@ const handleLeaseholdField = (index, field, value) => {
   updated[index][field] = value;
   setLeaseholdRows(updated);
 };
+const formatPound = (value) => {
+  if (!value) return "";
+  return new Intl.NumberFormat("en-GB", {
+    style: "currency",
+    currency: "GBP"
+  }).format(value);
+};
+
 
 
 
@@ -687,7 +584,7 @@ const handleLeaseholdField = (index, field, value) => {
       <nav className="text-[13px] text-[#6B7280] mb-5 flex items-center gap-4" aria-label="Breadcrumb">
             <span className="other-page hidden sm:inline">Home</span>
                   <span className="hidden sm:inline">/</span>
-                  <span className="other-page hidden sm:inline">Company registration</span>
+                 <a  href="" onClick={regipage}>  <span className="other-page  sm:inline"  >Company registration</span></a>
                   <span className="hidden sm:inline">/</span>
                   <span className="live-page hidden sm:inline">Price Breakdown</span>
                  
@@ -700,64 +597,55 @@ const handleLeaseholdField = (index, field, value) => {
      const item = value[0];
     const numIndex = Number(index);
    return (
-     <>
+     <div key={numIndex} > 
          {numIndex === 1 && (
             <div key={numIndex} className="  feecatgoryblock mb-5">
-                <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
+                <div className="bg-gray-50  px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
                 {item.fees_category}
                 </div>
                 {item.sub_categories.map((sub, i) => (
-                    <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
+                    <div key={i} className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
                         {sub.sub_category}
                     </div>
                 ))}
-            <div className="grid grid-cols-8 gap-4 w-full text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
-
+                {legalFeesError && <p style={{ color: "red" }}>{legalFeesError}</p>}
+            <div className="grid grid-cols-9 gap-4 w-full text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
+                <div className="flex justify-center items-center col-span-1">S.no</div>
                 <div className="text-center">Min £</div>
-                <div className="text-center">Max £</div>
-                {fieldVisibility.Purchase && (
-                <div className="text-center">Purchase Leasehold £</div>
+                <div className="text-center">Max £{formData['service_id'] }</div>
+               
+               {(formData['service_id']?.indexOf(1) !== -1 || formData['service_id']?.indexOf(3) !== -1) && (
+                  <div className="text-center">Purchase Leasehold £</div>
                 )}
-                    {fieldVisibility.Purchase && (
-
+                {(formData['service_id']?.indexOf(1) !== -1 || formData['service_id']?.indexOf(3) !== -1)&& (
                 <div className="text-center">Purchase Freehold £</div>
                 )}
 
-                        {fieldVisibility.Sales && (
-
+                       
+                 {(formData['service_id']?.indexOf(2) !== -1 || formData['service_id']?.indexOf(3) !== -1) && (
                 <div className="text-center">Sales Leasehold £</div>
-                        )}
-                        {fieldVisibility.Sales &&(
+                 )}   
+                   {(formData['service_id']?.indexOf(2) !== -1 || formData['service_id']?.indexOf(3) !== -1)&& (     
                 <div className="text-center">Sales Freehold £</div>
+                   )}
+                       
+                   {formData['service_id']?.indexOf(4) !== -1 && (      
+                  <div className="text-center">Remortgage</div>
+                   )}
 
-                        )
-
-                        }
-                        {fieldVisibility.Remortgage &&(
-                <div className="text-center">Remortgage</div>
-                        )}
                 <div className="text-center">Action</div>
             </div>
 
         
-            {legalcostrows.map((_, i) => (
-            <div
-                key={i}
-                className="    grid grid-cols-8 gap-4 w-full 
+            {
+            
+            pricingList.find(item => item.fees_category_id === numIndex).price_list.map((row, i) => (
+            <div key={i} className="grid grid-cols-9 gap-4 w-full items-start border-b border-gray-200  px-3 py-2">
 
-                items-start  border-b border-gray-200 
-                px-3 py-2
-                "
-            >
-
-                {/* MIN */}
+               <div className="flex justify-center items-center col-span-1">{i+1}</div>
                 <div className="flex flex-col">
-                <input
-                    type="number"
-                    placeholder="Min"  
-                    className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-left text-black bg-white"
-                    onChange={(e) =>{handlePoundChange(e), handleChange(i, "min", e.target.value)}}
-                />
+                <input type="text" placeholder="Min" value={row.min} className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-left text-black bg-white"
+                    onChange={(e) => handlePriceChange(numIndex, i, "min", e.target.value)}/>
 
                 {rowErrors[i]?.min && (
                     <span className="text-red-500 text-xs">{rowErrors[i].min}</span>
@@ -769,18 +657,15 @@ const handleLeaseholdField = (index, field, value) => {
                     <span className="text-red-500 text-xs">{rowErrors[i].negative}</span>
                 )}
                 {rangeErrors[i]?.map((msg, idx) => (
-            <p key={idx} className="text-red-500 text-xs mt-1">{msg}</p>
+                <p key={idx} className="text-red-500 text-xs mt-1">{msg}</p>
             ))}
                 
                 </div>
 
                 {/* MAX */}
                 <div className="flex flex-col">
-                <input
-                    type="number"
-                    placeholder="Max" 
-                    className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-left text-black"
-                    onChange={(e) =>{handlePoundChange(e), handleChange(i, "max", e.target.value)}}
+                <input type="text" placeholder="Max"  className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-left text-black"
+                    onChange={(e) => handlePriceChange(numIndex, i, "max", e.target.value)}
                 />
 
                 {rowErrors[i]?.max && (
@@ -792,77 +677,62 @@ const handleLeaseholdField = (index, field, value) => {
                 </div>
 
                 {/* Purchase Leasehold */}
-            
+            {(formData['service_id']?.indexOf(1) !== -1 || formData['service_id']?.indexOf(3) !== -1)&& (
             <div className="flex flex-col">
-                <input
-                type="number"
-                value={legalcostrows.pLease}
-                placeholder="Purchase Leasehold"  
+                <input type="text" value={legalcostrows.pLease}  placeholder="Purchase Leasehold"  
                 className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-left text-black"
-                onChange={(e) => {handlePoundChange(e),handleChange(i, "PurchaseLeasehold", e.target.value)}}
+                onChange={(e) => handlePriceChange(numIndex, i, "purchase_leasehold", e.target.value)}
                 />
                 {rowErrors[i]?.PurchaseLeasehold && (
                 <span className="text-red-500 text-xs">{rowErrors[i].PurchaseLeasehold}</span>
                 )}
             </div>
+            )}
 
 
-                {/* Purchase Freehold */}
+                
             
-                {fieldVisibility.Purchase && (
+          {(formData['service_id']?.indexOf(1) !== -1 || formData['service_id']?.indexOf(3) !== -1) && (      
             <div className="flex flex-col">
-                <input
-                type="number"
-                    placeholder="Purchase Freehold "  
-                className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-left text-black"
-                    onChange={(e) => {handlePoundChange(e),handleChange(i, "PurchaseFreehold", e.target.value)}}
+                <input type="text" placeholder="Purchase Freehold " className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-left text-black"
+                    onChange={(e) => handlePriceChange(numIndex, i, "purchase_freehold", e.target.value)}
                 />
                 {rowErrors[i]?.PurchaseFreehold && (
                 <span className="text-red-500 text-xs">{rowErrors[i].PurchaseFreehold}</span>
                 )}
             </div>
-            )}
+          )}
 
                 {/* Sales Leasehold */}
                 
-                    {fieldVisibility.Sales && (
+            {(formData['service_id']?.indexOf(2) !== -1 || formData['service_id']?.indexOf(3) !== -1)&& (        
             <div className="flex flex-col">
-                <input
-                    type="number"
-                    placeholder="Sales Leasehold"  
+                <input   type="text"  placeholder="Sales Leasehold"  
                     className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-left text-black"
-                    onChange={(e) =>{handlePoundChange(e), handleChange(i, "salesLeasehold", e.target.value)}}
+                    onChange={(e) => handlePriceChange(numIndex, i, "sales_leasehold", e.target.value)}
                 />
                 {rowErrors[i]?.salesLeasehold && (
                 <span className="text-red-500 text-xs">{rowErrors[i].salesLeasehold}</span>
                 )}
             </div>
             )}
-
-                {/* Sales Freehold */}
-
-
-                    {fieldVisibility.Sales && (
+            {(formData['service_id']?.indexOf(2) !== -1 || formData['service_id']?.indexOf(3) !== -1) && ( 
             <div className="flex flex-col">
-                <input
-                    type="number"
-                    placeholder="Sales Freehold" 
+                <input  type="text" placeholder="Sales Freehold" 
                     className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-left text-black"
-                    onChange={(e) =>  {handlePoundChange(e),handleChange(i, "salesFreehold", e.target.value)}}
+                    onChange={(e) => handlePriceChange(numIndex, i, "sales_freehold", e.target.value)}
                 />
                 {rowErrors[i]?.salesFreehold && (
                 <span className="text-red-500 text-xs">{rowErrors[i].salesFreehold}</span>
                 )}
             </div>
-
             )}
-            {fieldVisibility.Remortgage && (
+
+           
+            {formData['service_id'].indexOf(4) !== -1 && ( 
             <div className="flex flex-col">
-                <input
-                type="number"
-                placeholder="Remortgage"  
-                className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-left text-black"
-                onChange={(e) =>{handlePoundChange(e), handleChange(i, "remortgage", e.target.value)}}
+                <input type="text" placeholder="Remortgage" className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-left text-black"
+                onChange={(e) => handlePriceChange(numIndex, i, "remortgage", e.target.value)}
                 />
 
                 {rowErrors[i]?.remortgage && (
@@ -872,17 +742,18 @@ const handleLeaseholdField = (index, field, value) => {
                 )}
             </div>
             )}
+           
 
 
                 {/* ADD BUTTON */}
                 <div className="flex justify-center items-start pt-1">
-                {i === legalcostrows.length - 1 && (
-                    <button className="text-green-500 tooltip" onClick={handle_addrow}>
+               
+                    <button className="text-green-500 tooltip" onClick={() => handle_addrow(numIndex)}>
                     <Plus />
                             <span className="tooltiptext font">Add new row</span>
 
                     </button>
-                )}
+               
                 </div>
             </div>
             ))}
@@ -892,109 +763,100 @@ const handleLeaseholdField = (index, field, value) => {
          
           {numIndex === 2 && (   
             <div className="transactionblock mb-5">
-                <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
+                <div className="bg-gray-50  px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
                 {item.fees_category}
                 </div>
                 {item.sub_categories.map((sub, i) => (
-                    <div>
+                    <div key={i}>
                     <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
                         {sub.sub_category}
                     </div>
+                    {transactionFeesError && <p style={{ color: "red" }}>{transactionFeesError}</p>}
                         <div className="grid  grid-cols-4 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
                             <div className="text-center">Suplement Type £</div>
                             <div className="text-center">Fee Amount £</div>
                             <div className="text-center">Description </div>
                             <div className="text-center">Action</div>
                         </div>
-                        {PurchasTransactionSupplementsrows.map((row, i) => 
-(
-  <div key={i} className="grid grid-cols-4 gap-3 px-3 py-2">
+                        { pricingList.find(item => item.fees_category_id === numIndex).price_list.map((row, i) => 
+                        (
+                          <div key={i} className="grid grid-cols-4 gap-3 px-3 py-2">
 
-   
-    {!row.isOthers ? (
-     <select
-  className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
-  onChange={(e) => handlesuplement(e, i)}
-  value={row.type}
->
-  <option value="">Select Supplement Type</option>
+                          
+                            {!row.isOthers ? (
+                            <select className="border poundtransform border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
+                             onChange={(e) => handlePriceChange(numIndex, i, "type_id", e.target.value)}
+                          value={row.type}
+                        >
+                          <option value="">Select Supplement Type</option>
 
- {purchaseFeeTypeList.map((opt,index) => (
+                        {purchaseFeeTypeList.map((opt,index) => (
 
-    <option key={opt.id} value={opt.id}>
-      {opt.fee_type}
-    </option>
-  ))}
-</select>
+                            <option key={opt.id} value={opt.id}>
+                              {opt.fee_type}
+                            </option>
+                          ))}
+                        </select>
 
-    ) : (
-      <div>
-      <input
-      id="suplement_type"
-        type="text"
-        placeholder="Enter other Supplement Type"
-        value={row.type}
-        onChange={(e) => handleFieldChange(i, "type", e.target.value,"purchase")}
-        className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
-      />
-      </div>
-    )}
+                            ) : (
+                              <div>
+                              <input
+                              id="suplement_type"
+                                type="text"
+                                placeholder="Enter other Supplement Type"
+                                value={row.type}
+                                onChange={(e) => handlePriceChange(numIndex, i, "type_id", e.target.value)}
+                                className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
+                              />
+                              </div>
+                            )}
 
-    {/* FEE AMOUNT */}
-    <input
-      
-      placeholder="Fee Amount"
-      value={row.feeAmount}
-      onChange={(e) => handleFieldChange(i, "feeAmount", e.target.value,"purchase")}
-      className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
-    />
-    
-    
+                            {/* FEE AMOUNT */}
+                            <input
+                              
+                              placeholder="Fee Amount"
+                              value={row.feeAmount}
+                               onChange={(e) => handlePriceChange(numIndex, i, "fee_amount", e.target.value)}
+                              className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
+                            />
+                            
+                            
 
-    {/* DESCRIPTION */}
-    <input
-      type="text"
-      placeholder="Description"
-      value={row.description}
-      onChange={(e) => handleFieldChange(i, "description", e.target.value,"purchase"  )}
-      className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
-    />
+                            {/* DESCRIPTION */}
+                            <input
+                              type="text"
+                              placeholder="Description"
+                              value={row.description}
+                              onChange={(e) => handlePriceChange(numIndex, i, "description", e.target.value)}
+                              className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
+                            />
 
-    {/* REMOVE BUTTON */}
-    
-    {/* ADD Row Button */}
-    <div className="flex justify-center gap-4">   
-       {i === PurchasTransactionSupplementsrows.length - 1 && (
-      <button
-        className="text-green-500 tooltip"
-        onClick={() =>
-          setPurchasTransactionSupplementsrows([
-            ...PurchasTransactionSupplementsrows,
-            { isOthers: false, type: "", feeAmount: "", description: "",paidto:"" }
-          ])
-        }
-      >
-        <Plus />
-                  <span className="tooltiptext font">Add new row</span>
-      </button>
-    )}
+                            {/* REMOVE BUTTON */}
+                            
+                            {/* ADD Row Button */}
+                            <div className="flex justify-center gap-4">   
+                           
+                              <button
+                                className="text-green-500 tooltip"
+                                onClick={() =>{handle_transaction_sales(numIndex)}}
+                              >
+                                <Plus />
+                                          <span className="tooltiptext font">Add new row</span>
+                              </button>
+                            
 
-    <button
-      className="text-red-600 tooltip"
-      onClick={() => {
-        const updated = PurchasTransactionSupplementsrows.filter((_, idx) => idx !== i);
-        setPurchasTransactionSupplementsrows(updated);
+                            <button
+                              className="text-red-600 tooltip"
+                              onClick={() => {handle_transaction_sales(numIndex)}}
+                            >
+                              <X />
+                              <span className="tooltiptext"> Delete current row</span>
+                            </button>
 
-      }}
-    >
-      <X />
-      <span className="tooltiptext"> Delete current row</span>
-    </button>
-
-    </div>
-   
-  </div>
-)
+                            </div>
+                          
+                          </div>
+                        )
 
 )}
                     </div>
@@ -1004,14 +866,15 @@ const handleLeaseholdField = (index, field, value) => {
           )}
           {numIndex === 3 && (   
             <div className="standarddisblock mb-5">
-                <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
+                <div className="bg-gray-50 px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
                 {item.fees_category}
                 </div>
                 {item.sub_categories.map((sub, i) => (
-                    <div>
+                    <div key={i}>
                     <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
                         {sub.sub_category}
                     </div>
+                     {disbursementFeesError && <p style={{ color: "red" }}>{disbursementFeesError}</p>}
                     <div className="grid grid-cols-5 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
 
                             <div className="text-center">Disbursement Type £</div>
@@ -1021,13 +884,13 @@ const handleLeaseholdField = (index, field, value) => {
                             <div className="text-center">Action</div>
 
                     </div>
-                     {disbursementRows.map((row, i) => (
+                     {pricingList.find(item => item.fees_category_id === numIndex).price_list.map((row, i) => (
                     <div key={i} className="grid grid-cols-5 gap-3 px-3 py-2">
       
                         {!row.isOthers ? (
                             <select
-                            className="border border-gray-400 rounded py-0.5 w-auto  text-sm text-left text-black"
-                            onChange={(e) => handleDisbursementChange(e, i)}
+                            className="poundtransform border border-gray-400 rounded py-0.5 w-auto  text-sm text-left text-black"
+                            onChange={(e) => handlePriceChange(numIndex, i, "type_id", e.target.value)}
                             value={row.type}
                             >
                             <option value="">Select Disbursement</option>
@@ -1043,18 +906,18 @@ const handleLeaseholdField = (index, field, value) => {
                             type="text"
                             placeholder="Enter other suplement"
                             value={row.type}
-                            onChange={(e) => handleDisField(i, "type", e.target.value)}
-                            className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-gray-900"
+                            onChange={(e) => handlePriceChange(numIndex, i, "type_id", e.target.value)}
+                            className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-gray-900"
                             />
                             </div>
                         )}
 
                             {/* COST */}
                             <input
-                            type="number"
+                            type="text"
                             placeholder="Fee Cost"
                             value={row.feeCost}
-                            onChange={(e) => handleDisField(i, "feeCost", e.target.value)}
+                            onChange={(e) => handlePriceChange(numIndex, i, "fee_amount", e.target.value)}
                             className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-black"
                             />
 
@@ -1062,7 +925,7 @@ const handleLeaseholdField = (index, field, value) => {
                             <select
                             className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black  placeholder:text-gray-800"
                             value={row.paidTo}
-                            onChange={(e) => handleDisField(i, "paidTo", e.target.value)}
+                            onChange={(e) => handlePriceChange(numIndex, i, "paid_to", e.target.value)}
                          >
                             <option value="" className="text-gray-900">Select Paid To</option>
                             {paidToOptions.map((opt) => (
@@ -1076,9 +939,7 @@ const handleLeaseholdField = (index, field, value) => {
                                 <select
                                 className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black  placeholder:text-black"
                                 value={row.transactionType}
-                                onChange={(e) =>
-                                handleDisField(i, "transactionType", e.target.value)
-                                }
+                                onChange={(e) => handlePriceChange(numIndex, i, "paid_to", e.target.value)}
                                 >
                                 <option value="">Select Type</option>
                                 {transactionOptions.map((opt) => (
@@ -1094,21 +955,10 @@ const handleLeaseholdField = (index, field, value) => {
                                     {i === disbursementRows.length - 1 && (
                                     <button
                                         className="text-green-600 tooltip"
-                                        onClick={() =>
-                                        setDisbursementRows([
-                                            ...disbursementRows,
-                                            {
-                                            isOthers: false,
-                                            type: "",
-                                            feeCost: "",
-                                            paidTo: "",
-                                            transactionType: "",
-                                            },
-                                        ])
-                                        }
+                                        onClick={() => handle_standard_disbursement(numIndex)}
                                     >
                                         <Plus />
-                                                        <span className="tooltiptext font">Add new row</span>
+                                                        <span className="tooltiptext font">Add new row-{numIndex}</span>
 
                                     </button>
                                     )}
@@ -1137,8 +987,8 @@ const handleLeaseholdField = (index, field, value) => {
             </div>
           )}
           {numIndex === 4 && (   
-            <div class="standarddisblock mb-5">
-                <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
+            <div className="standarddisblock mb-5">
+                <div className="bg-gray-50 px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
                 {item.fees_category}
                 </div>
                 {item.sub_categories.map((sub, i) => (
@@ -1146,6 +996,7 @@ const handleLeaseholdField = (index, field, value) => {
                     <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
                         {sub.sub_category}
                     </div>
+                     {leasedisbursementFeesError && <p style={{ color: "red" }}>{leasedisbursementFeesError}</p>}
                     <div className="grid grid-cols-5 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
 
                             <div className="text-center">Leasehold Service</div>
@@ -1155,13 +1006,13 @@ const handleLeaseholdField = (index, field, value) => {
                             <div className="text-center">Action</div>
 
                     </div>
-                     {disbursementRows.map((row, i) => (
+                     {pricingList.find(item => item.fees_category_id === numIndex).price_list.map((row, i) => (
                     <div key={i} className="grid grid-cols-5 gap-3 px-3 py-2">
       
                         {!row.isOthers ? (
                             <select
-                            className="border border-gray-400 rounded py-0.5 w-auto  text-sm text-left text-black"
-                            onChange={(e) => handleDisbursementChange(e, i)}
+                            className="poundtransform border border-gray-400 rounded py-0.5 w-auto  text-sm text-left text-black"
+                           onChange={(e) => handlePriceChange(numIndex, i, "type_id", e.target.value)}
                             value={row.type}
                             >
                             <option value="">Select Disbursement</option>
@@ -1177,7 +1028,7 @@ const handleLeaseholdField = (index, field, value) => {
                             type="text"
                             placeholder="Enter other suplement"
                             value={row.type}
-                            onChange={(e) => handleDisField(i, "type", e.target.value)}
+                            onChange={(e) => handlePriceChange(numIndex, i, "type_id", e.target.value)}
                             className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-gray-900"
                             />
                             </div>
@@ -1185,10 +1036,10 @@ const handleLeaseholdField = (index, field, value) => {
 
                             {/* COST */}
                             <input
-                            type="number"
+                            type="text"
                             placeholder="Fee Cost"
                             value={row.feeCost}
-                            onChange={(e) => handleDisField(i, "feeCost", e.target.value)}
+                           onChange={(e) => handlePriceChange(numIndex, i, "fee_amount", e.target.value)}
                             className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-black"
                             />
 
@@ -1196,7 +1047,7 @@ const handleLeaseholdField = (index, field, value) => {
                             <select
                             className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black  placeholder:text-gray-800"
                             value={row.paidTo}
-                            onChange={(e) => handleDisField(i, "paidTo", e.target.value)}
+                           onChange={(e) => handlePriceChange(numIndex, i, "paid_to", e.target.value)}
                          >
                             <option value="" className="text-gray-900">Select Paid To</option>
                             {paidToOptions.map((opt) => (
@@ -1210,9 +1061,7 @@ const handleLeaseholdField = (index, field, value) => {
                                 <select
                                 className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black  placeholder:text-black"
                                 value={row.transactionType}
-                                onChange={(e) =>
-                                handleDisField(i, "transactionType", e.target.value)
-                                }
+                               onChange={(e) => handlePriceChange(numIndex, i, "paid_to", e.target.value)}
                                 >
                                 <option value="">Select Type</option>
                                 {transactionOptions.map((opt) => (
@@ -1228,18 +1077,7 @@ const handleLeaseholdField = (index, field, value) => {
                                     {i === disbursementRows.length - 1 && (
                                     <button
                                         className="text-green-600 tooltip"
-                                        onClick={() =>
-                                        setDisbursementRows([
-                                            ...disbursementRows,
-                                            {
-                                            isOthers: false,
-                                            type: "",
-                                            feeCost: "",
-                                            paidTo: "",
-                                            transactionType: "",
-                                            },
-                                        ])
-                                        }
+                                        onClick={() => handle_leasehold_disbursement(numIndex)}
                                     >
                                         <Plus />
                                                         <span className="tooltiptext font">Add new row</span>
@@ -1271,13 +1109,13 @@ const handleLeaseholdField = (index, field, value) => {
             </div>
           )}   
           {numIndex === 5 && (   
-            <div class="addtional mb-5">
+            <div className="addtional mb-5">
                 <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
                 {item.fees_category}
                 </div>
                 
                     <div>
-                    
+                    {additionalServiceError && <p style={{ color: "red" }}>{additionalServiceError}</p>}
                     <div className="grid grid-cols-5 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
 
                             <div className="text-center">Select Service</div>
@@ -1287,13 +1125,13 @@ const handleLeaseholdField = (index, field, value) => {
                             <div className="text-center">Action</div>
 
                     </div>
-                     {disbursementRows.map((row, i) => (
+                     {pricingList.find(item => item.fees_category_id === numIndex).price_list.map((row, i) => (
                     <div key={i} className="grid grid-cols-5 gap-3 px-3 py-2">
       
                        
                             <select
-                            className="border border-gray-400 rounded py-0.5 w-auto  text-sm text-left text-black"
-                            onChange={(e) => handleDisbursementChange(e, i)}
+                            className="poundtransform border border-gray-400 rounded py-0.5 w-auto  text-sm text-left text-black"
+                           onChange={(e) => handlePriceChange(numIndex, i, "type_id", e.target.value)}
                             value={row.type}
                             >
                             <option value="">Select Addtional Service</option>
@@ -1307,11 +1145,11 @@ const handleLeaseholdField = (index, field, value) => {
 
                             {/* COST */}
                             <input
-                            type="number"
+                            type="text"
                             placeholder="Fee Cost"
                             value={row.feeCost}
-                            onChange={(e) => handleDisField(i, "feeCost", e.target.value)}
-                            className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-black"
+                            onChange={(e) => handlePriceChange(numIndex, i, "fee_amount", e.target.value)}
+                            className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-black"
                             />
 
 
@@ -1321,18 +1159,7 @@ const handleLeaseholdField = (index, field, value) => {
                                     {i === disbursementRows.length - 1 && (
                                     <button
                                         className="text-green-600 tooltip"
-                                        onClick={() =>
-                                        setDisbursementRows([
-                                            ...disbursementRows,
-                                            {
-                                            isOthers: false,
-                                            type: "",
-                                            feeCost: "",
-                                            paidTo: "",
-                                            transactionType: "",
-                                            },
-                                        ])
-                                        }
+                                        onClick={() =>  handle_additional_service(numIndex)}
                                     >
                                         <Plus />
                                                         <span className="tooltiptext font">Add new row</span>
@@ -1359,11 +1186,11 @@ const handleLeaseholdField = (index, field, value) => {
                     ))}
                 
                     </div>
-                )
+                
                
             </div>
           )}                     
-      </>  
+      </div>  
         
     )
     

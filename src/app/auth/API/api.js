@@ -19,9 +19,10 @@ export const API_ENDPOINTS = {
     partnerfilter:`${BASE_URL}/partnerfilter`,
     feecatgory:`${BASE_URL}/feecategory`,
     feetype:`${BASE_URL}/feetype`,
-    insertcompanydetail:`${BASE_URL}/insertcompanydetail`,
+    insertcompanydetail:`${BASE_URL}/partners`,
     region:`${BASE_URL}/regions`,
-      services:`${BASE_URL}/services`
+    services:`${BASE_URL}/services`,
+    pricing:`${BASE_URL}/pricing`,
 
 
 }
