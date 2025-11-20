@@ -130,3 +130,32 @@ color:#4da768;
 .errormessage{
   color: red;
 }
+
+
+
+.tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.tooltiptext {
+  visibility: hidden;
+  background-color:rgb(46, 42, 42);
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+width: 130px;
+  bottom: 100%;
+  left: 65%;
+  margin-left: -65px;
+font-size: small;
+
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+}

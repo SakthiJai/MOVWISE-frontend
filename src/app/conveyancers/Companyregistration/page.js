@@ -40,10 +40,82 @@ export default function Companyregistration() {
   const [languagepreference, setlanguagepreference] = useState(" ");
   const [language, setLanguage] = useState([]);
    const [selectedLanguage, setSelectedLanguage] = useState([]); 
+const [notes, setNotes] = useState("");
+ let initialcompanydata={
+  "company_details": {
+    "company_name": "ABCdef",
+    "logo": "base64string",
+    "phone_number": "9876543210",
+    "email": "info123@abc.com",
+    "website": "www.abc.com",
+    "languages": [1, 2]
+  },
+  "notes": "This is a sample note for testing.",
+  "pricing": [
+    {
+      "1": [
+        {
+          "fees_category_id": 1,
+          "price_id": null,
+          "price_list": [
+            {
+              "min": 100,
+              "max": 200,
+              "purchase_leasehold": 150,
+              "purchase_freehold": 180,
+              "sales_leasehold": 120,
+              "sales_freehold": 140,
+              "remortgage": 160
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "2": [
+        {
+          "fees_category_id": 2,
+          "type_id": 1,
+          "price_list": [
+            {
+              "fee_amount": 50,
+              "paid_to": "Lawyer",
+              "description": "Purchase fee"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "5": [
+        {
+          "fees_category_id": 5,
+          "type_id": 40,
+          "price_list": [
+            {
+              "fee_amount": 75,
+              "paid_to": "Notary",
+              "description": "Sales fee"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
+
 
    const fetchlanguages = async () => {
     try {
       const  languages = await getData(API_ENDPOINTS.languages)
+
+const Companyregistrationdata = await postData(
+  API_ENDPOINTS.insertcompanydetail,
+  initialcompanydata
+);
+
+      console.log(Companyregistrationdata)
+
       console.log("Languages response:", languages);
            setLanguage( languages.users)
    console.log(languages.users)
@@ -497,7 +569,25 @@ value={formData?.SRAorCLC || ""}
 
   </div>
   </div>
-       <div className="mt-20 flex justify-end gap-4 w-full ">
+  <div className="mt-10">
+      <label className="block text-sm font-semibold text-gray-800 mb-2">
+        Enter Additional Information
+      </label>
+
+   <div className="bg-white border border-gray-300 rounded-md">
+  <textarea
+    value={notes}
+    onChange={(e) => setNotes(e.target.value)}
+    placeholder="Type your message here..."
+    className="min-h-[150px] w-full text-black p-2 outline-none rounded-md"
+  ></textarea>
+</div>
+
+    </div>
+       
+</div>
+    
+               <div className="mt-20 flex justify-end gap-4 w-full ">
             
 
               <button
@@ -508,10 +598,7 @@ value={formData?.SRAorCLC || ""}
                 Continue to price breakdown  →
               </button>
             </div>
-
-</div>
-    
-                  
+   
                 </form>
               </div>
             </div>

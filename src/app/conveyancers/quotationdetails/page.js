@@ -26,66 +26,173 @@ const [selectedItems, setSelectedItems] = useState({});
 
 
 
-let backend=[
-  {
-    "company_info": {}
+
+
+let backend = [
+{
+  "company_details": {
+    "company_name": "ABC Legal Ltd",
+    "logo": "base64string",
+    "phone_number": "9876543210",
+    "email": "info@abc.com",
+    "website": "www.abc.com",
+    "languages": [1, 2]
   },
-  {
-    "price_breakdown": [
+  "notes": "This is a sample note for testing.",
+  "pricing":[ {
+    "1": [
       {
-        "1": [
+        "fees_category_id": 1,
+        "fees_category_title":"legalcost",
+        "fees_category_subtitle":"Standard Conveyancing Fees (Excluding VAT)",
+        "price_id": null,
+        "price_list": [
           {
-            "fee_category_id": 1,
-            "fee_category_title": "Legal Fees",
-            "fee_category_sub_title":"Standard Conveyancing Fees (Excluding VAT)",
-            "min":100,
-            "max":null,
-            "purchasesalesehold":null,
-            "salesLeasehold":null,
-            "salesfreehold":null,
-            "status":0,
+            "min": 100,
+            "max": 200,
+            "purchase_leasehold": 150,
+            "purchase_freehold": 180,
+            "sales_leasehold": 120,
+            "sales_freehold": 140,
+            "remortgage": 160
           }
-        ],
-        "2":[
+        ]
+      }
+    ],
+    "2": [
+      {
+        "fees_category_id": 2,
+        "fees_category_title1":"Transaction Supplement Fees",
+        "fees_category_subtitle1":"Purchase Transaction Supplements",
+        "fees_category_subtitle1":"sales Transaction Supplements",
+        "type_id": 1,
+        "price_list": [
           {
- "fee_category_id": 2,
-            "fee_category_title": "Transaction Supplement Fees",
-            "fee_category_sub_title":"Purchase Transaction Supplements",
-            "cost":null,
-            "paidto":null,
-            "discription":null,
-            "typeid":null,
-            "status":0,
+            "fee_amount": 50,
+            "paid_to": "Lawyer",
+            "description": "Purchase fee"
+          }
+        ]
+      }
+    ],
+      "3": [
+      {
+        "fees_category_id": 2,
+        "fees_category_title1":"Transaction Supplement Fees",
+        "fees_category_subtitle1":"Purchase Transaction Supplements",
+        "type_id": 1,
+        "price_list": [
+          {
+            "fee_amount": 50,
+            "paid_to": "Lawyer",
+            "description": "Purchase fee"
+          }
+        ]
+      }
+    ],
+       "4": [
+      {
+        "fees_category_id": 2,
+        "fees_category_title1":"Transaction Supplement Fees",
+        "fees_category_subtitle1":"Purchase Transaction Supplements",
+        "type_id": 1,
+        "price_list": [
+          {
+            "fee_amount": 50,
+            "paid_to": "Lawyer",
+            "description": "Purchase fee"
+          }
+        ]
+      }
+    ],
+    "5": [
+      {
+        "fees_category_id": 5,
+        "type_id": 40,
+        "price_list": [
+          {
+            "fee_amount": 75,
+            "paid_to": "Notary",
+            "description": "Sales fee"
           }
         ]
       }
     ]
-  },
-  {
-    "notes": {}
-  }
+  }]
+}
+
 ]
+const [pricing,setpricing]=useState()
+async function getdropdown() {
+  let id={
+        "service_ids":[2,3]
+  }
+  const data = await postData(API_ENDPOINTS.partnerfilter,id);
+   const purchasedata = data?.data?.fees_category?.[0]?.Purchase;
+   const salesdata = data?.data?.fees_category?.[1]?.Sales;
+  
+
+const transactionSupplements = purchasedata?.["Transaction Supplement Fees"];
+const transsalessupplements = salesdata?.["Transaction Supplement Fees"];
+const disbursementdropdown = purchasedata?.["Standard Disbursements"];
+const lesehold_specific_fee = purchasedata?.["Leasehold Specific Fees & Disbursements"];
+
+const feeTypes = transactionSupplements.map(item => item.fee_type);
+const saletranstype = transsalessupplements.map(item=> item.fee_type);
+const disbursementtype = disbursementdropdown.map(item=> item.fee_type);
+const lesehold_specific_type= lesehold_specific_fee.map(item=>item.fee_type);
+
+console.log(lesehold_specific_type);
+
+
+
+  
+  setsuplementOptions(feeTypes)
+  setsalessuplementOptions(saletranstype);
+  setdisbursementOptions(disbursementtype);
+  setfeeTypeOptions(lesehold_specific_type);
+  
+}  
 
 useEffect(() => {
-  const legalFees = backend[1]?.price_breakdown?.[0]?.["1"] || [];
+  getdropdown();
+  const pricing = backend?.[0]?.pricing?.[0];
+  const pricingcheck = backend?.[0]?.pricing?.[0] || {};
+  setpricing(pricingcheck);
 
-  const formatted = legalFees.map((item) => ({
-    min: item.min ?? "",
-    max: item.max ?? "",
-    pLease: item.purchaseLeasehold ,
-    pFree: item.purchasesalesehold ?? "",
-    sLease: item.salesLeasehold ?? "",
-    sFree: item.salesfreehold ?? "",
-    remortgage: item.remortgage ?? "",
-  }));
+console.log(pricingcheck)
 
-  // If no backend rows → keep one empty row
- 
-    setLegalcostrows(formatted);
-  
+  console.log("📌 FULL Pricing Object:", pricing);
+
+  // 1️⃣ Loop through all fee categories (1, 2, 5)
+  Object.keys(pricing).forEach((categoryKey) => {
+    console.log("➡️ Category Key:", categoryKey);
+
+    const categoryArray = pricing[categoryKey];
+    console.log("   Category Array:", categoryArray);
+
+    // 2️⃣ Loop inside array (each contains price_list)
+    categoryArray.forEach((item, index) => {
+      console.log(`   ▶ Item ${index}:`, item);
+
+      const priceList = item.price_list;
+      console.log("     🔸 price_list:", priceList);
+
+      // 3️⃣ Loop through price_list items
+      priceList.forEach((p, idx) => {
+        console.log(`       🔹 Price Item ${idx}:`, p);
+      });
+
+    });
+
+  });
+
 }, []);
 
 
+
+const [selectedFee, setSelectedFee] = useState("");
+const [feeAmount, setFeeAmount] = useState("");
 
 
 const handleSubmit = () => {
@@ -134,9 +241,8 @@ const handleSubmit = () => {
       paid_to: r.paidTo
     })),
       additional_services: {
-    indemnity_insurance_preparation: Number(indemnity),
-    sdlt_lbtt_ltt_return: Number(sdltReturn),
-    additional_legal_advice: Number(additionalAdvice)
+  feeAmount: feeAmount,
+  selectedFee: selectedFee,
   },
   Notes:notes,
   service_level_options: {
@@ -148,6 +254,7 @@ const handleSubmit = () => {
 
   // ----------- ⭐ Print Final Payload ----------
   console.log("FINAL PAYLOAD:", payload);
+  router.push("/conveyancers/Notes/");
 }
 
 const [indemnity, setIndemnity] = useState("");
@@ -162,6 +269,7 @@ const [rangeErrors, setRangeErrors] = useState([]); // gap / overlap errors
 const [notes, setNotes] = useState("");
 
 const [legalcostrows, setLegalcostrows] = useState([
+    { min: "", max: "", pLease: "", pFree: "", sLease: "", sFree: "" }
 ]);
   
   const handle_addrow = () => {
@@ -194,11 +302,13 @@ const [SalesTransactionSupplementsrows, setSalesTransactionSupplementsrows] = us
     type: "",
     feeAmount: "",
     description: "",
+    paidto:""
   }
 ]);
 const validateRows = () => {
 const rErrors = {};
 const gErrors = {};
+console.log(legalcostrows)
 
   legalcostrows.forEach((row, i) => {
     const errors = {};
@@ -285,13 +395,11 @@ return hasRowErrors || hasRangeErrors;
 };
 
 const fieldVisibility = {
-  min: true,
-  max: true,
-  PurchaseLeasehold: true,
-  PurchaseFreehold: true,   // hidden
-  salesLeasehold: true,
-  salesFreehold: true,
-  remortgage:true,       // hidden
+ 
+  Purchase: true,
+  Sales: true,
+  
+  Remortgage:true,       // hidden
 };
 
 
@@ -388,17 +496,11 @@ const handleDisField = (index, field, value) => {
 };
 
 let [supplementOptions,setsuplementOptions] =useState( [
-  { label: "Leasehold Enfranchisement", value: "Leasehold Enfranchisement" },
-  { label: "Shared Ownership", value: "Shared Ownership" },
-  { label: "Help to Buy", value: "Help to Buy" },
-  { label: "Others", value: "others" },
+  
 ])
 
 let [salessupplementOptions,setsalessuplementOptions] =useState( [
-  { label: "Leasehold Enfranchisement", value: "Leasehold Enfranchisement" },
-  { label: "Shared Ownership", value: "Shared Ownership" },
-  { label: "Help to Buy", value: "Help to Buy" },
-  { label: "Others", value: "others" },
+  
 ])
 const [disbursementRows, setDisbursementRows] = useState([
   {
@@ -409,12 +511,7 @@ const [disbursementRows, setDisbursementRows] = useState([
     transactionType: "",
   },
 ]);
-const disbursementOptions = [
-  { value: "Stamp Duty", label: "Stamp Duty" },
-  { value: "Land Registry Fee", label: "Land Registry Fee" },
-  { value: "Search Fee", label: "Search Fee" },
-  { value: "others", label: "Others" },
-];
+const [disbursementOptions,setdisbursementOptions] =useState()
 
 const paidToOptions = [
   { value: "admin", label: "Admin" },
@@ -442,11 +539,7 @@ const leaseholdServiceOptions = [
   { value: "ground-rent", label: "Ground Rent" },
 ];
 
-const feeTypeOptions = [
-  { value: "disbursement", label: "Disbursement" },
-  { value: "legalfee", label: "Legal Fee" },
-  { value: "thirdpartycost", label: "Third Party Cost" },
-];
+const [feeTypeOptions,setfeeTypeOptions] =useState()
 
 const paidToOptions_std = [
   { value: "admin", label: "Admin" },
@@ -488,14 +581,16 @@ const handleLeaseholdField = (index, field, value) => {
                 </nav>
 
   </div>
+  <div className="border rounded-lg mb-6 shadow-sm overflow-hidden bg-white p-5">
 
-<div className="border rounded-lg mb-6 shadow-sm overflow-hidden bg-white p-5">
+{pricing && pricing["1"]  && (
+
   <div>
  <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
-    Legal Fees
+  {pricing["1"][0]?.fees_category_title}
   </div>
   <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
-Standard Conveyancing Fees (Excluding VAT)
+{pricing["1"][0]?.fees_category_subtitle}
   </div>
 
   {/* Header */}
@@ -507,11 +602,27 @@ Standard Conveyancing Fees (Excluding VAT)
 
     <div className="text-center">Min £</div>
     <div className="text-center">Max £</div>
+     {fieldVisibility.Purchase && (
     <div className="text-center">Purchase Leasehold £</div>
+     )}
+          {fieldVisibility.Purchase && (
+
     <div className="text-center">Purchase Freehold £</div>
+    )}
+
+              {fieldVisibility.Sales && (
+
     <div className="text-center">Sales Leasehold £</div>
+              )}
+              {fieldVisibility.Sales &&(
     <div className="text-center">Sales Freehold £</div>
+
+              )
+
+              }
+              {fieldVisibility.Remortgage &&(
     <div className="text-center">Remortgage</div>
+              )}
     <div className="text-center">Action</div>
   </div>
 
@@ -568,10 +679,11 @@ Standard Conveyancing Fees (Excluding VAT)
     </div>
 
     {/* Purchase Leasehold */}
-  {fieldVisibility.PurchaseLeasehold && (
+ 
   <div className="flex flex-col">
     <input
       type="number"
+      value={legalcostrows.pLease}
       placeholder="Purchase Leasehold"
       className="border border-gray-400 rounded py-0.5 text-sm text-center text-black"
       onChange={(e) => handleChange(i, "PurchaseLeasehold", e.target.value)}
@@ -580,11 +692,11 @@ Standard Conveyancing Fees (Excluding VAT)
       <span className="text-red-500 text-xs">{rowErrors[i].PurchaseLeasehold}</span>
     )}
   </div>
-)}
+
 
     {/* Purchase Freehold */}
    
-    {fieldVisibility.PurchaseFreehold && (
+    {fieldVisibility.Purchase && (
   <div className="flex flex-col">
     <input
       type="number"
@@ -600,7 +712,7 @@ Standard Conveyancing Fees (Excluding VAT)
 
     {/* Sales Leasehold */}
     
-        {fieldVisibility.salesLeasehold && (
+        {fieldVisibility.Sales && (
  <div className="flex flex-col">
       <input
         type="number"
@@ -617,7 +729,7 @@ Standard Conveyancing Fees (Excluding VAT)
     {/* Sales Freehold */}
 
 
-          {fieldVisibility.salesFreehold && (
+          {fieldVisibility.Sales && (
  <div className="flex flex-col">
       <input
         type="number"
@@ -629,8 +741,9 @@ Standard Conveyancing Fees (Excluding VAT)
       <span className="text-red-500 text-xs">{rowErrors[i].salesFreehold}</span>
     )}
   </div>
+
 )}
-{fieldVisibility.remortgage && (
+{fieldVisibility.Remortgage && (
   <div className="flex flex-col">
     <input
       type="number"
@@ -651,8 +764,10 @@ Standard Conveyancing Fees (Excluding VAT)
     {/* ADD BUTTON */}
     <div className="flex justify-center items-start pt-1">
       {i === legalcostrows.length - 1 && (
-        <button className="text-green-500" onClick={handle_addrow}>
+        <button className="text-green-500 tooltip" onClick={handle_addrow}>
           <Plus />
+                  <span className="tooltiptext font">Add new row</span>
+
         </button>
       )}
     </div>
@@ -660,32 +775,36 @@ Standard Conveyancing Fees (Excluding VAT)
 ))}
 
   </div>
+)
+}
+
  
 
 <div className="mt-10">
+{pricing && pricing["2"] &&(
+<div>
+   <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
+      Transaction Supplement Fees  </div>
 
-<div className="bg-gray-50 border-b px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
-Transaction Supplement Fees  </div>
+      <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
+          Purchase Transaction Supplements
+      </div>
+      <div className="grid  grid-cols-4 items-center 
+                        text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
 
-<div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
-Purchase Transaction Supplements
-  </div>
-<div className="grid  grid-cols-5 items-center 
-                  text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
+          <div className="text-center">Suplement Type £</div>
+          <div className="text-center">Fee Amount £</div>
+          <div className="text-center">Description </div>
+          <div className="text-center">Action</div>
 
-    <div className="text-center">Suplement Type £</div>
-    <div className="text-center">Fee Amount £</div>
-    <div className="text-center">Paid To</div>
-    <div className="text-center">Description </div>
-    <div className="text-center">Action</div>
+          
+        </div>
 
-    
-  </div>
+{PurchasTransactionSupplementsrows.map((row, i) => 
+(
+  <div key={i} className="grid grid-cols-4 gap-3 px-3 py-2">
 
-{PurchasTransactionSupplementsrows.map((row, i) => (
-  <div key={i} className="grid grid-cols-5 gap-3 px-3 py-2">
-
-    {/* SELECT DROPDOWN or TEXTBOX */}
+   
     {!row.isOthers ? (
      <select
   className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black"
@@ -694,10 +813,10 @@ Purchase Transaction Supplements
 >
   <option value="">Select Supplement Type</option>
 
- {salessupplementOptions.map((opt) => (
+ {supplementOptions.map((opt,index) => (
 
-    <option key={opt.value} value={opt.value}>
-      {opt.label}
+    <option key={index} value={opt}>
+      {opt}
     </option>
   ))}
 </select>
@@ -723,18 +842,7 @@ Purchase Transaction Supplements
       onChange={(e) => handleFieldChange(i, "feeAmount", e.target.value,"purchase")}
       className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black"
     />
-     <select
-        className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black  placeholder:text-gray-800"
-        value={row.paidto}
-        onChange={(e) => handleDisField(i, "paidto", e.target.value)}
-      >
-        <option value="" className="text-gray-900">Select Paid To</option>
-        {paidToOptions.map((opt) => (
-          <option key={opt.value} value={opt.value} className="text-gray-900">
-            {opt.label}
-          </option>
-        ))}
-      </select>
+    
     
 
     {/* DESCRIPTION */}
@@ -752,40 +860,43 @@ Purchase Transaction Supplements
     <div className="flex justify-center gap-4">   
        {i === PurchasTransactionSupplementsrows.length - 1 && (
       <button
-        className="text-green-500"
+        className="text-green-500 tooltip"
         onClick={() =>
           setPurchasTransactionSupplementsrows([
             ...PurchasTransactionSupplementsrows,
-            { isOthers: false, type: "", feeAmount: "", description: "" }
+            { isOthers: false, type: "", feeAmount: "", description: "",paidto:"" }
           ])
         }
       >
         <Plus />
+                  <span className="tooltiptext font">Add new row</span>
       </button>
     )}
 
     <button
-      className="text-red-600"
+      className="text-red-600 tooltip"
       onClick={() => {
         const updated = PurchasTransactionSupplementsrows.filter((_, idx) => idx !== i);
         setPurchasTransactionSupplementsrows(updated);
+
       }}
     >
       <X />
+      <span className="tooltiptext"> Delete current row</span>
     </button>
 
     </div>
    
   </div>
-))}
+)
 
-
+)}
 <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
 
 sales Transaction Supplements
   </div>
  
-<div className="grid grid-cols-[1fr_1fr_1fr_1fr] items-center 
+<div className="grid grid-cols-4 items-center 
                   text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
 
     <div className="text-center">Suplement Type £</div>
@@ -797,7 +908,7 @@ sales Transaction Supplements
   </div>
 
 {SalesTransactionSupplementsrows.map((row, i) => (
-  <div key={i} className="grid grid-cols-[1fr_1fr_1fr_1fr] gap-3 px-3 py-2">
+  <div key={i} className="grid grid-cols-4 gap-3 px-3 py-2">
 
     {/* SELECT DROPDOWN or TEXTBOX */}
     {!row.isOthers ? (
@@ -808,20 +919,19 @@ sales Transaction Supplements
 >
   <option value="">Select Supplement Type</option>
 
-  {salessupplementOptions.map((opt) => (
-    <option key={opt.value} value={opt.value}>
-      {opt.label}
+  {(salessupplementOptions || []).map((opt,index) => (
+    <option key={index} value={opt} >
+      {opt}
     </option>
   ))}
 </select>
 
     ) : (
       <div>
-            <label htmlFor="suplement_type" className="text-black"> Others</label>
 
       <input
         type="text"
-        placeholder="Enter Supplement Type"
+        placeholder="Enter other Supplement Type"
         value={row.type}
         onChange={(e) => handleFieldChange(i, "type", e.target.value,"sales")}
         className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black"
@@ -837,7 +947,7 @@ sales Transaction Supplements
       onChange={(e) => handleFieldChange(i, "feeAmount", e.target.value,"sales")}
       className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black"
     />
-
+     
     {/* DESCRIPTION */}
     <input
       type="text"
@@ -853,7 +963,7 @@ sales Transaction Supplements
     <div className="flex justify-center gap-4">   
        {i === SalesTransactionSupplementsrows.length - 1 && (
       <button
-        className="text-green-500"
+        className="text-green-500 tooltip "
         onClick={() =>
           setSalesTransactionSupplementsrows([
             ...SalesTransactionSupplementsrows,
@@ -862,11 +972,14 @@ sales Transaction Supplements
         }
       >
         <Plus />
+                          <span className="tooltiptext font">Add new row</span>
+
+
       </button>
     )}
 
     <button
-      className="text-red-600"
+      className="text-red-600 tooltip"
       onClick={() => {
         const updated = SalesTransactionSupplementsrows.filter((_, idx) => idx !== i);
 
@@ -874,12 +987,22 @@ sales Transaction Supplements
       }}
     >
       <X />
+            <span className="tooltiptext"> Delete current row</span>
+
     </button>
 
     </div>
    
   </div>
 ))}
+</div>
+ 
+
+)}
+
+
+
+
 
 
 <div className="mt-10">
@@ -895,7 +1018,7 @@ sales Transaction Supplements
 Essential Disbursements & Third-Party Costs
   </div>
 
-  <div className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr] items-center 
+  <div className="grid grid-cols-5 items-center 
       text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
 
     <div className="text-center">Disbursement Type £</div>
@@ -909,28 +1032,27 @@ Essential Disbursements & Third-Party Costs
   {disbursementRows.map((row, i) => (
     <div
       key={i}
-      className="grid grid-cols-[1fr_1fr_1fr_1fr_1fr] gap-3 px-3 py-2"
+      className="grid grid-cols-5 gap-3 px-3 py-2"
     >
       {/* TYPE DROPDOWN OR TEXTBOX */}
       {!row.isOthers ? (
         <select
-          className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black"
+          className="border border-gray-400 rounded py-0.5 w-auto  text-sm text-center text-black"
           onChange={(e) => handleDisbursementChange(e, i)}
           value={row.type}
         >
           <option value="">Select Disbursement</option>
-          {disbursementOptions.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
+          {(disbursementOptions || []).map((opt,index) => (
+            <option key={index} value={opt}>
+              {opt}
             </option>
           ))}
         </select>
       ) : (
         <div>
-          <label className="text-black" >Others</label>
         <input
           type="text"
-          placeholder="Enter Type"
+          placeholder="Enter other suplement"
           value={row.type}
           onChange={(e) => handleDisField(i, "type", e.target.value)}
           className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black placeholder:text-gray-900"
@@ -982,7 +1104,7 @@ Essential Disbursements & Third-Party Costs
         {/* ADD ROW – only last row */}
         {i === disbursementRows.length - 1 && (
           <button
-            className="text-green-600"
+            className="text-green-600 tooltip"
             onClick={() =>
               setDisbursementRows([
                 ...disbursementRows,
@@ -997,12 +1119,14 @@ Essential Disbursements & Third-Party Costs
             }
           >
             <Plus />
+                              <span className="tooltiptext font">Add new row</span>
+
           </button>
         )}
 
         {/* REMOVE */}
         <button
-          className="text-red-600"
+          className="text-red-600 tooltip"
           onClick={() => {
             const updated = disbursementRows.filter(
               (_, idx) => idx !== i
@@ -1011,6 +1135,8 @@ Essential Disbursements & Third-Party Costs
           }}
         >
           <X />
+                <span className="tooltiptext"> Delete current row</span>
+
         </button>
       </div>
     </div>
@@ -1066,9 +1192,9 @@ Leasehold Specific Fees & Disbursements
         onChange={(e) => handleLeaseholdField(i, "feeType", e.target.value)}
       >
         <option value="">Select Fee Type</option>
-        {feeTypeOptions.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
+        {(feeTypeOptions||[]).map((opt,index) => (
+          <option key={index} value={opt}>
+            {opt}
           </option>
         ))}
       </select>
@@ -1102,7 +1228,7 @@ Leasehold Specific Fees & Disbursements
         {/* ADD button — only on last row */}
         {i === leaseholdRows.length - 1 && (
           <button
-            className="text-green-600"
+            className="text-green-600 tooltip"
             onClick={() =>
               setLeaseholdRows([
                 ...leaseholdRows,
@@ -1116,18 +1242,21 @@ Leasehold Specific Fees & Disbursements
             }
           >
             <Plus />
+            <span className="tooltiptext">Add new row</span>
           </button>
         )}
 
         {/* DELETE */}
         <button
-          className="text-red-600"
+          className="text-red-600 tooltip"
           onClick={() => {
             const updated = leaseholdRows.filter((_, idx) => idx !== i);
             setLeaseholdRows(updated);
           }}
         >
           <X />
+                <span className="tooltiptext"> Delete current row</span>
+
         </button>
       </div>
     </div>
@@ -1141,68 +1270,43 @@ Leasehold Specific Fees & Disbursements
     Additional Services & Insurance
   </div>
 
-  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+<div className="flex flex-col gap-2 mt-6 w-full md:w-1/2">
+  {/* Label */}
+  <label className="text-sm font-semibold text-gray-700 mb-1">
+    Select Fee Type & Amount
+  </label>
 
-    {/* 1 — Indemnity Insurance Handling Preparation */}
-    <div className="flex flex-col">
-      <label className="text-sm font-semibold text-gray-700 mb-2">
-        Indemnity Insurance Handling Preparation
-      </label>
-<input
-  type="number"
-  className="border p-2 rounded-md text-sm focus:ring-2 border-gray-400 outline-none focus:ring-black placeholder:text-black"
-  placeholder="Enter amount"
-  value={indemnity}
-  onChange={(e) => setIndemnity(e.target.value)}
-/>
+  {/* Dropdown and Input in one row */}
+  <div className="flex flex-row items-center gap-4">
+    <select
+      className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black placeholder:text-black"
+      value={selectedFee}
+      onChange={e => {
+        setSelectedFee(e.target.value);
+        setFeeAmount(""); // clear amount when option changes
+      }}
+    >
+      <option value="" className="text-black">Select option</option>
+      <option value="indemnity" className="text-black">Indemnity Insurance Handling Preparation</option>
+      <option value="sdlt" className="text-black">SDLT/LBTT/LTT Return</option>
+      <option value="advice" className="text-black">Additional Legal Advice</option>
+      <option value="others" className="text-black">Others</option>
+    </select>
 
-
-      <p className="text-xs text-gray-900 mt-1">
-        Fee for arranging indemnity policies
-      </p>
-    </div>
-
-    {/* 2 — SDLT/LBTT/LTT Return */}
-    <div className="flex flex-col">
-      <label className="text-sm font-semibold text-gray-700 mb-2">
-        SDLT/LBTT/LTT Return
-      </label>
-
-     <input
-  type="number"
-  className="border p-2 rounded-md text-sm focus:ring-2 border-gray-400 outline-none focus:ring-black placeholder:text-black"
-  placeholder="Enter amount"
-  value={sdltReturn}
-  onChange={(e) => setSdltReturn(e.target.value)}
-/>
-
-
-      <p className="text-xs text-gray-900 mt-1">
-        Tax return preparation fee
-      </p>
-    </div>
-
-    {/* 3 — Additional Legal Advice */}
-    <div className="flex flex-col">
-      <label className="text-sm font-semibold text-gray-700 mb-2">
-        Additional Legal Advice
-      </label>
-
-     <input
-  type="number"
-  className="border p-2 rounded-md text-sm focus:ring-2 border-gray-400 outline-none focus:ring-black placeholder:text-black"
-  placeholder="Enter amount"
-  value={additionalAdvice}
-  onChange={(e) => setAdditionalAdvice(e.target.value)}
-/>
-
-
-      <p className="text-xs text-gray-900 mt-1">
-        Tax return preparation fee
-      </p>
-    </div>
-
+    <input
+      type="number"
+      className="border border-gray-400 rounded py-0.5 w-full text-sm text-center text-black placeholder:text-black"
+      placeholder={
+        selectedFee === "others"
+          ? "Enter custom fee name & amount"
+          : "Enter amount"
+      }
+      value={feeAmount}
+      onChange={e => setFeeAmount(e.target.value)}
+    />
   </div>
+</div>
+
 
 
 
@@ -1210,83 +1314,13 @@ Leasehold Specific Fees & Disbursements
 
 </div>
 
-<div className="mt-10">
-  <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
-    Service Level Options
-  </div>
 
-  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-
-    {/* 1 — Expedited Service Fee */}
-    <div className="flex flex-col">
-      <label className="text-sm font-semibold text-gray-700 mb-2">
-        Expedited Service Fee
-      </label>
-
-      <input
-        type="number"
-        placeholder="0.00"
-        value={serviceOptions.expedited_service_fee}
-        onChange={(e) =>
-          setServiceOptions({
-            ...serviceOptions,
-            expedited_service_fee: e.target.value
-          })
-        }
-        className="border p-2 border-gray-400 placeholder:text-black rounded-md text-sm focus:ring-2 focus:ring-black outline-none"
-      />
-
-      <p className="text-xs text-gray-500 mt-1">
-        Additional fee for faster completion (e.g., 4–6 weeks)
-      </p>
-    </div>
-
-    {/* 2 — Weekend/Evening Appointment Fee */}
-    <div className="flex flex-col">
-      <label className="text-sm font-semibold text-gray-700 mb-2">
-        Weekend/Evening Appointment Fee
-      </label>
-
-      <input
-        type="number"
-        placeholder="0.00"
-        value={serviceOptions.weekend_appointment_fee}
-        onChange={(e) =>
-          setServiceOptions({
-            ...serviceOptions,
-            weekend_appointment_fee: e.target.value
-          })
-        }
-        className="border border-gray-400 p-2 placeholder:text-black rounded-md text-sm focus:ring-2 focus:ring-black outline-none"
-      />
-
-      <p className="text-xs text-gray-500 mt-1">
-        Fee for out-of-hours appointments
-      </p>
-    </div>
-
-  </div>
-</div>
 
 
 
 
 </div>
-<div className="mt-10">
-      <label className="block text-sm font-semibold text-gray-800 mb-2">
-        Enter Additional Information
-      </label>
 
-   <div className="bg-white border border-gray-300 rounded-md">
-  <textarea
-    value={notes}
-    onChange={(e) => setNotes(e.target.value)}
-    placeholder="Type your message here..."
-    className="min-h-[150px] w-full text-black p-2 outline-none rounded-md"
-  ></textarea>
-</div>
-
-    </div>
 
                   </div>
 </div>
