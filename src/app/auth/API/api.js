@@ -1,5 +1,5 @@
 // ✅ Base URL for your backend
-const BASE_URL = "http://movwiseadmin.digitalcloudies.co.in/api";
+const BASE_URL = "https://movwiseadmin.digitalcloudies.co.in/api";
 
 
 // ✅ Example: central place for all API endpoints
@@ -15,8 +15,13 @@ export const API_ENDPOINTS = {
     service:`${BASE_URL}/create-services`,
     quotesfilter:`${BASE_URL}/quotes/filter`,
     compareQuotes:`${BASE_URL}/compare-quotes`,
+    languages:`${BASE_URL}/languages`,
+    partnerfilter:`${BASE_URL}/partnerfilter`,
+    feecatgory:`${BASE_URL}/feecategory`,
+    feetype:`${BASE_URL}/feetype`,
+    insertcompanydetail:`${BASE_URL}/insertcompanydetail`,
 
-
+    
 }
   // add more endpoints here
 
