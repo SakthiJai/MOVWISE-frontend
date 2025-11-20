@@ -33,9 +33,7 @@ export default function Companyregistration() {
     company_name: "",
     phone_number: "",
     email: "",
-    c_website: "",
-  SRAorCLC : "",
-    languages:[],
+    websiter: "",
   });
   const [languagepreference, setlanguagepreference] = useState(" ");
   const [language, setLanguage] = useState([]);
@@ -108,6 +106,7 @@ const [notes, setNotes] = useState("");
    const fetchlanguages = async () => {
     try {
       const  languages = await getData(API_ENDPOINTS.languages)
+      
 
 const Companyregistrationdata = await postData(
   API_ENDPOINTS.insertcompanydetail,
@@ -145,52 +144,31 @@ const handleChangeLang = (selectedOptions = []) => {
     // Keep only "Not Required" selected
     const notRequiredOption = lang.find(opt => opt.value === "Not Required");
     setSelectedLanguage([notRequiredOption]);
-    console.log("Selected language: [0]");
-    handleChange("languages", [0]);
+   handleChange({ name: "languages", value: [0] })
+    
   } else {
     // Normal behavior for other lenders
     setSelectedLanguage(selectedOptions);
     const ids = selectedOptions.map(item => item.id);
-    console.log("Selected languages:", ids);
-    handleChange("languages", ids);
+   handleChange({ name: " languages", value: ids })
   }
 }
 
-  function languagecheckboxchange(item,checked,id){
-    if(checked){
-setLanguage(prev => [...prev, item]);
-handle_l_change("languages",[...formData.languages, id])
-console.log(language);
+ 
 
-    }
-    else{
-      setLanguage(prev=>prev.filter(lang=>lang!==item))
-    }
-        
-      
-       }
 
- function handle_l_change(key,id){
-console.log(key,id)
-setFormData((prev)=>({...prev, [key]:id}))
-console.log(formData)
-  }
   // Error & Image states
   const [errors, setErrors] = useState({});
   const [image, setImage] = useState("");
 
   // ✅ Unified handleChange function
-    const handleChange = (key,id, e) => {
+    const handleChange = (e) => {
   // If called from input event
- if(key && id){
-  const name = key;
-  const value = id;
-  setFormData((prev) => ({ ...prev, [name]: value }));
- }
-  else{
 
-    const { name, value } = e.target;
-  setErrors((prev) => ({
+  if((e.target && e.target!=undefined)){
+console.log(e.target);
+    let { name, value } = e.target;
+      setErrors((prev) => ({
     ...prev,
     [name]: "",
   }));    // For phone number: allow only digits and limit to 12
@@ -213,8 +191,73 @@ console.log(formData)
   // ✅ Clear error for this specific field
   setErrors((prev) => ({ ...prev, [name]: "" }));
 
+  setFormData((prev)=>({
+    ...prev,
+    [name]:value
+    }))
+console.log(formData)
   }
+
+  else{
+    let{name, value}=e
+    console.log(name,value)
+    if(name=="languages"){
+     setFormData(prev => ({
+    ...prev,
+    languages: Array.isArray(value) 
+      ? value                     // replace entire array
+      : [...prev.languages, value] // push if single value // 👈 push value into array
+  }));
+    }
+    if(name=="regions"){
+    setFormData(prev => ({
+    ...prev,
+    regions: Array.isArray(value)
+      ? value
+      : [...prev.regions, value] // 👈 push value into array
+  }));    }
+  if(name=="service_id"){
+    setFormData(prev => ({
+    ...prev,
+    service_id: Array.isArray(value)
+      ? value
+      : [...prev.service_id, value]  // 👈 push value into array
+  }));
   }
+      setErrors((prev) => ({
+    ...prev,
+    [name]: "",
+  }));    // For phone number: allow only digits and limit to 12
+    if (name === "phone_number") {
+      const numericValue = value.replace(/\D/g, "").slice(0, 12);
+      setFormData((prev) => ({ ...prev, [name]: numericValue }));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    }
+  
+
+  // Handle phone separately
+  if (name === "phone") {
+    const numericValue = value.replace(/\D/g, "").slice(0, 12);
+    setFormData((prev) => ({ ...prev, [name]: numericValue }));
+  } else {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  }
+
+  // ✅ Clear error for this specific field
+  setErrors((prev) => ({ ...prev, [name]: "" }));
+
+  setFormData((prev)=>({
+    ...prev,
+    [name]:value
+    }))
+console.log(formData)
+  }
+
+
+
+  }
+  
 
   // ✅ Validation function
   const validate = () => {
@@ -257,10 +300,10 @@ console.log(formData)
         // ✅ also set inside form data
         setFormData((prev) => ({
           ...prev,
-          logo: base64String, // <-- your required key
+          logo: base64String+"deva", // <-- your required key
         }));
       };
-      
+      console.log(formData)
       reader.readAsDataURL(file);
     }
   };
@@ -309,34 +352,34 @@ console.log(errors);
   };
   const [selectedJurisdictions, setSelectedJurisdictions] = useState([]);
 
+
 const jurisdictions = [
-  { value: "Scotland", label: "Scotland" },
-  { value: "Wales", label: "Wales" },
-  { value: "Northern Ireland", label: "Northern Ireland" },
-  { value: "England", label: "England" },
+  { value: "Scotland", label: "Scotland",id:1 },
+  { value: "Wales", label: "Wales",id:2 },
+  { value: "Northern Ireland", label: "Northern Ireland",id:3 },
+  { value: "England", label: "England",id:4 },
 ];
 const serviceoptions = [
-  { value: "Purchase", label: "Purchase" },
-  { value: "Sales", label: "Sales" },
-  { value: "Purchase and Sales", label: "Purchase and Sales" },
-  { value: "Remortgage", label: "Remortgage" },
+  { value: "Purchase", label: "Purchase",id:1 },
+  { value: "Sales", label: "Sales",id:2 },
+  { value: "Purchase and Sales", label: "Purchase and Sales",id:3 },
+  { value: "Remortgage", label: "Remortgage",id:4 },
 ];
 
 const toggleJurisdiction = (selectedOptions) => {
   setSelectedJurisdictions(selectedOptions);
 
   // Extract only values to store in formData
-  const values = selectedOptions.map(opt => opt.value);
+  const values = selectedOptions.map(opt => opt.id);
 
-  handleChange("region_covered", values);
-};
+ handleChange({ name: "regions", value: values })};
 
 const [selectedServices, setSelectedServices] = useState([]);
 
 const togglesercice = (selectedOptions) => {
   setSelectedServices(selectedOptions);
-  const values = selectedOptions.map(opt => opt.value);
-  handleChange("services_offered", values);
+  const values = selectedOptions.map(opt => opt.id);
+   handleChange({ name: "service_id", value: values })
 }
 
 
@@ -441,9 +484,9 @@ const togglesercice = (selectedOptions) => {
                       </label>
                       <input
                         id="c_website"
-                        name="c_website"
+                        name="websiter"
                         type="text"
-                        value={formData.c_website}
+                        value={formData.websiter}
                         onChange={handleChange}
                         placeholder="Enter Website Url"
                         className="block w-full h-[44px] text-[#1B1D21] placeholder-[#1B1D21] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] focus:outline-none"
@@ -457,8 +500,7 @@ const togglesercice = (selectedOptions) => {
                       </label>
                       <input
                         id="Name"
-                        name="SRA/CLC  *"
-value={formData?.SRAorCLC || ""}
+                        name="SRA_CLC_number"
                         onChange={handleChange}
                         placeholder="Enter Company name"
                         className={`block w-full h-[44px] rounded-[10px] border ${errors.company_name ? "border-red-500" : "border-[#D1D5DB]"}  text-[#1B1D21] placeholder-[#1B1D21] px-3 text-[14px] focus:outline-none`}
@@ -496,7 +538,7 @@ value={formData?.SRAorCLC || ""}
     <Select
       options={jurisdictions}
       isMulti
-      name="region_covered"
+      name="regions"
       instanceId="region-select"
       value={selectedJurisdictions}
       onChange={toggleJurisdiction}
@@ -515,7 +557,7 @@ value={formData?.SRAorCLC || ""}
     <Select
       options={serviceoptions}
       isMulti
-      name="region_covered"
+      name="service_id"
       instanceId="region-select"
       value={selectedServices}
       onChange={togglesercice}
@@ -576,8 +618,8 @@ value={formData?.SRAorCLC || ""}
 
    <div className="bg-white border border-gray-300 rounded-md">
   <textarea
-    value={notes}
-    onChange={(e) => setNotes(e.target.value)}
+  name="additional_info"
+    onChange={handleChange}
     placeholder="Type your message here..."
     className="min-h-[150px] w-full text-black p-2 outline-none rounded-md"
   ></textarea>

@@ -20,8 +20,10 @@ export const API_ENDPOINTS = {
     feecatgory:`${BASE_URL}/feecategory`,
     feetype:`${BASE_URL}/feetype`,
     insertcompanydetail:`${BASE_URL}/insertcompanydetail`,
+    region:`${BASE_URL}/regions`,
+      services:`${BASE_URL}/services`
 
-    
+
 }
   // add more endpoints here
 
@@ -32,7 +34,7 @@ export const getData = async (url) => {
     if (!response.ok) throw new Error("Network response was not ok");
     return await response.json();
   } catch (error) {
-    console.error("GET request failed:", error);
+    console.log("GET request failed:", error);
     throw error;
   }
 };
@@ -53,12 +55,12 @@ export const postData = async (url, data) => {
     console.log("✅ Response:", result);
 
     if (!response.ok) {
-      console.error("❌ API Error:", result);
+      console.log("❌ API Error:", result);
     }
 
     return result;
   } catch (error) {
-    console.error("🚨 Network Error:", error);
+    console.log("🚨 Network Error:", error);
   }
 };
 
