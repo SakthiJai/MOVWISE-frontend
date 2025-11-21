@@ -87,32 +87,37 @@ export default  function HomePage() {
   label: "Sales",
   icon: <Tag className="w-10 h-10 text-[#256041]" />,
   desc: "Quick and easy property sales.",
-   "service_id":3
+  "service_id":3,
+  page:"sales"
 },
     {
       label: "Purchase",
       icon: <Home className="w-10 h-10 text-[#256041]" />,
       desc: "Buying your dream property -1",
-      "service_id":2
+      "service_id":2,
+      page:"purchase"
     },
   
     {
       label: "Sales & Purchase",
       icon: <Repeat className="w-10 h-10 text-[#256041]" />,
       desc: "Buy and sell in one smooth move",
-      "service_id":1
+      "service_id":1,
+      page:"saleswithpurchase"
     },
     {
       label: "Remortgage",
       icon: <Landmark className="w-10 h-10 text-[#256041]" />,
       desc: "Refinancing for better rates",
-      "service_id":4
+      "service_id":4,
+      page:"remortagage"
     },
     {
       label: "Transfer of Equity",
       icon: <Building2 className="w-10 h-10 text-[#256041]" />,
       desc: "Changing ownership easily",
-      "service_id":5
+      "service_id":5,
+      page:"equity"
     },
     
 
@@ -192,7 +197,7 @@ export default  function HomePage() {
               </div>
 
               <button
-                onClick={() => handleSelect(opt.label,opt.service_id)}
+                onClick={() => handleSelect(opt.page,opt.service_id)}
                 className="mt-6 flex items-center justify-center gap-3 bg-[#256041] hover:bg-[#1B4E34] text-white font-semibold py-2.5 px-5 rounded-full text-sm transition-all"
               >
                 Get Quote

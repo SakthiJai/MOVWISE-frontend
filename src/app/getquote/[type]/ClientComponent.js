@@ -12,6 +12,8 @@ import { useRouter } from "next/navigation";
 import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
 import Footer from "../../parts/Footer/footer";
 import Sales from "./Sales"
+import Salewithpurchase from "./Salewithpurchase"
+import Remortage from "./Remortage"
 
 
 import { v4 as uuidv4 } from 'uuid';
@@ -32,8 +34,9 @@ export default function ClientComponent({ type }) {
             </div>
                 <main className="pt-8 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                   <h1>Type: {type}</h1>
-                    <Sales></Sales>
-
+                    {type === 'sales' && <Sales />}
+                    {type === 'saleswithpurchase' && <Salewithpurchase />}
+                    {type === 'remortage' && <Remortage />}
                 </main>
             </div>
             <Footer />
