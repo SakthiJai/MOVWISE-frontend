@@ -154,7 +154,8 @@ const [feeAmount, setFeeAmount] = useState("");
 
 
 const handleSubmit = async () => {
-  //console.loglog(pricingList);
+  console.log(pricingList,Object.keys(feeCategory));
+ 
   setlegalFeesError([]);
   const hasErrors = validatePriceList(pricingList);
 
@@ -163,11 +164,21 @@ const handleSubmit = async () => {
     return;
   }
   try {
-    setLoading(true); // optional loader
+    let tempPrice =[];
+   Object.keys(feeCategory).forEach((key,value) => {
+  const data = key;  // <-- key itself (1,2,3,...)
+  
+  tempPrice.push({
+    [data]: pricingList[value]
+  });
+});
 
+    console.log(tempPrice); 
+    setLoading(true); // optional loader
+    
     const payload = {
       company_details: formData,
-      pricing: pricingList,
+      pricing: tempPrice,
       notes: notesData,
     };
 
