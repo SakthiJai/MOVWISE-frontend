@@ -10,6 +10,9 @@ import dynamic from "next/dynamic";
 import Navbar from "../parts/navbar/page";
 import { API_ENDPOINTS,postData,getData } from "../auth/API/api";
 import { useFormStore } from "../store/useFormStore";
+import "react-quill-new/dist/quill.snow.css";
+import { poundFormat } from '../../utils/poundFormat';
+
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
 export default function Quotationdetails() {
@@ -34,19 +37,48 @@ const [leasedisbursementFeesError, setleasedisbursementFeesError] = useState([])
 const [additionalServiceError, setadditionalServiceError] = useState([]);
 const [headings, setHeadings] = useState([]);
 const [formData, setformData] = useState({});
+const [notesData, setnotesData] = useState("");
+const [loading, setLoading] = useState(false);
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, 3, false] }],
+      ["bold", "italic", "underline", "strike"],
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["link", "image"],
+      [{ align: [] }],
+      ["blockquote", "code-block"],
+      ["clean"],
+    ],
+  };
+
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "blockquote",
+    "list",
+    "link",
+    "image",
+    "code-block",
+    "align",
+  ];
+  const [showSuccess, setShowSuccess] = useState(false);
+ 
 
 useEffect(()=>{
   const storedData = JSON.parse(localStorage.getItem("companyData"));
   
   if (storedData) {
     setformData(storedData);
-    console.log(formData)
+    //console.loglog(formData)
   }
  },[]);
 
 useEffect(() => {
     // Define async function inside useEffect
-    const fetchData = async () => { console.log("121212");
+    const fetchData = async () => { //console.loglog("121212");
       try {
        // setLoading(true);
 
@@ -66,7 +98,7 @@ useEffect(() => {
         {
           response1.data[2][0]['sub_categories'].push({"sub_category" : "Sales Transaction Supplements"})
         }
-        console.log(response1.data[2][0]['sub_categories'])
+        //console.loglog(response1.data[2][0]['sub_categories'])
         setfeeCategory(response1.data)
         setpurchaseFeeTypeList(response2.purchase??[]);
         setsalesFeeTypeList(response2.sales??[]);
@@ -75,7 +107,7 @@ useEffect(() => {
         setadditionalServiceList(response2.additional_service??[]);
         setpricingList(response3.pricing??[])
       } catch (err) {
-        console.error(err);
+        //console.logerror(err);
         setError("Failed to fetch data");
       } finally {
         setLoading(false);
@@ -111,37 +143,8 @@ useEffect(() => {
     });*/
   };
 
-const [pricing,setpricing]=useState()
-async function getdropdown() {
-  let id={
-        "service_ids":[2,3]
-  }
-  const data = await postData(API_ENDPOINTS.partnerfilter,id);
-  const purchasedata = data?.data?.fees_category?.[0]?.Purchase;
-  const salesdata = data?.data?.fees_category?.[1]?.Sales;
-  
 
-const transactionSupplements = purchasedata?.["Transaction Supplement Fees"];
-const transsalessupplements = salesdata?.["Transaction Supplement Fees"];
-const disbursementdropdown = purchasedata?.["Standard Disbursements"];
-const lesehold_specific_fee = purchasedata?.["Leasehold Specific Fees & Disbursements"];
-
-const feeTypes = transactionSupplements.map(item => item.fee_type);
-const saletranstype = transsalessupplements.map(item=> item.fee_type);
-const disbursementtype = disbursementdropdown.map(item=> item.fee_type);
-const lesehold_specific_type= lesehold_specific_fee.map(item=>item.fee_type);
-
-
-
-
-
-  
-  setsuplementOptions(feeTypes)
-  setsalessuplementOptions(saletranstype);
-  setdisbursementOptions(disbursementtype);
-  setfeeTypeOptions(lesehold_specific_type);
-  
-}  
+ 
 
 
 
@@ -150,8 +153,8 @@ const [selectedFee, setSelectedFee] = useState("");
 const [feeAmount, setFeeAmount] = useState("");
 
 
-const handleSubmit = () => {
-  console.log(pricingList);
+const handleSubmit = async () => {
+  //console.loglog(pricingList);
   setlegalFeesError([]);
   const hasErrors = validatePriceList(pricingList);
 
@@ -159,9 +162,34 @@ const handleSubmit = () => {
     alert("Please fix validation issues before submitting.");
     return;
   }
+  try {
+    setLoading(true); // optional loader
 
+    const payload = {
+      company_details: formData,
+      pricing: pricingList,
+      notes: notesData,
+    };
+
+    //console.loglog("Payload to submit:", payload);
+
+    const response = await postData(API_ENDPOINTS.partnerfilter, payload);
+
+    //console.loglog("API Response:", response);
+
+    if (response.ok) {
+      setShowSuccess(true);   // show success modal
+    } else {
+      alert(`Failed: ${response.data?.message || "Server error"}`);
+    }
+  } catch (error) {
+    //console.logerror("Submit Error:", error);
+    alert("Something went wrong while saving!");
+  } finally {
+    setLoading(false);
+  }
  
-  router.push("/conveyancers/Notes/");
+  ///router.push("/conveyancers/Notes/");
 }
 const regipage =()=>{
   router.push("/conveyancers/Companyregistration/");
@@ -229,7 +257,7 @@ const handle_standard_disbursement= (index) => {
           : item
       )
     );
-    console.log(pricingList)
+    //console.loglog(pricingList)
 
 };
 const handle_leasehold_disbursement= (index) => {
@@ -256,8 +284,8 @@ const handle_additional_service= (index) => {
     );
 
 };
-const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
-  //const numericValue = value.replace(/[^\d.]/g, "");
+const handlePriceChange1 = (feesCategoryId, rowIndex, field, value) => {
+  const numericValue = value.replace(/[^\d.]/g, "");
   setpricingList(prev =>
     prev.map(item =>
       item.fees_category_id === feesCategoryId
@@ -272,7 +300,25 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
         : item
     )
   );
-  console.log(pricingList)
+  //console.loglog(pricingList)
+};
+const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
+  // Only allow numbers and dot
+  const rawValue = value.replace(/[^\d.]/g, "");
+  setpricingList(prev =>
+    prev.map(item =>
+      item.fees_category_id === feesCategoryId
+        ? {
+            ...item,
+            price_list: item.price_list.map((row, i) =>
+              i === rowIndex
+                ? { ...row, [field]: rawValue }  // store raw value only
+                : row
+            )
+          }
+        : item
+    )
+  );
 };
 
 const handleChange = (index, field, value) => {
@@ -281,7 +327,7 @@ const handleChange = (index, field, value) => {
   setLegalcostrows(updated);
 };
 
-const validatePriceList = (list) => { console.log('',list);
+const validatePriceList = (list) => { //console.loglog('',list);
   let errors=[];
   for (let i = 0; i < list.length; i++) { 
     if(list[i]['fees_category_id']==1)
@@ -385,7 +431,7 @@ const validatePriceList = (list) => { console.log('',list);
             const { type_id, fee_amount } = list[i].price_list[j];
             if (type_id!='' && Number(fee_amount)<=0) {
            
-            terror.push(`Row ${i + 1}: Fee amount is missing`);
+            terror5.push(`Row ${i + 1}: Fee amount is missing`);
             //return false;
             break;
           }
@@ -445,21 +491,7 @@ const handlesuplement = (e, rowIndex) => {
   setPurchasTransactionSupplementsrows(updated);
 };
 
-const handlesalesuplement = (e, rowIndex) => {
-  const value = e.target.value;
 
-  const updated = [...SalesTransactionSupplementsrows];
-
-  if (value === "others") {
-    updated[rowIndex].isOthers = true;
-    updated[rowIndex].type = "";
-  } else {
-    updated[rowIndex].isOthers = false;
-    updated[rowIndex].type = value;
-  }
-
-  setSalesTransactionSupplementsrows(updated);
-};
 
 const handleDisbursementChange = (e, index) => {
   const updated = [...disbursementRows];
@@ -475,7 +507,7 @@ const handleDisbursementChange = (e, index) => {
 };
 
 const handleFieldChange = (rowIndex, field, value,type) => {
-  console.log(type)
+  //console.loglog(type)
   if(type==="purchase"){
   const updated = [...PurchasTransactionSupplementsrows];
   updated[rowIndex][field] = value;
@@ -487,8 +519,8 @@ else if(type==="sales"){
   setSalesTransactionSupplementsrows(updated);
 }
 
-console.log(PurchasTransactionSupplementsrows)
-console.log(SalesTransactionSupplementsrows)
+//console.loglog(PurchasTransactionSupplementsrows)
+//console.loglog(SalesTransactionSupplementsrows)
 }
 const handleDisField = (index, field, value) => {
   const updated = [...disbursementRows];
@@ -584,7 +616,7 @@ const formatPound = (value) => {
       <nav className="text-[13px] text-[#6B7280] mb-5 flex items-center gap-4" aria-label="Breadcrumb">
             <span className="other-page hidden sm:inline">Home</span>
                   <span className="hidden sm:inline">/</span>
-                 <a  href="" onClick={regipage}>  <span className="other-page  sm:inline"  >Company registration</span></a>
+                 <a   onClick={regipage} >  <span className="other-page  sm:inline"  >Company registration</span></a>
                   <span className="hidden sm:inline">/</span>
                   <span className="live-page hidden sm:inline">Price Breakdown</span>
                  
@@ -592,617 +624,732 @@ const formatPound = (value) => {
 
   </div>
    <div className="border rounded-lg mb-6 shadow-sm overflow-hidden bg-white p-5">
- {Object.entries(feeCategory).map(([index, value]) => {
-            // the actual object inside
-     const item = value[0];
-    const numIndex = Number(index);
-   return (
-     <div key={numIndex} > 
-         {numIndex === 1 && (
-            <div key={numIndex} className="  feecatgoryblock mb-5">
-                <div className="bg-gray-50  px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
-                {item.fees_category}
-                </div>
-                {item.sub_categories.map((sub, i) => (
-                    <div key={i} className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
-                        {sub.sub_category}
+    {Object.entries(feeCategory).map(([index, value]) => {
+                // the actual object inside
+        const item = value[0];
+        const numIndex = Number(index);
+      return (
+        <div key={numIndex} > 
+            {numIndex === 1 && (
+                <div key={numIndex} className="  feecatgoryblock mb-5">
+                    <div className="bg-gray-50  px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
+                    {item.fees_category}
                     </div>
-                ))}
-                {legalFeesError && <p style={{ color: "red" }}>{legalFeesError}</p>}
-            <div className="grid grid-cols-9 gap-4 w-full text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
-                <div className="flex justify-center items-center col-span-1">S.no</div>
-                <div className="text-center">Min £</div>
-                <div className="text-center">Max £{formData['service_id'] }</div>
-               
-               {(formData['service_id']?.indexOf(1) !== -1 || formData['service_id']?.indexOf(3) !== -1) && (
-                  <div className="text-center">Purchase Leasehold £</div>
-                )}
-                {(formData['service_id']?.indexOf(1) !== -1 || formData['service_id']?.indexOf(3) !== -1)&& (
-                <div className="text-center">Purchase Freehold £</div>
-                )}
-
-                       
-                 {(formData['service_id']?.indexOf(2) !== -1 || formData['service_id']?.indexOf(3) !== -1) && (
-                <div className="text-center">Sales Leasehold £</div>
-                 )}   
-                   {(formData['service_id']?.indexOf(2) !== -1 || formData['service_id']?.indexOf(3) !== -1)&& (     
-                <div className="text-center">Sales Freehold £</div>
-                   )}
-                       
-                   {formData['service_id']?.indexOf(4) !== -1 && (      
-                  <div className="text-center">Remortgage</div>
-                   )}
-
-                <div className="text-center">Action</div>
-            </div>
-
-        
-            {
-            
-            pricingList.find(item => item.fees_category_id === numIndex).price_list.map((row, i) => (
-            <div key={i} className="grid grid-cols-9 gap-4 w-full items-start border-b border-gray-200  px-3 py-2">
-
-               <div className="flex justify-center items-center col-span-1">{i+1}</div>
-                <div className="flex flex-col">
-                <input type="text" placeholder="Min" value={row.min} className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-left text-black bg-white"
-                    onChange={(e) => handlePriceChange(numIndex, i, "min", e.target.value)}/>
-
-                {rowErrors[i]?.min && (
-                    <span className="text-red-500 text-xs">{rowErrors[i].min}</span>
-                )}
-                {rowErrors[i]?.range && (
-                    <span className="text-red-500 text-xs">{rowErrors[i].range}</span>
-                )}
-                {rowErrors[i]?.negative && (
-                    <span className="text-red-500 text-xs">{rowErrors[i].negative}</span>
-                )}
-                {rangeErrors[i]?.map((msg, idx) => (
-                <p key={idx} className="text-red-500 text-xs mt-1">{msg}</p>
-            ))}
-                
-                </div>
-
-                {/* MAX */}
-                <div className="flex flex-col">
-                <input type="text" placeholder="Max"  className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-left text-black"
-                    onChange={(e) => handlePriceChange(numIndex, i, "max", e.target.value)}
-                />
-
-                {rowErrors[i]?.max && (
-                    <span className="text-red-500 text-xs">{rowErrors[i].max}</span>
-                )}
-                {rangeErrors[i]?.map((msg, idx) => (
-            <p key={idx} className="text-red-500 text-xs mt-1">{msg}</p>
-            ))}
-                </div>
-
-                {/* Purchase Leasehold */}
-            {(formData['service_id']?.indexOf(1) !== -1 || formData['service_id']?.indexOf(3) !== -1)&& (
-            <div className="flex flex-col">
-                <input type="text" value={legalcostrows.pLease}  placeholder="Purchase Leasehold"  
-                className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-left text-black"
-                onChange={(e) => handlePriceChange(numIndex, i, "purchase_leasehold", e.target.value)}
-                />
-                {rowErrors[i]?.PurchaseLeasehold && (
-                <span className="text-red-500 text-xs">{rowErrors[i].PurchaseLeasehold}</span>
-                )}
-            </div>
-            )}
-
-
-                
-            
-          {(formData['service_id']?.indexOf(1) !== -1 || formData['service_id']?.indexOf(3) !== -1) && (      
-            <div className="flex flex-col">
-                <input type="text" placeholder="Purchase Freehold " className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-left text-black"
-                    onChange={(e) => handlePriceChange(numIndex, i, "purchase_freehold", e.target.value)}
-                />
-                {rowErrors[i]?.PurchaseFreehold && (
-                <span className="text-red-500 text-xs">{rowErrors[i].PurchaseFreehold}</span>
-                )}
-            </div>
-          )}
-
-                {/* Sales Leasehold */}
-                
-            {(formData['service_id']?.indexOf(2) !== -1 || formData['service_id']?.indexOf(3) !== -1)&& (        
-            <div className="flex flex-col">
-                <input   type="text"  placeholder="Sales Leasehold"  
-                    className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-left text-black"
-                    onChange={(e) => handlePriceChange(numIndex, i, "sales_leasehold", e.target.value)}
-                />
-                {rowErrors[i]?.salesLeasehold && (
-                <span className="text-red-500 text-xs">{rowErrors[i].salesLeasehold}</span>
-                )}
-            </div>
-            )}
-            {(formData['service_id']?.indexOf(2) !== -1 || formData['service_id']?.indexOf(3) !== -1) && ( 
-            <div className="flex flex-col">
-                <input  type="text" placeholder="Sales Freehold" 
-                    className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-left text-black"
-                    onChange={(e) => handlePriceChange(numIndex, i, "sales_freehold", e.target.value)}
-                />
-                {rowErrors[i]?.salesFreehold && (
-                <span className="text-red-500 text-xs">{rowErrors[i].salesFreehold}</span>
-                )}
-            </div>
-            )}
-
-           
-            {formData['service_id'].indexOf(4) !== -1 && ( 
-            <div className="flex flex-col">
-                <input type="text" placeholder="Remortgage" className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-left text-black"
-                onChange={(e) => handlePriceChange(numIndex, i, "remortgage", e.target.value)}
-                />
-
-                {rowErrors[i]?.remortgage && (
-                <span className="text-red-500 text-xs">
-                    {rowErrors[i].remortgage}
-                </span>
-                )}
-            </div>
-            )}
-           
-
-
-                {/* ADD BUTTON */}
-                <div className="flex justify-center items-start pt-1">
-               
-                    <button className="text-green-500 tooltip" onClick={() => handle_addrow(numIndex)}>
-                    <Plus />
-                            <span className="tooltiptext font">Add new row</span>
-
-                    </button>
-               
-                </div>
-            </div>
-            ))}
-
-            </div>
-          )}
-         
-          {numIndex === 2 && (   
-            <div className="transactionblock mb-5">
-                <div className="bg-gray-50  px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
-                {item.fees_category}
-                </div>
-                {item.sub_categories.map((sub, i) => (
-                    <div key={i}>
-                    <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
-                        {sub.sub_category}
-                    </div>
-                    {transactionFeesError && <p style={{ color: "red" }}>{transactionFeesError}</p>}
-                        <div className="grid  grid-cols-4 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
-                            <div className="text-center">Suplement Type £</div>
-                            <div className="text-center">Fee Amount £</div>
-                            <div className="text-center">Description </div>
-                            <div className="text-center">Action</div>
+                    {item.sub_categories.map((sub, i) => (
+                        <div key={i} className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
+                            {sub.sub_category}
                         </div>
-                        { pricingList.find(item => item.fees_category_id === numIndex).price_list.map((row, i) => 
-                        (
-                          <div key={i} className="grid grid-cols-4 gap-3 px-3 py-2">
+                    ))}
+                    {legalFeesError && <p style={{ color: "red" }}>{legalFeesError}</p>}
 
-                          
+                <div className=" w-full">
+                  <table className="min-w-max w-full text-xs font-semibold text-gray-600 ">
+                    <thead className="bg-gray-100">
+                      <tr className="">
+                        <th className="px-3 py-2 text-center">S.no</th>
+                        <th className="px-3 py-2 text-center">Min £</th>
+                        <th className="px-3 py-2 text-center">
+                          Max £
+                        </th>
+
+                        {(formData['service_id']?.includes(1) ||
+                          formData['service_id']?.includes(3)) && (
+                          <>
+                            <th className="px-3 py-2 text-center">Purchase Leasehold £</th>
+                            <th className="px-3 py-2 text-center">Purchase Freehold £</th>
+                          </>
+                        )}
+
+                        {(formData['service_id']?.includes(2) ||
+                          formData['service_id']?.includes(3)) && (
+                          <>
+                            <th className="px-3 py-2 text-center">Sales Leasehold £</th>
+                            <th className="px-3 py-2 text-center">Sales Freehold £</th>
+                          </>
+                        )}
+
+                        {formData['service_id']?.includes(4) && (
+                          <th className="px-3 py-2 text-center">Remortgage</th>
+                        )}
+
+                        <th className="px-3 py-2 text-center">Action</th>
+                      </tr>
+                    </thead>
+
+                    
+
+                    <tbody>        
+                      {
+                      
+                      pricingList.find(item => item.fees_category_id === numIndex).price_list.map((row, i) => (
+                            <tr key={i} className="border-b">
+            
+                              <td className="px-3 py-2 text-center">{i + 1}</td>
+                              <td className="px-3 py-2">
+                                <div className="flex flex-col">
+                                  <input
+                                    type="text"
+                                    placeholder="Min"
+                                    value={(row.min)}
+                                    className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black bg-white"
+                                    onChange={(e) => handlePriceChange(numIndex, i, "min", e.target.value)}
+                                  />
+
+                                  {rowErrors[i]?.min && (
+                                    <span className="text-red-500 text-xs">{rowErrors[i].min}</span>
+                                  )}
+                                  {rowErrors[i]?.range && (
+                                    <span className="text-red-500 text-xs">{rowErrors[i].range}</span>
+                                  )}
+                                  {rowErrors[i]?.negative && (
+                                    <span className="text-red-500 text-xs">{rowErrors[i].negative}</span>
+                                  )}
+
+                                  {rangeErrors[i]?.map((msg, idx) => (
+                                    <p key={idx} className="text-red-500 text-xs mt-1">{msg}</p>
+                                  ))}
+                                </div>
+                              </td>
+                              <td className="px-3 py-2">
+                                <div className="flex flex-col">
+                                  <input
+                                    type="text"
+                                    placeholder="Max"
+                                    value={(row.max)}
+                                    className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
+                                    onChange={(e) => handlePriceChange(numIndex, i, "max", e.target.value)}
+                                  />
+
+                                  {rowErrors[i]?.max && (
+                                    <span className="text-red-500 text-xs">{rowErrors[i].max}</span>
+                                  )}
+
+                                  {rangeErrors[i]?.map((msg, idx) => (
+                                    <p key={idx} className="text-red-500 text-xs mt-1">{msg}</p>
+                                  ))}
+                                </div>
+                              </td>
+
+                              {(formData['service_id']?.includes(1) ||
+                                formData['service_id']?.includes(3)) && (
+                                <td className="px-3 py-2">
+                                  <div className="flex flex-col">
+                                    <input
+                                      type="text"
+                                      placeholder="Purchase Leasehold"
+                                      className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
+                                      onChange={(e) =>
+                                        handlePriceChange(numIndex, i, "purchase_leasehold", e.target.value)
+                                      }
+                                    />
+
+                                    {rowErrors[i]?.PurchaseLeasehold && (
+                                      <span className="text-red-500 text-xs">{rowErrors[i].PurchaseLeasehold}</span>
+                                    )}
+                                  </div>
+                                </td>
+                              )}
+
+                              {/* PURCHASE FREEHOLD */}
+                              {(formData['service_id']?.includes(1) ||
+                                formData['service_id']?.includes(3)) && (
+                                <td className="px-3 py-2">
+                                  <div className="flex flex-col">
+                                    <input
+                                      type="text"
+                                      placeholder="Purchase Freehold"
+                                      className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
+                                      onChange={(e) =>
+                                        handlePriceChange(numIndex, i, "purchase_freehold", e.target.value)
+                                      }
+                                    />
+
+                                    {rowErrors[i]?.PurchaseFreehold && (
+                                      <span className="text-red-500 text-xs">{rowErrors[i].PurchaseFreehold}</span>
+                                    )}
+                                  </div>
+                                </td>
+                              )}
+
+                              {/* SALES LEASEHOLD */}
+                              {(formData['service_id']?.includes(2) ||
+                                formData['service_id']?.includes(3)) && (
+                                <td className="px-3 py-2">
+                                  <div className="flex flex-col">
+                                    <input
+                                      type="text"
+                                      placeholder="Sales Leasehold"
+                                      className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
+                                      onChange={(e) =>
+                                        handlePriceChange(numIndex, i, "sales_leasehold", e.target.value)
+                                      }
+                                    />
+
+                                    {rowErrors[i]?.salesLeasehold && (
+                                      <span className="text-red-500 text-xs">{rowErrors[i].salesLeasehold}</span>
+                                    )}
+                                  </div>
+                                </td>
+                              )}
+
+                              {/* SALES FREEHOLD */}
+                              {(formData['service_id']?.includes(2) ||
+                                formData['service_id']?.includes(3)) && (
+                                <td className="px-3 py-2">
+                                  <div className="flex flex-col">
+                                    <input
+                                      type="text"
+                                      placeholder="Sales Freehold"
+                                      className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
+                                      onChange={(e) =>
+                                        handlePriceChange(numIndex, i, "sales_freehold", e.target.value)
+                                      }
+                                    />
+
+                                    {rowErrors[i]?.salesFreehold && (
+                                      <span className="text-red-500 text-xs">{rowErrors[i].salesFreehold}</span>
+                                    )}
+                                  </div>
+                                </td>
+                              )}
+
+                              {/* REMORTGAGE */}
+                              {formData["service_id"]?.includes(4) && (
+                                <td className="px-3 py-2">
+                                  <div className="flex flex-col">
+                                    <input
+                                      type="text"
+                                      placeholder="Remortgage"
+                                      className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
+                                      onChange={(e) =>
+                                        handlePriceChange(numIndex, i, "remortgage", e.target.value)
+                                      }
+                                    />
+
+                                    {rowErrors[i]?.remortgage && (
+                                      <span className="text-red-500 text-xs">{rowErrors[i].remortgage}</span>
+                                    )}
+                                  </div>
+                                </td>
+                              )}
+
+                              {/* ADD ROW BUTTON */}
+                              <td className="px-3 py-2 text-center">
+                                <button
+                                  className="text-green-500 tooltip"
+                                  onClick={() => handle_addrow(numIndex)}
+                                >
+                                  <Plus />
+                                  <span className="tooltiptext font">Add new row</span>
+                                </button>
+                              </td>
+                            </tr>
+
+                      ))}
+                  </tbody> 
+                </table>
+                </div>
+              </div>
+              )}
+            
+              {numIndex === 2 && (   
+                <div className="transactionblock mb-5">
+                    <div className="bg-gray-50  px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
+                    {item.fees_category}
+                    </div>
+                    {item.sub_categories.map((sub, i) => (
+                        <div key={i}>
+                        <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
+                            {sub.sub_category}
+                        </div>
+                        {transactionFeesError && <p style={{ color: "red" }}>{transactionFeesError}</p>}
+                            <div className="grid  grid-cols-4 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
+                                <div className="text-center">Suplement Type £</div>
+                                <div className="text-center">Fee Amount £</div>
+                                <div className="text-center">Description </div>
+                                <div className="text-center">Action</div>
+                            </div>
+                            { pricingList.find(item => item.fees_category_id === numIndex).price_list.map((row, i) => 
+                            (
+                              <div key={i} className="grid grid-cols-4 gap-3 px-3 py-2">
+
+                              
+                                {!row.isOthers ? (
+                                <select className="border poundtransform border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
+                                onChange={(e) => handlePriceChange(numIndex, i, "type_id", e.target.value)}
+                              value={row.type}
+                            >
+                              <option value="">Select Supplement Type</option>
+
+                            {purchaseFeeTypeList.map((opt,index) => (
+
+                                <option key={opt.id} value={opt.id}>
+                                  {opt.fee_type}
+                                </option>
+                              ))}
+                            </select>
+
+                                ) : (
+                                  <div>
+                                  <input
+                                  id="suplement_type"
+                                    type="text"
+                                    placeholder="Enter other Supplement Type"
+                                    value={row.type}
+                                    onChange={(e) => handlePriceChange(numIndex, i, "type_id", e.target.value)}
+                                    className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
+                                  />
+                                  </div>
+                                )}
+
+                                {/* FEE AMOUNT */}
+                                <input
+                                  
+                                  placeholder="Fee Amount"
+                                  value={row.feeAmount}
+                                  onChange={(e) => handlePriceChange(numIndex, i, "fee_amount", e.target.value)}
+                                  className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
+                                />
+                                
+                                
+
+                                {/* DESCRIPTION */}
+                                <input
+                                  type="text"
+                                  placeholder="Description"
+                                  value={row.description}
+                                  onChange={(e) => handlePriceChange(numIndex, i, "description", e.target.value)}
+                                  className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
+                                />
+
+                                {/* REMOVE BUTTON */}
+                                
+                                {/* ADD Row Button */}
+                                <div className="flex justify-center gap-4">   
+                              
+                                  <button
+                                    className="text-green-500 tooltip"
+                                    onClick={() =>{handle_transaction_sales(numIndex)}}
+                                  >
+                                    <Plus />
+                                              <span className="tooltiptext font">Add new row</span>
+                                  </button>
+                                
+
+                                <button
+                                  className="text-red-600 tooltip"
+                                  onClick={() => {handle_transaction_sales(numIndex)}}
+                                >
+                                  <X />
+                                  <span className="tooltiptext"> Delete current row</span>
+                                </button>
+
+                                </div>
+                              
+                              </div>
+                            )
+
+    )}
+                        </div>
+                    ))}
+                  
+                </div>
+              )}
+              {numIndex === 3 && (   
+                <div className="standarddisblock mb-5">
+                    <div className="bg-gray-50 px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
+                    {item.fees_category}
+                    </div>
+                    {item.sub_categories.map((sub, i) => (
+                        <div key={i}>
+                        <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
+                            {sub.sub_category}
+                        </div>
+                        {disbursementFeesError && <p style={{ color: "red" }}>{disbursementFeesError}</p>}
+                        <div className="grid grid-cols-5 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
+
+                                <div className="text-center">Disbursement Type £</div>
+                                <div className="text-center">Fee Cost £</div>
+                                <div className="text-center">Paid To</div>
+                                <div className="text-center">Transaction Type</div>
+                                <div className="text-center">Action</div>
+
+                        </div>
+                        {pricingList.find(item => item.fees_category_id === numIndex).price_list.map((row, i) => (
+                        <div key={i} className="grid grid-cols-5 gap-3 px-3 py-2">
+          
                             {!row.isOthers ? (
-                            <select className="border poundtransform border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
-                             onChange={(e) => handlePriceChange(numIndex, i, "type_id", e.target.value)}
-                          value={row.type}
-                        >
-                          <option value="">Select Supplement Type</option>
-
-                        {purchaseFeeTypeList.map((opt,index) => (
-
-                            <option key={opt.id} value={opt.id}>
-                              {opt.fee_type}
-                            </option>
-                          ))}
-                        </select>
-
+                                <select
+                                className="poundtransform border border-gray-400 rounded py-0.5 w-auto  text-sm text-left text-black"
+                                onChange={(e) => handlePriceChange(numIndex, i, "type_id", e.target.value)}
+                                value={row.type}
+                                >
+                                <option value="">Select Disbursement</option>
+                                {(salesFeeTypeList || []).map((opt,index) => (
+                                    <option key={opt.id} value={opt.id}>
+                                    {opt.fee_type}
+                                    </option>
+                                ))}
+                                </select>
                             ) : (
-                              <div>
-                              <input
-                              id="suplement_type"
+                                <div>
+                                <input
                                 type="text"
-                                placeholder="Enter other Supplement Type"
+                                placeholder="Enter other suplement"
                                 value={row.type}
                                 onChange={(e) => handlePriceChange(numIndex, i, "type_id", e.target.value)}
-                                className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
-                              />
-                              </div>
+                                className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-gray-900"
+                                />
+                                </div>
                             )}
 
-                            {/* FEE AMOUNT */}
-                            <input
-                              
-                              placeholder="Fee Amount"
-                              value={row.feeAmount}
-                               onChange={(e) => handlePriceChange(numIndex, i, "fee_amount", e.target.value)}
-                              className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
-                            />
-                            
-                            
+                                {/* COST */}
+                                <input
+                                type="text"
+                                placeholder="Fee Cost"
+                                value={row.feeCost}
+                                onChange={(e) => handlePriceChange(numIndex, i, "fee_amount", e.target.value)}
+                                className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black "
+                                />
 
-                            {/* DESCRIPTION */}
-                            <input
-                              type="text"
-                              placeholder="Description"
-                              value={row.description}
-                              onChange={(e) => handlePriceChange(numIndex, i, "description", e.target.value)}
-                              className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
-                            />
-
-                            {/* REMOVE BUTTON */}
-                            
-                            {/* ADD Row Button */}
-                            <div className="flex justify-center gap-4">   
-                           
-                              <button
-                                className="text-green-500 tooltip"
-                                onClick={() =>{handle_transaction_sales(numIndex)}}
-                              >
-                                <Plus />
-                                          <span className="tooltiptext font">Add new row</span>
-                              </button>
-                            
-
-                            <button
-                              className="text-red-600 tooltip"
-                              onClick={() => {handle_transaction_sales(numIndex)}}
-                            >
-                              <X />
-                              <span className="tooltiptext"> Delete current row</span>
-                            </button>
-
-                            </div>
-                          
-                          </div>
-                        )
-
-)}
-                    </div>
-                ))}
-               
-            </div>
-          )}
-          {numIndex === 3 && (   
-            <div className="standarddisblock mb-5">
-                <div className="bg-gray-50 px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
-                {item.fees_category}
-                </div>
-                {item.sub_categories.map((sub, i) => (
-                    <div key={i}>
-                    <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
-                        {sub.sub_category}
-                    </div>
-                     {disbursementFeesError && <p style={{ color: "red" }}>{disbursementFeesError}</p>}
-                    <div className="grid grid-cols-5 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
-
-                            <div className="text-center">Disbursement Type £</div>
-                            <div className="text-center">Fee Cost £</div>
-                            <div className="text-center">Paid To</div>
-                            <div className="text-center">Transaction Type</div>
-                            <div className="text-center">Action</div>
-
-                    </div>
-                     {pricingList.find(item => item.fees_category_id === numIndex).price_list.map((row, i) => (
-                    <div key={i} className="grid grid-cols-5 gap-3 px-3 py-2">
-      
-                        {!row.isOthers ? (
-                            <select
-                            className="poundtransform border border-gray-400 rounded py-0.5 w-auto  text-sm text-left text-black"
-                            onChange={(e) => handlePriceChange(numIndex, i, "type_id", e.target.value)}
-                            value={row.type}
-                            >
-                            <option value="">Select Disbursement</option>
-                            {(salesFeeTypeList || []).map((opt,index) => (
-                                <option key={opt.id} value={opt.id}>
-                                {opt.fee_type}
-                                </option>
-                            ))}
-                            </select>
-                        ) : (
-                            <div>
-                            <input
-                            type="text"
-                            placeholder="Enter other suplement"
-                            value={row.type}
-                            onChange={(e) => handlePriceChange(numIndex, i, "type_id", e.target.value)}
-                            className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-gray-900"
-                            />
-                            </div>
-                        )}
-
-                            {/* COST */}
-                            <input
-                            type="text"
-                            placeholder="Fee Cost"
-                            value={row.feeCost}
-                            onChange={(e) => handlePriceChange(numIndex, i, "fee_amount", e.target.value)}
-                            className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-black"
-                            />
-
-                            {/* PAID TO */}
-                            <select
-                            className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black  placeholder:text-gray-800"
-                            value={row.paidTo}
-                            onChange={(e) => handlePriceChange(numIndex, i, "paid_to", e.target.value)}
-                         >
-                            <option value="" className="text-gray-900">Select Paid To</option>
-                            {paidToOptions.map((opt) => (
-                            <option key={opt.value} value={opt.value} className="text-gray-900">
-                                {opt.label}
-                            </option>
-                            ))}
-                            </select>
-
-                            {/* TRANSACTION TYPE */}
+                                {/* PAID TO */}
                                 <select
-                                className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black  placeholder:text-black"
-                                value={row.transactionType}
+                                className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black  placeholder:text-gray-800"
+                                value={row.paidTo}
                                 onChange={(e) => handlePriceChange(numIndex, i, "paid_to", e.target.value)}
-                                >
-                                <option value="">Select Type</option>
-                                {transactionOptions.map((opt) => (
-                                <option key={opt.value} value={opt.value}>
-                                    {opt.label}
-                                </option>
-                                ))}
-                                </select>
-
-                                {/* ACTION BUTTONS */}
-                                <div className="flex justify-center gap-4">
-                                    {/* ADD ROW – only last row */}
-                                    {i === disbursementRows.length - 1 && (
-                                    <button
-                                        className="text-green-600 tooltip"
-                                        onClick={() => handle_standard_disbursement(numIndex)}
-                                    >
-                                        <Plus />
-                                                        <span className="tooltiptext font">Add new row-{numIndex}</span>
-
-                                    </button>
-                                    )}
-
-                                    {/* REMOVE */}
-                                    <button
-                                    className="text-red-600 tooltip"
-                                    onClick={() => {
-                                        const updated = disbursementRows.filter(
-                                        (_, idx) => idx !== i
-                                        );
-                                        setDisbursementRows(updated);
-                                    }}
-                                    >
-                                    <X />
-                                            <span className="tooltiptext"> Delete current row</span>
-
-                                    </button>
-                                </div>
-                            </div>
-  ))}
-                
-                    </div>
-                ))}
-               
-            </div>
-          )}
-          {numIndex === 4 && (   
-            <div className="standarddisblock mb-5">
-                <div className="bg-gray-50 px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
-                {item.fees_category}
-                </div>
-                {item.sub_categories.map((sub, i) => (
-                    <div>
-                    <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
-                        {sub.sub_category}
-                    </div>
-                     {leasedisbursementFeesError && <p style={{ color: "red" }}>{leasedisbursementFeesError}</p>}
-                    <div className="grid grid-cols-5 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
-
-                            <div className="text-center">Leasehold Service</div>
-                            <div className="text-center">Fee Type</div>
-                            <div className="text-center">Amount £</div>
-                            <div className="text-center">Paid To</div>
-                            <div className="text-center">Action</div>
-
-                    </div>
-                     {pricingList.find(item => item.fees_category_id === numIndex).price_list.map((row, i) => (
-                    <div key={i} className="grid grid-cols-5 gap-3 px-3 py-2">
-      
-                        {!row.isOthers ? (
-                            <select
-                            className="poundtransform border border-gray-400 rounded py-0.5 w-auto  text-sm text-left text-black"
-                           onChange={(e) => handlePriceChange(numIndex, i, "type_id", e.target.value)}
-                            value={row.type}
                             >
-                            <option value="">Select Disbursement</option>
-                            {(standardDisbursementList || []).map((opt,index) => (
-                                <option key={opt.id} value={opt.id}>
-                                {opt.fee_type}
-                                </option>
-                            ))}
-                            </select>
-                        ) : (
-                            <div>
-                            <input
-                            type="text"
-                            placeholder="Enter other suplement"
-                            value={row.type}
-                            onChange={(e) => handlePriceChange(numIndex, i, "type_id", e.target.value)}
-                            className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-gray-900"
-                            />
-                            </div>
-                        )}
-
-                            {/* COST */}
-                            <input
-                            type="text"
-                            placeholder="Fee Cost"
-                            value={row.feeCost}
-                           onChange={(e) => handlePriceChange(numIndex, i, "fee_amount", e.target.value)}
-                            className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-black"
-                            />
-
-                            {/* PAID TO */}
-                            <select
-                            className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black  placeholder:text-gray-800"
-                            value={row.paidTo}
-                           onChange={(e) => handlePriceChange(numIndex, i, "paid_to", e.target.value)}
-                         >
-                            <option value="" className="text-gray-900">Select Paid To</option>
-                            {paidToOptions.map((opt) => (
-                            <option key={opt.value} value={opt.value} className="text-gray-900">
-                                {opt.label}
-                            </option>
-                            ))}
-                            </select>
-
-                            {/* TRANSACTION TYPE */}
-                                <select
-                                className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black  placeholder:text-black"
-                                value={row.transactionType}
-                               onChange={(e) => handlePriceChange(numIndex, i, "paid_to", e.target.value)}
-                                >
-                                <option value="">Select Type</option>
-                                {transactionOptions.map((opt) => (
-                                <option key={opt.value} value={opt.value}>
+                                <option value="" className="text-gray-900">Select Paid To</option>
+                                {paidToOptions.map((opt) => (
+                                <option key={opt.value} value={opt.value} className="text-gray-900">
                                     {opt.label}
                                 </option>
                                 ))}
                                 </select>
 
+                                {/* TRANSACTION TYPE */}
+                                    <select
+                                    className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black  "
+                                    value={row.transactionType}
+                                    onChange={(e) => handlePriceChange(numIndex, i, "paid_to", e.target.value)}
+                                    >
+                                    <option value="">Select Type</option>
+                                    {transactionOptions.map((opt) => (
+                                    <option key={opt.value} value={opt.value}>
+                                        {opt.label}
+                                    </option>
+                                    ))}
+                                    </select>
+
+                                    {/* ACTION BUTTONS */}
+                                    <div className="flex justify-center gap-4">
+                                        {/* ADD ROW – only last row */}
+                                        {i === disbursementRows.length - 1 && (
+                                        <button
+                                            className="text-green-600 tooltip"
+                                            onClick={() => handle_standard_disbursement(numIndex)}
+                                        >
+                                            <Plus />
+                                                            <span className="tooltiptext font">Add new row-{numIndex}</span>
+
+                                        </button>
+                                        )}
+
+                                        {/* REMOVE */}
+                                        <button
+                                        className="text-red-600 tooltip"
+                                        onClick={() => {
+                                            const updated = disbursementRows.filter(
+                                            (_, idx) => idx !== i
+                                            );
+                                            setDisbursementRows(updated);
+                                        }}
+                                        >
+                                        <X />
+                                                <span className="tooltiptext"> Delete current row</span>
+
+                                        </button>
+                                    </div>
+                                </div>
+      ))}
+                    
+                        </div>
+                    ))}
+                  
+                </div>
+              )}
+              {numIndex === 4 && (   
+              <div className="standarddisblock mb-5">
+                {/* MAIN CATEGORY HEADER */}
+                <div className="bg-gray-50 px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
+                  {item.fees_category}
+                </div>
+
+                {item.sub_categories.map((sub, sIndex) => (
+                  <div key={sIndex}>
+                    {/* SUB CATEGORY HEADER */}
+                    <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
+                      {sub.sub_category}
+                    </div>
+
+                    {leasedisbursementFeesError && (
+                      <p className="text-red-500 px-3">{leasedisbursementFeesError}</p>
+                    )}
+
+                    {/* RESPONSIVE WRAPPER */}
+                    <div className=" w-full">
+                      <table className="min-w-max w-full text-xs font-semibold text-gray-600 ">
+                        <thead className="bg-gray-100">
+                          <tr className="">
+                            <th className="px-3 py-2 text-center">Leasehold Service</th>
+                            <th className="px-3 py-2 text-center">Fee Type</th>
+                            <th className="px-3 py-2 text-center">Amount £</th>
+                            <th className="px-3 py-2 text-center">Paid To</th>
+                            <th className="px-3 py-2 text-center">Action</th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          {pricingList
+                            .find((x) => x.fees_category_id === numIndex)
+                            .price_list.map((row, i) => (
+                              <tr key={i} className="border-b">
+
+                                {/* LEASEHOLD SERVICE SELECT */}
+                                <td className="px-3 py-2 text-center">
+                                  {!row.isOthers ? (
+                                    <select
+                                      className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
+                                      value={row.type}
+                                      onChange={(e) =>
+                                        handlePriceChange(numIndex, i, "type_id", e.target.value)
+                                      }
+                                    >
+                                      <option value="">Select Disbursement</option>
+                                      {(standardDisbursementList || []).map((opt) => (
+                                        <option key={opt.id} value={opt.id}>
+                                          {opt.fee_type}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  ) : (
+                                    <input
+                                      type="text"
+                                      placeholder="Enter other supplement"
+                                      value={row.type}
+                                      onChange={(e) =>
+                                        handlePriceChange(numIndex, i, "type_id", e.target.value)
+                                      }
+                                      className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
+                                    />
+                                  )}
+                                </td>
+
+                                {/* COST */}
+                                <td className="px-3 py-2 text-center">
+                                  <input
+                                    type="text"
+                                    placeholder="Fee Cost"
+                                    value={row.feeCost}
+                                    onChange={(e) =>
+                                      handlePriceChange(numIndex, i, "fee_amount", e.target.value)
+                                    }
+                                    className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
+                                  />
+                                </td>
+
+                                {/* PAID TO */}
+                                <td className="px-3 py-2 text-center">
+                                  <select
+                                    className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
+                                    value={row.paidTo}
+                                    onChange={(e) =>
+                                      handlePriceChange(numIndex, i, "paid_to", e.target.value)
+                                    }
+                                  >
+                                    <option value="">Select Paid To</option>
+                                    {paidToOptions.map((opt) => (
+                                      <option key={opt.value} value={opt.value}>
+                                        {opt.label}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </td>
+
+                                {/* TRANSACTION TYPE */}
+                                <td className="px-3 py-2 text-center">
+                                  <select
+                                    className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
+                                    value={row.transactionType}
+                                    onChange={(e) =>
+                                      handlePriceChange(numIndex, i, "transactionType", e.target.value)
+                                    }
+                                  >
+                                    <option value="">Select Type</option>
+                                    {transactionOptions.map((opt) => (
+                                      <option key={opt.value} value={opt.value}>
+                                        {opt.label}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </td>
+
                                 {/* ACTION BUTTONS */}
-                                <div className="flex justify-center gap-4">
-                                    {/* ADD ROW – only last row */}
+                                <td className="px-3 py-2 text-center">
+                                  <div className="flex justify-center gap-4">
+                                    
+                                    {/* ADD ROW - LAST ROW ONLY */}
                                     {i === disbursementRows.length - 1 && (
-                                    <button
+                                      <button
                                         className="text-green-600 tooltip"
                                         onClick={() => handle_leasehold_disbursement(numIndex)}
-                                    >
+                                      >
                                         <Plus />
-                                                        <span className="tooltiptext font">Add new row</span>
-
-                                    </button>
+                                        <span className="tooltiptext font">Add new row</span>
+                                      </button>
                                     )}
 
-                                    {/* REMOVE */}
+                                    {/* DELETE ROW */}
                                     <button
-                                    className="text-red-600 tooltip"
-                                    onClick={() => {
+                                      className="text-red-600 tooltip"
+                                      onClick={() => {
                                         const updated = disbursementRows.filter(
-                                        (_, idx) => idx !== i
+                                          (_, idx) => idx !== i
                                         );
                                         setDisbursementRows(updated);
-                                    }}
+                                      }}
                                     >
-                                    <X />
-                                            <span className="tooltiptext"> Delete current row</span>
-
+                                      <X />
+                                      <span className="tooltiptext">Delete current row</span>
                                     </button>
-                                </div>
-                            </div>
-  ))}
-                
-                    </div>
-                ))}
-               
-            </div>
-          )}   
-          {numIndex === 5 && (   
-            <div className="addtional mb-5">
-                <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
-                {item.fees_category}
-                </div>
-                
-                    <div>
-                    {additionalServiceError && <p style={{ color: "red" }}>{additionalServiceError}</p>}
-                    <div className="grid grid-cols-5 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
+                                  </div>
+                                </td>
 
-                            <div className="text-center">Select Service</div>
-                            
-                            <div className="text-center">Amount £</div>
-                           
-                            <div className="text-center">Action</div>
-
-                    </div>
-                     {pricingList.find(item => item.fees_category_id === numIndex).price_list.map((row, i) => (
-                    <div key={i} className="grid grid-cols-5 gap-3 px-3 py-2">
-      
-                       
-                            <select
-                            className="poundtransform border border-gray-400 rounded py-0.5 w-auto  text-sm text-left text-black"
-                           onChange={(e) => handlePriceChange(numIndex, i, "type_id", e.target.value)}
-                            value={row.type}
-                            >
-                            <option value="">Select Addtional Service</option>
-                            {(additionalServiceList || []).map((opt,index) => (
-                                <option key={opt.id} value={opt.id}>
-                                {opt.fee_type}
-                                </option>
+                              </tr>
                             ))}
-                            </select>
-                        
-
-                            {/* COST */}
-                            <input
-                            type="text"
-                            placeholder="Fee Cost"
-                            value={row.feeCost}
-                            onChange={(e) => handlePriceChange(numIndex, i, "fee_amount", e.target.value)}
-                            className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-black"
-                            />
-
-
-                                {/* ACTION BUTTONS */}
-                                <div className="flex justify-center gap-4">
-                                    {/* ADD ROW – only last row */}
-                                    {i === disbursementRows.length - 1 && (
-                                    <button
-                                        className="text-green-600 tooltip"
-                                        onClick={() =>  handle_additional_service(numIndex)}
-                                    >
-                                        <Plus />
-                                                        <span className="tooltiptext font">Add new row</span>
-
-                                    </button>
-                                    )}
-
-                                    {/* REMOVE */}
-                                    <button
-                                    className="text-red-600 tooltip"
-                                    onClick={() => {
-                                        const updated = disbursementRows.filter(
-                                        (_, idx) => idx !== i
-                                        );
-                                        setDisbursementRows(updated);
-                                    }}
-                                    >
-                                    <X />
-                                            <span className="tooltiptext"> Delete current row</span>
-
-                                    </button>
-                                </div>
-                            </div>
-                    ))}
-                
+                        </tbody>
+                      </table>
                     </div>
-                
-               
-            </div>
-          )}                     
-      </div>  
-        
-    )
-    
-    })
-  }
+                  </div>
+                ))}
+              </div>
+
+              )}   
+              {numIndex === 5 && (   
+               <div className="addtional mb-5">
+  <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
+    {item.fees_category}
   </div>
 
+  {additionalServiceError && (
+    <p className="text-red-500 px-3 mt-1">{additionalServiceError}</p>
+  )}
+
+  {/* TABLE WRAPPER (for responsive scrolling) */}
+  <div className="overflow-x-auto w-full">
+    <table className="min-w-max w-full text-xs font-semibold text-gray-600 ">
+      <thead className="bg-gray-100">
+        <tr className="">
+          <th className="px-3 py-2 text-center">Select Service</th>
+          <th className="px-3 py-2 text-center">Amount £</th>
+          <th className="px-3 py-2 text-center">Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {pricingList
+          .find((x) => x.fees_category_id === numIndex)
+          .price_list.map((row, i) => (
+            <tr key={i} className="border-b">
+              
+              {/* SELECT SERVICE */}
+              <td className="px-3 py-2 text-center">
+                <select
+                  className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
+                  value={row.type}
+                  onChange={(e) =>
+                    handlePriceChange(numIndex, i, "type_id", e.target.value)
+                  }
+                >
+                  <option value="">Select Additional Service</option>
+                  {(additionalServiceList || []).map((opt) => (
+                    <option key={opt.id} value={opt.id}>
+                      {opt.fee_type}
+                    </option>
+                  ))}
+                </select>
+              </td>
+
+              {/* FEE COST */}
+              <td className="px-3 py-2 text-center">
+                <input
+                  type="text"
+                  placeholder="Fee Cost"
+                  value={row.feeCost}
+                  onChange={(e) =>
+                    handlePriceChange(numIndex, i, "fee_amount", e.target.value)
+                  }
+                  className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-black "
+                />
+              </td>
+
+              {/* ACTION BUTTONS */}
+              <td className="px-3 py-2 text-center">
+                <div className="flex justify-center gap-3">
+
+                  {/* ADD ROW - only last row */}
+                  {i === disbursementRows.length - 1 && (
+                    <button
+                      className="text-green-600 tooltip"
+                      onClick={() => handle_additional_service(numIndex)}
+                    >
+                      <Plus />
+                      <span className="tooltiptext font">Add new row</span>
+                    </button>
+                  )}
+
+                  {/* DELETE ROW */}
+                  <button
+                    className="text-red-600 tooltip"
+                    onClick={() => {
+                      const updated = disbursementRows.filter(
+                        (_, idx) => idx !== i
+                      );
+                      setDisbursementRows(updated);
+                    }}
+                  >
+                    <X />
+                    <span className="tooltiptext">Delete current row</span>
+                  </button>
+                </div>
+              </td>
+
+            </tr>
+          ))}
+      </tbody>
+    </table>
+  </div>
+</div>
 
 
+              )}                     
+          </div>  
+            
+        )
+        
+        })
+    }
+              <h1 className="bg-gray-50 px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
+                  Share your Notes Details
+                </h1>
+              <div className="border border-gray-300 rounded-lg overflow-hidden">
+                    <ReactQuill theme="snow"  value={notesData}  onChange={setnotesData}  modules={modules} formats={formats}
+                      className="h-[150px] text-black"
+                    />
+                  </div>
+           
+  </div>
+ </div>
 
-    </div>
-  
 
   {/* ✅ Footer Buttons */}
  
@@ -1219,9 +1366,65 @@ const formatPound = (value) => {
       className="font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full bg-[#1E5C3B] text-[#EDF4EF]"
     onClick={handleSubmit}
     >
-      Continue to Notes Section →
+      { loading && (
+    <div className="h-5 w-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+  )}
+  {loading ? "Saving..." : "Register"}
     </button>
   </div>
+  {showSuccess && (
+  <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn">
+    <div className="bg-white rounded-2xl p-8 w-[90%] max-w-md text-center shadow-2xl relative animate-slideUp">
+
+      {/* SUCCESS ICON */}
+      <div className="mx-auto w-20 h-20 bg-green-100 text-green-700 rounded-full flex items-center justify-center shadow-md">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-12 w-12"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+
+      <h2 className="text-2xl font-bold text-green-700 mt-5">
+        Registration Successful 🎉
+      </h2>
+
+      <p className="mt-3 text-gray-600 text-sm leading-relaxed">
+        Your company details have been securely saved.
+      </p>
+
+      {/* EXTRA MESSAGE */}
+      <div className="mt-4 bg-green-50 text-green-700 text-xs py-2 rounded-lg px-3 border border-green-100">
+        Thank you for completing your setup. You can update your company info anytime.
+      </div>
+
+      {/* CTA BUTTON */}
+      <button
+        onClick={() => {
+          setShowSuccess(false);
+          router.push("/");
+        }}
+        className="mt-6 w-full bg-gradient-to-r from-green-700 to-green-600 text-white py-2.5 rounded-lg font-semibold shadow-md hover:shadow-lg hover:scale-[1.02] transition-all"
+      >
+        Continue →
+      </button>
+
+      {/* CLOSE BUTTON */}
+      <button
+        onClick={() => setShowSuccess(false)}
+        className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition"
+      >
+        ✕
+      </button>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }

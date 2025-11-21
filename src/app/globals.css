@@ -165,6 +165,10 @@ font-size: small;
     /* padding: 1%; */
     background: #fff;
 }
+.other-page
+{
+  cursor: pointer;
+}
 
 /* Price / currency input styling for fields that show formatted GBP values */
 .poundtransform {

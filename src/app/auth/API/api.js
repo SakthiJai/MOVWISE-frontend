@@ -23,6 +23,7 @@ export const API_ENDPOINTS = {
     region:`${BASE_URL}/regions`,
     services:`${BASE_URL}/services`,
     pricing:`${BASE_URL}/pricing`,
+    insertcompanydetail:`${BASE_URL}/insertcompanydetail`
 
 
 }
