@@ -7,6 +7,7 @@ import Navbar from '../../parts/navbar/page';
 import Link from 'next/link';
 import { Facebook, Twitter, Linkedin, Instagram,Tag } from "lucide-react";
 import { useRouter } from "next/navigation";
+import React, { useState , useEffect } from 'react'
 import {
   Home,
   ShoppingBag,
@@ -25,6 +26,7 @@ import {
 } from "lucide-react";
 import { API_BASE_URL } from "../.././constants/config";
 import { FaSalesforce } from 'react-icons/fa';
+import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
 
 // --- Utility Components for Icons and Buttons (simplified) ---
 const iconColors = {
@@ -77,42 +79,50 @@ const PrimaryCTA = ({ text }) => (
 );
 
 // --- Main Page Component ---
-export default function HomePage() {
+export default  function HomePage() {
     const router = useRouter();
 
   const options = [
     {
+  label: "Sales",
+  icon: <Tag className="w-10 h-10 text-[#256041]" />,
+  desc: "Quick and easy property sales.",
+   "service_id":3
+},
+    {
       label: "Purchase",
       icon: <Home className="w-10 h-10 text-[#256041]" />,
-      desc: "Buying your dream property",
+      desc: "Buying your dream property -1",
+      "service_id":2
     },
   
     {
       label: "Sales & Purchase",
       icon: <Repeat className="w-10 h-10 text-[#256041]" />,
       desc: "Buy and sell in one smooth move",
+      "service_id":1
     },
     {
       label: "Remortgage",
       icon: <Landmark className="w-10 h-10 text-[#256041]" />,
       desc: "Refinancing for better rates",
+      "service_id":4
     },
     {
       label: "Transfer of Equity",
       icon: <Building2 className="w-10 h-10 text-[#256041]" />,
       desc: "Changing ownership easily",
+      "service_id":5
     },
-    {
-  label: "Sales",
-  icon: <Tag className="w-10 h-10 text-[#256041]" />,
-  desc: "Quick and easy property sales.",
-}
+    
 
     
   ];
-
-  const handleSelect = (type) => {
-    router.push(`/getquote/${type.replace(/\s+/g, "")}`);
+  const [services, setservices] = useState([]);
+  const data =  getData(API_ENDPOINTS.servicelist);
+  const handleSelect = (type,id) => {
+    localStorage.setItem("service",id);
+    router.push(`/getquote/${type.replace(/\s+/g, "").toLowerCase()}`);
   };
   return (
     <div className='font'>
@@ -182,7 +192,7 @@ export default function HomePage() {
               </div>
 
               <button
-                onClick={() => handleSelect(opt.label)}
+                onClick={() => handleSelect(opt.label,opt.service_id)}
                 className="mt-6 flex items-center justify-center gap-3 bg-[#256041] hover:bg-[#1B4E34] text-white font-semibold py-2.5 px-5 rounded-full text-sm transition-all"
               >
                 Get Quote

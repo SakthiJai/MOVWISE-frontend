@@ -19,7 +19,7 @@ const GetQuotePage = () => {
     {
       label: "Purchase",
       icon: <Home className="w-10 h-10 text-[#256041]" />,
-      desc: "Buying your dream property",
+      desc: "Buying your dream property -2",
     },
     {
       label: "Sales",

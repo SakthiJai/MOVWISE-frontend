@@ -23,8 +23,9 @@ export const API_ENDPOINTS = {
     services:`${BASE_URL}/services`,
     pricing:`${BASE_URL}/pricing`,
    // insertcompanydetail:`${BASE_URL}/insertcompanydetail`,
-quotesfilter:`${BASE_URL}/quotes/QTN-94857362541236547896325478963254`,
-     instruct:`${BASE_URL}/quote-mail`,
+    quotesfilter:`${BASE_URL}/quotes/QTN-94857362541236547896325478963254`,
+    instruct:`${BASE_URL}/quote-mail`,
+    servicelist:`${BASE_URL}/service`,
 }
   // add more endpoints here
 
