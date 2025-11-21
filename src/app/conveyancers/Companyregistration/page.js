@@ -156,7 +156,7 @@ const handleChangeLang = (selectedOptions = []) => {
   // If called from input event
 
   if((e.target && e.target!=undefined)){
-
+console.log(e.target);
     let { name, value } = e.target;
       setErrors((prev) => ({
     ...prev,
@@ -273,7 +273,7 @@ console.log(formData)
     e.preventDefault();
     if (validate()) {
       console.log("✅ Valid form:", formData);
-      alert("Form submitted successfully!");
+      alert("");
       // router.push("/next-page"); // if you want navigation
     }
   };

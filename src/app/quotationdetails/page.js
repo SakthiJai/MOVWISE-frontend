@@ -188,7 +188,7 @@ const handleSubmit = async () => {
 
     //console.loglog("API Response:", response);
 
-    if (response.ok) {
+    if (response.code==200) {
       setShowSuccess(true);   // show success modal
     } else {
       alert(`Failed: ${response.data?.message || "Server error"}`);

@@ -12,7 +12,6 @@ export const API_ENDPOINTS = {
     remortages:`${BASE_URL}/remortgages`,
     sales:`${BASE_URL}/sales`,
     createQuote:`${BASE_URL}/create-quote`,
-    service:`${BASE_URL}/create-services`,
     quotesfilter:`${BASE_URL}/quotes/filter`,
     compareQuotes:`${BASE_URL}/compare-quotes`,
     languages:`${BASE_URL}/languages`,
@@ -23,9 +22,9 @@ export const API_ENDPOINTS = {
     region:`${BASE_URL}/regions`,
     services:`${BASE_URL}/services`,
     pricing:`${BASE_URL}/pricing`,
-    insertcompanydetail:`${BASE_URL}/insertcompanydetail`
-
-
+   // insertcompanydetail:`${BASE_URL}/insertcompanydetail`,
+quotesfilter:`${BASE_URL}/quotes/QTN-94857362541236547896325478963254`,
+     instruct:`${BASE_URL}/quote-mail`,
 }
   // add more endpoints here
 

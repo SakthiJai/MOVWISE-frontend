@@ -14,14 +14,14 @@ import {
 
 export default function Partnerspagecard() {
     const partners = [
-        { id: 1, name: 'Emily Carter', commission: '€1,500.00', revenue: '€15,000.00', users: 450 },
-        { id: 2, name: 'Michael Johnson', commission: '€1,500.00', revenue: '€15,000.00', users: 450 },
-        { id: 3, name: 'Jessica Lee', commission: '€1,500.00', revenue: '€15,000.00', users: 450 },
-        { id: 4, name: 'David Smith', commission: '€1,500.00', revenue: '€15,000.00', users: 450 },
-        { id: 5, name: 'Sophia Brown', commission: '€1,500.00', revenue: '€15,000.00', users: 450 },
-        { id: 6, name: 'James Wilson', commission: '€1,500.00', revenue: '€15,000.00', users: 450 },
-        { id: 7, name: 'Olivia Miller', commission: '€1,500.00', revenue: '€15,000.00', users: 450 },
-        { id: 8, name: 'William Davis', commission: '€1,500.00', revenue: '€15,000.00', users: 450 },
+        { id: 1, name: 'Emily Carter', commission: '£1,500.00', revenue: '£15,000.00', users: 450 },
+        { id: 2, name: 'Michael Johnson', commission: '£1,500.00', revenue: '£15,000.00', users: 450 },
+        { id: 3, name: 'Jessica Lee', commission: '£1,500.00', revenue: '£15,000.00', users: 450 },
+        { id: 4, name: 'David Smith', commission: '£1,500.00', revenue: '£15,000.00', users: 450 },
+        { id: 5, name: 'Sophia Brown', commission: '£1,500.00', revenue: '£15,000.00', users: 450 },
+        { id: 6, name: 'James Wilson', commission: '£1,500.00', revenue: '£15,000.00', users: 450 },
+        { id: 7, name: 'Olivia Miller', commission: '£1,500.00', revenue: '£15,000.00', users: 450 },
+        { id: 8, name: 'William Davis', commission: '£1,500.00', revenue: '£15,000.00', users: 450 },
       ];
     
       return (

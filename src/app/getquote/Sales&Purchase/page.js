@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../../parts/navbar/page";
 import { Check, MapPin,ChevronDown } from "lucide-react";
 import { FaBuilding, FaHome, FaWarehouse } from "react-icons/fa";
@@ -12,6 +12,13 @@ const Link = ({ href, children, className }) => (
     {children}
   </a>
 );
+
+
+const useRouter = () => ({
+  back: () => console.log("Navigation: Going back..."),
+});
+
+export default function App() {
 useEffect(() => {
   const storedData = localStorage.getItem("getquote");
 
@@ -19,13 +26,6 @@ useEffect(() => {
     setFormData(JSON.parse(storedData));
   }
 }, []);
-
-const useRouter = () => ({
-  back: () => console.log("Navigation: Going back..."),
-});
-
-export default function App() {
-
    const [formData, setFormData] = useState({
     address: "",
     price: "",
@@ -1040,6 +1040,7 @@ console.log(language);
       <Select
         options={options_l}
         isMulti
+          instanceId="lenders-select"
         value={selectedLenders}
         onChange={handleChange_l}
         placeholder="Choose lenders..."

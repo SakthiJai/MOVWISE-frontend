@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../../parts/navbar/page";
 import { Check, MapPin,ChevronDown } from "lucide-react";
 import { FaBuilding, FaHome, FaWarehouse } from "react-icons/fa";
@@ -143,7 +143,7 @@ if(!formData.buy_to_let){
     // if no errors, submit
     if (Object.keys(newErrors).length === 0) {
       console.log("✅ Form submitted:", formData);
-      alert("Form submitted successfully!");
+      alert("");
           setModalopen(true)
 
     }

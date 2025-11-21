@@ -5,10 +5,12 @@ import { RiArrowDropDownLine } from "react-icons/ri";
 import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { API_BASE_URL } from "../.././constants/config";
 import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
-import { Check } from "lucide-react";
+import Swal from "sweetalert2";
+import {formatGBP}from "../utility/poundconverter"
 
+import { Check } from "lucide-react";
+import { Rating } from "react-simple-star-rating";
 
 
 
@@ -25,7 +27,9 @@ const staticQuotesData = [
     category: "rateofstampduty",
     quote_price: "250.00",
     property_value: 250,
-    languages: [1]
+    suplement_fees:100,
+    languages: [1],
+    starpoints:"Instruct us online in under two minutesNo move, no legal fee GUARANTEEDTrack the progress of your case through eWay"
   },
   {
     company_id: 3,
@@ -39,7 +43,9 @@ const staticQuotesData = [
     category: "rateofstampduty",
     quote_price: "300.00",
     property_value: 300,
-    languages: [1]
+    languages: [1],
+   starpoints:"Instruct us online in under two minutesNo move, no legal fee GUARANTEEDTrack the progress of your case through eWay"
+
   }
   // Add more static objects as needed
 ];
@@ -48,6 +54,11 @@ export default function Comparequotes() {
 
   // State to hold companies data (initialized with static data)
   const [quotesData, setQuotesData] = useState(staticQuotesData);
+
+  const [companydata,setcompanydata]=useState();
+
+  const[ref,setref]=useState()
+  
 
   // Track which card dropdown is open (by quote_id)
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
@@ -60,7 +71,14 @@ export default function Comparequotes() {
   }
 
   // On instruct button, show popup modal with message
-  function handleInstruct(companyName) {
+  function handleInstruct(companyName,user_id,conveyancer_id,quote_id) {
+    const instructpayload={
+"user_id":user_id,
+"conveyancer_id":conveyancer_id,
+"quote_id":quote_id
+    }
+    console.log(instructpayload)
+    const instruct = postData(API_ENDPOINTS.instruct,instructpayload)
     setPopupData({ visible: true, companyName });
   }
 
@@ -80,15 +98,18 @@ useEffect(() => {
   const data = localStorage.getItem("getquote");
 
   if (data) {
-    const parsedData = JSON.parse(data); // ✅ convert string → object
+    const parsedData = JSON.parse(data); 
     qutesdata(parsedData);
   }
 
   async function qutesdata(formData) {
     try {
-      const response = await postData(API_ENDPOINTS.service, formData);
-      console.log("✅ Remortgage API Response:", response.data.id);
-      const propety_id = response.data.id;
+      const response = await postData(API_ENDPOINTS.services, formData);
+            console.log("✅ Remortgage API Response:", response.service.quote_ref_number);
+            setref( response.service.quote_ref_number);
+
+      console.log("✅ Remortgage API Response:", response.data);
+      const propety_id = response.data;
       console.log("property_id",propety_id);//property_id
       
      const userid = formData.user_id || formData["guest_user "]; // note the space
@@ -99,23 +120,28 @@ console.log("User ID or Guest ID:", userid);// user_id
           ? { user_id: formData.user_id }   // logged-in user
           : { guest_user: "guest_user" };   // guest user
 
-        const quoteResponse = await postData(API_ENDPOINTS.quotesfilter, filterPayload);
-        console.log("✅ Quotes Filter API Response:", quoteResponse);
-  const { company_id } = quoteResponse.data;
-   console.log("companyid", company_id);
+      const quoteResponse = await getData(API_ENDPOINTS.quotesfilter);
+console.log("Quotes Filter API Response:", quoteResponse);
+const ref_no = quoteResponse.data[0].quote_ref_number;
+console.log(ref_no);
+setref(ref_no);
 
-  // 4️⃣ Extract the specific fields you want
-    if (quoteResponse.status == true) {
-      const { company_id } = quoteResponse.data;
-   console.log("companyid", company_id);
+// Decode Base64 logo before storing
+const formatted = quoteResponse.data.map((item) => {
+  return {
+    ...item,
+    conveying_details: {
+      ...item.conveying_details,
+      logo: item.conveying_details.logo
+        ? `data:image/png;base64,${item.conveying_details.logo}`
+        : null,
+    },
+  };
+});
 
-      // Return them for later use
-      return { company_id };
-    } else {
-      console.warn("⚠️ No data object found in quoteResponse");
-      return null;
-    }
-      
+setcompanydata(formatted);
+   
+
   }
         
         
@@ -129,6 +155,9 @@ console.log("User ID or Guest ID:", userid);// user_id
     }
   }
 }, []);
+
+
+
 
   return (
     <div className="min-h-screen bg-white antialiased">
@@ -248,26 +277,30 @@ console.log("User ID or Guest ID:", userid);// user_id
                 </p>
 
                 <div className="mt-8 space-y-6">
-                  {quotesData.map((quote) => (
-                    <div key={quote.quote_id} className="font border border-gray-200 rounded-2xl overflow-hidden bg-white w-full">
+                  {companydata?.map((quote,index) => (
+                    <div key={index} className="font border border-gray-200 rounded-2xl overflow-hidden bg-white w-full">
                       {/* Card Header */}
                       <div className="flex flex-col sm:flex-row items-center justify-between bg-red-50 mx-2 mt-2 rounded-2xl p-4 sm:px-8 sm:py-5">
                         <div className="flex items-center gap-5 mb-3 sm:mb-0">
                           {quote.logo ? (
-                            <Image src={quote.logo} alt={quote.company_name} width={80} height={40} className="object-contain" />
+<Image
+  src={quote.conveying_details.logo}
+alt={quote.company_name||"company logo"}
+    // <- controls visible size
+/>
                           ) : (
-                            <Image width={80} height={40} src="https://cdn-icons-png.flaticon.com/512/295/295128.png" alt={quote.company_name} className="object-contain" />
+                            <Image width={35} height={35} src="https://cdn-icons-png.flaticon.com/512/295/295128.png" alt={quote.company_name||"company logo"} className="object-contain" />
                           )}
-                          <h3 className="font-semibold text-base sm:text-lg text-gray-800">{quote.company_name}</h3>
+                          <h3 className="font-semibold text-base sm:text-lg text-gray-800">{quote.conveying_details.company_name}</h3>
                         </div>
                         <div className="flex items-center gap-4">
                           <div className="text-right">
-                            <p className="text-xl font-bold text-gray-900">£{quote.quote_price}</p>
+                            <p className="text-xl font-bold text-gray-900">{formatGBP(quote.total)}</p>
                             <button
                               className="text-green-700 text-sm font-medium hover:underline"
                               onClick={() => toggleDropdown(quote.quote_id)}
                             >
-                              {dropdownOpenId === quote.quote_id ? <u>Hide Price Breakdown</u> : <u>Price Breakdown</u>}
+                              {dropdownOpenId === quote.quote_id ? <u> Price Breakdown</u> : <u>Price Breakdown</u>}
                             </button>
                           </div>
                           <div
@@ -288,67 +321,89 @@ console.log("User ID or Guest ID:", userid);// user_id
                           <div className="grid grid-cols-1 lg:grid-cols-3 items-start gap-6 lg:gap-10">
                             {/* Left: Reviews - Static placeholder */}
                             <div className="flex flex-col gap-2">
-                              <div className="flex items-center gap-1 text-yellow-400">⭐⭐⭐⭐⭐</div>
+                              <div className="flex items-center gap-1  text-yellow-400"><div className="flex items-center text-green-500 text-xs">
+  <Rating
+    initialValue={5}
+    readonly
+    size={20}
+    className="testing rating-style"
+  />
+</div></div>
                               <p className="text-sm">
-                                <span className="font-bold text-[#4A7C59]">4.4 out of 5</span> <span className='text-black'>(356 reviews)</span>
+                                <span className="font-bold text-[#4A7C59]">{quote.conveying_details.rating} out of 5</span> <span className='text-black'>(356 reviews)</span>
                               </p>
-                              <p className="text-xs text-[#1B1D21] font-medium">Reviews on the web</p>
-                              <div className="flex items-center gap-2 text-xs mt-1">
-                                <Link href="#" className="text-gray-800 underline">TrustPilot</Link>
-                                <span className="text-gray-500">• 4.7/5 • 9,308 reviews</span>
-                              </div>
+                             
                             </div>
 
                             {/* Middle: Features - Static placeholder */}
                             <ul className="text-xs text-gray-700 space-y-2 font-normal text-[12px] list-none pl-4">
                               <li className="relative before:content-['•'] before:absolute before:left-0 before:text-[#4A7C59] before:text-base pl-3">
-                                Instruct us online in under two minutes
+                              {quote?.conveying_details.short_notes?.length > 60 
+  ? `${quote.conveying_details.short_notes.slice(0, 100)}...`
+  : quote?.short_notes}
                               </li>
-                              <li className="relative before:content-['•'] before:absolute before:left-0 before:text-[#4A7C59] before:text-base pl-3">
-                                No move, no legal fee GUARANTEED
-                              </li>
-                              <li className="relative before:content-['•'] before:absolute before:left-0 before:text-[#4A7C59] before:text-base pl-3">
-                                Track the progress of your case through eWay
-                              </li>
+                              
                             </ul>
 
                             {/* Right: Buttons */}
-                            <div className="flex flex-row gap-3 justify-start lg:col-start-3 lg:justify-end">
-                              <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50">
-                                Contact
-                              </button>
-                              <button
-                                className="px-4 py-2 bg-[#4A7C59] text-white rounded-full hover:bg-[#3b6248]"
-                                onClick={() => handleInstruct(quote.company_name)}
-                              >
-                                Instruct
-                              </button>
-                            </div>
+                            <div className="flex flex-row gap-2 justify-start lg:col-start-3 lg:justify-end">
+<Link href={`/components/viewquote?ref_no=${ref}`} className='  className="px-3 py-1.5 border border-gray-300 text-gray-700 text-sm rounded-full hover:bg-gray-50 "
+'>
+  View
+</Link>
+
+
+
+  <button
+    className="px-3 py-1.5 bg-[#4A7C59] text-white text-sm rounded-full hover:bg-[#3b6248]"
+    onClick={() => handleInstruct(quote.company_name,quote.guest_id,quote.conveying_details.conveying_id,quote.quote_id)}
+  >
+    Instruct
+  </button>
+</div>
+
                           </div>
 
                           {/* Description + Price Breakdown */}
-                     {dropdownOpenId === quote.quote_id && (        <div className="grid md:grid-cols-2 justify-between gap-6 border-t border-gray-200 pt-6">
-                            <p className="text-xs text-gray-600">
-                              {quote.notes || "No description available."}<br /><br />
-                              <span className="font-medium">{quote.website}</span>
-                            </p>
+     {dropdownOpenId === quote.quote_id && (
+  <div className="border-t border-gray-200 pt-6 flex justify-end">
+    <div className="text-xs text-gray-700 w-full max-w-[280px]">
+      <h4 className="font-semibold mb-3 text-left">Price Breakdown:</h4>
 
-                            <div className="text-xs text-gray-700">
-                              <h4 className="font-semibold mb-3">Price Breakdown:</h4>
-                              <ul className="space-y-2 text-gray-400 flex flex-col">
-                                <li className="flex justify-between gap-4 sm:gap-20">
-                                  <span>Quote Price</span>
-                                  <span className="font-bold text-gray-700">£{quote.quote_price}</span>
-                                </li>
-                                <li className="flex justify-between gap-4 sm:gap-20">
-                                  <span>Property Value</span>
-                                  <span className="font-bold text-gray-700">£{quote.property_value}</span>
-                                </li>
-                              </ul>
-                            </div>
-                          </div>
-                    
-                      )}
+      <ul className="space-y-2 text-gray-600">
+       <li className="flex justify-between">
+  <span>Legal fees</span>
+ <span className="font-bold text-gray-800">{formatGBP(quote.legal_fees)}</span>
+</li>
+
+
+
+        <li className="flex justify-between">
+          <span>Disbursements</span>
+          <span className="font-bold text-gray-800">
+            {formatGBP(quote.disbursements)}
+          </span>
+        </li>
+
+        <li className="flex justify-between border-b border-b-gray-500">
+          <span>VAT</span>
+          <span className="font-bold text-gray-800">
+            {formatGBP(quote.vat)}
+          </span>
+        </li>
+
+        <li className="flex justify-between">
+          <span>Total</span>
+          <span className="font-bold text-gray-800">
+            {formatGBP(quote.total)}
+          </span>
+        </li>
+      </ul>
+    </div>
+  </div>
+)}
+
+
                           </div>
                     </div>
                   ))}
@@ -370,22 +425,40 @@ console.log("User ID or Guest ID:", userid);// user_id
           </section>
 
           {/* Popup Modal for Instruct */}
-          {popupData.visible && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center  bg-opacity-50">
-              <div className="bg-white rounded-lg p-6 max-w-sm w-full text-center space-y-4 border-2">
-            <p className='text-center justify-center items-center flex  '>    <Check size={90} color="#16A34A" className='text-center' /> </p> {/* green tick */}
+         {popupData.visible && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm animate-fadeIn">
+    <div className="bg-white rounded-2xl p-8 w-[380px] text-center shadow-2xl border border-green-200 animate-popIn">
+ 
+      {/* Icon */}
+       <span className="text-[34px] leading-none font-extrabold text-[#1E5C3B] tracking-tight">
+          MovWise
+        </span>
+      <div className="flex justify-center mb-3">
+          
+        <Check size={100} color="#15803D" className="drop-shadow-md" />
+      </div>
 
-                <h2 className="text-lg font-semibold text-green-900">Quote Submitted</h2>
-                <p className='text-black'>Your quote details have been submitted for <strong>{popupData.companyName}</strong>.</p>
-                <button
-                  className="mt-4 px-4 py-2 bg-[#1E5C3B] text-white rounded-full hover:bg-[#154427]"
-                  onClick={closePopup}
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          )}
+      {/* Title */}
+      <h2 className="text-2xl font-bold text-green-800">Quote Submitted</h2>
+
+      {/* Message */}
+      <p className="text-gray-700 mt-2 leading-relaxed">
+        Your Instruct Quote has been sent to <br></br>
+        <strong className="text-green-700"> {popupData.companyName}</strong>.
+      </p>
+
+      {/* Button */}
+      <button
+        className="mt-6 w-auto p-19 py-3 bg-green-700 text-white text-[15px] font-medium rounded-full 
+                   hover:bg-green-800 transition-all duration-300 shadow-md"
+        onClick={closePopup}
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
+
         </div>
       </main>
     </div>

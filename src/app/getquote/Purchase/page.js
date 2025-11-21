@@ -81,11 +81,50 @@ const [lender, setLender] = useState([
 const [lang, setLang] = useState ([
   { value: "Not Required", label: "Not Required", id: 0 },
 ]);
+const [selectedLanguage, setSelectedLanguage] = useState([]);
+const handleChangeLang = (selectedOptions = []) => {
+     const hasNotRequired = selectedOptions.some(
+    (option) => option.value === "Not Required"
+  );
+ if (hasNotRequired) {
+    // Keep only "Not Required" selected
+    const notRequiredOption = lang.find(opt => opt.value === "Not Required");
+    setSelectedLanguage([notRequiredOption]);
+    console.log("Selected language: [0]");
+    handleChange("languages", [0]);
+  } else {
+    // Normal behavior for other lenders
+    setSelectedLanguage(selectedOptions);
+    const ids = selectedOptions.map(item => item.id);
+    console.log("Selected languages:", ids);
+    handleChange("languages", ids);
+  }
+}
+
+const handleChange_l = (selectedOptions = []) => {
+  const hasNotRequired = selectedOptions.some(
+    (option) => option.value === "Not Required"
+  );
+
+  if (hasNotRequired) {
+    // Keep only "Not Required" selected
+    const notRequiredOption = lender.find(opt => opt.value === "Not Required");
+    setSelectedLenders([notRequiredOption]);
+    console.log("Selected lenders: [0]");
+    handleChange("lender", [0]);
+  } else {
+    // Normal behavior for other lenders
+    setSelectedLenders(selectedOptions);
+    const ids = selectedOptions.map(item => item.id);
+    console.log("Selected lenders:", ids);
+    handleChange("lender", ids);
+  }
+};
 
 const [formData, setFormData] = useState({
 
     "languages": [],
-    "type_id":2,
+    "service_type":2,
   });
   async function createguestuser(){
   
@@ -96,7 +135,7 @@ const [formData, setFormData] = useState({
         const updatedForm = {
       ...formData,
       "guest_user ": guest_id,
-      "type_id":2
+      "service_type":2
     };
   
     // ✅ Update React state
@@ -176,24 +215,7 @@ const [selectedOptions, setSelectedOptions] = useState([]);
 const [errors, setErrors] = useState({});
 
     const [selectedLenders, setSelectedLenders] = useState([]);
-const handleChange_l = (selectedOptions = []) => {
-  // Check if "Not Required" is among selected options
-  const hasNotRequired = selectedOptions.some(
-    (option) => option.value === "Not Required"
-  );
 
-  if (hasNotRequired) {
-    // Clear all selections if "Not Required" is chosen
-    setSelectedLenders([{ value: "Not Required", label: "Not Required", id: 0 }]);
-    setLender([])
-    handleChange("lender", [0]);
-  } else {
-    setSelectedLenders(selectedOptions);
-    const ids = selectedOptions.map((item) => item.id);
-    console.log("Selected lenders:", ids);
-    handleChange("lender", ids);
-  }
-};
 
 
 const handleChange = (field, value) => {
@@ -229,7 +251,6 @@ const handleChange = (field, value) => {
   // }
 };
 
-const[,setlang]=useState  ([])
 
    
     const fetchPropertyTypes = async () => {
@@ -238,8 +259,17 @@ const[,setlang]=useState  ([])
         const data = await getData(API_ENDPOINTS.compareQuotes);
        const lenderData = await getData(API_ENDPOINTS.lenders);
        const languages = await getData(API_ENDPOINTS.languages);
-        setlang( languages.users)
+          if(Array.isArray(languages.users)){
+      const languageOptions = languages.users.map((l) => ({
+        value: l.language_name,
+        label: l.language_name,
+        id: l.id,
+      }));
+      setLang([{ value: "Not Required", id: 0,label: "Not Required" }, ...languageOptions]);
+   }
    console.log(lenderData)
+   console.log(languages);
+
     if (Array.isArray(lenderData.users)) {
       const lenderOptions = lenderData.users.map((l) => ({
         value: l.lenders_name,
@@ -326,7 +356,7 @@ if(!formData.buy_to_let){
     // if no errors, submit
     if (Object.keys(newErrors).length === 0) {
       console.log("✅ Form submitted:", formData);
-      alert("Form submitted successfully!");
+      alert("");
           setModalopen(true)
 
     }
@@ -1024,16 +1054,21 @@ console.log(language);
     <label className="block text-sm font-semibold text-gray-800 mb-1">
       Prefer solicitor in your first language?
     </label>
-    <select
-      className="text-black placeholder-black w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1E5C3B]"
-      onChange={handlelanguagechange}
-      value={languagepreference}
-    >
-      <option value="">Please select</option>
-      <option>No Preference</option>
-      <option>Yes</option>
-      <option>Maybe</option>
-    </select>
+    <div className="mt-2">
+  
+
+  
+  <Select
+    options={lang}
+    isMulti
+              instanceId="language-select"
+    value={selectedLanguage || formData.languages}
+    onChange={handleChangeLang}
+    placeholder="Choose languages..."
+    className="text-black mt-2"
+  />
+ 
+</div>
     <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
   </div>
 
@@ -1056,35 +1091,7 @@ console.log(language);
       /> 
       <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
     </div> {/* Show only when needed */}
-  {(languagepreference === "Yes" || languagepreference === "Maybe") && (
-<div className="mt-2">
-  <label className="block text-sm font-semibold text-gray-800 mb-2">
-    Select preferred language(s)
-  </label>
-
-  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 border border-gray-200 p-3 rounded-lg bg-gray-50">
-    {lang.map((item,index) => (
-      <label
-        key={item.id}
-        className="flex items-center gap-2 p-2 rounded-md cursor-pointer hover:bg-green-50 transition"
-      >
-        <input
-          type="checkbox"
-          key={index}
-          value={item.language_name}
-          onChange={(e) => languagecheckboxchange(item.language_name, e.target.checked,item.id)}
-          className="accent-[#1E5C3B] w-4 h-4"
-        />
-        <span className="text-gray-800 text-sm font-medium">
-          {item.language_name}
-        </span>
-      </label>
-    ))}
-  </div>
- 
-</div>
-
-  )}</div></div>
+</div></div>
           
                     {/* 🌐 SPECIAL INSTRUCTIONS */}
   

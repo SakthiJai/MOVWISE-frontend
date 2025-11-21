@@ -131,7 +131,9 @@ color:#4da768;
   color: red;
 }
 
-
+.star-svg{
+   display: inline !important
+}
 
 .tooltip {
   position: relative;
@@ -176,6 +178,9 @@ font-size: small;
   text-align: left;
   font-variant-numeric: tabular-nums; /* keeps numbers aligned */
 
+
+
+
   letter-spacing: 0.2px;
   caret-color: #111827;
   -moz-appearance: textfield;
@@ -185,6 +190,9 @@ font-size: small;
 .poundtransform--with-symbol {
   position: relative;
   padding-left: 1.5rem; /* make space for symbol */
+ letter-spacing: 0.2px;
+  caret-color: #111827;
+  -moz-appearance: textfield;
 }
 .poundtransform--with-symbol::before {
   content: '£';
