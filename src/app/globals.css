@@ -208,3 +208,54 @@ font-size: small;
 @media (max-width: 640px) {
   .poundtransform { padding: 0.25rem 0.5rem; }
 }
+
+.c-header {
+  background: #fff;
+  box-shadow: 0 1px 4px 0 rgba(0, 0, 0, 0.14);
+  height: 48px;
+  width: 100%;
+  position: relative;
+  
+  &-loader {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+  }
+}
+
+/* Reset */
+
+/* Header */
+.c-slidingLoader {
+  position: relative;
+  height: 4px;
+  width: 100%;
+  overflow: hidden;
+  border-radius: 9999px;
+  background-color: #e5e7eb; /* Tailwind gray-200 fallback */
+}
+
+.c-slidingLoader-inner {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    to right,
+    #f8c537 0%,    /* Yellow start */
+    #f8c537 50%,   /* Yellow ends at 50% */
+    #256041 50%,   /* Green starts at 50% */
+    #256041 100%   /* Green ends at 100% */
+  );
+  border-radius: 9999px;
+  animation: sliding 1s infinite alternate cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+
+@keyframes sliding {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}

@@ -14,6 +14,7 @@ import Footer from "../../parts/Footer/footer";
 import Sales from "./Sales"
 import Salewithpurchase from "./Salewithpurchase"
 import Remortage from "./Remortage"
+import Purchase from "./Purchase"
 
 
 import { v4 as uuidv4 } from 'uuid';
@@ -37,6 +38,8 @@ export default function ClientComponent({ type }) {
                     {type === 'sales' && <Sales />}
                     {type === 'saleswithpurchase' && <Salewithpurchase />}
                     {type === 'remortage' && <Remortage />}
+                      {type === 'purchase' && <Purchase />}
+                    <Purchase></Purchase>
                 </main>
             </div>
             <Footer />

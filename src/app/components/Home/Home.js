@@ -28,14 +28,22 @@ import { API_BASE_URL } from "../.././constants/config";
 import { FaSalesforce } from 'react-icons/fa';
 import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
 
+const Loader = () => (
+<div className="absolute bottom-0 left-0 w-full">
+  <div className="c-slidingLoader h-1 relative overflow-hidden rounded">
+    <div className="c-slidingLoader-inner absolute h-full w-full rounded"></div>
+  </div>
+</div>
+
+);
 // --- Utility Components for Icons and Buttons (simplified) ---
 const iconColors = {
-  Scale: "text-blue-500",       // Trust / legal = blue
-  Languages: "text-purple-500", // Communication = purple
-  UserCheck: "text-emerald-500",// Verified professionals = green
-  Repeat: "text-indigo-500",    // Smart automation = indigo
-  Cloud: "text-sky-500",        // Cloud / tech = sky blue
-  Zap: "text-amber-500",        // Speed = amber/yellow
+  Scale: "text-blue-500",      
+  Languages: "text-purple-500", 
+  UserCheck: "text-emerald-500",
+  Repeat: "text-indigo-500",   
+  Cloud: "text-sky-500",       
+  Zap: "text-amber-500", 
 };
 
 const icons = {
@@ -81,7 +89,7 @@ const PrimaryCTA = ({ text }) => (
 // --- Main Page Component ---
 export default  function HomePage() {
     const router = useRouter();
-
+ const [loading, setLoading] = useState(false);
   const options = [
     {
   label: "Sales",
@@ -127,8 +135,14 @@ export default  function HomePage() {
   const data =  getData(API_ENDPOINTS.servicelist);
   const handleSelect = (type,id) => {
     localStorage.setItem("service",id);
-    router.push(`/getquote/${type.replace(/\s+/g, "").toLowerCase()}`);
+    setLoading(true); 
+    setTimeout(() => {
+      setLoading(false);
+      router.push(`/getquote/${type.replace(/\s+/g, "").toLowerCase()}`);
+    }, 3000);
   };
+
+   
   return (
     <div className='font'>
       <Head>
@@ -138,6 +152,7 @@ export default  function HomePage() {
       {/* --- 1. HEADER / NAVIGATION --- */}
       <div className='bg-white shadow-md sticky top-0 p-4 z-50'>
          <Navbar originalstyle={true} />
+           {loading && <Loader />}
       </div>
 
 

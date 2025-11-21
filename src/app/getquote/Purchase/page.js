@@ -16,7 +16,7 @@ import LocationSearch from './LocationSearch';
 import { v4 as uuidv4 } from 'uuid';
 
 
-// const customStyles = {
+
 //     control: (provided, state) => ({
 //       ...provided,
 //       borderRadius: "0.5rem", // rounded-xl
@@ -202,57 +202,24 @@ function handleloginformchange(name, value) {
     [name]: value,
   }));
 }
-
-
- 
-  // Convert lenders into react-select format
- 
-
- 
 const [selectedOptions, setSelectedOptions] = useState([]);
   const [stageOptions, setStageOptions] = useState([]);
 
 const [errors, setErrors] = useState({});
 
     const [selectedLenders, setSelectedLenders] = useState([]);
-
-
-
 const handleChange = (field, value) => {
   setFormData((prev) => ({
     ...prev,
     [field]: value,
   }));
   console.log(formData)
-
-  // Clear error immediately when user types/selects valid input
   if (errors[field]) {
     setErrors((prev) => ({ ...prev, [field]: "" }));
   }
 };
 
-
   const [query, setQuery] = useState("");
-
- const addressapi = async (query) => {
-  // if (!query) return;
-
-  // try {
-  //   const res = await fetch(`https://api.postcodes.io/postcodes?q=${query}`);
-  //   const data = await res.json();
-
-  //   if (data.status === 200 && data.result) {
-  //     console.log("Matching results:", data.result);
-  //   } else {
-  //     console.log("No matching results found");
-  //   }
-  // } catch (err) {
-  //   console.error("API error:", err);
-  // }
-};
-
-
-   
     const fetchPropertyTypes = async () => {
          console.log(lender)
       try {
@@ -280,10 +247,7 @@ const handleChange = (field, value) => {
 
            setLender([{ value: "Not Required", id: 0,label: "Not Required" }, ...lenderOptions]);
                console.log(lender)
-
-        
     }
-    
         if (data.propertyTypes && Array.isArray(data.propertyTypes)) {
           const mappedOptions = data.propertyTypes.map((item) => ({
             id: item.id,
@@ -305,25 +269,15 @@ const handleChange = (field, value) => {
   const [modalopen, setModalopen] = useState(false);
   const [languagepreference, setlanguagepreference] = useState(" ");
   const [language, setLanguage] = useState([]);
-
-
-  
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // simple validation
     let newErrors = {};
-
- 
-  
   if(!formData.languages){
     newErrors.languages="please select a language"
   }
-
   if(!formData.address){
     newErrors.address="please select a address"
   }
-
   if (!formData.purchase_price) {
         newErrors.purchase_price = "purchase_price  is required";
       } else if (Number(formData.purchase_price) <= 0) {
@@ -373,13 +327,6 @@ if(!formData.buy_to_let){
 
   const [propertyType, setPropertyType] = useState("");
 
-  // const propertyTypeOptions = [
-  //   { label: "Flat", icon: <FaBuilding size={22} color="#007BFF" /> },
-  //   { label: "Terraced", icon: <FaHome size={22} color="#28A745" /> },
-  //   { label: "Semi-detached", icon: <MdHolidayVillage size={22} color="#FFC107" /> },
-  //   { label: "Detached", icon: <FaWarehouse size={22} color="#DC3545" /> },
-  // ];
-
   const getIconForType = (type) => {
   switch (type.toLowerCase()) {
     case "flat":
@@ -392,24 +339,11 @@ if(!formData.buy_to_let){
     case "detached":
       return <FaWarehouse size={22} color="#DC3545" />;
     default:
-      return <FaHome size={22} color="#6c757d" />; // default gray icon
+      return <FaHome size={22} color="#6c757d" />; 
   }
 };
 
- 
 
-  // const lang=[
-  //   { id: 1, language_name: "English" },
-  //   { id: 2, language_name: "Spanish" },
-  //   { id: 3, language_name: "French" },
-  //   { id: 4, language_name: "German" },
-  //   { id: 5, language_name: "Chinese" },
-  //   { id: 6, language_name: "Hindi" },
-  //   { id: 7, language_name: "Arabic" },
-  //   { id: 8, language_name: "Portuguese" },
-  //   { id: 9, language_name: "Russian" },
-  //   { id: 10, language_name: "Japanese" },
-  // ]; 
 
   const [loginformdata, setloginformdata] = useState({
     email: "",
@@ -433,14 +367,9 @@ console.log(language);
     else{
       setLanguage(prev=>prev.filter(lang=>lang!==item))
     }
-        
-      
        }
 
     const [loginformshow,setloginformshow]=useState(false)
-
-
-
 
   return (
     <div>
