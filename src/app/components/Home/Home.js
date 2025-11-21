@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { Facebook, Twitter, Linkedin, Instagram,Tag } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState , useEffect } from 'react'
+import Signinmodal from "./../utility/Singingmodal";
 import {
   Home,
   ShoppingBag,
@@ -27,6 +28,7 @@ import {
 import { API_BASE_URL } from "../.././constants/config";
 import { FaSalesforce } from 'react-icons/fa';
 import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
+
 
 const Loader = () => (
 <div className="absolute bottom-0 left-0 w-full">
@@ -89,6 +91,12 @@ const PrimaryCTA = ({ text }) => (
 // --- Main Page Component ---
 export default  function HomePage() {
     const router = useRouter();
+const [modalopen, setModalopen] = useState(false);
+const [loginformshow,setloginformshow]=useState(false);
+const [loginformdata, setloginformdata] = useState({
+  email: "",
+  password: "",
+});
  const [loading, setLoading] = useState(false);
   const options = [
     {
@@ -170,8 +178,17 @@ export default  function HomePage() {
               Compare fixed-fee quotes from trusted UK conveyancers and solicitors in minutes. MovWise helps you find the right legal partner to buy, sell, or remortgage your home — faster, clearer, and smarter.
             </p>
             <div className="mt-8">
-        <Link href="components/personaldetails">   
-           <PrimaryCTA  text="Get Your Free Quote" /></Link>
+            <Link href="#" passHref>
+                <div
+                  onClick={(e) => { 
+                    localStorage.removeItem("service");
+                    e.preventDefault(); setModalopen(true);
+                   }}
+                  className="text-blue-500 underline"
+                >
+                  <PrimaryCTA text="Get Your Free Quote" />
+                </div>
+              </Link>
             </div> 
           </div>
           {/* Image Placeholder */}
@@ -504,6 +521,9 @@ export default  function HomePage() {
           Get transparent quotes from trusted conveyancers and make your move with total confidence. <strong>Your next chapter starts with MovWise.</strong>
         </p>
       </section>
+        {modalopen && (
+                        <Signinmodal></Signinmodal>
+                        )}
       
       {/* ---------------------------------------------------------------------------------- */}
 

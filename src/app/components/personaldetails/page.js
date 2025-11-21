@@ -131,37 +131,7 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
                 </div>
               </div>
 
-              {/* Step 2 */}
-              {/* <div className="flex items-start mt-8">
-                <div className="relative mr-4">
-                  <div className="w-11 h-11 rounded-full border-[2px] border-[#B7B7B7] bg-white text-[#B7B7B7] flex items-center justify-center">
-                    <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
-                      <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" strokeWidth="2" />
-                    </svg>
-                  </div>
-                  <div className="absolute left-[22px] top-[44px] w-[2px] h-[56px] bg-[#E4E4E7]" />
-                </div>
-                <div>
-                  <div className="text-[12px] font-semibold pesonaldetails-steps font-gilroy ">STEP 2</div>
-                  <div className="font-outfit text-[20px] text-gray-900 font-semibold ">Property Details</div>
-                </div>
-              </div> */}
-
-              {/* Step 3 */}
-              {/* <div className="flex items-start mt-8">
-                <div className="mr-4">
-                  <div className="w-11 h-11 rounded-full border-[2px] border-[#B7B7B7] bg-white text-[#B7B7B7] flex items-center justify-center">
-                    <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
-                      <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" strokeWidth="2" />
-                    </svg>
-                  </div>
-                </div>
-                <div>
-                  <div className="text-[12px] font-semibold pesonaldetails-steps font-gilroy ">STEP 3</div>
-                  
-                  <div className="font-outfit text-[20px] text-gray-900 font-semibold ">Compare Quotes</div>
-                </div>
-              </div> */}
+            
             </div>
 
             {/* Decorative wave */}
