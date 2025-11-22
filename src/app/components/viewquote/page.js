@@ -11,10 +11,10 @@ import { useSearchParams } from "next/navigation";
 
 
 export default function ViewQuote() {
-  //   const params = useSearchParams();
-  // const ref_no = params.get("ref_no");
+    const params = useSearchParams();
+  const ref_no = params.get("ref_no");
 
-    //  console.log("REF NO:", ref_no);
+     console.log("REF NO:", ref_no);
 
 const [rating, setRating] = useState();
 
@@ -25,7 +25,7 @@ const router = useRouter()
 useEffect(() => {
   async function fetchviewquote() {
     try {
-      const viewquotedata = await getData(API_ENDPOINTS.quotesfilter);
+      const viewquotedata = await getData(API_ENDPOINTS.quotesfilter/+`${ref_no}`);
       const result = viewquotedata.data[0];
 
       console.log("Fetched:", result);

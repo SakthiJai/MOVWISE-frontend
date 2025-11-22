@@ -14,46 +14,11 @@ import { Rating } from "react-simple-star-rating";
 
 
 
-const staticQuotesData = [
-  {
-    company_id: 2,
-    company_name: "ABC Legal Ltd",
-    email: "info@abclegal.com",
-    website: "www.abclegal.com",
-    phone_number: "9876543210",
-    logo: null,
-    notes: "Initial quote for property sale",
-    quote_id: 2,
-    category: "rateofstampduty",
-    quote_price: "250.00",
-    property_value: 250,
-    suplement_fees:100,
-    languages: [1],
-    starpoints:"Instruct us online in under two minutesNo move, no legal fee GUARANTEEDTrack the progress of your case through eWay"
-  },
-  {
-    company_id: 3,
-    company_name: "XYZ Conveyancing",
-    email: "info@xyzconveyance.com",
-    website: "www.xyzconveyance.com",
-    phone_number: "1234567890",
-    logo: null,
-    notes: "Special rate for first-time buyers",
-    quote_id: 3,
-    category: "rateofstampduty",
-    quote_price: "300.00",
-    property_value: 300,
-    languages: [1],
-   starpoints:"Instruct us online in under two minutesNo move, no legal fee GUARANTEEDTrack the progress of your case through eWay"
 
-  }
-  // Add more static objects as needed
-];
 
 export default function Comparequotes() {
 
   // State to hold companies data (initialized with static data)
-  const [quotesData, setQuotesData] = useState(staticQuotesData);
 
   const [companydata,setcompanydata]=useState();
 
@@ -108,7 +73,6 @@ useEffect(() => {
             console.log("✅ Remortgage API Response:", response.service.quote_ref_number);
             setref( response.service.quote_ref_number);
 
-      console.log("✅ Remortgage API Response:", response.data);
       const propety_id = response.data;
       console.log("property_id",propety_id);//property_id
       
@@ -124,7 +88,7 @@ console.log("User ID or Guest ID:", userid);// user_id
 console.log("Quotes Filter API Response:", quoteResponse);
 const ref_no = quoteResponse.data[0].quote_ref_number;
 console.log(ref_no);
-setref(ref_no);
+
 
 // Decode Base64 logo before storing
 const formatted = quoteResponse.data.map((item) => {
