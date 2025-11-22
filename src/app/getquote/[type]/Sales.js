@@ -9,6 +9,7 @@ import Select from 'react-select';
 import LocationSearch from '../Purchase/LocationSearch';
 import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
 import Signinmodal from "../../components/utility/Singingmodal";
+import AddressFields from './AddressFields';
 // src/components/Sales.js
 
 export default function Sales() {
@@ -370,106 +371,59 @@ useEffect(() => {
           className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
         />
                                 </div>
+ {/* 1. Property Address */}
+                    <div className="flex flex-col h-full">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        Property address:<span className="text-red-500">*</span>
+                      </label>
 
-{/* 1. Property Address */}
-      <div className="flex flex-col h-full">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Property address:<span className="text-red-500">*</span>
-        </label>
+                      <LocationSearch
+                        readOnly={showAddressLines}
+                        onSelectAddress={(selected) => {
+                          if (!selected) return;
 
-        <LocationSearch
-          readOnly={showAddressLines} 
-          onSelectAddress={(selected) => {
-  if (!selected) return;
+                          setFormData((prev) => ({
+                            ...prev,
+                          address: selected,
+                            town: selected.town || selected.admin_district || "",
+                            country: selected.country || "",
+                          }));
 
-  setFormData((prev) => ({
-    ...prev,
-    address: selected,
-   town: selected.town || selected.admin_district || "", 
-   country: selected.country || "",
-  }));
+                          setErrors((prev) => ({
+                            ...prev,
+                            address: "",
+                            town: "",
+                            country: "",
+                          }));
+                        }}
+                      />
 
-  console.log("Address selected:", town);
-  setErrors((prev) => ({
-    ...prev,
-    address: "",
-    town: "",
-    country: "",
-  }));
-  
-}}
+                      {/* “I don’t know postcode” button */}
+                      {!showAddressLines && (
+                        <div className="flex justify-end mt-1">
+                          <button
+                            type="button"
+                            onClick={() => setShowAddressLines(true)}
+                            className="text-blue-600 underline text-xs mt-1"
+                          >
+                            I don’t know the postcode yet
+                          </button>
+                        </div>
+                      )}
 
-        />
+                      <p className="text-[12px] text-red-500 min-h-[16px]">{errors.address}</p>
+                    </div>
 
-        <p className="text-[12px] text-red-500 min-h-[16px]">{errors.address}</p>
+                    {/* Always render AddressFields */}
+                    <AddressFields
+                      formData={formData}
+                      errors={errors}
+                      showAddressLines={showAddressLines} // only used inside AddressFields
+                      onChange={(field, value) =>
+                        setFormData((prev) => ({ ...prev, [field]: value }))
+                      }
+                    />
 
-        {!showAddressLines && (
-          <button
-            type="button"
-            onClick={() => setShowAddressLines(true)}
-            className="text-blue-600 underline w-fit mt-2"
-          >
-            I dont know the postcode yet
-          </button>
-        )}
-      </div>
-
-{/* Address Lines – should appear first */}
-   {showAddressLines && (
-        <>
-          <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700">Address Line 1</label>
-            <input
-              type="text"
-              value={formData.address_line1}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, address_line1: e.target.value }))
-              }
-              className="border p-2 rounded"
-            />
-          </div>
-
-          <div className="flex flex-col">
-            <label className="text-sm font-medium text-gray-700">Address Line 2</label>
-            <input
-              type="text"
-              value={formData.address_line2}
-              onChange={(e) =>
-                setFormData((prev) => ({ ...prev, address_line2: e.target.value }))
-              }
-              className="border p-2 rounded"
-            />
-          </div>
-        </>
-      )}
-
-      {/* Town / City */}
-      <div className="flex flex-col h-full">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Town / City:<span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          value={formData.town}
-          readOnly
-          className="border p-2 rounded"
-        />
-        <p className="text-[12px] text-red-500 min-h-[16px]">{errors.town}</p>
-      </div>
-
-      {/* Country */}
-      <div className="flex flex-col h-full">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Country:<span className="text-red-500">*</span>
-        </label>
-        <input
-          type="text"
-          value={formData.country}
-          readOnly
-          className="border p-2 rounded"
-        />
-        <p className="text-[12px] text-red-500 min-h-[16px]">{errors.country}</p>
-      </div>
     
 
 
