@@ -101,8 +101,19 @@ const handleSubmit = (e) => {
     // if no errors, submit
     if (Object.keys(newErrors).length === 0) {
       console.log("✅ Form submitted:", formData);
+      localStorage.setItem("getquote", JSON.stringify(formData));
       //alert("Form submitted successfully!");
-          setModalopen(true)
+      if(localStorage.getItem("user")>0){
+        let data = JSON.parse(localStorage.getItem("getquote") || "{}")
+        data.user_id = localStorage.getItem("user");
+        data.service_type = Number(localStorage.getItem("service"));
+        localStorage.setItem("getquote", JSON.stringify(data));
+        router.push("/components/comparequotes");
+      }
+      else
+      {
+       setModalopen(true)
+      }
 
     }
 
@@ -195,15 +206,15 @@ async function logindata() {
       const userId = loginResponse.user?.id; // <-- get it from API response
         console.log(userId)
       if (userId) {
-        // ✅ Update formData
-      const updatedForm = {
-    ...formData,
-    "user_id": userId,
-    "service_type":Number(localStorage.getItem("service"))
-  };
-  // ✅ Update React state
-  setFormData(updatedForm);
-    localStorage.setItem("getquote", JSON.stringify(updatedForm));
+        localStorage.setItem("user", userId);
+        let data = JSON.parse(localStorage.getItem("getquote") || "{}");
+       
+        data.user_id = localStorage.getItem("user");
+        data.service_type = Number(localStorage.getItem("service"));
+
+        // Save back to localStorage
+        localStorage.setItem("getquote", JSON.stringify(data));
+
 
       }
 

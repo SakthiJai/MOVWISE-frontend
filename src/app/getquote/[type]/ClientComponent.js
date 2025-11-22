@@ -38,7 +38,7 @@ export default function ClientComponent({ type }) {
                     {type === 'sales' && <Sales />}
                     {type === 'saleswithpurchase' && <Salewithpurchase />}
                     {type === 'remortage' && <Remortage />}
-                      {type === 'purchase' && <Purchase />}
+                    {type === 'purchase' && <Purchase />}
                     
                 </main>
             </div>

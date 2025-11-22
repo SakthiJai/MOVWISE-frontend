@@ -9,6 +9,26 @@ export default function Signinmodal() {
   email: "",
   password: "",
 });
+const [modalopen, setModalopen] = useState(false);
+  const [formData, setFormData] = useState({
+    stages:"",
+  address: "",
+    address_line1: "",
+    address_line2: "",
+    country: "",
+    town: "",
+  sales_price: "",
+  no_of_bedrooms: "",
+  leasehold_or_free: "", 
+  property_type: "",
+  shared_ownership: "",
+  existing_mortgage:"yes",
+  languages:"",
+  specal_instruction:"",
+  lender:"",  
+  type_id:1,
+});
+
 function handleloginformchange(name, value) {
   setloginformdata((prev) => ({
     ...prev,
@@ -25,18 +45,14 @@ async function logindata() {
     if (loginResponse.code === 200) {
       const userId = loginResponse.user?.id; // <-- get it from API response
         console.log(userId)
-      
+      localStorage.setItem("user",userId);
       if(Number(localStorage.getItem("service"))>0){
         if (userId) {
-        // ✅ Update formData
-                const updatedForm = {
-                ...formData,
-                "user_id": userId,
-                "service_type":Number(localStorage.getItem("service"))
-            };
-            // ✅ Update React state
-            setFormData(updatedForm);
-                localStorage.setItem("getquote", JSON.stringify(updatedForm));
+        let data = JSON.parse(localStorage.getItem("getquote") || "{}")
+        data.user_id = userId;
+        data.service_type = Number(localStorage.getItem("service"));
+        localStorage.setItem("getquote", JSON.stringify(data));
+        //router.push("/components/comparequotes");
 
       }
       router.push("/components/comparequotes");
@@ -80,7 +96,7 @@ async function logindata() {
                                             onClick={() => setModalopen(false)}
                                             className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-3xl font-bold leading-none"
                                             >
-                                            &times;
+                                            X
                                             </button>
         
                                             <h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition">Confirm Submission</h2>
