@@ -56,6 +56,11 @@ const icons = {
   Cloud,
   Zap,
 };
+
+
+
+
+
 const FeatureIcon = ({ icon, title, description }) => {
   const Icon = icons[icon];
   const iconColor = iconColors[icon] || "text-gray-500";
@@ -90,6 +95,23 @@ const PrimaryCTA = ({ text }) => (
 
 // --- Main Page Component ---
 export default  function HomePage() {
+  useEffect(()=>{
+  fetchdata()
+},[])
+
+async function fetchdata(){
+try{
+    const data = await getData(API_ENDPOINTS.servicelist);
+  console.log(data.users)
+  setdata(data.users)
+}
+catch(e){
+  console.log(e);
+}
+}
+
+
+
     const router = useRouter();
 const [modalopen, setModalopen] = useState(false);
 const [loginformshow,setloginformshow]=useState(false);
@@ -97,7 +119,9 @@ const [loginformdata, setloginformdata] = useState({
   email: "",
   password: "",
 });
+
  const [loading, setLoading] = useState(false);
+ const[data,setdata]=useState()
   const options = [
     {
   label: "Sales",
@@ -139,11 +163,16 @@ const [loginformdata, setloginformdata] = useState({
 
     
   ];
+
+
   const [services, setservices] = useState([]);
-  const data =  getData(API_ENDPOINTS.servicelist);
+
+
+
   const handleSelect = (type,id) => {
     localStorage.setItem("service",id);
     setLoading(true); 
+
     setTimeout(() => {
       setLoading(false);
       router.push(`/getquote/${type.replace(/\s+/g, "").toLowerCase()}`);

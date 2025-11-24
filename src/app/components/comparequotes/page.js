@@ -22,7 +22,7 @@ export default function Comparequotes() {
 
   const [companydata,setcompanydata]=useState();
 
-  const[ref,setref]=useState()
+  const[ref,setref]=useState("")
   
 
   // Track which card dropdown is open (by quote_id)
@@ -70,7 +70,7 @@ useEffect(() => {
   async function qutesdata(formData) {
     try {
       const response = await postData(API_ENDPOINTS.services, formData);
-            console.log("✅ Remortgage API Response:", response.service.quote_ref_number);
+            console.log("✅ Remortgage API Response:", response?.service?.quote_ref_number);
             setref( response.service.quote_ref_number);
 
       const propety_id = response.data;
@@ -84,7 +84,9 @@ console.log("User ID or Guest ID:", userid);// user_id
           ? { user_id: formData.user_id }   // logged-in user
           : { guest_user: "guest_user" };   // guest user
 
-      const quoteResponse = await getData(API_ENDPOINTS.quotesfilter);
+      const quoteResponse = await getData(`${API_ENDPOINTS.quotesfilter}/${response?.service.quote_ref_number}`);
+
+
 console.log("Quotes Filter API Response:", quoteResponse);
 const ref_no = quoteResponse.data[0].quote_ref_number;
 console.log(ref_no);
@@ -244,7 +246,7 @@ setcompanydata(formatted);
                   {companydata?.map((quote,index) => (
                     <div key={index} className="font border border-gray-200 rounded-2xl overflow-hidden bg-white w-full">
                       {/* Card Header */}
-                      <div className="flex flex-col sm:flex-row items-center justify-between bg-red-50 mx-2 mt-2 rounded-2xl p-4 sm:px-8 sm:py-5">
+                      <div  className={`flex flex-col sm:flex-row items-center justify-between   ${index % 2 === 0 ? "bg-green-50" : "bg-red-50"}  mx-2 mt-2 rounded-2xl p-4 sm:px-8 sm:py-5`}>
                         <div className="flex items-center gap-5 mb-3 sm:mb-0">
                           {quote.logo ? (
 <Image
@@ -311,10 +313,13 @@ alt={quote.company_name||"company logo"}
 
                             {/* Right: Buttons */}
                             <div className="flex flex-row gap-2 justify-start lg:col-start-3 lg:justify-end">
-<Link href={`/components/viewquote?ref_no=${ref}`} className='  className="px-3 py-1.5 border border-gray-300 text-gray-700 text-sm rounded-full hover:bg-gray-50 "
-'>
+<Link
+  href={`/components/viewquote?ref_no=${ref}`}
+  className="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-full hover:bg-gray-100 transition font-medium"
+>
   View
 </Link>
+
 
 
 

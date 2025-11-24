@@ -2,6 +2,8 @@ import Link from 'next/link';
 import React, { useState , useEffect } from 'react'
 import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
 import { useRouter } from 'next/navigation';
+import { v4 as uuidv4 } from 'uuid';
+
 export default function Signinmodal() {
      const router = useRouter();
      const [loginformshow,setloginformshow]=useState(false);
@@ -9,6 +11,7 @@ export default function Signinmodal() {
   email: "",
   password: "",
 });
+
 const [modalopen, setModalopen] = useState(false);
   const [formData, setFormData] = useState({
     stages:"",
@@ -35,7 +38,8 @@ function handleloginformchange(name, value) {
     [name]: value,
   }));
 }
-async function logindata() {
+async function 
+logindata() {
 
   try {
     console.log(loginformdata)
@@ -46,6 +50,8 @@ async function logindata() {
       const userId = loginResponse.user?.id; // <-- get it from API response
         console.log(userId)
       localStorage.setItem("user",userId);
+      console.log(Number(localStorage.getItem("service")))
+
       if(Number(localStorage.getItem("service"))>0){
         if (userId) {
         let data = JSON.parse(localStorage.getItem("getquote") || "{}")
@@ -62,10 +68,36 @@ async function logindata() {
        router.push("/#quote_type");
       }
     }
+
   } catch (error) {
     console.error("Error logging in:", error);
   }
 }
+ async function createguestuser(){
+          console.log("1")
+           try {
+                      console.log("1")
+
+            const guest_id = uuidv4();
+          console.log(guest_id);
+             
+                const updatedForm = {
+              ...formData,
+              "guest_user ": guest_id,
+              "service_type":2
+            };
+          
+            setFormData(updatedForm);
+              localStorage.setItem("getquote", JSON.stringify(updatedForm));
+           router.push("/components/comparequotes");
+                }
+          
+               
+              
+             catch (error) {
+              console.error("Error logging in:", error);
+            }
+          }
     return (
 
                                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -113,12 +145,12 @@ async function logindata() {
                                         Sign In
                                         </button>
         
-                                        <Link
-                                        href="/components/comparequotes"
+                                        <button
+                                        onClick={createguestuser}
                                         className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
                                         >
                                         Guest User
-                                        </Link>
+                                        </button>
                                     </div>
                                         </div>
                                         )}

@@ -101,13 +101,24 @@ const [notes, setNotes] = useState("");
     }
   ]
 }
+const [jurisdictions,setjuisdictions]=useState([])
 
 
    const fetchlanguages = async () => {
     try {
       const  languages = await getData(API_ENDPOINTS.languages)
-      setLanguage( languages.users)
-   //console.log(languages.users)
+      const region = await getData(API_ENDPOINTS.region);
+
+  setjuisdictions(
+  region.users.map(item => ({
+    label: item.region_name,
+    value: item.id
+  }))
+);
+
+
+      setLanguage( region)
+   console.log(languages.users)
    if(Array.isArray(languages.users)){
       const languageOptions = languages.users.map((l) => ({
         value: l.language_name,
@@ -140,7 +151,7 @@ const handleChangeLang = (selectedOptions = []) => {
     // Normal behavior for other lenders
     setSelectedLanguage(selectedOptions);
     const ids = selectedOptions.map(item => item.id);
-   handleChange({ name: " languages", value: ids })
+   handleChange({ name: "languages", value: ids })
   }
 }
 
@@ -341,12 +352,6 @@ console.log(formData)
   const [selectedJurisdictions, setSelectedJurisdictions] = useState([]);
 
 
-const jurisdictions = [
-  { value: "Scotland", label: "Scotland",id:1 },
-  { value: "Wales", label: "Wales",id:2 },
-  { value: "Northern Ireland", label: "Northern Ireland",id:3 },
-  { value: "England", label: "England",id:4 },
-];
 const serviceoptions = [
   { value: "Purchase", label: "Purchase",id:1 },
   { value: "Sales", label: "Sales",id:2 },
@@ -356,10 +361,10 @@ const serviceoptions = [
 
 const toggleJurisdiction = (selectedOptions) => {
   setSelectedJurisdictions(selectedOptions);
+console.log(selectedOptions)
 
   // Extract only values to store in formData
-  const values = selectedOptions.map(opt => opt.id);
-
+  const values = selectedOptions.map(opt => opt.value);
  handleChange({ name: "regions", value: values })};
 
 const [selectedServices, setSelectedServices] = useState([]);

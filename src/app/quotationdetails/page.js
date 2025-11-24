@@ -108,7 +108,7 @@ useEffect(() => {
         setpricingList(response3.pricing??[])
       } catch (err) {
         //console.logerror(err);
-        setError("Failed to fetch data");
+        setErrors("Failed to fetch data");
       } finally {
         setLoading(false);
       }
@@ -183,12 +183,13 @@ const handleSubmit = async () => {
     };
 
     //console.loglog("Payload to submit:", payload);
-
-    const response = await postData(API_ENDPOINTS.partnerfilter, payload);
+  
+    const response = await postData(API_ENDPOINTS.insertcompanydetail, payload);
 
     //console.loglog("API Response:", response);
 
     if (response.code==200) {
+      localStorage.clear();
       setShowSuccess(true);   // show success modal
     } else {
       alert(`Failed: ${response.data?.message || "Server error"}`);
@@ -699,9 +700,10 @@ const formatPound = (value) => {
                               <td className="px-3 py-2">
                                 <div className="flex flex-col">
                                   <input
+
                                     type="text"
                                     placeholder="Min"
-                                    value={(row.min)}
+                                    value={(row?.min)}
                                     className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black bg-white"
                                     onChange={(e) => handlePriceChange(numIndex, i, "min", e.target.value)}
                                   />

@@ -11,10 +11,10 @@ import { useSearchParams } from "next/navigation";
 
 
 export default function ViewQuote() {
-    const params = useSearchParams();
-  const ref_no = params.get("ref_no");
+  //   const params = useSearchParams();
+  // const ref_no = params.get("ref_no");
 
-     console.log("REF NO:", ref_no);
+  //    console.log("REF NO:", ref_no);
 
 const [rating, setRating] = useState();
 

@@ -1,7 +1,13 @@
 // ✅ Base URL for your backend
 const BASE_URL = "https://movwiseadmin.digitalcloudies.co.in/api";
 
-
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '100mb'
+    }
+  }
+};
 // ✅ Example: central place for all API endpoints
 export const API_ENDPOINTS = {
   conveyancingQuotes: `${BASE_URL}/conveyancing-quotes`,
@@ -23,12 +29,12 @@ export const API_ENDPOINTS = {
     services:`${BASE_URL}/services`,
     pricing:`${BASE_URL}/pricing`,
    // insertcompanydetail:`${BASE_URL}/insertcompanydetail`,
-    quotesfilter:`${BASE_URL}/quotes/QTN-94857362541236547896325478963254`,
+    quotesfilter:`${BASE_URL}/quotes`,
     instruct:`${BASE_URL}/quote-mail`,
     servicelist:`${BASE_URL}/service`,
+
 }
   // add more endpoints here
-
 
 export const getData = async (url) => {
   try {
