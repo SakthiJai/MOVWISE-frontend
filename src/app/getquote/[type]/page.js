@@ -2,7 +2,7 @@
 
 import ClientComponent from './ClientComponent';
 export function generateStaticParams() {
-  const types = ['purchase', 'sales', 'saleswithpurchase',"remortagage"]; // Example types
+  const types = ['purchase', 'sales', 'saleswithpurchase',"remortage","equity"]; // Example types
   return types.map(type => ({
     type,
   }));

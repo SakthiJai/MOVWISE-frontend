@@ -5,6 +5,8 @@ import { Check, MapPin,ChevronDown } from "lucide-react";
 import { FaBuilding, FaHome, FaWarehouse } from "react-icons/fa";
 import { MdHolidayVillage } from "react-icons/md"; // Material icon
 import Select from "react-select"; //imp
+import LocationSearch, { fetchAddressDetails } from '../Purchase/LocationSearch';
+import AddressFields from './AddressFields';
 
 
 const Link = ({ href, children, className }) => (
@@ -26,14 +28,54 @@ useEffect(() => {
     setFormData(JSON.parse(storedData));
   }
 }, []);
+
+const handleUnknownPostcode = () => {
+  // 1️⃣ Condition: user clicked "I don’t know the postcode yet"
+  setShowAddressLines(true); // show address fields
+
+  // 2️⃣ Reset address-related fields
+  setFormData(prev => ({
+    ...prev,
+    [`address_line1`]: "",
+    [`address_line2`]: "",
+    [`town`]: "",
+    [`country`]: "",
+  }));
+};
+
+const handleUnknownPostcode_purchase = () => {
+  // 1️⃣ Condition: user clicked "I don’t know the postcode yet"
+  setShowAddressLines_purchase(true); // show address fields
+
+  // 2️⃣ Reset address-related fields
+  setFormData(prev => ({
+    ...prev,
+    [`address_line1_purchase`]: "",
+    [`address_line2_purchase`]: "",
+    [`town_purchase`]: "",
+    [`country_purchase`]: "",
+  }));
+};
+
+  const [showAddressLines, setShowAddressLines] = useState(false);
+  const [showAddressLines_purchase, setShowAddressLines_purchase] = useState(false);
+
    const [formData, setFormData] = useState({
     address: "",
+    address_line1: "",
+    address_line2: "",
+    country: "",
+    town: "",
     price: "",
     bedrooms: "",
     tenure: "", 
     propertyType: "",
     sharedOwnership: "",
     address_purchase: "",
+    address_line1_purchase: "",
+    address_line2_purchase: "",
+    country_purchase: "",
+    town_purchase: "",
     price_purchase: "",
     bedrooms_purchase: "",
     tenure_purchase: "", 
@@ -266,9 +308,9 @@ console.log(language);
 
         return (
 
-                            <div className="flex flex-col lg:flex-row gap-8">
+                            <div className="flex flex-col lg:flex-row gap-8 mt-8">
                 {/* Left stepper */}
-           <aside className="z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-full lg:max-h-[600px] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white   lg:top-22">
+           <aside className="z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] lg:max-h-[600px] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white   lg:top-22">
                               <div className="p-6">
                               {/* Step 1 */}
                               <div className="flex items-start">
@@ -350,30 +392,78 @@ console.log(language);
                                     <option key={opt} value={opt === "Please select" ? "" : opt}> {opt} </option>))}
                                 </select>
                                 </div>
+                                
+                                 {/* 1. Property Address (Inline Input) */}
+                       <div className="flex flex-col h-full">
+                        <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                         Property address:<span className="text-red-500">*</span>
+                         </label>
+                        <LocationSearch
+                        readOnly={showAddressLines}
+                        onSelectAddress={async (selected) => {
+                          if (!selected) return;
+                          // Clear address error immediately when selecting
+                           if (errors.address) {
+                            setErrors((prev) => ({ ...prev, address: "" }));
+                            }
+                            // Update formData with selected suggestion
+                            setFormData((prev) => ({
+                              ...prev,
+                              selectedId: selected.id,
+                              address: selected.suggestion,
+                            }));
+                            // Fetch full address details
+                            const details = await fetchAddressDetails(selected.udprn);
+                              if (details) {
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  town: details.post_town || details.admin_district || "",
+                                  country: details.country || "",
+                                  }));
+                                } else {
+                                  setErrors((prev) => ({
+                                    ...prev,
+                                    address: "Failed to fetch full address details.",
+                                    }));
+                                  }
+                                }}
+                                onInputChange={() => {
+                                  // Clear the error immediately when user types
+                                if (errors.address) {
+                                  setErrors((prev) => ({ ...prev, address: "" }));
+                                   }
+                                  }}
+                                  />
 
+                                          <div className="flex justify-between items-center mt-1">
+                                            {/* Left: Error message */}
+                                            <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+                              errors.address ? "text-red-500 opacity-100" : "opacity-0"
+                            }`}>
+                              {errors.address || "placeholder"} {/* placeholder keeps same height */}
+                            </p>
 
-                        {/* 1. Property Address (Inline Input) */}
-                          <div className="flex flex-col h-full">
-                            <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-                            Property address:<span className="text-red-500">*</span>
-                            </label>
-                            <div className="relative mt-auto">
-                            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                                <MapPin size={16} />
-                            </span>
-                            <input
-                                id="address"
-                                name="address"
-                                type="text"
-                                value={formData.address}
-                                onChange={handleChange}
-                                className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
-                              /></div>
-                              {errors.address && (
-                                <span className="text-red-500 text-xs mt-1">{errors.address}</span>
-                              )}
-                           
-                        </div>
+                    {/* “I don’t know postcode” button */}
+                    {!showAddressLines && (
+                      <button
+                        type="button"
+                         onClick={handleUnknownPostcode}
+                        className="text-blue-600 underline text-xs"
+                      >
+                        I don’t know the postcode yet
+                      </button>
+                    )}
+                  </div>
+                </div>
+{/* Always render AddressFields */}
+                    <AddressFields
+                      formData={formData}
+                      errors={errors}
+                      showAddressLines={showAddressLines} // only used inside AddressFields
+                      onChange={(field, value) =>
+                        setFormData((prev) => ({ ...prev, [field]: value }))
+                      }
+                    />
 
                         {/* 2. Agreed SALES Price (Inline Input with Prefix) */}
                         <div className="flex flex-col h-full">
@@ -587,45 +677,80 @@ console.log(language);
                                 <option key={opt} value={opt === "Please select" ? "" : opt}> {opt} </option>))}
                                 </select>
                                 </div>               
-                                  {/* 1. Property Address (Inline Input) */}
-                          <div className="flex flex-col h-full">
-  <label
-    htmlFor="address_purchase"
-    className="block text-sm font-medium text-gray-700 mb-1"
-  >
-    Property address:<span className="text-red-500">*</span>
-  </label>
+      {/* 1. Property Address (Inline Input) */}
 
-  <div className="relative mt-auto">
-    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-      <MapPin size={16} />
-    </span>
+                             <div className="flex flex-col h-full">
+                        <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                         Property address:<span className="text-red-500">*</span>
+                         </label>
+                        <LocationSearch
+  readOnly={showAddressLines_purchase}
+  onSelectAddress={async (selected) => {
+    if (!selected) return;
 
-    <input
-      id="address_purchase"
-      name="address_purchase"
-      type="text"
-      value={formData.address_purchase}
-      onChange={(e) => {
-        const { name, value } = e.target;
+    // Clear purchase error
+    if (errors.address_purchase) {
+      setErrors((prev) => ({ ...prev, address_purchase: "" }));
+    }
 
-        // ✅ Update form data
-        setFormData((prev) => ({ ...prev, [name]: value }));
+    // Save suggestion
+    setFormData((prev) => ({
+      ...prev,
+      selectedId_purchase: selected.id,
+      address_purchase: selected.suggestion,
+    }));
 
-        // ✅ Clear only this field’s error when typing
-        setErrors((prev) => ({ ...prev, [name]: "" }));
-      }}
-      placeholder="Enter property address"
-      className={`block w-full h-[44px] rounded-xl border pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors `}
-    />
-  </div>
+    // Fetch full details
+    const details = await fetchAddressDetails(selected.udprn);
 
-  {errors.address_purchase && (
-    <span className="text-red-500 text-xs mt-1">
-      {errors.address_purchase}
-    </span>
-  )}
-</div>
+    if (details) {
+      setFormData((prev) => ({
+        ...prev,
+        town_purchase: details.post_town || details.admin_district || "",
+        country_purchase: details.country || "",
+      }));
+    } else {
+      setErrors((prev) => ({
+        ...prev,
+        address_purchase: "Failed to fetch full address details.",
+      }));
+    }
+  }}
+/>
+
+                                          <div className="flex justify-between items-center mt-1">
+                                            {/* Left: Error message */}
+                                            <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+                              errors.address_purchase ? "text-red-500 opacity-100" : "opacity-0"
+                            }`}>
+                              {errors.address_purchase || "placeholder"} {/* placeholder keeps same height */}
+                            </p>
+
+                    {/* “I don’t know postcode” button */}
+                    {!showAddressLines_purchase && (
+                      <button
+                        type="button"
+                        onClick={handleUnknownPostcode_purchase}
+                        className="text-blue-600 underline text-xs"
+                      >
+                        I don’t know the postcode yet
+                      </button>
+                    )}
+                  </div>
+                </div>
+
+
+                {/* Always render AddressFields */}
+<AddressFields
+  prefix="_purchase"
+  formData={formData}
+  errors={errors}
+  showAddressLines={showAddressLines_purchase}
+  onChange={(field, value) =>
+    setFormData((prev) => ({ ...prev, [field]: value }))
+  }
+/>
+
 
                     
                                  {/* 2. Agreed purchase Price (Inline Input with Prefix) */}

@@ -6,10 +6,11 @@ import { FaBuilding, FaHome, FaWarehouse } from "react-icons/fa";
 import { MdHolidayVillage } from "react-icons/md"; // Material icon
 import { useRouter } from 'next/navigation';
 import Select from 'react-select';
-import LocationSearch from '../Purchase/LocationSearch';
+import LocationSearch, { fetchAddressDetails } from '../Purchase/LocationSearch';
+import AddressFields from './AddressFields';
 import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
 import Signinmodal from "../../components/utility/Singingmodal";
-import AddressFields from './AddressFields';
+
 // src/components/Sales.js
 
 export default function Sales() {
@@ -36,6 +37,19 @@ const [languagepreference, setlanguagepreference] = useState(" ");
   type_id:1,
 });
 
+const handleUnknownPostcode = () => {
+  // 1️⃣ Condition: user clicked "I don’t know the postcode yet"
+  setShowAddressLines(true); // show address fields
+
+  // 2️⃣ Reset address-related fields
+  setFormData(prev => ({
+    ...prev,
+    [`address_line1`]: "",
+    [`address_line2`]: "",
+    [`town`]: "",
+    [`country`]: "",
+  }));
+};
 
 const [errors, setErrors] = useState({});
 
@@ -132,8 +146,11 @@ console.log(formData)
     console.log("❌ Validation failed:", errors);
   }
 };
+  const [lender, setLender] = useState([
+      { value: "Not Required", label: "Not Required", id: 0 },
+    ]);
 
-    const [selectedLenders, setSelectedLenders] = useState([]);//imp
+       const [selectedLenders, setSelectedLenders] = useState([]);
      const options_l = [
       { value: 1, label: "Lender A" },
       { value: 2, label: "Lender B" },
@@ -149,11 +166,24 @@ console.log(formData)
     ];
   
     // ✅ Handle change
-    const handleChange_l = (selectedOptions) => {
-      setFormData((prevData) => ({
-        ...prevData,
-        lender: selectedOptions ? selectedOptions.map((opt) => opt.value) : [],
-      }));
+        const handleChange_l = (selectedOptions = []) => {
+      const hasNotRequired = selectedOptions.some(
+        (option) => option.value === "Not Required"
+      );
+    
+      if (hasNotRequired) {
+        // Keep only "Not Required" selected
+        const notRequiredOption = lender.find(opt => opt.value === "Not Required");
+        setSelectedLenders([notRequiredOption]);
+        console.log("Selected lenders: [0]");
+        handleChange("lender", [0]);
+      } else {
+        // Normal behavior for other lenders
+        setSelectedLenders(selectedOptions);
+        const ids = selectedOptions.map(item => item.id);
+        console.log("Selected lenders:", ids);
+        handleChange("lender", ids);
+      }
     };
     // Convert to react-select options
   
@@ -382,48 +412,71 @@ useEffect(() => {
           className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
         />
                                 </div>
- {/* 1. Property Address */}
-                    <div className="flex flex-col h-full">
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Property address:<span className="text-red-500">*</span>
-                      </label>
-
-                      <LocationSearch
+                                
+      {/* 1. Property Address (Inline Input) */}
+                       <div className="flex flex-col h-full">
+                        <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                         Property address:<span className="text-red-500">*</span>
+                         </label>
+                        <LocationSearch
                         readOnly={showAddressLines}
-                        onSelectAddress={(selected) => {
+                        onSelectAddress={async (selected) => {
                           if (!selected) return;
+                          // Clear address error immediately when selecting
+                           if (errors.address) {
+                            setErrors((prev) => ({ ...prev, address: "" }));
+                            }
+                            // Update formData with selected suggestion
+                            setFormData((prev) => ({
+                              ...prev,
+                              selectedId: selected.id,
+                              address: selected.suggestion,
+                            }));
+                            // Fetch full address details
+                            const details = await fetchAddressDetails(selected.udprn);
+                              if (details) {
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  town: details.post_town || details.admin_district || "",
+                                  country: details.country || "",
+                                  }));
+                                } else {
+                                  setErrors((prev) => ({
+                                    ...prev,
+                                    address: "Failed to fetch full address details.",
+                                    }));
+                                  }
+                                }}
+                                onInputChange={() => {
+                                  // Clear the error immediately when user types
+                                if (errors.address) {
+                                  setErrors((prev) => ({ ...prev, address: "" }));
+                                   }
+                                  }}
+                                  />
 
-                          setFormData((prev) => ({
-                            ...prev,
-                          address: selected,
-                            town: selected.town || selected.admin_district || "",
-                            country: selected.country || "",
-                          }));
+                                          <div className="flex justify-between items-center mt-1">
+                                            {/* Left: Error message */}
+                                            <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+                              errors.address ? "text-red-500 opacity-100" : "opacity-0"
+                            }`}>
+                              {errors.address || "placeholder"} {/* placeholder keeps same height */}
+                            </p>
 
-                          setErrors((prev) => ({
-                            ...prev,
-                            address: "",
-                            town: "",
-                            country: "",
-                          }));
-                        }}
-                      />
+                    {/* “I don’t know postcode” button */}
+                    {!showAddressLines && (
+                      <button
+                        type="button"
+                         onClick={handleUnknownPostcode}
+                        className="text-blue-600 underline text-xs"
+                      >
+                        I don’t know the postcode yet
+                      </button>
+                    )}
+                  </div>
+                </div>
 
-                      {/* “I don’t know postcode” button */}
-                      {!showAddressLines && (
-                        <div className="flex justify-end mt-1">
-                          <button
-                            type="button"
-                            onClick={() => setShowAddressLines(true)}
-                            className="text-blue-600 underline text-xs mt-1"
-                          >
-                            I don’t know the postcode yet
-                          </button>
-                        </div>
-                      )}
 
-                      <p className="text-[12px] text-red-500 min-h-[16px]">{errors.address}</p>
-                    </div>
 
                     {/* Always render AddressFields */}
                     <AddressFields
@@ -736,31 +789,22 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
 {/* //imp */}
  
 {/* //imp */}
- <div className="flex flex-col h-full">
-      <label className="block text-sm font-semibold text-gray-800 mb-1 rounded-lg focus:ring-2 focus:ring-[#1E5C3B]">
-        Select Lenders
-      </label>
-
-      {isClient ? (
-  <Select
-        options={options_l}
-        name="lender"
-        isMulti
-        instanceId="lenders-select"
-        value={options_l.filter((opt) => formData.lender.includes(opt.value))}
-        onChange={handleChange_l}
-        placeholder="Choose lenders..."
-        className="text-black"
-      />
-      ) : (
-        <div className="h-[44px] bg-gray-100 rounded-lg animate-pulse" />
-      )}
-
-      {/* Debug preview */}
-       <p
-className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
-></p>
-    </div>         
+      <div className="flex flex-col h-full">
+          <label className="block text-sm font-semibold text-gray-800 mb-2">
+            Select Lenders
+          </label>
+           <Select
+            options={lender}
+              instanceId="lenders-select"
+            isMulti
+            value={selectedLenders}
+            onChange={handleChange_l}
+            placeholder="Choose lenders..."
+            className="text-black"
+    
+          /> 
+          <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
+        </div>
 </div>    
 
 

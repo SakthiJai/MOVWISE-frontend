@@ -2,22 +2,13 @@
 
 import React, { use, useEffect, useMemo, useState } from "react";
 import Navbar from "../../parts/navbar/page";
-import { Check, MapPin, ChevronDown } from "lucide-react";
-import { FaBuilding, FaHome, FaWarehouse } from "react-icons/fa";
-import { MdHolidayVillage } from "react-icons/md"; // Material icon
-import Select from 'react-select';
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 
-import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
 import Footer from "../../parts/Footer/footer";
-import Sales from "./Sales"
-import Salewithpurchase from "./Salewithpurchase"
-import Remortage from "./Remortage"
-import Purchase from "./Purchase"
-
-
-import { v4 as uuidv4 } from 'uuid';
+import Sales from "./Sales";
+import Salewithpurchase from "./Salewithpurchase";
+import Remortage from "./Remortage";
+import Purchase from "./Purchase";
+import Equity from "./Equity";
 
 export default function ClientComponent({ type }) {
   const [data, setData] = useState(null);
@@ -39,6 +30,7 @@ export default function ClientComponent({ type }) {
                     {type === 'saleswithpurchase' && <Salewithpurchase />}
                     {type === 'remortage' && <Remortage />}
                     {type === 'purchase' && <Purchase />}
+                    {type === 'equity' && <Equity />}
                     
                 </main>
             </div>

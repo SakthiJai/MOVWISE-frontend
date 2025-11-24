@@ -11,12 +11,8 @@ import { useRouter } from "next/navigation";
 import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
 import Select from "react-select";
 import Footer from "../../parts/Footer/footer";
-import { v4 as uuidv4 } from 'uuid';
-import Image from "next/image";
-import Swal  from "sweetalert2";
 import LocationSearch, { fetchAddressDetails } from '../Purchase/LocationSearch';
 import AddressFields from './AddressFields';
-
 
 // import Select from "react-select";
 
@@ -24,380 +20,245 @@ import AddressFields from './AddressFields';
 
 
 
+export default function Equity() {
+    const [selectedLenders, setSelectedLenders] = useState([]);
+        const [loginformshow,setloginformshow]=useState(false)
+        const lenders = [
+      { id: 1, lenders_name: "Lender A" },
+      { id: 2, lenders_name: "Lender B" },
+      { id: 3, lenders_name: "Lender C" },
+      { id: 4, lenders_name: "Lender D" },
+      { id: 5, lenders_name: "Lender E" },
+      { id: 6, lenders_name: "Lender F" },
+      { id: 7, lenders_name: "Lender G" },
+      { id: 8, lenders_name: "Lender H" },
+      { id: 9, lenders_name: "Lender I" },
+      { id: 10, lenders_name: "Lender J" },
+    ];
+    
+      // Convert lenders into react-select format
+      const options_l = lenders.map((lender) => ({
+        value: lender.id,
+        label: lender.lenders_name,
+      }));
+    
+      const handleChange_l = (selectedOptions) => {
+        setSelectedLenders(selectedOptions);
+        const ids = selectedOptions.map(item => item.value);
+        console.log("Selected lenders:", ids);
+        handleChange("lender",ids)
+      };
+    
+    useEffect(() => {
+      const storedData = localStorage.getItem("getquote");
+    
+      if (storedData) {
+        setFormData(JSON.parse(storedData));
+      }
+    }, []);
 
-export default function Remortage() {
-  useEffect(() => {
-  const storedData = localStorage.getItem("getquote");
+      const [showAddressLines, setShowAddressLines] = useState(false);
+    
+      const [formData, setFormData] = useState({
 
-
-  if (storedData) {
-    setFormData(JSON.parse(storedData));
-  }
- 
-  fetchPropertyTypes();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-}, []);
-
-const handleUnknownPostcode = () => {
+      "address": "",
+      "address_line1": "",
+      "address_line2": "",
+      "country": "",
+      "town": "",
+      "property_value": 0,
+      "number_of_peoples": "",
+      "property_type": "",
+      "leasehold_or_free": "",
+      "buy_to_let": "",
+      "mortgage_lender": "not required",
+      "ownership_housing_asso": 1,
+      "languages": [],
+      "special_instruction": "",
+      "user_id":[],
+      "lender":[],
+      "type_id":3
+            
+      });
+    
+      const [loginformdata, setloginformdata] = useState({
+      email: "",
+      password: "",
+    });
+    
+    function handleloginformchange(name, value) {
+      setloginformdata((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+    
+      const handleUnknownPostcode = () => {
   // 1️⃣ Condition: user clicked "I don’t know the postcode yet"
   setShowAddressLines(true); // show address fields
 
   // 2️⃣ Reset address-related fields
   setFormData(prev => ({
     ...prev,
+    [`address`]: "",
     [`address_line1`]: "",
     [`address_line2`]: "",
     [`town`]: "",
     [`country`]: "",
   }));
 };
- 
-const [lender, setLender] = useState([
-  { value: "Not Known", label: "Not Known", id: 0 },
-  {value:"Not Required", label:"Not Required", id:1},
-]);
-const [lang, setLang] = useState ([
-  { value: "Not Required", label: "Not Required", id: 0 },
-]);
-  
-    const [selectedLenders, setSelectedLenders] = useState([]);
-    const [loginformshow,setloginformshow]=useState(false)
-   
 
-  
-
-const [selectedLanguage, setSelectedLanguage] = useState([]);
-const handleChangeLang = (selectedOptions = []) => {
-     const hasNotRequired = selectedOptions.some(
-    (option) => option.value === "Not Required"
-  );
- if (hasNotRequired) {
-    // Keep only "Not Required" selected
-    const notRequiredOption = lang.find(opt => opt.value === "Not Required");
-    setSelectedLanguage([notRequiredOption]);
-    console.log("Selected language: [0]");
-    handleChange("languages", [0]);
-  } else {
-    // Normal behavior for other lenders
-    setSelectedLanguage(selectedOptions);
-    const ids = selectedOptions.map(item => item.id);
-    console.log("Selected languages:", ids);
-    handleChange("languages", ids);
-  }
-}
-const handleChange_l = (selectedOptions = []) => {
-  const hasNotRequired = selectedOptions.some(
-    (option) => option.value === "Not Required"
-  );
-
-  if (hasNotRequired) {
-    // Keep only "Not Required" selected
-    const notRequiredOption = lender.find(opt => opt.value === "Not Required");
-    setSelectedLenders([notRequiredOption]);
-    console.log("Selected lenders: [0]");
-    handleChange("lender", [0]);
-  } else {
-    // Normal behavior for other lenders
-    setSelectedLenders(selectedOptions);
-    const ids = selectedOptions.map(item => item.id);
-    console.log("Selected lenders:", ids);
-    handleChange("lender", ids);
-  }
-};
-
-  const [showAddressLines, setShowAddressLines] = useState(false);
-
-  const [formData, setFormData] = useState({
-  "address": "",
-  "address_line1": "",
-  "address_line2": "",
-  "country": "",
-  "town": "",
-  "property_values": 0,
-  "no_of_bedrooms": "",
-  "property_type": "",
-  "leasehold_or_free": "",
-  "buy_to_let": "",
-  "mortgage_lender": "not required",
-  "ownership_housing_asso": 1,
-  "languages": [],
-  "specal_instruction": "",
- "service_type":4, 
-  "lender":[],
-   
-  
-  });
-
-
-  const [loginformdata, setloginformdata] = useState({
-  email: "",
-  password: "",
-});
-
-function handleloginformchange(name, value) {
-  setloginformdata((prev) => ({
-    ...prev,
-    [name]: value,
-  }));
-}
-
-  
-  const [errors, setErrors] = useState({});
-
-  const handleChange = (name, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-
-    setErrors((prev) => ({ ...prev, [name]: "" }));
-  };
-
-
-  
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    // simple validation
-    let newErrors = {};
-
- 
-  
-  if(!formData.languages){
-    newErrors.languages="please select a language"
-  }
-
+      const [errors, setErrors] = useState({});
+    
+      const handleChange = (name, value) => {
+        setFormData((prev) => ({
+          ...prev,
+          [name]: value,
+        }));
+        setErrors((prev) => ({ ...prev, [name]: "" }));
+      };
+    
+    
+     const handleSubmit = (e) => {
+        e.preventDefault();
+    
+        // simple validation
+        let newErrors = {};
+    
      
-      if (!formData.address.trim()) {
-        newErrors.address = "Property address is required";
-      } else if (formData.address.trim().length < 5) {
-        newErrors.address = "Address must be at least 5 characters";
+      
+      if(!formData.languages){
+        newErrors.languages="please select a language"
       }
     
-      
-      if (!formData.property_values
-) {
-        newErrors.property_values
- = "property_valuesis required";
-      } else if (Number(formData.property_values
-) <= 0) {
-        newErrors.property_values
- = "property_values must be a positive number";
-      }
-
- if(!formData.no_of_bedrooms){
-  newErrors.no_of_bedrooms="please select a no. of bedrooms"
- }
-  if(!formData.property_type){
-  newErrors.property_type="please select a property_type"
- }
-   if(!formData.leasehold_or_free){
-  newErrors.leasehold_or_free="please select a leasehold_or_free"
- }
-
-if(!formData.buy_to_let){
-  newErrors.buy_to_let="please select buy_to_let"
-}
-    setErrors(newErrors);
-    console.log(errors)
-
-    // if no errors, submit
-  if (Object.keys(newErrors).length === 0) {
-  console.log("✅ Form submitted:", formData);
-
-  Swal.fire({
-    title: "Success!",
-    text: "",
-    icon: "success",
-    confirmButtonText: "OK",
-    life:1000
-  });
-
-  setModalopen(true); // if you still want to open your modal
-}
-else{
-  Swal.fire({
-    title: "Error!",
-    text: "Fix Validation Errors!",
-    icon: "error",
-    confirmButtonText: "OK",
-    life:1000
-  });
-
-}
-
-
-  };
-
-   
-
-    const [modalopen, setModalopen] = useState(false);
-      const [languagepreference, setlanguagepreference] = useState(" ");
-      const [language, setLanguage] = useState([]);
-     
-
-      function   handlelanguagechange(e){
-      console.log(e.target.value);
-          setlanguagepreference(e.target.value);
-          setLanguage([]); 
-       }
-
-       function languagecheckboxchange(item,checked,id){
-    if(checked){
-setLanguage(prev => [...prev, item]);
-handleChange("languages",[...formData.languages, id])
-console.log(language);
-
-    }
-    else{
-      setLanguage(prev=>prev.filter(lang=>lang!==item))
-    }
-        
-      
-       }
-
-
-      const [tenure, setTenure] = useState("");
-
-     const tenureOptions = ["Leasehold", "Freehold"];
-
-
-     const options = ["1", "2", "3", "4","5","5+"];
-
-     const [propertyType, setPropertyType] = useState("");
-      
-
          
+          if (!formData.address.trim()) {
+            newErrors.address = "Property address is required";
+          } else if (formData.address.trim().length < 5) {
+            newErrors.address = "Address must be at least 5 characters";
+          }
         
-        const router = useRouter();
-        const [sharedOwnership, setSharedOwnership] = useState("");
-
-  async function logindata() {
-
-  try {
-    console.log(loginformdata)
-    const loginResponse = await postData(API_ENDPOINTS.login, loginformdata);
-    console.log("Login response:", loginResponse);
-
-    if (loginResponse.code === 200) {
-      const userId = loginResponse.user?.id; // <-- get it from API response
-console.log(userId)
-      if (userId) {
-        // ✅ Update formData
-      const updatedForm = {
-    ...formData,
-    "user_id": userId,
-    "service_type":4
-  };
-
-
-  // ✅ Update React state
-  setFormData(updatedForm);
-    localStorage.setItem("getquote", JSON.stringify(updatedForm));
-
-      }
-
-      router.push("/components/comparequotes");
-    }
-  } catch (error) {
-    console.error("Error logging in:", error);
-  }
-
-}
-const getIconForType = (type) => {
-  switch (type.toLowerCase()) {
-    case "flat":
-      return <FaBuilding size={22} color="#007BFF" />;
-    case "terraced":
-      return <FaHome size={22} color="#28A745" />;
-    case "semidetached":
-    case "semi-detached":
-      return <MdHolidayVillage size={22} color="#FFC107" />;
-    case "detached":
-      return <FaWarehouse size={22} color="#DC3545" />;
-    default:
-      return <FaHome size={22} color="#6c757d" />; // default gray icon
-  }
-};
-
-async function createguestuser(){
-
- try {
-  const guest_id = uuidv4();
-console.log(guest_id);
-   
-      const updatedForm = {
-    ...formData,
-    "guest_user": guest_id,
-    "user_id":null,
-    "service_type":4
-  };
-
-  // ✅ Update React state
-  setFormData(updatedForm);
-    localStorage.setItem("getquote", JSON.stringify(updatedForm));
- router.push("/components/comparequotes");
-      }
-
-     
+          
+          if (!formData.property_value) {
+            newErrors.property_value = "property_value  is required";
+          } else if (Number(formData.property_value) <= 0) {
+            newErrors.property_value = "property_value must be a positive number";
+          }
     
-   catch (error) {
-    console.error("Error logging in:", error);
-  }
-}
- const [propertyTypeOptions, setPropertyTypeOptions] = useState([]);
-
-
- const fetchPropertyTypes = async () => {
-         console.log(lender)
-      try {
-        const data = await getData(API_ENDPOINTS.compareQuotes);
-      
-       const lenderData = await getData(API_ENDPOINTS.lenders);
-       const languages = await getData(API_ENDPOINTS.languages);
-        setLang( languages.users)
-   console.log(languages.users)
-   if(Array.isArray(languages.users)){
-      const languageOptions = languages.users.map((l) => ({
-        value: l.language_name,
-        label: l.language_name,
-        id: l.id,
-      }));
-      setLang([{ value: "Not Required", id: 0,label: "Not Required" }, ...languageOptions]);
-   }
-    if (Array.isArray(lenderData.users)) {
-      const lenderOptions = lenderData.users.map((l) => ({
-        value: l.lenders_name,
-        label: l.lenders_name,
-        id: l.id,
-      }));
-         console.log(lenderOptions)
-
-           setLender([{ value: "Not Required", id: 0,label: "Not Required" },{value:"Not Known",id:1,label:"Not Known"} ,...lenderOptions]);
-               console.log(lender)
-
-        
-    }
+     if(!formData.number_of_peoples){
+      newErrors.number_of_peoples="please select a no. of bedrooms"
+     }
+      if(!formData.property_type){
+      newErrors.property_type="please select a property_type"
+     }
+       if(!formData.leasehold_or_free){
+      newErrors.leasehold_or_free="please select a leasehold_or_free"
+     }
     
-        if (data.propertyTypes && Array.isArray(data.propertyTypes)) {
-       
-          const mappedOptions = data.propertyTypes.map((item) => ({
-            id: item.id,
-            label: item.property_type,
-            icon: getIconForType(item.property_type),
-          }));
-          setPropertyTypeOptions(mappedOptions);
-          console.log(mappedOptions);
+    if(!formData.buy_to_let){
+      newErrors.buy_to_let="please select buy_to_let"
+    }
+        setErrors(newErrors);
+        console.log(errors)
+    
+        // if no errors, submit
+        if (Object.keys(newErrors).length === 0) {
+          console.log("✅ Form submitted:", formData);
+          alert("");
+              setModalopen(true)
+    
         }
-       
-
+    
+      };
+    
+        const [modalopen, setModalopen] = useState(false);
+          const [languagepreference, setlanguagepreference] = useState(" ");
+          const [language, setLanguage] = useState([]);
+                const lang=[
+      { id: 1, language_name: "English" },
+      { id: 2, language_name: "Spanish" },
+      { id: 3, language_name: "French" },
+      { id: 4, language_name: "German" },
+      { id: 5, language_name: "Chinese" },
+      { id: 6, language_name: "Hindi" },
+      { id: 7, language_name: "Arabic" },
+      { id: 8, language_name: "Portuguese" },
+      { id: 9, language_name: "Russian" },
+      { id: 10, language_name: "Japanese" },
+    ];
+    
+          function   handlelanguagechange(e){
+          console.log(e.target.value);
+              setlanguagepreference(e.target.value);
+              setLanguage([]); 
+           }
+    
+           function languagecheckboxchange(item,checked,id){
+        if(checked){
+    setLanguage(prev => [...prev, item]);
+    handleChange("languages",[...formData.languages, id])
+    console.log(language);
+    
+        }
+        else{
+          setLanguage(prev=>prev.filter(lang=>lang!==item))
+        }
+            
+          
+           }
+    
+    
+          const [tenure, setTenure] = useState("");
+    
+         const tenureOptions = ["Leasehold", "Freehold"];
+    
+    
+         const options = ["1", "2", "3", "4","5", "5+"];
+    
+         const [propertyType, setPropertyType] = useState("");
+            const propertyTypeOptions = [
+              { label: "Flat", icon: <FaBuilding size={22} color="#007BFF" /> },
+              { label: "Terraced", icon: <FaHome size={22} color="#28A745" /> },
+              { label: "Semi-detached", icon: <MdHolidayVillage size={22} color="#FFC107" /> },
+              { label: "Detached", icon: <FaWarehouse size={22} color="#DC3545" /> },
+            ];
+    
+             
+            
+            const router = useRouter();
+            const [sharedOwnership, setSharedOwnership] = useState("");
+    
+      async function logindata() {
+    
+      try {
+        console.log(loginformdata)
+        const loginResponse = await postData(API_ENDPOINTS.login, loginformdata);
+        console.log("Login response:", loginResponse);
+    
+        if (loginResponse.code === 200) {
+          const userId = loginResponse.user?.id; // <-- get it from API response
+    console.log(userId)
+          if (userId) {
+            // ✅ Update formData
+          const updatedForm = {
+        ...formData,
+        "user_id": userId,
+      };
+    
+      // ✅ Update React state
+      setFormData(updatedForm);
+        localStorage.setItem("getquote", JSON.stringify(updatedForm));
+    
+          }
+    
+          router.push("/components/comparequotes");
+        }
       } catch (error) {
-        console.error("Failed to load property types:", error);
+        console.error("Error logging in:", error);
       }
-    };
-
-        return (
-                         <div className="flex flex-col lg:flex-row gap-8 mt-8">
+    }
+          return (
+                <div className="flex flex-col lg:flex-row gap-8 mt-8">
                 {/* Left stepper */}
                    <aside className="z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-50% lg:max-h-[600px] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white   lg:top-22">
                                  <div className="p-6">
@@ -411,8 +272,8 @@ console.log(guest_id);
                                      </div>
                                      <div>
                                      <div className="text-xs font-semibold text-[#1E1E1E]">STEP 1</div>
-                                     <div className="text-lg font-extrabold text-[#1E1E1E]">Property Details</div>
-                                      <div className="text-xs text-[#A38320] mt-1">In Progress</div>
+                                     <div className="text-lg font-extrabold text-[#1E1E1E]">Personal Details</div>
+                                     <div className="text-xs text-[#2D7C57] mt-1">Completed</div>
                                      </div>
                                  </div>
              
@@ -426,8 +287,8 @@ console.log(guest_id);
                                      </div>
                                      <div>
                                      <div className="text-xs font-semibold text-[#1E1E1E]">STEP 2</div>
-                                     <div className="text-lg font-extrabold text-[#1E1E1E]">Personal Details</div>
-                                   
+                                     <div className="text-lg font-extrabold text-[#1E1E1E]">Property Details</div>
+                                     <div className="text-xs text-[#A38320] mt-1">In Progress</div>
                                      </div>
                                  </div>
              
@@ -468,13 +329,15 @@ console.log(guest_id);
 
                     <form className="mt-8 space-y-10">
                     {/* 🏡 REMORTGAGE DETAILS */}
-                    <div className="space-y-6">
+                    <div className="space-y-6 mb-6">
                         <h2 className="text-xl font-bold text-gray-900 border-b-2 border-[#1E5C3B] pb-2 flex items-center gap-2">
-                        <span className="text-2xl">🏡</span>REMORTGAGE DETAILS
+                        <span className="text-2xl">🏡</span>TRANSFER OF EQUITY DETAILS
                         </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
-                                 {/* 1. Property Address (Inline Input) */}
+
+
+      {/* 1. Property Address (Inline Input) */}
                        <div className="flex flex-col h-full">
                         <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
                          Property address:<span className="text-red-500">*</span>
@@ -528,7 +391,7 @@ console.log(guest_id);
                     {!showAddressLines && (
                       <button
                         type="button"
-                         onClick={handleUnknownPostcode}
+                        onClick={handleUnknownPostcode}
                         className="text-blue-600 underline text-xs"
                       >
                         I don’t know the postcode yet
@@ -536,7 +399,10 @@ console.log(guest_id);
                     )}
                   </div>
                 </div>
-{/* Always render AddressFields */}
+
+
+
+                    {/* Always render AddressFields */}
                     <AddressFields
                       formData={formData}
                       errors={errors}
@@ -547,9 +413,11 @@ console.log(guest_id);
                     />
 
 
+                    {/* Property value */}
+
                         <div className="flex flex-col h-full">
                             <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
-                            Property value:<span className="text-red-500">*</span>
+                            Property value:
                             </label>
                             <div className="relative mt-auto">
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold text-lg">
@@ -558,27 +426,23 @@ console.log(guest_id);
                             <input
                                 id="price"
                                 type="number"
-                                  value={formData?.property_values ?? ""}
                                 className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
-                            name="property_values
-"
-                            onChange={(e)=>{handleChange("property_values",Number(e.target.value))}}
+                            name="property_value"
+                            onChange={(e)=>{handleChange("property_value",Number(e.target.value))}}
                             />
                             </div>
-  <p
+                              <p
 className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
-   errors.property_values
- ? "text-red-500 opacity-100" : "opacity-0"
+   errors.property_value ? "text-red-500 opacity-100" : "opacity-0"
 }`}>
-  {errors.property_values
- || "placeholder"} {/* placeholder keeps same height */}
+  {errors.property_value || "placeholder"} {/* placeholder keeps same height */}
 </p>
                         </div>
 
                         {/* 3. Number of Bedrooms (Inline Select) */}
                         <div className="flex flex-col h-full">
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Number of Bedrooms:<span className="text-red-500">*</span>
+                                Number of Bedrooms:
                             </label>
 
                             <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 mt-auto">
@@ -586,10 +450,10 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                                 <button
                                     key={opt}
                                     type="button"
- onClick={() => handleChange("no_of_bedrooms", opt)}                 
-                    className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm
+                                    onClick={() => handleChange("number_of_peoples", opt)}                 
+                                    className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm
                                     ${
-   formData.no_of_bedrooms === opt                                        ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+                                    formData.number_of_peoples === opt  ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
                                         : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                                     }`}
                                 >
@@ -597,7 +461,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                                 </button>
                                 ))}
                             </div>
-  <p
+                              <p
 className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
    errors.no_of_bedrooms ? "text-red-500 opacity-100" : "opacity-0"
 }`}>
@@ -606,6 +470,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                             </div>
                     
                         {/* 4. Leasehold or Freehold (Inline Select) */}
+
                         <div className="flex flex-col gap-6">
                             {/* Leasehold / Freehold Section */}
                             <div className="flex flex-col h-full">
@@ -637,16 +502,14 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                                 </div>
                             </div>
                         </div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1 ">
-                            Property Type:<span className="text-red-500">*</span>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                            Property Type:
                             </label>
-         <div>
-                 
 
                             <div className="flex flex-wrap  gap-9">
                             {propertyTypeOptions.map((opt) => (
                                 <button
-                                key={opt.id}
+                                key={opt.label}
                                 type="button"
                                 onClick={()=> handleChange ( "property_type",opt.label)}
                                 className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 transition-all duration-200 shadow-sm w-[170.76px]
@@ -663,24 +526,23 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                                 >
                                     {opt.icon}
                                 </span>
-                                <span className="text-sm font-semibold">{opt.label
-}</span>
+                                <span className="text-sm font-semibold">{opt.label}</span>
                                 </button>
                             ))}
                             </div>
-                           
- <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+                             <p
+className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
    errors.property_type ? "text-red-500 opacity-100" : "opacity-0"
 }`}>
   {errors.property_type || "placeholder"} {/* placeholder keeps same height */}
 </p>
-</div>
 
+                        
                         
                         </div>
 
                          {/* 💰 PURCHASE FINANCE */}
-              <div className="space-y-6 mb-4">
+              <div className="space-y-6 mb-6">
                 <h2 className="text-xl font-bold text-gray-900 border-b-2 border-[#1E5C3B] pb-2 flex items-center gap-2">
                   <span className="text-2xl">💰</span> PURCHASE FINANCE
                 </h2>
@@ -689,31 +551,31 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                   {/* 6. Buy to Let? (Inline Select) */}
                   <div className="flex flex-col h-full">
                     <label htmlFor="b2l" className="block text-sm font-medium text-gray-700 mb-1">
-                      Buy to Let?<span className="text-red-500">*</span>
+                      Buy to Let?
                     </label>
                 <div className="relative mt-auto">
-  <select
-    name="buy_to_let"
-    id="b2l"
-    value={formData.buy_to_let || ""}  // ✅ controlled value
-    onChange={(e) => handleChange("buy_to_let", e.target.value)}  // ✅ update formData
-    className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"
-  >
-    {["Please select", "No", "Yes - Personal name", "Yes - Company name"].map(
-      (opt) => (
-        <option key={opt} value={opt}>
-          {opt}
-        </option>
-      )
-    )}
-  </select>
+              <select
+                name="buy_to_let"
+                id="b2l"
+                value={formData.buy_to_let || ""}  // ✅ controlled value
+                onChange={(e) => handleChange("buy_to_let", e.target.value)}  // ✅ update formData
+                className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"
+              >
+                {["Please select", "No", "Yes - Personal name", "Yes - Company name"].map(
+                  (opt) => (
+                    <option key={opt} value={opt}>
+                      {opt}
+                    </option>
+                  )
+                )}
+              </select>
 
-  <ChevronDown
-    size={16}
-    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
-  />
-</div>
-  <p
+              <ChevronDown
+                size={16}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+              />
+            </div>
+              <p
 className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
    errors.buy_to_let ? "text-red-500 opacity-100" : "opacity-0"
 }`}>
@@ -723,7 +585,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
 
                   {/* 11. Shared Ownership? (Inline ButtonGroup) */}
                   <div className="flex flex-col h-full">
-                    <label className=" text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
                       Shared Ownership via housing association?
                     </label>
                     <div className="grid grid-cols-2 gap-3 mt-auto">
@@ -750,10 +612,42 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                         <span>No</span>
                       </button>
                     </div>
-                      <p
+<p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
+                  </div>
+<div className="flex flex-col h-full">
+  <label
+    htmlFor="b2l"
+    className="block text-sm font-medium text-gray-700 mb-1"
+  >
+    Mortgage Lender
+  </label>
+
+  <div className="relative mt-auto">
+    <select
+      id="b2l"
+      name="mortgage_lender"
+      value={formData.mortgage_lender || ""} // ✅ controlled value
+      onChange={(e) => handleChange("mortgage_lender", e.target.value)} // ✅ updates formData
+      className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"
+    >
+      {["Please select", "Not Known", "Not Required", "Lender Name Look Up"].map(
+        (opt) => (
+          <option key={opt} value={opt}>
+            {opt}
+          </option>
+        )
+      )}
+    </select>
+
+    <ChevronDown
+      size={16}
+      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+    />
+  </div>
+   <p
 className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
 ></p>
- </div>
+</div>
 
 
                 </div>
@@ -762,52 +656,75 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
   {/* Label + Main dropdown */}
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
   <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">
+    <label className="block text-sm font-semibold text-gray-800 mb-1">
       Prefer solicitor in your first language?
     </label>
-   <div className="mt-2">
-  
-
-  
-  <Select
-    options={lang}
-    isMulti
-              instanceId="language-select"
-    value={selectedLanguage || formData.languages}
-    onChange={handleChangeLang}
-    placeholder="Choose languages..."
-    className="text-black mt-2"
-  />
- 
-</div>
-    <p
+    <select
+      className="text-black placeholder-black w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1E5C3B]"
+      onChange={handlelanguagechange}
+      value={languagepreference}
+    >
+      <option value="">Please select</option>
+      <option>No Preference</option>
+      <option>Yes</option>
+      <option>Maybe</option>
+    </select>
+     <p
 className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
 ></p>
   </div>
 
-  {/* Show only when needed */}
  
 
 
- <div className="flex flex-col h-full">
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-     Mortgage Lender
+  <div className="flex flex-col h-full">
+      <label className="block text-sm font-semibold text-gray-800 mb-2">
+        Select Lenders
       </label>
-       <Select
-        options={lender}
+      <Select
+        options={options_l}
           instanceId="lenders-select"
         isMulti
-        value={selectedLenders}
+        value={selectedLenders} 
         onChange={handleChange_l}
         placeholder="Choose lenders..."
         className="text-black"
 
-      /> 
-      <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
+      />
+       <p
+className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
+></p>
     </div>
-    
-    
-    </div></div>
+     {/* Show only when needed */}
+  {(languagepreference === "Yes" || languagepreference === "Maybe") && (
+<div className="mt-2">
+  <label className="block text-sm font-semibold text-gray-800 mb-2">
+    Select preferred language(s)
+  </label>
+
+  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 border border-gray-200 p-3 rounded-lg bg-gray-50">
+    {lang.map((item) => (
+      <label
+        key={item.id}
+        className="flex items-center gap-2 p-2 rounded-md cursor-pointer hover:bg-green-50 transition"
+      >
+        <input
+          type="checkbox"
+          value={item.language_name}
+          onChange={(e) => languagecheckboxchange(item.language_name, e.target.checked,item.id)}
+          className="accent-[#1E5C3B] w-4 h-4"
+        />
+        <span className="text-gray-800 text-sm font-medium">
+          {item.language_name}
+        </span>
+      </label>
+    ))}
+  </div>
+ 
+</div>
+
+  )}</div>
+    </div>
           
                     {/* 🌐 SPECIAL INSTRUCTIONS */}
   
@@ -816,8 +733,8 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
     Special instructions (Optional)
   </label>
   <textarea
-  name="specal_instruction"
-  onChange={(e)=>handleChange("specal_instruction",e.target.value)}
+  name="special_instruction"
+  onChange={(e)=>handleChange("special_instruction",e.target.value)}
     className="w-full border border-gray-300 rounded-lg px-3 py-2 h-28 resize-none focus:outline-none focus:ring-2 focus:ring-[#1E5C3B] text-black placeholder-black"
     placeholder="Enter any special instructions..."
   ></textarea>
@@ -857,65 +774,30 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
           &times;
         </button>
 
-        <h2 className="text-2xl font-bold text-white mb-3">Became a Member</h2>
-        <p className="text-white mb-8 leading-relaxed" >
+        <h2 className="text-2xl font-bold text-[#1E5C3B] mb-3">Confirm Submission</h2>
+        <p className="text-gray-600 mb-8 leading-relaxed">
           You’re about to submit your <b>Property Details</b>.  
-          Please to continue as a <b>Sign in</b> or proceed as a <b>Guest</b>?
+          Would you like to continue as a <b>logged-in user</b> or a <b>guest user</b>?
         </p>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 mt-6 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
       <button
   // use your actual route path
-  className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
-          onClick={()=>{setloginformshow(true)}}
+  className="border border-[#1E5C3B] text-[#1E5C3B] px-6 py-3 rounded-lg hover:bg-[#1E5C3B] hover:text-white transition-all duration-200 shadow-sm flex items-center justify-center"
+onClick={()=>{setloginformshow(true)}}
 >
-    Sign in 
+  Continue as Logged-in User
 </button>
- {/* <Link
-          href="/components/comparequotes"
-          className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
-           onClick={createguestuser} >
-         
-        </Link> */}
- <Link
-          href="/components/comparequotes"
-          className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
-           onClick={createguestuser} >
-          Guest 
-        </Link>
-          </div>
-          <div>
           <Link
-    href="/auth/forgetpassword"
-    className="absolute mt-2 right-6 text-white hover:underline text-sm"
-  >
-             Forget Password
+ href="/components/comparequotes"
+             className="border border-[#1E5C3B] text-[#1E5C3B] px-6 py-3 rounded-lg hover:bg-[#1E5C3B] hover:text-white transition-all duration-200 shadow-sm"
+          >
+            Continue as Guest User
           </Link>
-          
-
         </div>
-<div class="w-full flex justify-center mt-15">
-  <button
-    class="inline-flex items-center gap-2 
-           px-5 py-2 border border-gray-300 
-           rounded-full bg-white hover:bg-gray-50 
-           transition shadow-sm">
-    
-    <Image
-    width={"10"}
-    height={"10"}
-      src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-      class="w-5 h-5"
-      alt="Google" />
-
-    <span class="text-gray-700 font-medium">Sign in with Google</span>
-  </button>
-</div>
-
-
       </div>)}
 {loginformshow && (
-  <div className="flex justify-center items-center min-h-[70vh]  rounded-xl shadow-md p-6">
+  <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 rounded-xl shadow-md p-6">
     <form
       onSubmit={(e) => {
         e.preventDefault();
@@ -924,12 +806,6 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
       }}
       className="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg border border-gray-200"
     >
-      <button
-          onClick={() => setModalopen(false)}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-3xl font-bold leading-none"
-        >
-          &times;
-        </button>
       <h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">
         Welcome Back 👋
       </h2>
@@ -1007,5 +883,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
                     </div>
                 </section>
                 </div>
-        );
-        }
+          );
+
+
+};

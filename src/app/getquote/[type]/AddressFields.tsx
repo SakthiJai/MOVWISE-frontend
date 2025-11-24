@@ -3,20 +3,11 @@
 import React from "react";
 
 interface AddressFieldsProps {
-  formData: {
-    address_line1: string;
-    address_line2: string;
-    town: string;
-    country: string;
-  };
-  errors: {
-    address_line1?: string;
-    address_line2?: string;
-    town?: string;
-    country?: string;
-  };
+  formData: any;
+  errors: any;
   onChange: (field: string, value: string) => void;
   showAddressLines: boolean;
+  prefix?: string; // <-- IMPORTANT
 }
 
 const AddressFields: React.FC<AddressFieldsProps> = ({
@@ -24,23 +15,31 @@ const AddressFields: React.FC<AddressFieldsProps> = ({
   errors,
   onChange,
   showAddressLines,
+  prefix = "", // default for SALE
 }) => {
+
+  const line1 = `address_line1${prefix}`;
+  const line2 = `address_line2${prefix}`;
+  const town = `town${prefix}`;
+  const country = `country${prefix}`;
+
   return (
     <>
+
       {/* Address Line 1 */}
       {showAddressLines && (
         <div className="flex flex-col h-full">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Address Line 1 <span className="text-red-500">*</span>
+            Address Line 1 <span className="text-red-900">*</span>
           </label>
           <input
             type="text"
-            value={formData.address_line1}
-            onChange={(e) => onChange("address_line1", e.target.value)}
-            className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"
+            value={formData[line1] || ""}
+            onChange={(e) => onChange(line1, e.target.value)}
+            className="block w-full h-[44px] rounded-xl border border-gray-300 px-4  text-gray-900"
           />
           <p className="text-[12px] text-red-500 min-h-[16px]">
-            {errors.address_line1}
+            {errors[line1]}
           </p>
         </div>
       )}
@@ -53,41 +52,41 @@ const AddressFields: React.FC<AddressFieldsProps> = ({
           </label>
           <input
             type="text"
-            value={formData.address_line2}
-            onChange={(e) => onChange("address_line2", e.target.value)}
-            className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"
+            value={formData[line2] || ""}
+            onChange={(e) => onChange(line2, e.target.value)}
+            className="block w-full h-[44px] rounded-xl border border-gray-300 px-4  text-gray-900"
           />
           <p className="text-[12px] text-red-500 min-h-[16px]">
-            {errors.address_line2}
+            {errors[line2]}
           </p>
         </div>
       )}
 
-      {/* Town / City - always visible */}
+      {/* Town */}
       <div className="flex flex-col h-full">
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Town / City <span className="text-red-500">*</span>
         </label>
         <input
           type="text"
-          value={formData.town}
-          onChange={(e) => onChange("town", e.target.value)}
-          className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"
+          value={formData[town] || ""}
+          onChange={(e) => onChange(town, e.target.value)}
+          className="block w-full h-[44px] rounded-xl border border-gray-300 px-4  text-gray-900"
         />
         <p className="text-[12px] text-red-500 min-h-[16px]">
-          {errors.town}
+          {errors[town]}
         </p>
       </div>
 
-      {/* Country - always visible */}
+      {/* Country */}
       <div className="flex flex-col h-full">
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Country <span className="text-red-500">*</span>
         </label>
         <select
-          value={formData.country}
-          onChange={(e) => onChange("country", e.target.value)}
-          className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"
+          value={formData[country] || ""}
+          onChange={(e) => onChange(country, e.target.value)}
+          className="block w-full h-[44px] rounded-xl border border-gray-300 text-gray-900 px-4 "
         >
           <option value="">Select country</option>
           <option value="England">England</option>
@@ -96,9 +95,10 @@ const AddressFields: React.FC<AddressFieldsProps> = ({
           <option value="Northern Ireland">Northern Ireland</option>
         </select>
         <p className="text-[12px] text-red-500 min-h-[16px]">
-          {errors.country}
+          {errors[country]}
         </p>
       </div>
+
     </>
   );
 };
