@@ -40,7 +40,7 @@ const [languagepreference, setlanguagepreference] = useState(" ");
   lender:"",  
   type_id:1,
 });
-
+const [rawValue, setRawValue] = useState("");
 const handleUnknownPostcode = () => {
   // 1️⃣ Condition: user clicked "I don’t know the postcode yet"
   setShowAddressLines(true); // show address fields
@@ -85,13 +85,34 @@ const handleUnknownPostcode = () => {
   }
 
 const [errors, setErrors] = useState({});
+useEffect(() => {
+    if (rawValue === "") return;
 
+    const timer = setTimeout(() => {
+      const num = Number(rawValue.replace(/,/g, ""));
+
+      if (!isNaN(num)) {
+        // Format as UK number WITHOUT pound symbol
+        const formatted = new Intl.NumberFormat("en-GB", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }).format(num);
+
+       // setValue(formatted);
+         setFormData((prev) => ({ ...prev, sales_price: formatted }))
+      }
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [rawValue]);
 const handleChange = (name, value) => {
-
   // Handle phone separately
   if (name === "sales_price") {
+  const cleaned = value.replace(/[^0-9.]/g, "");
+
     const numericValue = Number(value);
-    setFormData((prev) => ({ ...prev, [name]: numericValue }));
+    setRawValue(cleaned);
+    setFormData((prev) => ({ ...prev, [name]: cleaned}));
   } else {
     setFormData((prev) => ({ ...prev, [name]: value }));
   }
