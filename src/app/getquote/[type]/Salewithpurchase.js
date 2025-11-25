@@ -34,6 +34,8 @@ const handleUnknownPostcode = () => {
   // 2️⃣ Reset address-related fields
   setFormData(prev => ({
     ...prev,
+    [`address`]: "",          // ← THIS is the missing one
+    [`selectedId`]: "",
     [`address_line1`]: "",
     [`address_line2`]: "",
     [`town`]: "",
@@ -48,6 +50,8 @@ const handleUnknownPostcode_purchase = () => {
   // 2️⃣ Reset address-related fields
   setFormData(prev => ({
     ...prev,
+    [`address_purchase`]: "",          // ← THIS is the missing one
+    [`selectedId_purchase`]: "",
     [`address_line1_purchase`]: "",
     [`address_line2_purchase`]: "",
     [`town_purchase`]: "",
@@ -85,7 +89,8 @@ useEffect(() => {
     propertyType_purchase: "",
     sharedOwnership_purchase: "",
     b2l:"",
-    languages:[]
+    languages:[],
+    service_type:1
   });
   
   const [errors, setErrors] = useState({});
@@ -615,7 +620,7 @@ console.log(e);
                              <input
                                 id="price"
                                 name="price"
-                                type="number"
+                                type="text"
                                 value={formData.price ?? ""} 
                                 onChange={handleChange}
                                 className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
@@ -1304,7 +1309,6 @@ console.log(e);
                         Back
                     </button>
                     <button
-                        href="/components/comparequotes"
                          onClick={handleContinue}
                         className="font-semibold text-base h-[48px] px-8 rounded-full bg-[#1E5C3B] text-white shadow-lg hover:bg-[#16472F] flex items-center justify-center transition duration-150"
                     >

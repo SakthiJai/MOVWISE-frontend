@@ -12,6 +12,7 @@ import Footer from "../../parts/Footer/footer";
 import LocationSearch, { fetchAddressDetails } from '../Purchase/LocationSearch';
 import AddressFields from './AddressFields';
 import { v4 as uuidv4 } from 'uuid';
+import Signinmodal from "../../components/utility/Singingmodal";
 
 
 export default function Purchase() {
@@ -78,6 +79,8 @@ export default function Purchase() {
   // 2️⃣ Reset address-related fields
   setFormData(prev => ({
     ...prev,
+    [`address`]: "",          // ← THIS is the missing one
+    [`selectedId`]: "",
     [`address_line1`]: "",
     [`address_line2`]: "",
     [`town`]: "",
@@ -91,9 +94,10 @@ export default function Purchase() {
   "address_line2": "",
   "country": "",
   "town": "",
-        "languages": [],
-        "service_type":2,
+  "languages": [],
+  "service_type":2,
       });
+
       async function createguestuser(){
       
        try {
@@ -177,9 +181,10 @@ export default function Purchase() {
     
         const [selectedLenders, setSelectedLenders] = useState([]);
     const handleChange = (field, value) => {
+      console.log(field,value)
       setFormData((prev) => ({
         ...prev,
-        [field]: [value],
+        [field]: value,
       }));
       console.log(formData)
       if (errors[field]) {
@@ -241,9 +246,7 @@ export default function Purchase() {
       if(!formData.languages){
         newErrors.languages="please select a language"
       }
-      if(!formData.address){
-        newErrors.address="please select a address"
-      }
+     
       if (!formData.purchase_price) {
             newErrors.purchase_price = "purchase_price  is required";
           } else if (Number(formData.purchase_price) <= 0) {
@@ -272,7 +275,7 @@ export default function Purchase() {
         // if no errors, submit
         if (Object.keys(newErrors).length === 0) {
           console.log("✅ Form submitted:", formData);
-         localStorage.setItem("getquote",formData)
+          localStorage.setItem("getquote", JSON.stringify(formData));
               setModalopen(true)
     
         }
@@ -538,7 +541,7 @@ return (
         <input
           id="purchase_price"
           name="purchase_price"
-          type="number"
+          type="text"
           value={formData.purchase_price || ""}
           onChange={(e) => {
             setFormData({ ...formData, purchase_price: Number( e.target.value ) });
@@ -574,7 +577,7 @@ return (
      onClick={() => handleChange("no_of_bedrooms", opt)}                 
                         className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm
                                         ${
-       formData.no_of_bedrooms === opt                                        ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+       formData.no_of_bedrooms == opt                                        ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
                                             : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                                         }`}
                                     >
@@ -1035,125 +1038,9 @@ return (
     
      </form>
     
-     {modalopen && (
-      <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-        <div className="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-3xl h-[500px] grid grid-cols-1 md:grid-cols-[35%_65%] animate-scale-in relative">
-          
-          {/* LEFT SIDE (Brand Section - 30%) */}
-          <div className="text-center bg-gradient-to-br from-[#1E5C3B] to-green-600 text-white flex flex-col justify-between items-center md:items-start p-8">
-            <div className="mt-20">
-              <h2 className="text-3xl font-extrabold tracking-wide mb-2">MOVWISE</h2>
-              <p className="text-sm opacity-90 leading-relaxed mt-20">
-                Making property transactions simple, secure, and smart.
-              </p>
-            </div>
-    
-            <Link
-            type="button"
-     href="/components/personaldetails" 
-             className="mt-8 mx-auto bg-white text-[#1E5C3B] font-semibold px-8 py-2 rounded-full hover:bg-gray-100 transition-all duration-200 shadow-md">
-              Sign Up
-            </Link>
-          </div>
-    
-          {/* RIGHT SIDE (Content Section - 70%) */}
-        {!loginformshow &&  ( <div className="relative p-8 flex flex-col justify-center text-center md:text-left">
-            {/* Close Button */}
-            <button
-              onClick={() => setModalopen(false)}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-3xl font-bold leading-none"
-            >
-              &times;
-            </button>
-    
-            <h2 className="text-2xl font-bold text-[#1E5C3B] mb-3">Confirm Submission</h2>
-            <p className="text-gray-600 mb-8 leading-relaxed">
-              You’re about to submit your <b>Property Details</b>.  
-              Would you like to continue as a <b>logged-in user</b> or a <b>guest user</b>?
-            </p>
-    
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <button
-      // use your actual route path
-      className="border border-[#1E5C3B] text-[#1E5C3B] px-6 py-3 rounded-lg hover:bg-[#1E5C3B] hover:text-white transition-all duration-200 shadow-sm flex items-center justify-center"
-    onClick={()=>{setloginformshow(true)}}
-    >
-      Continue as Logged-in User
-    </button>
-                  <Link
-             href="/components/comparequotes"
-                         className="border border-[#1E5C3B] text-[#1E5C3B] px-6 py-3 rounded-lg hover:bg-[#1E5C3B] hover:text-white transition-all duration-200 shadow-sm"
-                   onClick={createguestuser}   >
-                Continue as Guest User
-              </Link>
-            </div>
-          </div>)}
-          {loginformshow && (
-      <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 rounded-xl shadow-md p-6">
-       <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            logindata();
-           
-          }}
-          className="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg border border-gray-200"
-        >
-          <h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">
-            Welcome Back 👋
-          </h2>
-    
-          {/* Email */}
-          <div className="mb-5">
-            <label
-              htmlFor="email"
-              className="block text-sm font-semibold text-gray-700 mb-2"
-            >
-              Email Address
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              placeholder="Enter your email"
-              value={loginformdata.email || ""}
-              onChange={(e) => handleloginformchange("email", e.target.value)}
-              className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
-            />
-          </div>
-    
-          {/* Password */}
-          <div className="mb-6">
-            <label
-              htmlFor="password"
-              className="block text-sm font-semibold text-gray-700 mb-2"
-            >
-              Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              placeholder="Enter your password"
-              value={loginformdata.password || ""}
-              onChange={(e) => handleloginformchange("password", e.target.value)}
-              autoComplete="current-password"
-              className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
-            />
-          </div>
-          <button
-            type="submit"
-            className="w-full bg-[#1E5C3B] text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-all duration-200 shadow-md"
-          >
-            Login
-          </button>
-        </form>
-      </div>
-    )}
-        </div>
-      </div>
-    )}
+   {modalopen && (
+                          <Signinmodal></Signinmodal>
+                          )}
       <div className="mt-12 flex justify-end gap-4">
          <button
          onClick={() => router.back()}

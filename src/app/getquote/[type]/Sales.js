@@ -48,10 +48,13 @@ const handleUnknownPostcode = () => {
   // 2️⃣ Reset address-related fields
   setFormData(prev => ({
     ...prev,
+    [`address`]: "",          // ← THIS is the missing one
+    [`selectedId`]: "",
     [`address_line1`]: "",
     [`address_line2`]: "",
     [`town`]: "",
     [`country`]: "",
+    [`address`]:""
   }));
 };
 
@@ -534,7 +537,7 @@ useEffect(() => {
                              <input
                                 id="sales_price"
                                 name="sales_price"
-                                type="number"
+                                type="text"
                                 value={formData.sales_price}
                                 onChange={(e)=>{handleChange("sales_price",e.target.value)}}
                                 className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
