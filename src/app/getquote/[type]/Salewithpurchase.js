@@ -59,6 +59,7 @@ const handleUnknownPostcode_purchase = () => {
   }));
 };
 
+const [rawValue, setRawValue] = useState("");
 useEffect(() => {
   const storedData = localStorage.getItem("getquote");
 
@@ -104,20 +105,61 @@ useEffect(() => {
             password: "",
           });
 
-   const handleChange = (e) => {
+//    const handleChange = (e) => {
+//   const { name, value } = e.target;
+
+//   // Handle phone separately
+//   if (name === "phone") {
+//     const numericValue = value.replace(/\D/g, "").slice(0, 12);
+//     setFormData((prev) => ({ ...prev, [name]: numericValue }));
+//   } else {
+//     setFormData((prev) => ({ ...prev, [name]: value }));
+//   }
+//   setErrors((prev) => ({ ...prev, [name]: "" }));
+// };
+
+const handleChange = (e) => {
   const { name, value } = e.target;
 
-  // Handle phone separately
-  if (name === "phone") {
+  if (name === "price") {
+    const cleaned = value.replace(/[^0-9.]/g, ""); 
+    setRawValue(cleaned); 
+    setFormData((prev) => ({ ...prev, price: cleaned })); 
+  }
+  else if (name === "phone") {
     const numericValue = value.replace(/\D/g, "").slice(0, 12);
     setFormData((prev) => ({ ...prev, [name]: numericValue }));
-  } else {
+  }
+  else {
     setFormData((prev) => ({ ...prev, [name]: value }));
   }
 
-  // ✅ Clear error for this specific field
   setErrors((prev) => ({ ...prev, [name]: "" }));
 };
+
+
+useEffect(() => {
+    if (rawValue === "") return;
+
+    const timer = setTimeout(() => {
+      const num = Number(rawValue.replace(/,/g, ""));
+
+      if (!isNaN(num)) {
+        // Format as UK number WITHOUT pound symbol
+        const formatted = new Intl.NumberFormat("en-GB", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }).format(num);
+
+       // setValue(formatted);
+         setFormData((prev) => ({ ...prev, price: formatted }))
+      }
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [rawValue])
+
+
 
   const validate = () => {
     const newErrors = {};
