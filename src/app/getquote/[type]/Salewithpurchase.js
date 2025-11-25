@@ -5,8 +5,13 @@ import { Check, MapPin,ChevronDown } from "lucide-react";
 import { FaBuilding, FaHome, FaWarehouse } from "react-icons/fa";
 import { MdHolidayVillage } from "react-icons/md"; // Material icon
 import Select from "react-select"; //imp
+import { API_ENDPOINTS, getData,postData } from "../../auth/API/api";
+import { v4 as uuidv4 } from 'uuid';
+import { useRouter } from "next/navigation";
+import Signinmodal from "../../components/utility/Singingmodal";
 import LocationSearch, { fetchAddressDetails } from '../Purchase/LocationSearch';
 import AddressFields from './AddressFields';
+
 
 
 const Link = ({ href, children, className }) => (
@@ -16,18 +21,11 @@ const Link = ({ href, children, className }) => (
 );
 
 
-const useRouter = () => ({
-  back: () => console.log("Navigation: Going back..."),
-});
 
 export default function Salewithpurchase() {
-useEffect(() => {
-  const storedData = localStorage.getItem("getquote");
 
-  if (storedData) {
-    setFormData(JSON.parse(storedData));
-  }
-}, []);
+  const [showAddressLines_purchase, setShowAddressLines_purchase] = useState(false);
+    const [showAddressLines, setShowAddressLines] = useState(false);
 
 const handleUnknownPostcode = () => {
   // 1️⃣ Condition: user clicked "I don’t know the postcode yet"
@@ -57,35 +55,48 @@ const handleUnknownPostcode_purchase = () => {
   }));
 };
 
-  const [showAddressLines, setShowAddressLines] = useState(false);
-  const [showAddressLines_purchase, setShowAddressLines_purchase] = useState(false);
+useEffect(() => {
+  const storedData = localStorage.getItem("getquote");
 
+  if (storedData) {
+    setFormData(JSON.parse(storedData));
+  }
+  fetchdata()
+}, []);
    const [formData, setFormData] = useState({
     address: "",
-    address_line1: "",
-    address_line2: "",
-    country: "",
-    town: "",
+        address_line1: "",
+        address_line2: "",
+        country: "",
+        town: "",
     price: "",
     bedrooms: "",
     tenure: "", 
     propertyType: "",
     sharedOwnership: "",
     address_purchase: "",
-    address_line1_purchase: "",
-    address_line2_purchase: "",
-    country_purchase: "",
-    town_purchase: "",
+        address_line1_purchase: "",
+        address_line2_purchase: "",
+        country_purchase: "",
+        town_purchase: "",
     price_purchase: "",
     bedrooms_purchase: "",
     tenure_purchase: "", 
     propertyType_purchase: "",
     sharedOwnership_purchase: "",
     b2l:"",
+    languages:[]
   });
   
   const [errors, setErrors] = useState({});
   
+  const [lender, setLender] = useState([
+      { value: "Not Required", label: "Not Required", id: 0 },
+    ]);
+     const [loginformdata, setloginformdata] = useState({
+            email: "",
+            password: "",
+          });
 
    const handleChange = (e) => {
   const { name, value } = e.target;
@@ -106,72 +117,72 @@ const handleUnknownPostcode_purchase = () => {
     const newErrors = {};
   
    
-    if (!formData.address.trim()) {
-      newErrors.address = "Property address is required";
-    } else if (formData.address.trim().length < 5) {
-      newErrors.address = "Address must be at least 5 characters";
-    }
+//     if (!formData.address.trim()) {
+//       newErrors.address = "Property address is required";
+//     } else if (formData.address.trim().length < 5) {
+//       newErrors.address = "Address must be at least 5 characters";
+//     }
   
     
-    if (!formData.price) {
-      newErrors.price = "Agreed sales price is required";
-    } else if (Number(formData.price) <= 0) {
-      newErrors.price = "Price must be a positive number";
-    }
+//     if (!formData.price) {
+//       newErrors.price = "Agreed sales price is required";
+//     } else if (Number(formData.price) <= 0) {
+//       newErrors.price = "Price must be a positive number";
+//     }
   
    
-    if (!formData.bedrooms) {
-      newErrors.bedrooms = "Please select number of bedrooms";
-    }
+//     if (!formData.bedrooms) {
+//       newErrors.bedrooms = "Please select number of bedrooms";
+//     }
   
   
-    if (!formData.tenure) {
-      newErrors.tenure = "Please select leasehold or freehold";
-    }
+//     if (!formData.tenure) {
+//       newErrors.tenure = "Please select leasehold or freehold";
+//     }
   
    
-    if (!formData.propertyType) {
-      newErrors.propertyType = "Please select a property type";
-    }
+//     if (!formData.propertyType) {
+//       newErrors.propertyType = "Please select a property type";
+//     }
   
-      if (!formData.sharedOwnership) {
-      newErrors.sharedOwnership = "Please select a ownership";
-    }
+//       if (!formData.sharedOwnership) {
+//       newErrors.sharedOwnership = "Please select a ownership";
+//     }
 
-    if (!formData.address_purchase.trim()) {
-      newErrors.address_purchase = "Property address is required";
-    } else if (formData.address_purchase.trim().length < 5) {
-      newErrors.address_purchase = "Address must be at least 5 characters";
-    }
+//     if (!formData.address_purchase?.trim()) {
+//       newErrors.address_purchase = "Property address is required";
+//     } else if (formData.address_purchase?.trim().length < 5) {
+//       newErrors.address_purchase = "Address must be at least 5 characters";
+//     }
   
     
-    if (!formData.price_purchase) {
-      newErrors.price_purchase = "Agreed sales price is required";
-    } else if (Number(formData.price_purchase) <= 0) {
-      newErrors.price_purchase = "Price must be a positive number";
-    }
+//     if (!formData.price_purchase) {
+//       newErrors.price_purchase = "Agreed sales price is required";
+//     } else if (Number(formData.price_purchase) <= 0) {
+//       newErrors.price_purchase = "Price must be a positive number";
+//     }
   
    
-    if (!formData.bedrooms_purchase) {
-      newErrors.bedrooms_purchase = "Please select number of bedrooms";
-    }
+//     if (!formData.bedrooms_purchase) {
+//       newErrors.bedrooms_purchase = "Please select number of bedrooms";
+//     }
   
   
-    if (!formData.tenure_purchase) {
-      newErrors.tenure_purchase = "Please select leasehold or freehold";
-    }
+//     if (!formData.tenure_purchase) {
+//       newErrors.tenure_purchase = "Please select leasehold or freehold";
+//     }
   
    
-    if (!formData.propertyType_purchase) {
-      newErrors.propertyType_purchase = "Please select a property type";
-    }
+//     if (!formData.propertyType_purchase) {
+//       newErrors.propertyType_purchase = "Please select a property type";
+//     }
   
-      if (!formData.sharedOwnership_purchase) {
-      newErrors.sharedOwnership_purchase = "Please select a ownership";
-      }
-      if (!formData.b2l || formData.b2l === "No") {
-  newErrors.b2l = "Please select a Buy to Let option";
-}
+//       if (!formData.sharedOwnership_purchase) {
+//       newErrors.sharedOwnership_purchase = "Please select a ownership";
+//       }
+//       if (!formData.b2l || formData.b2l === "No") {
+//   newErrors.b2l = "Please select a Buy to Let option";
+// }
   
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -183,6 +194,7 @@ const handleUnknownPostcode_purchase = () => {
   
     if (validate()) {
       console.log("✅ Valid form data:", formData);
+        setModalopen(true)
       
     } else {
       console.log("❌ Validation failed:", errors);
@@ -191,17 +203,8 @@ const handleUnknownPostcode_purchase = () => {
   
 
     const [selectedLenders, setSelectedLenders] = useState([]);//imp
-          const lenders = [//imp
-        { id: 1, lenders_name: "Lender A" },
-        { id: 2, lenders_name: "Lender B" },
-        { id: 3, lenders_name: "Lender C" },
-        { id: 4, lenders_name: "Lender D" },
-        { id: 5, lenders_name: "Lender E" },
-        { id: 6, lenders_name: "Lender F" },
-        { id: 7, lenders_name: "Lender G" },
-        { id: 8, lenders_name: "Lender H" },
-        { id: 9, lenders_name: "Lender I" },
-        { id: 10, lenders_name: "Lender J" },
+          const lenders = [
+
       ];
       
         // Convert lenders into react-select format
@@ -210,18 +213,46 @@ const handleUnknownPostcode_purchase = () => {
           label: lender.lenders_name,
         }));
       
-        const handleChange_l = (selectedOptions) => {//imp
-          setSelectedLenders(selectedOptions);
-          const ids = selectedOptions.map(item => item.value);
-          console.log("Selected lenders:", ids);
-          handleChange("Lenders",ids)
-        };
-  
+        
+    const handleChange_l = (selectedOptions = []) => {
+      const hasNotRequired = selectedOptions.some(
+        (option) => option.value === "Not Required"
+      );
+    
+      if (hasNotRequired) {
+        // Keep only "Not Required" selected
+        const notRequiredOption = lender.find(opt => opt.value === "Not Required");
+        setSelectedLenders([notRequiredOption]);
+        console.log("Selected lenders: [0]");
+     handleChange({
+    target: {
+      name:"lender",
+     value: [0]
+    }
+  })
+      } else {
+        // Normal behavior for other lenders
+        setSelectedLenders(selectedOptions);
+        const ids = selectedOptions.map(item => item.id);
+        console.log("Selected lenders:", ids);
+      handleChange({
+    target: {
+     name: "lender",
+      value:ids
+    }
+  });
+      }
+    };
+    
+    const [lang, setLang] = useState ([
+        { value: "Not Required", label: "Not Required", id: 0 },
+      ]);
+          const [selectedLanguage, setSelectedLanguage] = useState([]);
+      
 
       const [modalopen, setModalopen] = useState(false);
       const [languagepreference, setlanguagepreference] = useState(" ");
       const [language, setLanguage] = useState([]);
-            const lang=["English","Spanish","French","German","Chinese","Hindi","Arabic","Portuguese","Russian","Japanese"]
 
     
       const [tenure, setTenure] = useState("");
@@ -229,6 +260,7 @@ const handleUnknownPostcode_purchase = () => {
      const tenureOptions = ["Leasehold", "Freehold"];
 
      const [bedrooms, setBedrooms] = useState("");
+        const [loginformshow,setloginformshow]=useState(false)
 
      const options = ["1", "2", "3", "4","5", "5+"];
 
@@ -304,13 +336,117 @@ console.log(language);
         
       
        }
+         const handleChangeLang = (selectedOptions = []) => {
+      //    const hasNotRequired = selectedOptions.some(
+      //   (option) => option.value === "Not Required"
+      // );
+     const  hasNotRequired=false
+      console.log(selectedOptions)
+      if(selectedOptions=="Not Required"){
+      const  hasNotRequired=true
+      }
+ 
+
+     if (hasNotRequired) {
+        // Keep only "Not Required" selected
+        const notRequiredOption = lang.find(opt => opt.value === "Not Required");
+        setSelectedLanguage([notRequiredOption]);
+        console.log("Selected language: [0]");
+         handleChange({
+    target: {
+      name:"languages",
+      value:[0]
+    }
+  });
+      } else {
+        // Normal behavior for other lenders
+        setSelectedLanguage(selectedOptions);
+      
+          handleChange({
+    target: {
+      name:"languages",
+      value:[selectedOptions.id]
+    }
+  });
+  console.log(selectedOptions.id)
+      }
+    
+  }
+
+  async function fetchdata() {
+    try{
+           const languages = await getData(API_ENDPOINTS.languages);
+                      const lenderData = await getData(API_ENDPOINTS.lenders);
+           
+                    if(Array.isArray(languages.users)){
+          const languageOptions = languages.users.map((l) => ({
+            value: l.language_name,
+            label: l.language_name,
+            id: l.id,
+          }));
+          setLang([{ value: "Not Required", id: 0,label: "Not Required" }, ...languageOptions]);
+        
+                 console.log(languages);
+    }
+   if (Array.isArray(lenderData.users)) {
+          const lenderOptions = lenderData.users.map((l) => ({
+            value: l.lenders_name,
+            label: l.lenders_name,
+            id: l.id,
+          }));
+             console.log(lenderOptions)
+    
+               setLender([{ value: "Not Required", id: 0,label: "Not Required" }, ...lenderOptions]);
+                   console.log(lender)
+              }
+  }
+    catch(e){
+console.log(e);
+    }
+  }
+
+    
   
 
+      async function logindata() {
+      
+        try {
+          console.log(loginformdata)
+          const loginResponse = await postData(API_ENDPOINTS.login, loginformdata);
+          console.log("Login response:", loginResponse);
+      
+          if (loginResponse.code === 200) {
+            const userId = loginResponse.user?.id; // <-- get it from API response
+      console.log(userId)
+            if (userId) {
+    
+            const updatedForm = {
+          ...formData,
+          "user_id": userId,
+        };
+      
+        // ✅ Update React state
+        setFormData(updatedForm);
+          localStorage.setItem("getquote", JSON.stringify(updatedForm));
+            }
+      
+            router.push("/components/comparequotes");
+          }
+        } catch (error) {
+          console.error("Error logging in:", error);
+        }
+      }
+         function handleloginformchange(name, value) {
+      setloginformdata((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
         return (
 
-                            <div className="flex flex-col lg:flex-row gap-8 mt-8">
+                            <div className="flex flex-col lg:flex-row gap-8">
                 {/* Left stepper */}
-           <aside className="z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] lg:max-h-[600px] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white   lg:top-22">
+           <aside className="z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)]  lg:max-h-[600px] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white   lg:top-22">
                               <div className="p-6">
                               {/* Step 1 */}
                               <div className="flex items-start">
@@ -392,8 +528,9 @@ console.log(language);
                                     <option key={opt} value={opt === "Please select" ? "" : opt}> {opt} </option>))}
                                 </select>
                                 </div>
-                                
-                                 {/* 1. Property Address (Inline Input) */}
+
+
+                        {/* 1. Property Address (Inline Input) */}
                        <div className="flex flex-col h-full">
                         <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
                          Property address:<span className="text-red-500">*</span>
@@ -455,7 +592,8 @@ console.log(language);
                     )}
                   </div>
                 </div>
-{/* Always render AddressFields */}
+
+                    {/* Always render AddressFields */}
                     <AddressFields
                       formData={formData}
                       errors={errors}
@@ -478,7 +616,7 @@ console.log(language);
                                 id="price"
                                 name="price"
                                 type="number"
-                                value={formData.price}
+                                value={formData.price ?? ""} 
                                 onChange={handleChange}
                                 className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
                               />
@@ -677,9 +815,8 @@ console.log(language);
                                 <option key={opt} value={opt === "Please select" ? "" : opt}> {opt} </option>))}
                                 </select>
                                 </div>               
-      {/* 1. Property Address (Inline Input) */}
-
-                             <div className="flex flex-col h-full">
+                                  {/* 1. Property Address (Inline Input) */}
+                <div className="flex flex-col h-full">
                         <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
                          Property address:<span className="text-red-500">*</span>
                          </label>
@@ -750,8 +887,6 @@ console.log(language);
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
 />
-
-
                     
                                  {/* 2. Agreed purchase Price (Inline Input with Prefix) */}
                                    <div className="flex flex-col h-full">
@@ -1044,19 +1179,7 @@ console.log(language);
                   </div>
 
                   {/* 9. Mortgage Lender (Inline Select) */}
-                  <div className="flex flex-col h-full">
-                    <label htmlFor="lender" className="block text-sm font-medium text-gray-700 mb-1">
-                      Mortgage Lender (If Known)
-                    </label>
-                    <div className="relative mt-auto">
-                        <select id="lender" defaultValue="Not Known" className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10">
-                            {["Not Known", "Not required", "Lender Name", "Look up"].map((opt) => (
-                                <option key={opt} value={opt}>{opt}</option>
-                            ))}
-                        </select>
-                         <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"/>
-                    </div>
-                  </div>
+                
 
                   {/* 10. Receiving a gifted deposit? (Inline Select) */}
                   <div className="flex flex-col h-full">
@@ -1111,63 +1234,47 @@ console.log(language);
   {/* Prefer solicitor in your first language */}
 <div className="space-y-4">
   {/* Label + Main dropdown */}
-  <div>
-    <label className="block text-sm font-semibold text-gray-800 mb-1">
-      Prefer solicitor in your first language?
-    </label>
-    <select
-      className="text-black placeholder-black w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1E5C3B]"
-      onChange={handlelanguagechange}
-      value={languagepreference}
-    >
-      <option value="">Please select</option>
-      <option>No Preference</option>
-      <option>Yes</option>
-      <option>Maybe</option>
-    </select>
-  </div>
+     <div>
+        <label className="block text-sm font-semibold text-gray-800 mb-1">
+          Prefer solicitor in your first language?
+        </label>
+        <div className="mt-2">
+      
+    
+      
+      <Select
+        options={lang}
+    
+                  instanceId="language-select"
+        value={selectedLanguage || formData.languages}
+        onChange={handleChangeLang}
+        placeholder="Choose languages..."
+        className="text-black mt-2"
+      />
+     
+    </div>
+        <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
+      </div>
 
   {/* Show only when needed */}
-  {(languagepreference === "Yes" || languagepreference === "Maybe") && (
-    <div className="mt-2">
-      <label className="block text-sm font-semibold text-gray-800 mb-2">
-        Select preferred language(s)
-      </label>
 
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 border border-gray-200 p-3 rounded-lg bg-gray-50">
-        {lang.map((item, index) => (
-          <label
-            key={index}
-            className="flex items-center gap-2 p-2 rounded-md cursor-pointer hover:bg-green-50 transition"
-          >
-            <input
-              type="checkbox"
-              value={item}
-              onChange={(e) => languagecheckboxchange(item, e.target.checked)}
-              className="accent-[#1E5C3B] w-4 h-4"
-            />
-            <span className="text-gray-800 text-sm font-medium">{item}</span>
-          </label>
-        ))}
-      </div>
-    </div>
-  )}
 </div>
- <div className="flex flex-col h-full ">
-      <label className="block text-sm font-semibold text-gray-800 mb-1 rounded-lg focus:ring-2 focus:ring-[#1E5C3B]">
-        Select Lenders
-      </label>
-      <Select
-        options={options_l}
-        isMulti
-          instanceId="lenders-select"
-        value={selectedLenders}
-        onChange={handleChange_l}
-        placeholder="Choose lenders..."
-        className="text-black "
-
-      />
-    </div>
+<div className="flex flex-col h-full">
+          <label className="block text-sm font-semibold text-gray-800 mb-2">
+            Select Lenders
+          </label>
+           <Select
+            options={lender}
+              instanceId="lenders-select"
+            isMulti
+            value={selectedLenders}
+            onChange={handleChange_l}
+            placeholder="Choose lenders..."
+            className="text-black"
+    
+          /> 
+          <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
+        </div>
     </div>     
 
 
@@ -1184,59 +1291,10 @@ console.log(language);
   ></textarea>
 </div>
 
- {modalopen && (
-  <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    <div className="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-3xl h-[500px] grid grid-cols-1 md:grid-cols-[35%_65%] animate-scale-in relative">
-      
-      {/* LEFT SIDE (Brand Section - 30%) */}
-      <div className="text-center bg-gradient-to-br from-[#1E5C3B] to-green-600 text-white flex flex-col justify-between items-center md:items-start p-8">
-        <div className="mt-20">
-          <h2 className="text-3xl font-extrabold tracking-wide mb-2">MOVWISE</h2>
-          <p className="text-sm opacity-90 leading-relaxed mt-20">
-            Making property transactions simple, secure, and smart.
-          </p>
-        </div>
-
-        <button className="mt-8 mx-auto bg-white text-[#1E5C3B] font-semibold px-8 py-2 rounded-full hover:bg-gray-100 transition-all duration-200 shadow-md">
-          Sign Up
-        </button>
-      </div>
-
-      {/* RIGHT SIDE (Content Section - 70%) */}
-      <div className="relative p-8 flex flex-col justify-center text-center md:text-left">
-        {/* Close Button */}
-        <button
-          onClick={() => setModalopen(false)}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-3xl font-bold leading-none"
-        >
-          &times;
-        </button>
-
-        <h2 className="text-2xl font-bold text-[#1E5C3B] mb-3">Confirm Submission</h2>
-        <p className="text-gray-600 mb-8 leading-relaxed">
-          You’re about to submit your <b>Property Details</b>.  
-          Would you like to continue as a <b>logged-in user</b> or a <b>guest user</b>?
-        </p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <button
-            onClick={() => alert('Proceeding as Logged-in User')}
-            className="bg-[#1E5C3B] text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-all duration-200 shadow-sm"
-          >
-            Continue as Logged-in User
-          </button>
-          <button
-            onClick={() => alert('Proceeding as Guest User')}
-            className="border border-[#1E5C3B] text-[#1E5C3B] px-6 py-3 rounded-lg hover:bg-[#1E5C3B] hover:text-white transition-all duration-200 shadow-sm"
-          >
-            Continue as Guest User
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-)}
                     </form>
+                     {modalopen && (
+                          <Signinmodal></Signinmodal>
+                        )}
 
                     <div className="mt-12 flex justify-end gap-4">
                     <button

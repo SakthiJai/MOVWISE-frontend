@@ -128,7 +128,7 @@ const [loginformdata, setloginformdata] = useState({
   icon: <Tag className="w-10 h-10 text-[#256041]" />,
   desc: "Quick and easy property sales.",
   "service_id":3,
-  page:"sales"
+  page:"Sales"
 },
     {
       label: "Purchase",
@@ -150,7 +150,7 @@ const [loginformdata, setloginformdata] = useState({
       icon: <Landmark className="w-10 h-10 text-[#256041]" />,
       desc: "Refinancing for better rates",
       "service_id":4,
-      page:"remortagage"
+      page:"remortage"
     },
     {
       label: "Transfer of Equity",

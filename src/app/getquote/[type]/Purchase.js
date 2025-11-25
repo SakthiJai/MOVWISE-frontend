@@ -9,11 +9,15 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
 import Footer from "../../parts/Footer/footer";
-import LocationSearch from '../Purchase/LocationSearch';
+import LocationSearch, { fetchAddressDetails } from '../Purchase/LocationSearch';
+import AddressFields from './AddressFields';
 import { v4 as uuidv4 } from 'uuid';
 
 
 export default function Purchase() {
+
+    const [showAddressLines, setShowAddressLines] = useState(false);
+  
     const [lender, setLender] = useState([
       { value: "Not Required", label: "Not Required", id: 0 },
     ]);
@@ -66,9 +70,27 @@ export default function Purchase() {
         handleChange("lender", ids);
       }
     };
+
+    const handleUnknownPostcode = () => {
+  // 1️⃣ Condition: user clicked "I don’t know the postcode yet"
+  setShowAddressLines(true); // show address fields
+
+  // 2️⃣ Reset address-related fields
+  setFormData(prev => ({
+    ...prev,
+    [`address_line1`]: "",
+    [`address_line2`]: "",
+    [`town`]: "",
+    [`country`]: "",
+  }));
+};
     
     const [formData, setFormData] = useState({
-    
+        "address": "",
+  "address_line1": "",
+  "address_line2": "",
+  "country": "",
+  "town": "",
         "languages": [],
         "service_type":2,
       });
@@ -431,36 +453,76 @@ return (
     
                       {/* 1. Property Address (Inline Input) */}
                        <div className="flex flex-col h-full">
-                                                 <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-                                                 Property address:<span className="text-red-500">*</span>
-                                                 </label>
-                                                       <LocationSearch  onSelectAddress={(selectedAddress) => {
-          setFormData({ ...formData, address: selectedAddress });
-    
-          if (errors.address) {
-            setErrors({ ...errors, address: "" });
-          }
-        }} />
-    
-                                                 {/* <!--<div className="relative mt-auto">
-                                                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">
-                                                     <MapPin size={16} />
-                                                 </span>
-                                                 <input
-                                                     id="address"
-                                                     name="address"
-                                                     type="text"
-                                                     className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
-                                                   onChange={(e)=>{handleChange("address",e.target.value)}}
-                                                 />
-                                                 </div>--> */}
-     <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
-       errors.address ? "text-red-500 opacity-100" : "opacity-0"
-    }`}>
-      {errors.address || "placeholder"} {/* placeholder keeps same height */}
-    </p>
-                                             </div>
-         
+                        <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                         Property address:<span className="text-red-500">*</span>
+                         </label>
+                        <LocationSearch
+                        readOnly={showAddressLines}
+                        onSelectAddress={async (selected) => {
+                          if (!selected) return;
+                          // Clear address error immediately when selecting
+                           if (errors.address) {
+                            setErrors((prev) => ({ ...prev, address: "" }));
+                            }
+                            // Update formData with selected suggestion
+                            setFormData((prev) => ({
+                              ...prev,
+                              selectedId: selected.id,
+                              address: selected.suggestion,
+                            }));
+                            // Fetch full address details
+                            const details = await fetchAddressDetails(selected.udprn);
+                              if (details) {
+                                setFormData((prev) => ({
+                                  ...prev,
+                                  town: details.post_town || details.admin_district || "",
+                                  country: details.country || "",
+                                  }));
+                                } else {
+                                  setErrors((prev) => ({
+                                    ...prev,
+                                    address: "Failed to fetch full address details.",
+                                    }));
+                                  }
+                                }}
+                                onInputChange={() => {
+                                  // Clear the error immediately when user types
+                                if (errors.address) {
+                                  setErrors((prev) => ({ ...prev, address: "" }));
+                                   }
+                                  }}
+                                  />
+
+                                          <div className="flex justify-between items-center mt-1">
+                                            {/* Left: Error message */}
+                                            <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+                              errors.address ? "text-red-500 opacity-100" : "opacity-0"
+                            }`}>
+                              {errors.address || "placeholder"} {/* placeholder keeps same height */}
+                            </p>
+
+                    {/* “I don’t know postcode” button */}
+                    {!showAddressLines && (
+                      <button
+                        type="button"
+                         onClick={handleUnknownPostcode}
+                        className="text-blue-600 underline text-xs"
+                      >
+                        I don’t know the postcode yet
+                      </button>
+                    )}
+                  </div>
+                </div>
+{/* Always render AddressFields */}
+                    <AddressFields
+                      formData={formData}
+                      errors={errors}
+                      showAddressLines={showAddressLines} // only used inside AddressFields
+                      onChange={(field, value) =>
+                        setFormData((prev) => ({ ...prev, [field]: value }))
+                      }
+                    />
+
     
                       {/* 2. Agreed purchase Price (Inline Input with Prefix) */}
                       <div className="flex flex-col h-full">

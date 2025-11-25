@@ -10,24 +10,28 @@ import LocationSearch, { fetchAddressDetails } from '../Purchase/LocationSearch'
 import AddressFields from './AddressFields';
 import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
 import Signinmodal from "../../components/utility/Singingmodal";
-
 // src/components/Sales.js
 
 export default function Sales() {
   const [showAddressLines, setShowAddressLines] = useState(false);
+      const [selectedLanguage, setSelectedLanguage] = useState([]);
+    const [lender, setLender] = useState([
+        { value: "Not Required", label: "Not Required", id: 0 },
+      ]);
 
 const [languagepreference, setlanguagepreference] = useState(" ");
+
 
   const [formData, setFormData] = useState({
     stages:"",
   address: "",
-    address_line1: "",
-    address_line2: "",
-    country: "",
-    town: "",
+ "address_line1": "",
+  "address_line2": "",
+  "country": "",
+  "town": "",
   sales_price: "",
   no_of_bedrooms: "",
-  leasehold_or_free: "", 
+  sales_leasehold_or_free: "", 
   property_type: "",
   shared_ownership: "",
   existing_mortgage:"yes",
@@ -50,6 +54,32 @@ const handleUnknownPostcode = () => {
     [`country`]: "",
   }));
 };
+
+ const handleChangeLang = (selectedOptions) => {
+      //    const hasNotRequired = selectedOptions.some(
+      //   (option) => option.value === "Not Required"
+      // );
+     const  hasNotRequired=false
+      console.log(selectedOptions)
+      if(selectedOptions=="Not Required"){
+      const  hasNotRequired=true
+      }
+ 
+
+     if (hasNotRequired) {
+        // Keep only "Not Required" selected
+        const notRequiredOption = lang.find(opt => opt.value === "Not Required");
+        setSelectedLanguage([notRequiredOption]);
+        console.log("Selected language: [0]");
+        handleChange("languages", [0]);
+      } else {
+        // Normal behavior for other lenders
+        setSelectedLanguage(selectedOptions);
+      console.log(selectedOptions)
+     handleChange("languages",[selectedOptions.id]);
+      }
+    
+  }
 
 const [errors, setErrors] = useState({});
 
@@ -95,8 +125,8 @@ const handleSubmit = (e) => {
   }
 
 
-  if (!formData.leasehold_or_free) {
-    newErrors.leasehold_or_free = "Please select leasehold or freehold";
+  if (!formData.sales_leasehold_or_free) {
+    newErrors.sales_leasehold_or_free = "Please select leasehold or freehold";
   }
 
  
@@ -115,19 +145,13 @@ const handleSubmit = (e) => {
     // if no errors, submit
     if (Object.keys(newErrors).length === 0) {
       console.log("✅ Form submitted:", formData);
+            localStorage.setItem("service", JSON.stringify(3));
+
       localStorage.setItem("getquote", JSON.stringify(formData));
       //alert("Form submitted successfully!");
-      if(localStorage.getItem("user")>0){
-        let data = JSON.parse(localStorage.getItem("getquote") || "{}")
-        data.user_id = localStorage.getItem("user");
-        data.service_type = Number(localStorage.getItem("service"));
-        localStorage.setItem("getquote", JSON.stringify(data));
-        router.push("/components/comparequotes");
-      }
-      else
-      {
        setModalopen(true)
-      }
+      
+      
 
     }
 
@@ -146,27 +170,15 @@ console.log(formData)
     console.log("❌ Validation failed:", errors);
   }
 };
-  const [lender, setLender] = useState([
-      { value: "Not Required", label: "Not Required", id: 0 },
-    ]);
 
-       const [selectedLenders, setSelectedLenders] = useState([]);
+    const [selectedLenders, setSelectedLenders] = useState([]);//imp
      const options_l = [
-      { value: 1, label: "Lender A" },
-      { value: 2, label: "Lender B" },
-      { value: 3, label: "Lender C" },
-      { value: 4, label: "Lender D" },
-      { value: 5, label: "Lender E" },     
-      { value: 6, label: "Lender F" },
-      { value: 7, label: "Lender G" },
-      { value: 8, label: "Lender H" },
-      { value: 9, label: "Lender I" },
-      { value: 10, label: "Lender J" },
+   
       
     ];
   
     // ✅ Handle change
-        const handleChange_l = (selectedOptions = []) => {
+    const handleChange_l = (selectedOptions = []) => {
       const hasNotRequired = selectedOptions.some(
         (option) => option.value === "Not Required"
       );
@@ -185,6 +197,7 @@ console.log(formData)
         handleChange("lender", ids);
       }
     };
+
     // Convert to react-select options
   
     // Optional: hydration-safe render
@@ -200,18 +213,9 @@ console.log(formData)
     const [modalopen, setModalopen] = useState(false);
       const [languages, setlanguages] = useState(" ");
       const [language, setLanguage] = useState([]);
-      const lang=[
-        { id: 1, language_name: "English" },
-        { id: 2, language_name: "Spanish" },
-        { id: 3, language_name: "French" },
-        { id: 4, language_name: "German" },
-        { id: 5, language_name: "Chinese" },
-        { id: 6, language_name: "Hindi" },
-        { id: 7, language_name: "Arabic" },
-        { id: 8, language_name: "Portuguese" },
-        { id: 9, language_name: "Russian" },
-        { id: 10, language_name: "Japanese" },
-      ];
+       const [lang, setLang] = useState ([
+            { value: "Not Required", label: "Not Required", id: 0 },
+          ]);
     const [loginformshow,setloginformshow]=useState(false)
 const [loginformdata, setloginformdata] = useState({
   email: "",
@@ -255,18 +259,49 @@ async function logindata() {
   }
 }
 
+async function fetchdata(){
+  try{
+ const languages = await getData(API_ENDPOINTS.languages);
+            const lenderData = await getData(API_ENDPOINTS.lenders);
+ 
+              if(Array.isArray(languages.users)){
+          const languageOptions = languages.users.map((l) => ({
+            value: l.language_name,
+            label: l.language_name,
+            id: l.id,
+          }));
+          setLang([{ value: "Not Required", id: 0,label: "Not Required" }, ...languageOptions]);
+       }
+          if (Array.isArray(lenderData.users)) {
+          const lenderOptions = lenderData.users.map((l) => ({
+            value: l.lenders_name,
+            label: l.lenders_name,
+            id: l.id,
+          }));
+             console.log(lenderOptions)
+    
+               setLender([{ value: "Not Required", id: 0,label: "Not Required" }, ...lenderOptions]);
+                   console.log(lender)
+              }
+  }
+  catch(e){
+console.log(e);
+  }
+  
+}
 
 useEffect(() => {
   const storedData = localStorage.getItem("getquote");
+  fetchdata()
 
   if (storedData) {
     setFormData(JSON.parse(storedData));
   }
 }, []);
 
-      const [leasehold_or_free, setleasehold_or_free] = useState("");
+      const [sales_leasehold_or_free, setsales_leasehold_or_free] = useState("");
 
-     const leasehold_or_freeOptions = ["Leasehold", "Freehold"];
+     const sales_leasehold_or_freeOptions = ["Leasehold", "Freehold"];
 
      const [no_of_bedrooms, setno_of_bedrooms] = useState("");
 
@@ -412,8 +447,7 @@ useEffect(() => {
           className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
         />
                                 </div>
-                                
-      {/* 1. Property Address (Inline Input) */}
+ {/* 1. Property Address */}
                        <div className="flex flex-col h-full">
                         <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
                          Property address:<span className="text-red-500">*</span>
@@ -475,10 +509,7 @@ useEffect(() => {
                     )}
                   </div>
                 </div>
-
-
-
-                    {/* Always render AddressFields */}
+{/* Always render AddressFields */}
                     <AddressFields
                       formData={formData}
                       errors={errors}
@@ -566,18 +597,18 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
   </label>
 
   <div className="grid grid-cols-2 gap-3 mt-auto">
-    {leasehold_or_freeOptions.map((opt) => (
+    {sales_leasehold_or_freeOptions.map((opt) => (
       <button
         key={opt}
         type="button"
         onClick={() => {
           // ✅ update formData
-          setFormData((prev) => ({ ...prev, leasehold_or_free: opt }));
+          setFormData((prev) => ({ ...prev, sales_leasehold_or_free: opt }));
           // ✅ clear error for this field
-          setErrors((prev) => ({ ...prev, leasehold_or_free: "" }));
+          setErrors((prev) => ({ ...prev, sales_leasehold_or_free: "" }));
         }}
         className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-          formData.leasehold_or_free === opt
+          formData.sales_leasehold_or_free === opt
             ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
             : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
         }`}
@@ -589,9 +620,9 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
 
     <p
 className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
-   errors.leasehold_or_free ? "text-red-500 opacity-100" : "opacity-0"
+   errors.sales_leasehold_or_free ? "text-red-500 opacity-100" : "opacity-0"
 }`}>
-  {errors.leasehold_or_free || "placeholder"} {/* placeholder keeps same height */}
+  {errors.sales_leasehold_or_free || "placeholder"} {/* placeholder keeps same height */}
 </p>
 </div>
 
@@ -737,63 +768,40 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
     {/* Prefer solicitor in your first language */}
             <div className="space-y-4">
   {/* Label + Main dropdown */}
-  <div>
-    <label className="block text-sm font-semibold text-gray-800 mb-1">
-      Prefer solicitor in your first language?
-    </label>
-    <select
-      className="text-black placeholder-black w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1E5C3B]"
-      onChange={handlelanguagechange}
-      value={languagepreference}
-    >
-      <option value="">Please select</option>
-      <option>No Preference</option>
-      <option>Yes</option>
-      <option>Maybe</option>
-    </select>
-      <p
-className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
-></p>
-  </div>
+ <div>
+        <label className="block text-sm font-semibold text-gray-800 mb-1">
+          Prefer solicitor in your first language?
+        </label>
+        <div className="mt-2">
+      
+    
+      
+      <Select
+        options={lang}
+                  instanceId="language-select"
+        value={selectedLanguage || formData.languages}
+        onChange={handleChangeLang}
+        placeholder="Choose languages..."
+        className="text-black mt-2"
+      />
+     
+    </div>
+        <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
+      </div>
 
   {/* Show only when needed */}
-  {(languagepreference === "Yes" || languagepreference === "Maybe") && (
-<div className="mt-2">
-  <label className="block text-sm font-semibold text-gray-800 mb-2">
-    Select preferred language(s)
-  </label>
-
-  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 border border-gray-200 p-3 rounded-lg bg-gray-50">
-    {lang.map((item) => (
-      <label
-        key={item.id}
-        className="flex items-center gap-2 p-2 rounded-md cursor-pointer hover:bg-green-50 transition"
-      >
-        <input
-          type="checkbox"
-          value={item.language_name}
-          onChange={(e) => languagecheckboxchange(item.language_name, e.target.checked,item.id)}
-          className="accent-[#1E5C3B] w-4 h-4"
-        />
-        <span className="text-gray-800 text-sm font-medium">
-          {item.language_name}
-        </span>
+ 
+</div>
+{/* //imp */}
+ 
+{/* //imp */}
+ <div className="flex flex-col h-full">
+      <label className="block text-sm font-semibold text-gray-800 mb-1 rounded-lg focus:ring-2 focus:ring-[#1E5C3B]">
+        Select Lenders
       </label>
-    ))}
-  </div>
- 
-</div>
 
-  )}
-</div>
-{/* //imp */}
- 
-{/* //imp */}
-      <div className="flex flex-col h-full">
-          <label className="block text-sm font-semibold text-gray-800 mb-2">
-            Select Lenders
-          </label>
-           <Select
+      {isClient ? (
+    <Select
             options={lender}
               instanceId="lenders-select"
             isMulti
@@ -803,8 +811,17 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
             className="text-black"
     
           /> 
-          <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
-        </div>
+      
+      ) : (
+        <div className="h-[44px] bg-gray-100 rounded-lg animate-pulse" />
+      )}
+
+      {/* Debug preview */}
+       <p
+className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
+></p>
+    </div>    
+
 </div>    
 
 
@@ -838,7 +855,6 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
                         Back
                     </button>
                     <button
-                        href="/components/comparequotes"
                         onClick={handleSubmit}
                         className="font-semibold text-base h-[48px] px-8 rounded-full bg-[#1E5C3B] text-white shadow-lg hover:bg-[#16472F] flex items-center justify-center transition duration-150"
                     >
