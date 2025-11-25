@@ -1,6 +1,6 @@
 "use client"
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState ,useRef} from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { Check, ListPlus, Plus, PlusCircle, Trash, Trash2, X } from "lucide-react";
@@ -39,6 +39,8 @@ const [headings, setHeadings] = useState([]);
 const [formData, setformData] = useState({});
 const [notesData, setnotesData] = useState("");
 const [loading, setLoading] = useState(false);
+const timers = useRef({});
+
   const modules = {
     toolbar: [
       [{ header: [1, 2, 3, false] }],
@@ -329,9 +331,15 @@ const handlePriceChange1 = (feesCategoryId, rowIndex, field, value) => {
   );
   //console.loglog(pricingList)
 };
+const formatNumber = (num) =>
+    new Intl.NumberFormat("en-GB", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(num);
 const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
   // Only allow numbers and dot
   const rawValue = value.replace(/[^\d.]/g, "");
+  
   setpricingList(prev =>
     prev.map(item =>
       item.fees_category_id === feesCategoryId
@@ -346,6 +354,28 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
         : item
     )
   );
+  if (timers.current[feesCategoryId]) clearTimeout(timers.current[feesCategoryId]);
+  timers.current[feesCategoryId] = setTimeout(() => {
+      const num = Number(rawValue);
+      if (!isNaN(num)) {
+        const formatted = formatNumber(num);
+        setpricingList(prev =>
+    prev.map(item =>
+      item.fees_category_id === feesCategoryId
+        ? {
+            ...item,
+            price_list: item.price_list.map((row, i) =>
+              i === rowIndex
+                ? { ...row, [field]: formatted }  // store raw value only
+                : row
+            )
+          }
+        : item
+    )
+  );
+        
+      }
+    }, 2000);
 };
 
 const handleChange = (index, field, value) => {
@@ -764,7 +794,8 @@ const formatPound = (value) => {
                                   <div className="flex flex-col">
                                     <input
                                       type="text"
-                                      placeholder="Purchase Leasehold"
+                                      value={(row.purchase_leasehold)}
+                                      placeholder="Purchase Leasehold" 
                                       className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
                                       onChange={(e) =>
                                         handlePriceChange(numIndex, i, "purchase_leasehold", e.target.value)
@@ -785,7 +816,7 @@ const formatPound = (value) => {
                                   <div className="flex flex-col">
                                     <input
                                       type="text"
-                                      placeholder="Purchase Freehold"
+                                      placeholder="Purchase Freehold" value={(row.purchase_freehold)}
                                       className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
                                       onChange={(e) =>
                                         handlePriceChange(numIndex, i, "purchase_freehold", e.target.value)
@@ -806,6 +837,7 @@ const formatPound = (value) => {
                                   <div className="flex flex-col">
                                     <input
                                       type="text"
+                                      value={(row.sales_leasehold)}
                                       placeholder="Sales Leasehold"
                                       className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
                                       onChange={(e) =>
@@ -826,7 +858,7 @@ const formatPound = (value) => {
                                 <td className="px-3 py-2">
                                   <div className="flex flex-col">
                                     <input
-                                      type="text"
+                                      type="text" value={(row.sales_freehold)}
                                       placeholder="Sales Freehold"
                                       className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
                                       onChange={(e) =>
@@ -847,7 +879,7 @@ const formatPound = (value) => {
                                   <div className="flex flex-col">
                                     <input
                                       type="text"
-                                      placeholder="Remortgage"
+                                      placeholder="Remortgage" value={(row.remortgage)}
                                       className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
                                       onChange={(e) =>
                                         handlePriceChange(numIndex, i, "remortgage", e.target.value)
@@ -934,7 +966,7 @@ const formatPound = (value) => {
                                 <input
                                   
                                   placeholder="Fee Amount"
-                                  value={row.feeAmount}
+                                  value={row.fee_amount}
                                   onChange={(e) => handlePriceChange(numIndex, i, "fee_amount", e.target.value)}
                                   className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
                                 />
@@ -1035,7 +1067,7 @@ const formatPound = (value) => {
                                 <input
                                 type="text"
                                 placeholder="Fee Cost"
-                                value={row.feeCost}
+                                value={row.fee_amount}
                                 onChange={(e) => handlePriceChange(numIndex, i, "fee_amount", e.target.value)}
                                 className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black "
                                 />
@@ -1177,7 +1209,7 @@ const formatPound = (value) => {
                                   <input
                                     type="text"
                                     placeholder="Fee Cost"
-                                    value={row.feeCost}
+                                    value={row.fee_amount}
                                     onChange={(e) =>
                                       handlePriceChange(numIndex, i, "fee_amount", e.target.value)
                                     }
@@ -1312,7 +1344,7 @@ const formatPound = (value) => {
                 <input
                   type="text"
                   placeholder="Fee Cost"
-                  value={row.feeCost}
+                  value={row.fee_amount}
                   onChange={(e) =>
                     handlePriceChange(numIndex, i, "fee_amount", e.target.value)
                   }
