@@ -65,7 +65,8 @@ const [loading, setLoading] = useState(false);
     "align",
   ];
   const [showSuccess, setShowSuccess] = useState(false);
- 
+ const [showConfirm, setShowConfirm] = useState(false);
+
 
 useEffect(()=>{
   const storedData = JSON.parse(localStorage.getItem("companyData"));
@@ -75,6 +76,8 @@ useEffect(()=>{
     //console.loglog(formData)
   }
  },[]);
+
+ const [finalPayload, setFinalPayload] = useState(null);
 
 useEffect(() => {
     // Define async function inside useEffect
@@ -174,19 +177,31 @@ const handleSubmit = async () => {
 });
 
     console.log(tempPrice); 
-    setLoading(true); // optional loader
+    setLoading(false); // optional loader
     
     const payload = {
       company_details: formData,
       pricing: tempPrice,
       notes: notesData,
     };
+setFinalPayload(payload);  
+setShowConfirm(true);
 
+ } catch (error) {
+    console.log("Error building payload:", error);
+  }}
     //console.loglog("Payload to submit:", payload);
-  
-    const response = await postData(API_ENDPOINTS.insertcompanydetail, payload);
+ 
+ 
+    const submitFinal = async () => {
+      console.log("inside")
+  setLoading(true);
 
-    //console.loglog("API Response:", response);
+  try {
+    const response = await postData(API_ENDPOINTS.insertcompanydetail, finalPayload);
+
+
+    console.log("API Response:", response);
 
     if (response.code==200) {
       localStorage.clear();
@@ -1437,7 +1452,47 @@ const formatPound = (value) => {
     </div>
   </div>
 )}
+{showConfirm && (
+  <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn">
+    <div className="bg-white rounded-2xl p-6 w-[90%] max-w-sm text-center shadow-xl animate-slideUp">
 
+      <h2 className="text-xl font-bold text-gray-800 mb-3">
+        Confirm Submission
+      </h2>
+
+      <p className="text-gray-600 text-sm mb-6">
+        Please review your inputs before submit or else click ok to proceed next level
+      </p>
+
+      <div className="flex gap-3">
+        <button
+          className="w-1/2 bg-yellow-400 text-gray-700 py-2 rounded-lg font-semibold hover:bg-yellow-300 transition"
+          onClick={() => setShowConfirm(false)}
+        >
+          Yes, Review
+        </button>
+
+        <button
+          className="w-1/2 bg-green-800 text-white py-2 rounded-lg font-semibold hover:bg-green-900 transition"
+          onClick={() => {
+            setShowConfirm(false);
+            submitFinal();  // <-- Call API only here
+          }}
+        >
+         Ok, Proceed
+        </button>
+      </div>
+
+      {/* Close button */}
+      <button
+        onClick={() => setShowConfirm(false)}
+        className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
+      >
+        ✕
+      </button>
+    </div>
+  </div>
+)}
     </div>
   );
 }
