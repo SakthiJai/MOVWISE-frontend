@@ -93,6 +93,7 @@ useEffect(() => {
     service_type:1
   });
   
+
   const [errors, setErrors] = useState({});
   
   const [lender, setLender] = useState([
@@ -199,21 +200,22 @@ useEffect(() => {
   
     if (validate()) {
       console.log("✅ Valid form data:", formData);
-        setModalopen(true)
-      
-    } else {
+                  localStorage.setItem("service", JSON.stringify(1));
+
+      localStorage.setItem("getquote", JSON.stringify(formData));
+        setModalopen(true)    
+    }
+     else {
       console.log("❌ Validation failed:", errors);
     }
   };
   
 
-    const [selectedLenders, setSelectedLenders] = useState([]);//imp
-          const lenders = [
-
-      ];
+    const [selectedLenders, setSelectedLenders] = useState([]);
+        
       
         // Convert lenders into react-select format
-        const options_l = lenders.map((lender) => ({//imp
+        const options_l = lender.map((lender) => ({//imp
           value: lender.id,
           label: lender.lenders_name,
         }));
