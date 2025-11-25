@@ -164,7 +164,7 @@ export default function AboutPage() {
       </div>
 
       {/* Main Page Container */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-4 lg:px-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-4 lg:px-4 mt-20">
         {/* Header/Hero Section */}
         <header className="text-white p-8 sm:p-12 text-center rounded-t-2xl">
           <h1 className="mt-2 text-3xl leading-8 font-extrabold tracking-tight text-gray-900 sm:text-4xl">

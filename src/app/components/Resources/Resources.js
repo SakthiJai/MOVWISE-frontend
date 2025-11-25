@@ -175,7 +175,7 @@ export default function ResourcePage() {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-4 lg:px-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-4 lg:px-4 mt-23">
       <main className="p-6 sm:p-12 space-y-12 pt-0" style={{ paddingTop: 0 , paddingBottom: 0 }}>
       <div className="min-h-screen bg-white font-sans p-4 sm:p-8">
         <section className="max-w-6xl mx-auto text-center mb-10">

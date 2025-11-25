@@ -79,30 +79,30 @@ export default function AdvicePage() {
       {/* ---------------------------------------------------------------------------------- */}
 
       {/* --- 3. HOW MOVWISE WORKS (Content Journey) --- */}
-      {/* <section id="content-journey" className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section id="content-journey" className="py-20 bg-gray-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
           <h2 className="text-3xl font-bold text-center text-gray-900 mb-12">Your Information Journey</h2>
-          <div className="grid md:grid-cols-4 gap-8 text-center"> */}
+          <div className="grid md:grid-cols-4 gap-8 text-center">
             {/* Step 1: Find */}
-            {/* <div>
+            <div>
               <div className="text-2xl font-bold text-white mb-3 mx-auto w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center shadow-md">🔍</div>
               <h3 className="font-semibold text-lg text-black">Search by Topic</h3>
               <p className="text-sm text-gray-600">Use our search to find specific guides on conveyancing, moving, and property law.</p>
-            </div> */}
+            </div>
             {/* Step 2: Read */}
-            {/* <div>
+            <div>
               <div className="text-2xl font-bold text-white mb-3 mx-auto w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center shadow-md">💡</div>
               <h3 className="font-semibold text-lg text-black">Gain Clarity</h3>
               <p className="text-sm text-gray-600">Read articles written by legal experts, simplified and often with multilingual summaries.</p>
-            </div> */}
+            </div>
             {/* Step 3: Act */}
-            {/* <div>
+            <div>
               <div className="text-2xl font-bold text-white mb-3 mx-auto w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center shadow-md">✅</div>
               <h3 className="font-semibold text-lg text-black">Take Action</h3>
               <p className="text-sm text-gray-600">Use your new knowledge to ask better questions and move forward confidently.</p>
-            </div> */}
+            </div>
             {/* Step 4: Quote */}
-            {/* <div>
+            <div>
               <div className="text-2xl font-bold text-white mb-3 mx-auto w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center shadow-md">⚖️</div>
               <h3 className="font-semibold text-lg text-black">Find Your Solicitor</h3>
               <p className="text-sm text-gray-600">Ready? Get a quote from a firm matched to your specific, well-informed needs.</p>
@@ -112,7 +112,7 @@ export default function AdvicePage() {
             <PrimaryCTA text="Get a Conveyancing Quote" href={`${API_BASE_URL}/auth/login`}/>
           </div>
         </div>
-      </section> */}
+      </section>
  
       
       {/* ---------------------------------------------------------------------------------- */}

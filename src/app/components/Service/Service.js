@@ -52,7 +52,7 @@ const services = [
        <div className='bg-white shadow-md fixed w-full z-50 top-0 p-4  '>
          <Navbar originalstyle={true} />
       </div>
-    <div className="min-h-screen bg-gray-50 py-12 mt-10">
+    <div className="min-h-screen bg-gray-50 py-12 mt-11">
       {/* Hidden element for SEO keywords (Metadata would be in the <Head> component in a real Next.js page) */}
       <div className="hidden">{keywords}</div> 
 

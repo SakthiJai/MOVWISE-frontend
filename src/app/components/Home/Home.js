@@ -194,7 +194,7 @@ const [loginformdata, setloginformdata] = useState({
 
 
       {/* --- 2. HERO SECTION --- */}
-      <section className="bg-white pt-16 pb-24 border-b border-gray-100">
+      <section className="bg-white pt-16 pb-24 border-b border-gray-100 mt-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-12 items-center">
           <div>
             <h1 className="text-5xl font-extrabold text-gray-900 leading-tight">
