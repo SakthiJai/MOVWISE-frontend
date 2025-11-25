@@ -18,7 +18,7 @@ import Signinmodal from "../../components/utility/Singingmodal";
 export default function Purchase() {
 
     const [showAddressLines, setShowAddressLines] = useState(false);
-  
+     const [rawValue, setRawValue] = useState("");
     const [lender, setLender] = useState([
       { value: "Not Required", label: "Not Required", id: 0 },
     ]);
@@ -135,7 +135,9 @@ export default function Purchase() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
     
-    
+  
+
+      
     
       async function logindata() {
       
@@ -180,17 +182,58 @@ export default function Purchase() {
     const [errors, setErrors] = useState({});
     
         const [selectedLenders, setSelectedLenders] = useState([]);
+    // const handleChange = (field, value) => {
+    //   console.log(field,value)
+    //   setFormData((prev) => ({
+    //     ...prev,
+    //     [field]: value,
+    //   }));
+    //   console.log(formData)
+    //   if (errors[field]) {
+    //     setErrors((prev) => ({ ...prev, [field]: "" }));
+    //   }
+    // };
+
+
     const handleChange = (field, value) => {
-      console.log(field,value)
-      setFormData((prev) => ({
-        ...prev,
-        [field]: value,
-      }));
-      console.log(formData)
-      if (errors[field]) {
-        setErrors((prev) => ({ ...prev, [field]: "" }));
+  console.log(field, value);
+
+  if (field === "purchase_price") {
+    const cleaned = value.replace(/[^0-9.]/g, ""); 
+    setRawValue(cleaned);
+    setFormData(prev => ({ ...prev, purchase_price: cleaned })); 
+  } 
+  else {
+    setFormData(prev => ({ ...prev, [field]: value }));
+  }
+  if (errors[field]) {
+    setErrors(prev => ({ ...prev, [field]: "" }));
+  }
+};
+
+useEffect(() => {
+    if (rawValue === "") return;
+
+    const timer = setTimeout(() => {
+      const num = Number(rawValue.replace(/,/g, ""));
+
+      if (!isNaN(num)) {
+        // Format as UK number WITHOUT pound symbol
+        const formatted = new Intl.NumberFormat("en-GB", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }).format(num);
+
+       // setValue(formatted);
+         setFormData((prev) => ({ ...prev, purchase_price: formatted }))
       }
-    };
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [rawValue]);
+
+
+
       const [query, setQuery] = useState("");
         const fetchPropertyTypes = async () => {
              console.log(lender)
@@ -543,14 +586,16 @@ return (
           name="purchase_price"
           type="text"
           value={formData.purchase_price || ""}
-          onChange={(e) => {
-            setFormData({ ...formData, purchase_price: Number( e.target.value ) });
+          // onChange={(e) => {
+          //   setFormData({ ...formData, purchase_price: Number( e.target.value ) });
     
-            // clear error when typing
-            if (errors.purchase_price) {
-              setErrors({ ...errors, purchase_price: "" });
-            }
-          }}
+          //   // clear error when typing
+          //   if (errors.purchase_price) {
+          //     setErrors({ ...errors, purchase_price: "" });
+          //   }
+          // }}
+
+            onChange={(e)=>{handleChange("purchase_price",e.target.value)}}
           className={`block w-full h-[44px] rounded-xl border pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors `}
         />
       </div>
