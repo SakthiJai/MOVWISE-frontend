@@ -15,13 +15,13 @@ const AddressFields: React.FC<AddressFieldsProps> = ({
   errors,
   onChange,
   showAddressLines,
-  prefix = "", // default for SALE
+  prefix , // default for SALE
 }) => {
 
   const line1 = `address_line1${prefix}`;
   const line2 = `address_line2${prefix}`;
-  const town = `town${prefix}`;
-  const country = `country${prefix}`;
+  const town_city = `${prefix}town_city`;
+  const country = `${prefix}country`;
 
   return (
     <>
@@ -69,12 +69,12 @@ const AddressFields: React.FC<AddressFieldsProps> = ({
         </label>
         <input
           type="text"
-          value={formData[town] || ""}
-          onChange={(e) => onChange(town, e.target.value)}
+          value={formData[town_city] || ""}
+          onChange={(e) => onChange(town_city, e.target.value)}
           className="block w-full h-[44px] rounded-xl border border-gray-300 px-4  text-gray-900"
         />
         <p className="text-[12px] text-red-500 min-h-[16px]">
-          {errors[town]}
+          {errors[town_city]}
         </p>
       </div>
 

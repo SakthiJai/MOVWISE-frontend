@@ -23,23 +23,24 @@ const [languagepreference, setlanguagepreference] = useState(" ");
 
 
   const [formData, setFormData] = useState({
-    stages:"",
-  address: "",
- "address_line1": "",
-  "address_line2": "",
-  "country": "",
-  "town": "",
+    "sales_stages":"",
+ "sales_address": "",
+ "sales_address_line1": "",
+  "sales_address_line2": "",
+  "sales_country": "",
+  "sales_town_city": "",
   sales_price: "",
-  no_of_bedrooms: "",
+  sales_no_of_bedrooms: "",
   sales_leasehold_or_free: "", 
-  property_type: "",
+  sales_property_type: "",
   shared_ownership: "",
   existing_mortgage:"yes",
   languages:"",
   specal_instruction:"",
-  lender:"",  
-  type_id:1,
+  lenders:"",  
 });
+
+
 const [rawValue, setRawValue] = useState("");
 const handleUnknownPostcode = () => {
   // 1️⃣ Condition: user clicked "I don’t know the postcode yet"
@@ -48,13 +49,12 @@ const handleUnknownPostcode = () => {
   // 2️⃣ Reset address-related fields
   setFormData(prev => ({
     ...prev,
-    [`address`]: "",          // ← THIS is the missing one
+    [`sales_address`]: "",          // ← THIS is the missing one
     [`selectedId`]: "",
-    [`address_line1`]: "",
-    [`address_line2`]: "",
-    [`town`]: "",
-    [`country`]: "",
-    [`address`]:""
+    [`sales_address_line1`]: "",
+    [`sales_address_line2`]: "",
+    [`sales_town_city`]: "",
+    [`sales_country`]: "",
   }));
 };
 
@@ -144,8 +144,8 @@ const handleSubmit = (e) => {
   }
 
  
-  if (!formData.no_of_bedrooms) {
-    newErrors.no_of_bedrooms = "Please select number of bedrooms";
+  if (!formData.sales_no_of_bedrooms) {
+    newErrors.sales_no_of_bedrooms = "Please select number of bedrooms";
   }
 
 
@@ -154,8 +154,8 @@ const handleSubmit = (e) => {
   }
 
  
-  if (!formData.property_type) {
-    newErrors.property_type = "Please select a property type";
+  if (!formData.sales_property_type) {
+    newErrors.sales_property_type = "Please select a property type";
   }
 
     if (!formData.shared_ownership) {
@@ -168,6 +168,8 @@ const handleSubmit = (e) => {
 
     // if no errors, submit
     if (Object.keys(newErrors).length === 0) {
+            localStorage.removeItem("getquote");
+
       console.log("✅ Form submitted:", formData);
             localStorage.setItem("service", JSON.stringify(3));
 
@@ -212,13 +214,13 @@ console.log(formData)
         const notRequiredOption = lender.find(opt => opt.value === "Not Required");
         setSelectedLenders([notRequiredOption]);
         console.log("Selected lenders: [0]");
-        handleChange("lender", [0]);
+        handleChange("lenders", [0]);
       } else {
         // Normal behavior for other lenders
         setSelectedLenders(selectedOptions);
         const ids = selectedOptions.map(item => item.id);
         console.log("Selected lenders:", ids);
-        handleChange("lender", ids);
+        handleChange("lenders", ids);
       }
     };
 
@@ -253,35 +255,7 @@ function handleloginformchange(name, value) {
   }));
 }
 
-async function logindata() {
 
-  try {
-    console.log(loginformdata)
-    const loginResponse = await postData(API_ENDPOINTS.login, loginformdata);
-    console.log("Login response:", loginResponse);
-
-    if (loginResponse.code === 200) {
-      const userId = loginResponse.user?.id; // <-- get it from API response
-        console.log(userId)
-      if (userId) {
-        localStorage.setItem("user", userId);
-        let data = JSON.parse(localStorage.getItem("getquote") || "{}");
-       
-        data.user_id = localStorage.getItem("user");
-        data.service_type = Number(localStorage.getItem("service"));
-
-        // Save back to localStorage
-        localStorage.setItem("getquote", JSON.stringify(data));
-
-
-      }
-
-      router.push("/components/comparequotes");
-    }
-  } catch (error) {
-    console.error("Error logging in:", error);
-  }
-}
 
 async function fetchdata(){
   try{
@@ -315,12 +289,9 @@ console.log(e);
 }
 
 useEffect(() => {
-  const storedData = localStorage.getItem("getquote");
   fetchdata()
 
-  if (storedData) {
-    setFormData(JSON.parse(storedData));
-  }
+ 
 }, []);
 
       const [sales_leasehold_or_free, setsales_leasehold_or_free] = useState("");
@@ -456,9 +427,9 @@ useEffect(() => {
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     What stages are you at?
                                 </label>
-                                <select id="stages" name="stages"
-                                 value={formData.stages} // ✅ controlled value
-                                 onChange={(e)=>{handleChange("stages",e.target.value)}}
+                                <select id="stages" name="sales_stages"
+                                 value={formData.sales_stages} // ✅ controlled value
+                                 onChange={(e)=>{handleChange("sales_stages",e.target.value)}}
 
 
                                   className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10">
@@ -488,15 +459,15 @@ useEffect(() => {
                             setFormData((prev) => ({
                               ...prev,
                               selectedId: selected.id,
-                              address: selected.suggestion,
+                              sales_address: selected.suggestion,
                             }));
                             // Fetch full address details
                             const details = await fetchAddressDetails(selected.udprn);
                               if (details) {
                                 setFormData((prev) => ({
                                   ...prev,
-                                  town: details.post_town || details.admin_district || "",
-                                  country: details.country || "",
+                                  sales_town_city: details.post_town || details.admin_district || "",
+                                  sales_country: details.country || "",
                                   }));
                                 } else {
                                   setErrors((prev) => ({
@@ -539,8 +510,10 @@ useEffect(() => {
                       errors={errors}
                       showAddressLines={showAddressLines} // only used inside AddressFields
                       onChange={(field, value) =>
+                        
                         setFormData((prev) => ({ ...prev, [field]: value }))
                       }
+                      prefix='sales_'
                     />
 
     
@@ -589,13 +562,13 @@ useEffect(() => {
         type="button"
         onClick={() => {
           // ✅ update formData
-          setFormData((prev) => ({ ...prev, no_of_bedrooms: opt }));
+          setFormData((prev) => ({ ...prev, sales_no_of_bedrooms: opt }));
           // ✅ clear error for this field
           setErrors((prev) => ({ ...prev, no_of_bedrooms: "" }));
         }}
         className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm
           ${
-            formData.no_of_bedrooms === opt
+            formData.sales_no_of_bedrooms === opt
               ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
               : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
           }`}
@@ -663,20 +636,20 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
         type="button"
         onClick={() => {
           // ✅ Update property type in formData
-          setFormData((prev) => ({ ...prev, property_type: opt.label }));
+          setFormData((prev) => ({ ...prev, sales_property_type: opt.label }));
           // ✅ Clear the specific error
-          setErrors((prev) => ({ ...prev, property_type: "" }));
+          setErrors((prev) => ({ ...prev, sales_property_type: "" }));
         }}
         className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 transition-all duration-200 shadow-sm w-[170.76px]
           ${
-            formData.property_type === opt.label
+            formData.sales_property_type === opt.label
               ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
               : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
           }`}
       >
         <span
           className={`${
-            formData.property_type === opt.label ? "text-white" : "text-gray-700"
+            formData.sales_property_type === opt.label ? "text-white" : "text-gray-700"
           } text-[18px]`}
         >
           {opt.icon}

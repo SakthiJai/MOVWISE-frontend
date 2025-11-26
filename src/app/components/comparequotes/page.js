@@ -23,6 +23,7 @@ export default function Comparequotes() {
   const [companydata,setcompanydata]=useState();
 
   const[ref,setref]=useState("")
+  const[quotefound,setquotefound]=useState(false);
   
 
   // Track which card dropdown is open (by quote_id)
@@ -72,6 +73,14 @@ useEffect(() => {
       const response = await postData(API_ENDPOINTS.services, formData);
             console.log("✅ Remortgage API Response:", response?.service?.quote_ref_number);
             setref( response.service.quote_ref_number);
+            if(response.code==200){
+              localStorage.clear()
+              setquotefound(true)
+            }
+            else{
+              setquotefound(false)
+            }
+
 
       const propety_id = response.data;
       console.log("property_id",propety_id);//property_id
@@ -88,12 +97,11 @@ console.log("User ID or Guest ID:", userid);// user_id
 
 
 console.log("Quotes Filter API Response:", quoteResponse);
-const ref_no = quoteResponse.data[0].quote_ref_number;
-console.log(ref_no);
+
 
 
 // Decode Base64 logo before storing
-const formatted = quoteResponse.data.map((item) => {
+const formatted = quoteResponse?.data?.map((item) => {
   return {
     ...item,
     conveying_details: {
@@ -126,7 +134,7 @@ setcompanydata(formatted);
 
 
   return (
-    <div className="min-h-screen bg-white antialiased">
+   <div className="min-h-screen bg-white antialiased">
       {/* Top bar */}
       <Navbar />
 
@@ -431,5 +439,6 @@ alt={quote.company_name||"company logo"}
         </div>
       </main>
     </div>
+
   );
 }

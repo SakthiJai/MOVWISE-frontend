@@ -13,7 +13,7 @@ export interface PostcodeResult {
   udprn: number;
 }
 
-const API_KEY = "ak_micsw87nuox6gtauW7FsLyX0baku9"; 
+const API_KEY = "ak_mie745342OYxduUJmojB2pHvhQqqZ"; 
 
 export async function fetchAddressDetails(udprn: number) {
   const url = `https://api.ideal-postcodes.co.uk/v1/udprn/${udprn}?api_key=${API_KEY}`;
@@ -113,7 +113,7 @@ useEffect(() => {
       <input
         type="text"
         placeholder="Search Location..."
-        value={query}
+        value={readOnly ? "" : query}  
         onChange={(e) => !readOnly && setQuery(e.target.value)}
         onKeyDown={handleKeyDown}
         readOnly={readOnly}

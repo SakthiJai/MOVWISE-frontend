@@ -8,10 +8,8 @@ import Select from 'react-select';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
-import Footer from "../../parts/Footer/footer";
 import LocationSearch, { fetchAddressDetails } from '../Purchase/LocationSearch';
 import AddressFields from './AddressFields';
-import { v4 as uuidv4 } from 'uuid';
 import Signinmodal from "../../components/utility/Singingmodal";
 
 
@@ -62,13 +60,13 @@ export default function Purchase() {
         const notRequiredOption = lender.find(opt => opt.value === "Not Required");
         setSelectedLenders([notRequiredOption]);
         console.log("Selected lenders: [0]");
-        handleChange("lender", [0]);
+        handleChange("lenders", [0]);
       } else {
         // Normal behavior for other lenders
         setSelectedLenders(selectedOptions);
         const ids = selectedOptions.map(item => item.id);
         console.log("Selected lenders:", ids);
-        handleChange("lender", ids);
+        handleChange("lenders", ids);
       }
     };
 
@@ -83,7 +81,7 @@ export default function Purchase() {
     [`selectedId`]: "",
     [`address_line1`]: "",
     [`address_line2`]: "",
-    [`town`]: "",
+    [`town_city`]: "",
     [`country`]: "",
   }));
 };
@@ -93,43 +91,28 @@ export default function Purchase() {
   "address_line1": "",
   "address_line2": "",
   "country": "",
-  "town": "",
+  "town_city": "",
   "languages": [],
   "service_type":2,
+  "stages":"", 
+   "purchase_price": "",
+  "no_of_bedrooms": "",
+  "property_type": "",
+  "leasehold_or_free": "",
+  "new_build": "",
+  "buy_to_let": "",
+  "govt_by_scheme": "",
+  "obtaining_mortgage": "",
+  "gift_deposit": "",
+  "ownership_housing_asso": "",
+  "specal_instruction": "",
+  "lenders": ""             
       });
 
-      async function createguestuser(){
-      
-       try {
-        const guest_id = uuidv4();
-      console.log(guest_id);
-         
-            const updatedForm = {
-          ...formData,
-          "guest_user ": guest_id,
-          "service_type":2
-        };
-      
-        // ✅ Update React state
-        setFormData(updatedForm);
-          localStorage.setItem("getquote", JSON.stringify(updatedForm));
-       router.push("/components/comparequotes");
-            }
-      
-           
-          
-         catch (error) {
-          console.error("Error logging in:", error);
-        }
-      }
+     
       
     useEffect(() => {
-      const storedData = localStorage.getItem("getquote");
-    
-    
-      if (storedData) {
-        setFormData(JSON.parse(storedData));
-      }
+     
      
       fetchPropertyTypes();
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -139,60 +122,18 @@ export default function Purchase() {
 
       
     
-      async function logindata() {
-      
-        try {
-          console.log(loginformdata)
-          const loginResponse = await postData(API_ENDPOINTS.login, loginformdata);
-          console.log("Login response:", loginResponse);
-      
-          if (loginResponse.code === 200) {
-            const userId = loginResponse.user?.id; // <-- get it from API response
-      console.log(userId)
-            if (userId) {
-    
-            const updatedForm = {
-          ...formData,
-          "user_id": userId,
-        };
-      
-        // ✅ Update React state
-        setFormData(updatedForm);
-          localStorage.setItem("getquote", JSON.stringify(updatedForm));
-            }
-      
-            router.push("/components/comparequotes");
-          }
-        } catch (error) {
-          console.error("Error logging in:", error);
-        }
-      }
+     
     
     const router = useRouter();
     
-    function handleloginformchange(name, value) {
-      setloginformdata((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
+   
     const [selectedOptions, setSelectedOptions] = useState([]);
       const [stageOptions, setStageOptions] = useState([]);
     
     const [errors, setErrors] = useState({});
     
         const [selectedLenders, setSelectedLenders] = useState([]);
-    // const handleChange = (field, value) => {
-    //   console.log(field,value)
-    //   setFormData((prev) => ({
-    //     ...prev,
-    //     [field]: value,
-    //   }));
-    //   console.log(formData)
-    //   if (errors[field]) {
-    //     setErrors((prev) => ({ ...prev, [field]: "" }));
-    //   }
-    // };
+   
 
 
     const handleChange = (field, value) => {
@@ -236,6 +177,7 @@ useEffect(() => {
 
       const [query, setQuery] = useState("");
         const fetchPropertyTypes = async () => {
+               localStorage.removeItem("getquote");
              console.log(lender)
           try {
             const data = await getData(API_ENDPOINTS.compareQuotes);
@@ -284,7 +226,9 @@ useEffect(() => {
       const [languagepreference, setlanguagepreference] = useState(" ");
       const [language, setLanguage] = useState([]);
       const handleSubmit = (e) => {
+
         e.preventDefault();
+
         let newErrors = {};
       if(!formData.languages){
         newErrors.languages="please select a language"
@@ -314,11 +258,14 @@ useEffect(() => {
     }
         setErrors(newErrors);
         console.log(errors)
-    
+ 
         // if no errors, submit
         if (Object.keys(newErrors).length === 0) {
+               localStorage.removeItem("getquote");
+
           console.log("✅ Form submitted:", formData);
           localStorage.setItem("getquote", JSON.stringify(formData));
+          localStorage.setItem("service",JSON.stringify(2))
               setModalopen(true)
     
         }
@@ -521,7 +468,7 @@ return (
                               if (details) {
                                 setFormData((prev) => ({
                                   ...prev,
-                                  town: details.post_town || details.admin_district || "",
+                                  town_city: details.post_town || details.admin_district || "",
                                   country: details.country || "",
                                   }));
                                 } else {
@@ -811,13 +758,13 @@ return (
         <button
           type="button"
           onClick={() => {
-            setFormData({ ...formData, govt_buy_scheme: 1 }); // ✅ store 1 for yes
-            if (errors.govt_buy_scheme) {
-              setErrors({ ...errors, govt_buy_scheme: "" }); // clear error
+            setFormData({ ...formData, govt_by_scheme: 1 }); // ✅ store 1 for yes
+            if (errors.govt_by_scheme) {
+              setErrors({ ...errors, govt_by_scheme: "" }); // clear error
             }
           }}
           className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-            formData.govt_buy_scheme === 1
+            formData.govt_by_scheme === 1
               ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
               : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
           }`}
@@ -828,13 +775,13 @@ return (
         <button
           type="button"
           onClick={() => {
-            setFormData({ ...formData, govt_buy_scheme: 0 }); // ✅ store 0 for no
-            if (errors.govt_buy_scheme) {
-              setErrors({ ...errors, govt_buy_scheme: "" }); // clear error
+            setFormData({ ...formData, govt_by_scheme: 0 }); // ✅ store 0 for no
+            if (errors.govt_by_scheme) {
+              setErrors({ ...errors, govt_by_scheme: "" }); // clear error
             }
           }}
           className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-            formData.govt_buy_scheme === 0
+            formData.govt_by_scheme === 0
               ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
               : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
           }`}

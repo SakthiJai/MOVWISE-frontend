@@ -347,7 +347,7 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
             ...item,
             price_list: item.price_list.map((row, i) =>
               i === rowIndex
-                ? { ...row, [field]: rawValue }  // store raw value only
+                ? { ...row, [field]: (field=="description" ?value:rawValue) }  // store raw value only
                 : row
             )
           }
