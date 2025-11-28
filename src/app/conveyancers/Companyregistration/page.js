@@ -17,8 +17,16 @@ export default function Companyregistration() {
 
  useEffect(()=>{
   const storedData = localStorage.getItem("companyData");
+  
   if (storedData) {
     setFormData(JSON.parse(storedData));
+  }
+   //console.log("storedData",JSON.parse(storedData).languages);
+  if(formData.languages){
+    //handleChange({})
+    
+    const ids = formData.languages.map(item => item.id);
+   handleChange({ name: "languages", value: JSON.parse(storedData).languages })
   }
  },[]);
 
@@ -118,6 +126,8 @@ const [jurisdictions,setjuisdictions]=useState([])
 
 
       setLanguage( region)
+      
+  
    console.log(languages.users)
    if(Array.isArray(languages.users)){
       const languageOptions = languages.users.map((l) => ({
@@ -126,7 +136,50 @@ const [jurisdictions,setjuisdictions]=useState([])
         id: l.id,
       }));
       setLanguage([{ value: "Not Required", id: 0,label: "Not Required" }, ...languageOptions]);
+      handleChange({ name: "languages", value: JSON.parse(localStorage.getItem("companyData")).languages })
+      if(localStorage.getItem("companyData"))
+      {
+       
+        let templang =[];
+        languageOptions.forEach(element => {
+        if(JSON.parse(localStorage.getItem("companyData")).languages.indexOf(element.id)>=0){
+        
+          templang.push(element)
+        }
+      });
+       setSelectedLanguage(templang);
+      }
+     
    }
+   
+   if(localStorage.getItem("companyData"))
+      {
+       
+        let templang =[];
+        region.users.forEach(element => {
+         // console.log(element.id,JSON.parse(localStorage.getItem("companyData")).regions,JSON.parse(localStorage.getItem("companyData")).regions.indexOf(element.id))
+        if(JSON.parse(localStorage.getItem("companyData")).regions.indexOf(element.id)>=0){
+           element.value= element.id,
+        element.label=element.region_name;
+          templang.push(element)
+        }
+      });
+       setSelectedJurisdictions(templang);
+      }
+      if(localStorage.getItem("companyData"))
+      {
+       
+        let templang =[];
+        serviceoptions.forEach(element => {
+         // console.log(element.id,JSON.parse(localStorage.getItem("companyData")).regions,JSON.parse(localStorage.getItem("companyData")).regions.indexOf(element.id))
+        if(JSON.parse(localStorage.getItem("companyData")).service_id.indexOf(element.id)>=0){
+          
+          templang.push(element)
+        }
+      });
+       setSelectedServices(templang);
+      }
+      //selectedServices
     }
     catch (error) {
       console.error("Error fetching languages:", error);
@@ -297,14 +350,14 @@ console.log(formData)
       reader.onloadend = () => {
         const base64String = reader.result;
         setImage(base64String); // ✅ for preview
-  console.log(base64String)
+ 
         // ✅ also set inside form data
         setFormData((prev) => ({
           ...prev,
           logo: base64String+"deva", // <-- your required key
         }));
       };
-      console.log(formData)
+     
       reader.readAsDataURL(file);
     }
   };
@@ -494,6 +547,7 @@ const togglesercice = (selectedOptions) => {
                       <input
                         id="Name"
                         name="SRA_CLC_number"
+                        value={formData.SRA_CLC_number}
                         onChange={handleChange}
                         placeholder="Enter Company name"
                         className={`block w-full h-[44px] rounded-[10px] border ${errors.company_name ? "border-red-500" : "border-[#D1D5DB]"}  text-[#1B1D21] placeholder-[#1B1D21] px-3 text-[14px] focus:outline-none`}
@@ -554,7 +608,7 @@ const togglesercice = (selectedOptions) => {
       instanceId="region-select"
       value={selectedServices}
       onChange={togglesercice}
-      placeholder="Choose regions..."
+      placeholder="Choose Services..."
       className="text-black mt-2"
     />
   </div>
@@ -576,12 +630,13 @@ const togglesercice = (selectedOptions) => {
     {/* Logo circle */}
     <div className="relative">
       <div
-        className={`w-[120px] h-[120px] rounded-full border 
+        className={`w-[120px] h-[120px] rounded-full  
         ${errors.logo ? "border-red-500" : "border-gray-300"} 
         bg-center bg-cover flex items-center justify-center text-gray-400 text-sm`}
-        style={{ backgroundImage: image ? `url(${image})` : "none" }}
+       
       >
-        {!image && <span>Upload Logo</span>}
+        <img src={image?image:"https://www.clipartmax.com/png/small/283-2833048_small-business-logo-icon-company-name-icon.png"} style={{ width: "100%" } }></img>
+       
       </div>
 
       {/* Pencil Icon (Edit Button) */}

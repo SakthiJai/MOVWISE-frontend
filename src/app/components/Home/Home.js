@@ -532,7 +532,10 @@ const [loginformdata, setloginformdata] = useState({
           </p>
           <div className="mt-8">
             {/* Secondary CTA colour: Amber Yellow */}
-          <Link href="/conveyancers/Companyregistration" className='cursor-pointer'>
+          <Link onClick={(e) => { 
+                    localStorage.removeItem("companyData");
+                   
+                   }} href="/conveyancers/Companyregistration" className='cursor-pointer'>
             <button className="bg-amber-500 hover:bg-amber-600 text-gray-900 font-bold py-3 px-8 rounded-lg shadow-xl transition duration-300">
               Join as a Partner →
 
