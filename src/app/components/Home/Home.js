@@ -102,6 +102,9 @@ export default  function HomePage() {
 async function fetchdata(){
 try{
     const data = await getData(API_ENDPOINTS.servicelist);
+    const lang = await getData(API_ENDPOINTS.languages);
+    console.log(lang.users)
+    setlang(lang.users)
   console.log(data.users)
   setdata(data.users)
 }
@@ -115,6 +118,7 @@ catch(e){
     const router = useRouter();
 const [modalopen, setModalopen] = useState(false);
 const [loginformshow,setloginformshow]=useState(false);
+const [lang,setlang]=useState([])
 const [loginformdata, setloginformdata] = useState({
   email: "",
   password: "",
@@ -375,13 +379,13 @@ const [loginformdata, setloginformdata] = useState({
             {/* Left Column: Search & Testimonials */}
             <div>
               <div className="p-6 bg-white rounded-lg shadow-lg">
-                <h3 className="text-xl font-semibold mb-3">Find a solicitor who speaks:</h3>
+                <h3 className="text-xl font-semibold mb-3 text-black">Find a solicitor who speaks:</h3>
                 <div className="flex space-x-3">
-                  <select className="flex-1 border border-gray-300 p-2 rounded-lg">
+                  <select className="flex-1 border border-gray-300 p-2 rounded-lg text-black">
                     <option>Select Language</option>
-                    <option>Tamil</option>
-                    <option>Hindi</option>
-                    <option>Spanish</option>
+                         {lang?.map((lang, index) => (
+        <option key={index} className='text-black'>{lang.language_name}</option>
+      ))}
                   </select>
                   <button className="bg-emerald-600 text-white py-2 px-4 rounded-lg hover:bg-emerald-700">Search</button>
                 </div>
