@@ -1,12 +1,21 @@
 "use client"
 
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import Navbar from '../../parts/navbar/page';
 import Footer from '../../parts/Footer/footer';
-import PriceBreakdownCard from '../Myprofile/pricebreakdown'
+import PriceBreakdownCard from './PartnersPricebreakdown'
 
-const Myprofile = () => {
+const Partnersprofile = () => {
   const [show, setshow] = useState(true);
+  const [logintype,setlogintype]=useState()
+  const [showpricebreakdown,setshowpricebreakdown]=useState();
+
+  useEffect(()=>{
+    if(localStorage.getItem("logintype")){
+    setlogintype(localStorage.getItem("logintype"));
+
+    }
+  })
 
   // --- Mock Data for Illustration (Unchanged) ---
   const userDetails = {
@@ -16,9 +25,7 @@ const Myprofile = () => {
 
   const quotesList = [
     { id: 1, text: "ABC Legal Hub", status: "Status" },
-    { id: 2, text: "Digital Work", status: "Status" },
-    { id: 3, text: "cd_Tech ltd.", status: "Status" },
-    { id: 4, text: "ZOHO", status: "Status" },
+   
   ];
   // -----------------------------------
 
@@ -92,7 +99,7 @@ const Myprofile = () => {
             <p className="text-gray-700 italic font-medium mb-2 sm:mb-0 max-w-2xl">
               "{quote.text}"
             </p>
-            <div className="flex items-center space-x-3 flex-shrink-0">
+            <div className="flex items-center space-x-3 flex-shrink-0" onClick={()=>{setshowpricebreakdown(true)}}>
               <StatusButton status={quote.status} />
           
             </div>
@@ -101,6 +108,32 @@ const Myprofile = () => {
       </div>
     </div>
   );
+  
+ const Partnerquotescontent = () => {
+  return (
+    <div className="p-6 bg-white shadow-lg rounded-xl min-h-[300px] font">
+      <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">
+        My Quotes List ({quotesList.length})
+      </h2>
+      <div className="space-y-4">
+        {quotesList.map((quote) => (
+          <div
+            key={quote.id}
+            className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition duration-150"
+          >
+            <p className="text-gray-700 italic font-medium mb-2 sm:mb-0 max-w-2xl">
+              "{quote.text}"
+            </p>
+            <div className="flex items-center space-x-3 flex-shrink-0">
+              <StatusButton status={quote.status} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 
 
   return (
@@ -142,18 +175,28 @@ const Myprofile = () => {
         {/* 3. SECTION/MAIN CONTENT: Spans the remaining 3 columns */}
         <section className="govt_by_scheme md:col-span-3 govt_by_scheme">
           <main>
-            {!show ? (
+          
               <div>
-                 <QuotesContent />
-                 <div className='mt-5'>
+                <div>
+
+                <Partnerquotescontent/>
+
+                <div className='mt-5'>
                   <PriceBreakdownCard/>
-                 </div>
+                   </div>
+                   </div>
+
+              
+
+               
+                 
+                
+            
+               
+               
               </div>
               
-            ) : (
-              <ProfileContent />
-
-            )}
+           
            
           </main>
         </section>
@@ -164,4 +207,4 @@ const Myprofile = () => {
   )
 }
 
-export default Myprofile
+export default Partnersprofile

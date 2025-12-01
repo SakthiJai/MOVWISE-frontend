@@ -38,6 +38,7 @@ const [languagepreference, setlanguagepreference] = useState(" ");
   languages:"",
   specal_instruction:"",
   lenders:"",  
+  user_id:null,
 });
 
 
@@ -130,11 +131,11 @@ const handleSubmit = (e) => {
  
 
  
-  /*if (!formData.address.trim()) {
+  if (!formData.sales_address.trim()) {
     newErrors.address = "Property address is required";
-  } else if (formData.address.trim().length < 5) {
+  } else if (formData.sales_address.trim().length < 5) {
     newErrors.address = "Address must be at least 5 characters";
-  }*/
+  }
 
   
   if (!formData.sales_price) {
@@ -144,9 +145,6 @@ const handleSubmit = (e) => {
   }
 
  
-  if (!formData.sales_no_of_bedrooms) {
-    newErrors.sales_no_of_bedrooms = "Please select number of bedrooms";
-  }
 
 
   if (!formData.sales_leasehold_or_free) {
@@ -154,10 +152,6 @@ const handleSubmit = (e) => {
   }
 
  
-  if (!formData.sales_property_type) {
-    newErrors.sales_property_type = "Please select a property type";
-  }
-
     if (!formData.shared_ownership) {
     newErrors.shared_ownership = "Please select a ownership";
   }
@@ -173,9 +167,16 @@ const handleSubmit = (e) => {
       console.log("✅ Form submitted:", formData);
             localStorage.setItem("service", JSON.stringify(3));
 
-      localStorage.setItem("getquote", JSON.stringify(formData));
       //alert("Form submitted successfully!");
+      
+      if(localStorage.getItem("user")){
+        formData.user_id=localStorage.getItem("user");
+              localStorage.setItem("getquote", JSON.stringify(formData));
+      router.push("/components/comparequotes");
+      }
+      else{
        setModalopen(true)
+      }
       
       
 

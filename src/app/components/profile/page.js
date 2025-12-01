@@ -1,5 +1,5 @@
 import React from 'react'
-import Myprofile from "../Myprofile/Myprofile"
+import Myprofile from "./Myprofile"
 
 const page = () => {
   return (

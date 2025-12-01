@@ -23,6 +23,7 @@ const Navbar = ({ originalstyle = false }) => {
     { name: "Advice / Blog", href: "/components/Advice" },
     { name: "Resources", href: "/components/Resources" },
   ];
+
 useEffect(()=>{
   if(localStorage.getItem("user")&&localStorage.getItem("logintype"))
   setuserlogin(localStorage.getItem("user"));
@@ -99,21 +100,21 @@ setlogintype(localStorage.getItem("logintype"));
           <ul className="p-0.5 text-sm text-body font-medium">
             {logintype=="user"&&(
                 <li className="hover:bg-yellow-400 hover:rounded-sm text-black">
-              <Link className="block w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded" href="/components/Myprofile">
+              <Link className="block w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded" href="/components/profile">
              MY Profile
               </Link>
             </li>
             )}
           {logintype=="user" &&(
            <li className="hover:bg-yellow-400 hover:rounded-sm text-black ">
-              <Link className="block w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded"  href="/components/Myprofile">
+              <Link className="block w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded"  href="/components/profile">
             My Quotes
               </Link>
             </li>
           )}
           {logintype=="partner"&&(
             <li className="hover:bg-yellow-400 hover:rounded-sm text-black ">
-              <Link className="block w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded"  href="/components/Myprofile">
+              <Link className="block w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded"  href="/components/account">
             My Account
               </Link>
             </li>
