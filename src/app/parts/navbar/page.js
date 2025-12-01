@@ -4,13 +4,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { API_BASE_URL } from "../.././constants/config";
 import { CircleUserRound, Menu, MenuIcon, MenuSquareIcon, SquareMenu } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 
 const Navbar = ({ originalstyle = false }) => {
 
   const pathname = usePathname();
  const [open, setOpen] = useState(false);
+ const[isloggeduser,setisloggeduser]=useState(false)
+ const[userlogin,setuserlogin]=useState();
+ const[logintype,setlogintype]=useState();
 
 
   const links = [
@@ -20,6 +23,12 @@ const Navbar = ({ originalstyle = false }) => {
     { name: "Advice / Blog", href: "/components/Advice" },
     { name: "Resources", href: "/components/Resources" },
   ];
+useEffect(()=>{
+  if(localStorage.getItem("user")&&localStorage.getItem("logintype"))
+  setuserlogin(localStorage.getItem("user"));
+setlogintype(localStorage.getItem("logintype"));
+})
+
 
   return (
     <header
@@ -64,12 +73,13 @@ const Navbar = ({ originalstyle = false }) => {
         </Link>
     
 
-  
+   
 
       </nav>
       <div className="relative inline-block">
       {/* Button */}
-     <button
+    {userlogin&&(
+ <button
   onClick={() => setOpen(!open)}
   className="ml-2 flex items-center justify-center 
              bg-white  border-gray-300 
@@ -79,25 +89,43 @@ const Navbar = ({ originalstyle = false }) => {
 >
   <CircleUserRound size={32} className="text-gray-600" />
 </button>
+    )} 
+   
 
 
       {/* Dropdown */}
       {open && (
         <div className="absolute right-0  z-10 bg-neutral-primary-medium border bg-white  rounded-base shadow-lg w-44 animate-fade-in font">
           <ul className="p-0.5 text-sm text-body font-medium">
-            <li className="hover:bg-yellow-400 hover:rounded-sm text-black">
+            {logintype=="user"&&(
+                <li className="hover:bg-yellow-400 hover:rounded-sm text-black">
               <Link className="block w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded" href="/components/Myprofile">
              MY Profile
               </Link>
             </li>
-            <li className="hover:bg-yellow-400 hover:rounded-sm text-black ">
-              <Link className="block w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded" href="#">
-My Quotes
+            )}
+          {logintype=="user" &&(
+           <li className="hover:bg-yellow-400 hover:rounded-sm text-black ">
+              <Link className="block w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded"  href="/components/Myprofile">
+            My Quotes
               </Link>
             </li>
+          )}
+          {logintype=="partner"&&(
+            <li className="hover:bg-yellow-400 hover:rounded-sm text-black ">
+              <Link className="block w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded"  href="/components/Myprofile">
+            My Account
+              </Link>
+            </li>
+          )}
+           
            
             <li className="hover:bg-yellow-400 hover:rounded-sm text-black">
-              <Link className="block w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded" href="#">
+              <Link className="block w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded " href="/" onClick={()=>{
+                localStorage.removeItem("user");
+                setOpen(false);
+                
+              }}>
                 Sign out
               </Link>
             </li>

@@ -11,6 +11,7 @@ export default function Signinmodal({ closeModal }) {
   email: "",
   password: "",
 });
+const [logintype,setlogintype]=useState();
 const [guestformshow,setguestformshow]=useState(false);
  const [guestformsdata, setguestformsdata] = useState({
  guest_email: "",
@@ -51,6 +52,13 @@ function handleguestformchange(name,value){
 }
 async function logindata() {
 
+console.log(logintype)
+
+if(logintype){
+  localStorage.setItem("logintype",logintype);
+}
+
+console.log("check")
   try {
     console.log(loginformdata)
     const loginResponse = await postData(API_ENDPOINTS.login, loginformdata);
@@ -62,7 +70,7 @@ async function logindata() {
       localStorage.setItem("user",userId);
       console.log(Number(localStorage.getItem("service")))
 
-      if(Number(localStorage.getItem("service"))>0){
+      if(Number(localStorage.getItem("service"))>0 || localStorage.getItem("user")){  ///remove the conditon using user
         if (userId) {
         let data = JSON.parse(localStorage.getItem("getquote") || "{}")
         data.user_id = userId;
@@ -74,7 +82,6 @@ async function logindata() {
         console.log("service",data.service_type)
         localStorage.setItem("getquote", JSON.stringify(data));
         //router.push("/components/comparequotes");
-
       }
       router.push("/components/comparequotes");
       }
@@ -158,18 +165,29 @@ async function logindata() {
                                           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                               <button
                                               className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
-                                              onClick={() => { setloginformshow(true); }}
+                                              onClick={() => { setloginformshow(true);setlogintype("user") }}
                                               >
                                               Sign In
                                               </button>
               
                                               <button
-                                              onClick={createguestuser}
+                                              onClick={()=>{setguestformshow(true)}}
                                               className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
                                               >
                                               Guest User
                                               </button>
                                           </div>
+
+                                          <div className='grid grid-cols-1  gap-6 mt-5  mx-auto'>
+                                                <button
+                                              className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
+                                              onClick={() => { setloginformshow(true); setlogintype("partner") }}
+                                              >
+                                          Partner Login
+                                              </button>
+
+                                          </div>
+                                       
                                       
                                         </div>
                                         )};
