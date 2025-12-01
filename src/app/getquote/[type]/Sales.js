@@ -58,7 +58,10 @@ const handleUnknownPostcode = () => {
     [`sales_country`]: "",
   }));
 };
-
+ const closeModal = () => {
+    console.log("closing...");
+    setModalopen(false);
+  };
  const handleChangeLang = (selectedOptions) => {
       //    const hasNotRequired = selectedOptions.some(
       //   (option) => option.value === "Not Required"

@@ -1,344 +1,406 @@
-import Link from 'next/link';
-import React, { useState , useEffect } from 'react'
-import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
-import { useRouter } from 'next/navigation';
-import { v4 as uuidv4 } from 'uuid';
+import Link from "next/link";
+import React, { useState, useEffect } from "react";
+import { getData, postData, API_ENDPOINTS } from "../../auth/API/api";
+import { useRouter } from "next/navigation";
+import { v4 as uuidv4 } from "uuid";
 
 export default function Signinmodal({ closeModal }) {
-     const router = useRouter();
-     const [loginformshow,setloginformshow]=useState(false);
-     const [loginformdata, setloginformdata] = useState({
-  email: "",
-  password: "",
-});
-const [logintype,setlogintype]=useState();
-const [guestformshow,setguestformshow]=useState(false);
- const [guestformsdata, setguestformsdata] = useState({
- guest_email: "",
-  guest_name: "",
-});
+  const router = useRouter();
+  const [loginformshow, setloginformshow] = useState(false);
+  const [loginformdata, setloginformdata] = useState({
+    email: "",
+    password: "",
+  });
+  const [logintype, setlogintype] = useState();
+  const [guestformshow, setguestformshow] = useState(false);
+  const [guestformsdata, setguestformsdata] = useState({
+    guest_email: "",
+    guest_name: "",
+  });
 
-const [modalopen, setModalopen] = useState(false);
+  const [loginError, setLoginError] = useState("");
+
+
+  const [modalopen, setModalopen] = useState(false);
   const [formData, setFormData] = useState({
-    stages:"",
-  address: "",
+    stages: "",
+    address: "",
     address_line1: "",
     address_line2: "",
     country: "",
     town_city: "",
-  sales_price: "",
-  no_of_bedrooms: "",
-  leasehold_or_free: "", 
-  property_type: "",
-  shared_ownership: "",
-  existing_mortgage:"yes",
-  languages:"",
-  specal_instruction:"",
-  lender:"",  
-  type_id:1,
-});
+    sales_price: "",
+    no_of_bedrooms: "",
+    leasehold_or_free: "",
+    property_type: "",
+    shared_ownership: "",
+    existing_mortgage: "yes",
+    languages: "",
+    specal_instruction: "",
+    lender: "",
+    type_id: 1,
+  });
 
-function handleloginformchange(name, value) {
-  setloginformdata((prev) => ({
-    ...prev,
-    [name]: value,
-  }));
-}
-function handleguestformchange(name,value){
-  setguestformsdata((prev)=>({
-    ...prev,
-    [name]:value
-  }))
-}
-async function logindata() {
+  function handleloginformchange(name, value) {
+    setloginformdata((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }
+  function handleguestformchange(name, value) {
+    setguestformsdata((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }
+  async function logindata() {
 
-console.log(logintype)
+      try {
+        const res = await axios.post("YOUR_LOGIN_API_URL", loginformdata);
 
-if(logintype){
-  localStorage.setItem("logintype",logintype);
-}
+        if (res.data?.status === true) {
+            setLoginError(""); // clear error
+            // login success code here...
+        } else {
+            setLoginError("Invalid email or password");
+        }
+    } catch (error) {
+        setLoginError("Invalid email or password");
+    }
+    console.log(logintype);
 
-console.log("check")
-  try {
-    console.log(loginformdata)
-    const loginResponse = await postData(API_ENDPOINTS.login, loginformdata);
-    console.log("Login response:", loginResponse);
-
-    if (loginResponse.code === 200) {
-      const userId = loginResponse.user?.id; // <-- get it from API response
-        console.log(userId)
-      localStorage.setItem("user",userId);
-      console.log(Number(localStorage.getItem("service")))
-
-      if(Number(localStorage.getItem("service"))>0 || localStorage.getItem("user")){  ///remove the conditon using user
-        if (userId) {
-        let data = JSON.parse(localStorage.getItem("getquote") || "{}")
-        data.user_id = userId;
-        data.service_type = Number(localStorage.getItem("service"));
-        data.guest_email=null
-        data.guest_name=null
-        data.guest_user=null
-        
-        console.log("service",data.service_type)
-        localStorage.setItem("getquote", JSON.stringify(data));
-        //router.push("/components/comparequotes");
-      }
-      router.push("/components/comparequotes");
-      }
-      else
-      {
-       router.push("/#quote_type");
-      }
+    if (logintype) {
+      localStorage.setItem("logintype", logintype);
     }
 
-  } catch (error) {
-    console.error("Error logging in:", error);
-  }
-}
- async function createguestuser(){
-          console.log("1")
-           try {
-                      console.log("1")
+    console.log("check");
+    try {
+      let data = JSON.parse(localStorage.getItem("getquote") || "{}");
+      console.log(loginformdata);
+      const loginResponse = await postData(API_ENDPOINTS.login, loginformdata);
+      console.log("Login response:", loginResponse);
 
-            const guest_id = uuidv4();
-          console.log(guest_id);
-             
-                const updatedForm = {
-              ...formData,
-              "guest_user": guest_id,
-              "guest_name":guestformsdata.guest_name,
-              "guest_email":guestformsdata.guest_email,
-              "service_type":2,
-              "user_id":null
-            };
-          
-            setFormData(updatedForm);
-              localStorage.setItem("getquote", JSON.stringify(updatedForm));
-           router.push("/components/comparequotes");
-                }
-          
-               
-              
-             catch (error) {
-              console.error("Error logging in:", error);
-            }
+      if (loginResponse.code === 200) {
+        const userId = loginResponse.user?.id; // <-- get it from API response
+        console.log(userId);
+        localStorage.setItem("user", userId);
+        console.log(Number(localStorage.getItem("service")));
+
+        if (
+          Number(localStorage.getItem("service")) > 0 ||
+          localStorage.getItem("user")
+        ) {
+          ///remove the conditon using user
+          if (userId && Object.keys(data).length !== 0) {
+            data.user_id = userId;
+            data.service_type = Number(localStorage.getItem("service"));
+            data.guest_email = null;
+            data.guest_name = null;
+            data.guest_user = null;
+
+            console.log("service", data.service_type);
+            localStorage.setItem("getquote", JSON.stringify(data));
+            router.push("/components/comparequotes");
+          } else {
+            closeModal();
+            router.push("/#quote_type");
           }
-    return (
+          //router.push("/components/comparequotes");
+        } else {
+          router.push("/#quote_type");
+        }
+      }
+    } catch (error) {
+      console.error("Error logging in:", error);
+    }
+  }
+  async function createguestuser() {
+    console.log("1");
+    try {
+      console.log("1");
 
-                                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-                                    <div className="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-4xl h-[500px] md:h-auto grid grid-cols-1 md:grid-cols-[35%_65%] animate-scale-in relative">
-                                        <button
-                                           onClick={closeModal}
-                                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold leading-none"
-                                            >
-                                            X
-                                            </button>
-                                        {/* LEFT SIDE (Brand Section - 35%) */}
-                                        <div className="text-center bg-gradient-to-br from-[#1E5C3B] to-green-600 text-white flex flex-col justify-between items-center md:items-start p-8">
-                                            <div className="mt-12">
-                                                <h2 className="text-4xl font-extrabold tracking-wide mb-2">MOVWISE</h2>
-                                                <p className="text-sm opacity-90 leading-relaxed mt-12">
-                                                Making property transactions simple, secure, and smart.
-                                                </p>
-                                            </div>
-                                        
-                                              <Link
-                                                  href="/components/personaldetails"
-                                                  className="mt-8 mx-auto bg-white text-[#1E5C3B] font-semibold px-8 py-3 rounded-full hover:bg-gray-100 transition-all duration-300 shadow-lg transform hover:scale-105"
-                                              >
-                                                  Sign Up
-                                              </Link>
-                                        </div>
-        
-                                        {/* RIGHT SIDE (Content Section - 65%) */}
-                                        {(!loginformshow&&!guestformshow) &&  
-                                        (
-                                        <div className="relative p-8 flex flex-col justify-center text-center md:text-left">
-                                            {/* Close Button */}
-                                            <button
-                                           onClick={closeModal}
-                                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold leading-none"
-                                            >
-                                            X
-                                            </button>
-        
-                                            <h2 className="text-2xl  text-[#1E5C3B] mb-6 text-center ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition">Confirm Submission</h2>
-                                            <p className="text-gray-600 mb-8 leading-relaxed">
-                                            You’re about to submit your <b>Property Details</b>.  
-                                            Would you like to continue as a <b>logged-in user</b> or a <b>guest user</b>?
-                                            </p>
-        
-                                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                              <button
-                                              className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
-                                              onClick={() => { setloginformshow(true);setlogintype("user") }}
-                                              >
-                                              Sign In
-                                              </button>
-              
-                                              <button
-                                              onClick={()=>{setguestformshow(true)}}
-                                              className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
-                                              >
-                                              Guest User
-                                              </button>
-                                          </div>
+      const guest_id = uuidv4();
+      console.log(guest_id);
 
-                                          <div className='grid grid-cols-1  gap-6 mt-5  mx-auto'>
-                                                <button
-                                              className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
-                                              onClick={() => { setloginformshow(true); setlogintype("partner") }}
-                                              >
-                                          Partner Login
-                                              </button>
+      const updatedForm = {
+        ...formData,
+        guest_user: guest_id,
+        guest_name: guestformsdata.guest_name,
+        guest_email: guestformsdata.guest_email,
+        service_type: 2,
+        user_id: null,
+      };
 
-                                          </div>
-                                       
-                                      
-                                        </div>
-                                        )}
-        
-                                        {/* LOGIN FORM */}
-                                        {loginformshow && (
-                                        <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-6">
-                                            <form
-                                            onSubmit={(e) => {
-                                                e.preventDefault();
-                                                logindata();
-                                            }}
-                                            className="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg border border-gray-200"
-                                            >
-                                                
-                                            <h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">
-                                                User / Partner  Login 👋
-                                            </h2>
-        
-                                            {/* Email */}
-                                            <div className="mb-5">
-                                                <label
-                                                htmlFor="email"
-                                                className="block text-sm font-semibold text-gray-700 mb-2"
-                                                >
-                                                Email Address
-                                                </label>
-                                                <input
-                                                id="email"
-                                                name="email"
-                                                type="email"
-                                                required
-                                                placeholder="Enter your email"
-                                                value={loginformdata.email || ""}
-                                                onChange={(e) => handleloginformchange("email", e.target.value)}
-                                                className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
-                                                />
-                                            </div>
-        
-                                            {/* Password */}
-                                            <div className="mb-6">
-                                                <label
-                                                htmlFor="password"
-                                                className="block text-sm font-semibold text-gray-700 mb-2"
-                                                >
-                                                Password
-                                                </label>
-                                                <input
-                                                id="password"
-                                                name="password"
-                                                type="password"
-                                                required
-                                                placeholder="Enter your password"
-                                                value={loginformdata.password || ""}
-                                                onChange={(e) => handleloginformchange("password", e.target.value)}
-                                                autoComplete="current-password"
-                                                className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
-                                                />
-                                            </div>
-        
-                                            {/* Submit Button */}
-                                            <button
-                                                type="submit"
-                                                className="w-full bg-[#1E5C3B] text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md transform hover:scale-105"
-                                            >
-                                                Login
-                                            </button>
-                                            </form>
-                                        </div>
-                                        )}
-                                          
-                                        {guestformshow && (
-                                        <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-6">
-                                            <form
-                                            onSubmit={(e) => {
-                                                e.preventDefault();
-                                                createguestuser();
-                                            }}
-                                            className="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg border border-gray-200"
-                                            >
-                                                
-                                            <h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">
-                                               Guest Users Please Fill Below Details 
-                                            </h2>
-        
-                                            {/* Email */}
-                                             <div className="mb-6">
-                                                <label
-                                                htmlFor="Name"
-                                                className="block text-sm font-semibold text-gray-700 mb-2"
-                                                >
-                                                Full Name
-                                                </label>
-                                                <input
-                                                id="Name"
-                                                name="guest_name"
-                                                type="text"
-                                                required
-                                                placeholder="Enter your Name"
-                                                value={guestformsdata.guest_name || ""}
-                                                onChange={(e) => handleguestformchange("guest_name", e.target.value)}
-                                                autoComplete="current-password"
-                                                className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
-                                                />
-                                            </div>
-                                            <div className="mb-5">
-                                                <label
-                                                htmlFor="email"
-                                                className="block text-sm font-semibold text-gray-700 mb-2"
-                                                >
-                                                Email Address
-                                                </label>
-                                                <input
-                                                id="email"
-                                                name="guest_email"
-                                                type="email"
-                                                required
-                                                placeholder="Enter your email"
-                                                value={guestformsdata.guest_email || ""}
-                                                onChange={(e) => handleguestformchange("guest_email", e.target.value)}
-                                                className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
-                                                />
-                                            </div>
-        
-                                            {/* Password */}
-                                           
-        
-                                            {/* Submit Button */}
-                                            <button
-                                                type="submit"
-                                                className="w-full bg-[#1E5C3B] text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md transform hover:scale-105"
-                                            >
-                                                Proceed
-                                            </button>
-                                             <button
-                                                type="button"
-                                                className="mt-1 w-full bg-[#ffd954] text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md transform hover:scale-105"
-                                            >
-                                                Back
-                                            </button>
-                                            </form>
-                                        </div>
-                                        )}
-                                        
-                                    </div>
-                                </div>
-    )
+      setFormData(updatedForm);
+      localStorage.setItem("getquote", JSON.stringify(updatedForm));
+      router.push("/components/comparequotes");
+    } catch (error) {
+      console.error("Error logging in:", error);
+    }
+  }
+
+  const quoteData = localStorage.getItem("service");
+  const isEmptyQuote = quoteData?true:false;
+  return (
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-4xl h-[500px] md:h-auto grid grid-cols-1 md:grid-cols-[35%_65%] animate-scale-in relative">
+        <button
+          onClick={closeModal}
+          className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold leading-none"
+        >
+          X
+        </button>
+        {/* LEFT SIDE (Brand Section - 35%) */}
+        <div className="text-center bg-gradient-to-br from-[#1E5C3B] to-green-600 text-white flex flex-col justify-between items-center md:items-start p-8">
+          <div className="mt-12">
+            <h2 className="text-4xl font-extrabold tracking-wide mb-2">
+              MOVWISE
+            </h2>
+            <p className="text-sm opacity-90 leading-relaxed mt-12">
+              Making property transactions simple, secure, and smart.
+            </p>
+          </div>
+
+          <Link
+            href="/components/personaldetails"
+            className="mt-8 mx-auto bg-white text-[#1E5C3B] font-semibold px-8 py-3 rounded-full hover:bg-gray-100 transition-all duration-300 shadow-lg transform hover:scale-105"
+          >
+            Sign Up
+          </Link>
+        </div>
+
+        {/* RIGHT SIDE (Content Section - 65%) */}
+        {!loginformshow && !guestformshow && (
+          <div className="relative p-8 flex flex-col justify-center text-center md:text-left">
+            {/* Close Button */}
+            <button
+              onClick={closeModal}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold leading-none"
+            >
+              X
+            </button>
+
+            
+          <p className="text-gray-600 mb-8 leading-relaxed">
+            {isEmptyQuote ? (
+              <><h2 class="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">Access your account or Register a new one to proceed.</h2></>
+            ) : (
+              <>
+                You’re about to submit your <b>Property Details</b>. Would you
+                like to continue as a <b>logged-in user</b> or a <b>guest user</b>?
+              </>
+            )}
+          </p>
+
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <button
+                className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
+                onClick={() => {
+                  setloginformshow(true);
+                  setlogintype("user");
+                }}
+              >
+                Sign In
+              </button>
+
+              <button
+                onClick={() => {
+                  setguestformshow(true);
+                }}
+                className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
+              >
+                Guest User
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1  gap-6 mt-5  mx-auto">
+              <button
+                className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
+                onClick={() => {
+                  setloginformshow(true);
+                  setlogintype("partner");
+                }}
+              >
+                Partner Login
+              </button>
+            </div>
+          </div>
+        )}
+
+        {/* LOGIN FORM */}
+        {loginformshow && (
+          <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-6">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                logindata();
+              }}
+              className="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg border border-gray-200"
+            >
+              <h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">
+                User / Partner Login 👋
+              </h2>
+
+              {loginError && (
+    <p className="text-red-600 text-sm font-medium text-center mb-4">
+        {loginError}
+    </p>
+)}
+
+
+              {/* Email */}
+              <div className="mb-5">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
+                  Email Address
+                </label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  required
+                  placeholder="Enter your email"
+                  value={loginformdata.email || ""}
+                  onChange={(e) =>
+                    handleloginformchange("email", e.target.value)
+                  }
+                  className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
+                />
+              </div>
+
+              {/* Password */}
+              <div className="mb-6">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
+                  Password
+                </label>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  required
+                  placeholder="Enter your password"
+                  value={loginformdata.password || ""}
+                  onChange={(e) =>
+                    handleloginformchange("password", e.target.value)
+                  }
+                  autoComplete="current-password"
+                  className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
+                />
+              </div>
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                className="w-full bg-[#1E5C3B] text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md transform hover:scale-105"
+              >
+                Login
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setloginformshow(false);
+                  setguestformshow(false);
+                }}
+                className="mt-1 w-full bg-[#ffd954] text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md transform hover:scale-105"
+              >
+                Back
+              </button>
+            </form>
+          </div>
+        )}
+
+        {guestformshow && (
+          <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-6">
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                createguestuser();
+              }}
+              className="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg border border-gray-200"
+            >
+              <h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">
+                Guest Users Please Fill Below Details
+              </h2>
+
+              {loginError && (
+    <p className="text-red-600 text-sm font-medium text-center mb-4">
+        {loginError}
+    </p>
+)}
+
+
+              {/* Email */}
+              <div className="mb-6">
+                <label
+                  htmlFor="Name"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
+                  Full Name
+                </label>
+                <input
+                  id="Name"
+                  name="guest_name"
+                  type="text"
+                  required
+                  placeholder="Enter your Name"
+                  value={guestformsdata.guest_name || ""}
+                  onChange={(e) =>
+                    handleguestformchange("guest_name", e.target.value)
+                  }
+                  autoComplete="current-password"
+                  className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
+                />
+              </div>
+              <div className="mb-5">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
+                  Email Address
+                </label>
+                <input
+                  id="email"
+                  name="guest_email"
+                  type="email"
+                  required
+                  placeholder="Enter your email"
+                  value={guestformsdata.guest_email || ""}
+                  onChange={(e) =>
+                    handleguestformchange("guest_email", e.target.value)
+                  }
+                  className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
+                />
+              </div>
+
+              {/* Password */}
+
+              {/* Submit Button */}
+              <button
+                type="submit"
+                className="w-full bg-[#1E5C3B] text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md transform hover:scale-105"
+              >
+                Proceed
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setloginformshow(false);
+                  setguestformshow(false);
+                }}
+                className="mt-1 w-full bg-[#ffd954] text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md transform hover:scale-105"
+              >
+                Back
+              </button>
+            </form>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
