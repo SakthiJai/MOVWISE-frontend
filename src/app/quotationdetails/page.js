@@ -12,6 +12,7 @@ import { API_ENDPOINTS,postData,getData } from "../auth/API/api";
 import { useFormStore } from "../store/useFormStore";
 import "react-quill-new/dist/quill.snow.css";
 import { poundFormat } from '../../utils/poundFormat';
+import { title } from "process";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
@@ -40,6 +41,8 @@ const [formData, setformData] = useState({});
 const [notesData, setnotesData] = useState("");
 const [loading, setLoading] = useState(false);
 const timers = useRef({});
+
+const[reviewshow,setreviewshow]=useState(false);
 
   const modules = {
     toolbar: [
@@ -163,11 +166,15 @@ const handleSubmit = async () => {
  
   setlegalFeesError([]);
   const hasErrors = validatePriceList(pricingList);
+if (hasErrors == false) {
+  Swal.fire({
+    icon: "error",
+    title: "Validation Error",
+    text: "Please fix validation issues before submitting."
+  });
+  return;
+}
 
-  if (hasErrors==false) {
-    alert("Please fix validation issues before submitting.");
-    return;
-  }
   try {
     let tempPrice =[];
    Object.keys(feeCategory).forEach((key,value) => {
@@ -188,11 +195,13 @@ const handleSubmit = async () => {
     };
 setFinalPayload(payload);  
 setShowConfirm(true);
+setreviewshow(true)
 
  } catch (error) {
     console.log("Error building payload:", error);
   }}
-    //console.loglog("Payload to submit:", payload);
+
+    //console.log("Payload to submit:", payload);
  
   
     const submitFinal = async () => {
@@ -751,7 +760,8 @@ const formatPound = (value) => {
                                     value={(row?.min)}
                                     className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black bg-white"
                                     onChange={(e) => handlePriceChange(numIndex, i, "min", e.target.value)}
-                                  />
+                                
+                                 />
 
                                   {rowErrors[i]?.min && (
                                     <span className="text-red-500 text-xs">{rowErrors[i].min}</span>
@@ -1484,9 +1494,10 @@ const formatPound = (value) => {
     </div>
   </div>
 )}
+
 {showConfirm && (
-  <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 animate-fadeIn">
-    <div className="bg-white rounded-2xl p-6 w-[90%] max-w-sm text-center shadow-xl animate-slideUp">
+  <div className="fixed inset-0 mt-20 bg-black/40 backdrop-blur-sm flex  items-center justify-center z-50 animate-fadeIn reviewpopup">
+    <div className="bg-white rounded-2xl p-6 w-[90%]  text-center shadow-xl animate-slideUp">
 
       <h2 className="text-xl font-bold text-gray-800 mb-3">
         Confirm Submission
@@ -1496,10 +1507,644 @@ const formatPound = (value) => {
         Please review your inputs before submit or else click ok to proceed next level
       </p>
 
+    
+
+      {/* Close button */}
+      
+     
+    <div className="border rounded-lg mb-6 shadow-sm overflow-auto  bg-white p-5 " style={{ maxHeight: "550px", overflowY: "scroll" }}>
+ 
+    {Object.entries(feeCategory).map(([index, value]) => {
+                // the actual object inside
+        const item = value[0];
+        const numIndex = Number(index);
+      return (
+        <div key={numIndex} > 
+            {numIndex === 1 && (
+                <div key={numIndex} className="  feecatgoryblock mb-5">
+                    <div className="bg-gray-50  px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
+                    {item.fees_category}
+                    </div>
+                    {item.sub_categories.map((sub, i) => (
+                        <div key={i} className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
+                            {sub.sub_category}
+                        </div>
+                    ))}
+                    {legalFeesError && <p style={{ color: "red" }}>{legalFeesError}</p>}
+
+                <div className=" w-full">
+                  <table className="min-w-max w-full text-xs font-semibold text-gray-600 ">
+                    <thead className="bg-gray-100">
+                      <tr className="">
+                        <th className="px-3 py-2 text-center">S.no</th>
+                        <th className="px-3 py-2 text-center">Min £</th>
+                        <th className="px-3 py-2 text-center">
+                          Max £
+                        </th>
+
+                        {(formData['service_id']?.includes(1) ||
+                          formData['service_id']?.includes(3)) && (
+                          <>
+                            <th className="px-3 py-2 text-center">Purchase Leasehold £</th>
+                            <th className="px-3 py-2 text-center">Purchase Freehold £</th>
+                          </>
+                        )}
+
+                        {(formData['service_id']?.includes(2) ||
+                          formData['service_id']?.includes(3)) && (
+                          <>
+                            <th className="px-3 py-2 text-center">Sales Leasehold £</th>
+                            <th className="px-3 py-2 text-center">Sales Freehold £</th>
+                          </>
+                        )}
+
+                        {formData['service_id']?.includes(4) && (
+                          <th className="px-3 py-2 text-center">Remortgage</th>
+                        )}
+
+                      </tr>
+                    </thead>
+
+                    
+
+                    <tbody>        
+                      {
+                      
+                      pricingList.find(item => item.fees_category_id === numIndex).price_list.map((row, i) => (
+                            <tr key={i} className="border-b">
+            
+                              <td className="px-3 py-2 text-center">{i + 1}</td>
+                              <td className="px-3 py-2">
+                                <div className="flex flex-col">
+                                  <input
+                                    readOnly
+                                    type="text"
+                                    placeholder="Min"
+                                    value={(row?.min)}
+                                    className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black bg-white"
+                                    onChange={(e) => handlePriceChange(numIndex, i, "min", e.target.value)}
+                                  />
+
+                                  {rowErrors[i]?.min && (
+                                    <span className="text-red-500 text-xs">{rowErrors[i].min}</span>
+                                  )}
+                                  {rowErrors[i]?.range && (
+                                    <span className="text-red-500 text-xs">{rowErrors[i].range}</span>
+                                  )}
+                                  {rowErrors[i]?.negative && (
+                                    <span className="text-red-500 text-xs">{rowErrors[i].negative}</span>
+                                  )}
+
+                                  {rangeErrors[i]?.map((msg, idx) => (
+                                    <p key={idx} className="text-red-500 text-xs mt-1">{msg}</p>
+                                  ))}
+                                </div>
+                              </td>
+                              <td className="px-3 py-2">
+                                <div className="flex flex-col">
+                                  <input
+                                   readOnly
+                                    type="text"
+                                    placeholder="Max"
+                                    value={(row.max)}
+                                    className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
+                                    onChange={(e) => handlePriceChange(numIndex, i, "max", e.target.value)}
+                                  />
+
+                                  {rowErrors[i]?.max && (
+                                    <span className="text-red-500 text-xs">{rowErrors[i].max}</span>
+                                  )}
+
+                                  {rangeErrors[i]?.map((msg, idx) => (
+                                    <p key={idx} className="text-red-500 text-xs mt-1">{msg}</p>
+                                  ))}
+                                </div>
+                              </td>
+
+                              {(formData['service_id']?.includes(1) ||
+                                formData['service_id']?.includes(3)) && (
+                                <td className="px-3 py-2">
+                                  <div className="flex flex-col">
+                                    <input
+                                     readOnly
+                                      type="text"
+                                      value={(row.purchase_leasehold)}
+                                      placeholder="Purchase Leasehold" 
+                                      className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
+                                      onChange={(e) =>
+                                        handlePriceChange(numIndex, i, "purchase_leasehold", e.target.value)
+                                      }
+                                    />
+
+                                    {rowErrors[i]?.PurchaseLeasehold && (
+                                      <span className="text-red-500 text-xs">{rowErrors[i].PurchaseLeasehold}</span>
+                                    )}
+                                  </div>
+                                </td>
+                              )}
+
+                              {/* PURCHASE FREEHOLD */}
+                              {(formData['service_id']?.includes(1) ||
+                                formData['service_id']?.includes(3)) && (
+                                <td className="px-3 py-2">
+                                  <div className="flex flex-col">
+                                    <input
+                                     readOnly
+                                      type="text"
+                                      placeholder="Purchase Freehold" value={(row.purchase_freehold)}
+                                      className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
+                                      onChange={(e) =>
+                                        handlePriceChange(numIndex, i, "purchase_freehold", e.target.value)
+                                      }
+                                    />
+
+                                    {rowErrors[i]?.PurchaseFreehold && (
+                                      <span className="text-red-500 text-xs">{rowErrors[i].PurchaseFreehold}</span>
+                                    )}
+                                  </div>
+                                </td>
+                              )}
+
+                              {/* SALES LEASEHOLD */}
+                              {(formData['service_id']?.includes(2) ||
+                                formData['service_id']?.includes(3)) && (
+                                <td className="px-3 py-2">
+                                  <div className="flex flex-col">
+                                    <input
+                                     readOnly
+                                      type="text"
+                                      value={(row.sales_leasehold)}
+                                      placeholder="Sales Leasehold"
+                                      className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
+                                      onChange={(e) =>
+                                        handlePriceChange(numIndex, i, "sales_leasehold", e.target.value)
+                                      }
+                                    />
+
+                                    {rowErrors[i]?.salesLeasehold && (
+                                      <span className="text-red-500 text-xs">{rowErrors[i].salesLeasehold}</span>
+                                    )}
+                                  </div>
+                                </td>
+                              )}
+
+                              {/* SALES FREEHOLD */}
+                              {(formData['service_id']?.includes(2) ||
+                                formData['service_id']?.includes(3)) && (
+                                <td className="px-3 py-2">
+                                  <div className="flex flex-col">
+                                    <input
+                                     readOnly
+                                      type="text" value={(row.sales_freehold)}
+                                      placeholder="Sales Freehold"
+                                      className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
+                                      onChange={(e) =>
+                                        handlePriceChange(numIndex, i, "sales_freehold", e.target.value)
+                                      }
+                                    />
+
+                                    {rowErrors[i]?.salesFreehold && (
+                                      <span className="text-red-500 text-xs">{rowErrors[i].salesFreehold}</span>
+                                    )}
+                                  </div>
+                                </td>
+                              )}
+
+                              {/* REMORTGAGE */}
+                              {formData["service_id"]?.includes(4) && (
+                                <td className="px-3 py-2">
+                                  <div className="flex flex-col">
+                                    <input
+                                     readOnly
+                                      type="text"
+                                      placeholder="Remortgage" value={(row.remortgage)}
+                                      className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
+                                      onChange={(e) =>
+                                        handlePriceChange(numIndex, i, "remortgage", e.target.value)
+                                      }
+                                    />
+
+                                    {rowErrors[i]?.remortgage && (
+                                      <span className="text-red-500 text-xs">{rowErrors[i].remortgage}</span>
+                                    )}
+                                  </div>
+                                </td>
+                              )}
+
+                              {/* ADD ROW BUTTON */}
+                            
+                            </tr>
+
+                      ))}
+                  </tbody> 
+                </table>
+                </div>
+              </div>
+              )}
+            
+              {numIndex === 2 && (   
+                <div className="transactionblock mb-5">
+                    <div className="bg-gray-50  px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
+                    {item.fees_category}
+                    </div>
+                    {item.sub_categories.map((sub, i) => (
+                        <div key={i}>
+                        <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
+                            {sub.sub_category}
+                        </div>
+                        {transactionFeesError && <p style={{ color: "red" }}>{transactionFeesError}</p>}
+                            <div className="grid  grid-cols-4 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
+                                <div className="text-center">Suplement Type £</div>
+                                <div className="text-center">Fee Amount £</div>
+                                <div className="text-center">Description </div>
+                            </div>
+                            { pricingList.find(item => item.fees_category_id === numIndex).price_list.map((row, i) => 
+                            (
+                              <div key={i} className="grid grid-cols-4 gap-3 px-3 py-2">
+
+                              
+                                {!row.isOthers ? (
+
+                                <select className="border poundtransform border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
+                                onChange={(e) => handlePriceChange(numIndex, i, "type_id", e.target.value)}
+                              value={row.type}
+                              disabled
+                            >
+                              <option value="">Select Supplement Type</option>
+
+                            {purchaseFeeTypeList.map((opt,index) => (
+
+                                <option key={opt.id} value={opt.id}>
+                                  {opt.fee_type}
+                                </option>
+                              ))}
+                            </select>
+
+                                ) : (
+                                  <div>
+                                  <input
+                                  disabled
+                                  id="suplement_type"
+                                    type="text"
+                                    placeholder="Enter other Supplement Type"
+                                    value={row.type}
+                                    onChange={(e) => handlePriceChange(numIndex, i, "type_id", e.target.value)}
+                                    className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
+                                  />
+                                  </div>
+                                )}
+
+                                {/* FEE AMOUNT */}
+                                <input
+                                   readOnly
+                                  placeholder="Fee Amount"
+                                  value={row.fee_amount}
+                                  onChange={(e) => handlePriceChange(numIndex, i, "fee_amount", e.target.value)}
+                                  className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
+                                />
+                                
+                                
+
+                                {/* DESCRIPTION */}
+                                <input
+                                 readOnly
+                                  type="text"
+                                  placeholder="Description"
+                                  value={row.description}
+                                  onChange={(e) => handlePriceChange(numIndex, i, "description", e.target.value)}
+                                  className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
+                                />
+
+                                {/* REMOVE BUTTON */}
+                                
+                              
+                              
+                              </div>
+                            )
+
+    )}
+                        </div>
+                    ))}
+                  
+                </div>
+              )}
+              {numIndex === 3 && (   
+                <div className="standarddisblock mb-5">
+                    <div className="bg-gray-50 px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
+                    {item.fees_category}
+                    </div>
+                    {item.sub_categories.map((sub, i) => (
+                        <div key={i}>
+                        <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
+                            {sub.sub_category}
+                        </div>
+                        {disbursementFeesError && <p style={{ color: "red" }}>{disbursementFeesError}</p>}
+                        <div className="grid grid-cols-5 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
+
+                                <div className="text-center">Disbursement Type £</div>
+                                <div className="text-center">Fee Cost £</div>
+                                <div className="text-center">Paid To</div>
+                                <div className="text-center">Transaction Type</div>
+
+                        </div>
+                        {pricingList.find(item => item.fees_category_id === numIndex).price_list.map((row, i) => (
+                        <div key={i} className="grid grid-cols-5 gap-3 px-3 py-2">
+          
+                            {!row.isOthers ? (
+                                <select
+                                disabled
+                                className="poundtransform border border-gray-400 rounded py-0.5 w-auto  text-sm text-left text-black"
+                                onChange={(e) => handlePriceChange(numIndex, i, "type_id", e.target.value)}
+                                value={row.type}
+                                >
+                                <option value="">Select Disbursement</option>
+                                {(salesFeeTypeList || []).map((opt,index) => (
+                                    <option key={opt.id} value={opt.id}>
+                                    {opt.fee_type}
+                                    </option>
+                                ))}
+                                </select>
+                            ) : (
+                                <div>
+                                <input
+                                 readOnly
+                                type="text"
+                                placeholder="Enter other suplement"
+                                value={row.type}
+                                onChange={(e) => handlePriceChange(numIndex, i, "type_id", e.target.value)}
+                                className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-gray-900"
+                                />
+                                </div>
+                            )}
+
+                                {/* COST */}
+                                <input
+                                 readOnly
+                                type="text"
+                                placeholder="Fee Cost"
+                                value={row.fee_amount}
+                                onChange={(e) => handlePriceChange(numIndex, i, "fee_amount", e.target.value)}
+                                className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black "
+                                />
+
+                                {/* PAID TO */}
+                                <select
+                                disabled
+                                className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black  placeholder:text-gray-800"
+                                value={row.paidTo}
+                                onChange={(e) => handlePriceChange(numIndex, i, "paid_to", e.target.value)}
+                            >
+                                <option value="" className="text-gray-900">Select Paid To</option>
+                                {paidToOptions.map((opt) => (
+                                <option key={opt.value} value={opt.value} className="text-gray-900">
+                                    {opt.label}
+                                </option>
+                                ))}
+                                </select>
+
+                                {/* TRANSACTION TYPE */}
+                                    <select
+                                     disabled
+                                    className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black  "
+                                    value={row.transactionType}
+                                    onChange={(e) => handlePriceChange(numIndex, i, "paid_to", e.target.value)}
+                                    >
+                                    <option value="">Select Type</option>
+                                    {transactionOptions.map((opt) => (
+                                    <option key={opt.value} value={opt.value}>
+                                        {opt.label}
+                                    </option>
+                                    ))}
+                                    </select>
+
+                                  
+                                </div>
+      ))}
+                    
+                        </div>
+                    ))}
+                  
+                </div>
+              )}
+              {numIndex === 4 && (   
+                
+              <div className="standarddisblock mb-5">
+              
+                {/* MAIN CATEGORY HEADER */}
+                <div className="bg-gray-50 px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
+                  {item.fees_category}
+                </div>
+
+                {item.sub_categories.map((sub, sIndex) => (
+                  <div key={sIndex}>
+                    {/* SUB CATEGORY HEADER */}
+                    <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
+                      {sub.sub_category}
+                    </div>
+
+                    {leasedisbursementFeesError && (
+                      <p className="text-red-500 px-3">{leasedisbursementFeesError}</p>
+                    )}
+
+                    {/* RESPONSIVE WRAPPER */}
+                    <div className=" w-full">
+                      <table className="min-w-max w-full text-xs font-semibold text-gray-600 ">
+                        <thead className="bg-gray-100">
+                          <tr className="">
+                            <th className="px-3 py-2 text-center">Leasehold Service</th>
+                            <th className="px-3 py-2 text-center">Fee Type</th>
+                            <th className="px-3 py-2 text-center">Amount £</th>
+                            <th className="px-3 py-2 text-center">Paid To</th>
+                          </tr>
+                        </thead>
+
+                        <tbody>
+                          {pricingList
+                            .find((x) => x.fees_category_id === numIndex)
+                            .price_list.map((row, i) => (
+                              <tr key={i} className="border-b">
+
+                                {/* LEASEHOLD SERVICE SELECT */}
+                                <td className="px-3 py-2 text-center">
+                                  {!row.isOthers ? (
+                                    <select
+                                     disabled
+                                      className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
+                                      value={row.type}
+                                      onChange={(e) =>
+                                        handlePriceChange(numIndex, i, "type_id", e.target.value)
+                                      }
+                                    >
+                                      <option value="">Select Disbursement</option>
+                                      {(standardDisbursementList || []).map((opt) => (
+                                        <option key={opt.id} value={opt.id}>
+                                          {opt.fee_type}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  ) : (
+                                    <input
+                                     readOnly
+                                      type="text"
+                                      placeholder="Enter other supplement"
+                                      value={row.type}
+                                      onChange={(e) =>
+                                        handlePriceChange(numIndex, i, "type_id", e.target.value)
+                                      }
+                                      className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
+                                    />
+                                  )}
+                                </td>
+
+                                {/* COST */}
+                                <td className="px-3 py-2 text-center">
+                                  <input
+                                   readOnly
+                                    type="text"
+                                    placeholder="Fee Cost"
+                                    value={row.fee_amount}
+                                    onChange={(e) =>
+                                      handlePriceChange(numIndex, i, "fee_amount", e.target.value)
+                                    }
+                                    className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
+                                  />
+                                </td>
+
+                                {/* PAID TO */}
+                                <td className="px-3 py-2 text-center">
+                                  <select
+                                   disabled
+                                    className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
+                                    value={row.paidTo}
+                                    onChange={(e) =>
+                                      handlePriceChange(numIndex, i, "paid_to", e.target.value)
+                                    }
+                                  >
+                                    <option value="">Select Paid To</option>
+                                    {paidToOptions.map((opt) => (
+                                      <option key={opt.value} value={opt.value}>
+                                        {opt.label}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </td>
+
+                                {/* TRANSACTION TYPE */}
+                                <td className="px-3 py-2 text-center">
+                                  <select
+                                   disabled
+                                    className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
+                                    value={row.transactionType}
+                                    onChange={(e) =>
+                                      handlePriceChange(numIndex, i, "transactionType", e.target.value)
+                                    }
+                                  >
+                                    <option value="">Select Type</option>
+                                    {transactionOptions.map((opt) => (
+                                      <option key={opt.value} value={opt.value}>
+                                        {opt.label}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </td>
+
+                               
+
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              )}   
+              {numIndex === 5 && (   
+               <div className="addtional mb-5">
+  <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
+    {item.fees_category}
+  </div>
+
+  {additionalServiceError && (
+    <p className="text-red-500 px-3 mt-1">{additionalServiceError}</p>
+  )}
+
+  {/* TABLE WRAPPER (for responsive scrolling) */}
+  <div className="overflow-x-auto w-full">
+    <table className="min-w-max w-full text-xs font-semibold text-gray-600 ">
+      <thead className="bg-gray-100">
+        <tr className="">
+          <th className="px-3 py-2 text-center">Select Service</th>
+          <th className="px-3 py-2 text-center">Amount £</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        {pricingList
+          .find((x) => x.fees_category_id === numIndex)
+          .price_list.map((row, i) => (
+            <tr key={i} className="border-b">
+              
+              {/* SELECT SERVICE */}
+              <td className="px-3 py-2 text-center">
+                <select
+                  className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
+                  value={row.type}
+                   disabled
+                  onChange={(e) =>
+                    handlePriceChange(numIndex, i, "type_id", e.target.value)
+                  }
+                >
+                  <option value="">Select Additional Service</option>
+                  {(additionalServiceList || []).map((opt) => (
+                    <option key={opt.id} value={opt.id}>
+                      {opt.fee_type}
+                    </option>
+                  ))}
+                </select>
+              </td>
+
+              {/* FEE COST */}
+              <td className="px-3 py-2 text-center">
+                <input
+                 readOnly
+                  type="text"
+                  placeholder="Fee Cost"
+                  value={row.fee_amount}
+                  onChange={(e) =>
+                    handlePriceChange(numIndex, i, "fee_amount", e.target.value)
+                  }
+                  className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-black "
+                />
+              </td>
+
+           
+
+            </tr>
+          ))}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+              )}                     
+          </div>  
+            
+        )
+        
+        })
+    }
+    </div>
+    
+  
+
       <div className="flex gap-3">
         <button
           className="w-1/2 bg-yellow-400 text-gray-700 py-2 rounded-lg font-semibold hover:bg-yellow-300 transition"
-          onClick={() => setShowConfirm(false)}
+         onClick={() => {setShowConfirm(false),setreviewshow(true);}}
+
         >
           Yes, Review
         </button>
@@ -1514,17 +2159,13 @@ const formatPound = (value) => {
          Ok, Proceed
         </button>
       </div>
-
-      {/* Close button */}
-      <button
-        onClick={() => setShowConfirm(false)}
-        className="absolute top-4 right-4 text-gray-400 hover:text-gray-600"
-      >
-        ✕
-      </button>
     </div>
+    
+      
   </div>
+  
 )}
+
     </div>
   );
 }
