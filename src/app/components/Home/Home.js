@@ -215,12 +215,21 @@ const [loginformdata, setloginformdata] = useState({
               Compare fixed-fee quotes from trusted UK conveyancers and solicitors in minutes. MovWise helps you find the right legal partner to buy, sell, or remortgage your home — faster, clearer, and smarter.
             </p>
             <div className="mt-8">
+              
             <Link href="#" passHref>
                 <div
-                  onClick={(e) => { 
+                  onClick={(e) => {
                     localStorage.removeItem("service");
-                    e.preventDefault(); setModalopen(true);
-                   }}
+                    const userId = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+                    e.preventDefault();
+                    if (userId) {
+                      // If user is logged in, go to the getquote flow
+                      router.push('/#quote_type');
+                    } else {
+                      // If not logged in, open sign-in modal
+                      setModalopen(true);
+                    }
+                  }}
                   className="text-blue-500 underline"
                 >
                   <PrimaryCTA text="Get Your Free Quote" />
