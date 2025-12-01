@@ -48,69 +48,9 @@ export default function Companyregistration() {
   const [language, setLanguage] = useState([]);
 
    const [selectedLanguage, setSelectedLanguage] = useState([]); 
+     const [selectedJurisdictions, setSelectedJurisdictions] = useState([]);
 const [notes, setNotes] = useState("");
- let initialcompanydata={
-  "company_details": {
-    "company_name": "ABCdef",
-    "logo": "base64string",
-    "phone_number": "9876543210",
-    "email": "info123@abc.com",
-    "website": "www.abc.com",
-    "languages": [1, 2]
-  },
-  "notes": "This is a sample note for testing.",
-  "pricing": [
-    {
-      "1": [
-        {
-          "fees_category_id": 1,
-          "price_id": null,
-          "price_list": [
-            {
-              "min": 100,
-              "max": 200,
-              "purchase_leasehold": 150,
-              "purchase_freehold": 180,
-              "sales_leasehold": 120,
-              "sales_freehold": 140,
-              "remortgage": 160
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "2": [
-        {
-          "fees_category_id": 2,
-          "type_id": 1,
-          "price_list": [
-            {
-              "fee_amount": 50,
-              "paid_to": "Lawyer",
-              "description": "Purchase fee"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "5": [
-        {
-          "fees_category_id": 5,
-          "type_id": 40,
-          "price_list": [
-            {
-              "fee_amount": 75,
-              "paid_to": "Notary",
-              "description": "Sales fee"
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
+
 const [jurisdictions,setjuisdictions]=useState([])
 
 
@@ -148,11 +88,12 @@ const [jurisdictions,setjuisdictions]=useState([])
         let templang =[];
 
 const data = JSON.parse(localStorage.getItem("companyData"));
+console.log(data)
 console.log(data.languages);
 
         languageOptions.forEach(element => {
           
-        if(JSON.parse(localStorage.getItem("companyData")).languages.indexOf(element.id)>=0){
+        if(JSON.parse(localStorage.getItem("companyData")).languages?.indexOf(element.id)>=0){
         
           templang.push(element)
         }
@@ -223,7 +164,7 @@ console.log(data.languages);
     const exists = prev.some((item) => item.value === lang.value);
 
     let updated;
-updated = [...prev, opt];
+updated = [...prev, lang];
     
 
 console.log("updataed",updated)
@@ -431,7 +372,7 @@ console.log(formData)
     }
     console.log(errors)
   };
-  const [selectedJurisdictions, setSelectedJurisdictions] = useState([]);
+
 
 
 const serviceoptions = [
@@ -441,23 +382,37 @@ const serviceoptions = [
   { value: "Remortgage", label: "Remortgage",id:4 },
 ];
 
-const toggleJurisdiction = (selectedOptions) => {
-  setSelectedJurisdictions(selectedOptions);
-console.log(selectedOptions)
+const toggleJurisdiction = (option) => {
+  setSelectedJurisdictions(prev => {
+    prev = prev || []; // ensure array
 
-  // Extract only values to store in formData
-  const values = selectedOptions.map(opt => opt.value);
- handleChange({ name: "regions", value: values })};
+    const exists = prev.some(item => item.value === option.value);
+
+    const updated = exists
+      ? prev.filter(item => item.value !== option.value)
+      : [...prev, option];
+
+    handleChange({
+      name: "regions",
+      value: updated.map(x => x.value),
+    });
+
+    return updated;
+  });
+};
+
 
 const [selectedServices, setSelectedServices] = useState([]);
 
 const togglesercice = (opt) => {
  
   setSelectedServices((prev) => {
-    const exists = prev.some(item => item.id === opt.id);
+    const exists = prev.some(item => item.value === opt.value);
 
-    let updated;
-updated = [...prev, opt];
+  const updated = exists
+      ? prev.filter(item => item.value !== opt.value)
+      : [...prev, opt];
+
 console.log(updated);
     // update form
     const values = updated.map(x => x.id);
@@ -516,9 +471,7 @@ console.log(updated);
                         className={`block w-full h-[44px] rounded-[10px] border ${errors.company_name ? "border-red-500" : "border-[#D1D5DB]"}  text-[#1B1D21] placeholder-[#1B1D21] px-3 text-[14px] focus:outline-none`}
                       />
                       {errors.company_name && <p className="text-red-500 text-[12px] mt-1">{errors.company_name}</p>}
-                    </div>
-
-                    <div>
+                       <div>
   <label
     htmlFor="phone"
     className="block text-[14px] text-[#6A7682] font-medium mb-1"
@@ -544,28 +497,7 @@ console.log(updated);
   {errors.phone_number && (
     <p className="text-red-500 text-[12px] mt-1">{errors.phone_number}</p>
   )}
-</div>
-                  </div>
-
-                  {/* Row 2 */}
-                  <div className="grid grid-cols-2 gap-4 mt-4">
-                    <div>
-                      <label htmlFor="email" className="block text-[14px] text-[#6A7682] font-medium mb-1">
-                        Email<span className = "text-red-500">*</span>
-                      </label>
-                      <input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        placeholder="Enter email"
-                        className={`block w-full h-[44px] text-[#1B1D21] placeholder-[#1B1D21] rounded-[10px] border ${errors.email ? "border-red-500" : "border-[#D1D5DB]"} px-3 text-[14px] focus:outline-none`}
-                      />
-                      {errors.email && <p className="text-red-500 text-[12px] mt-1">{errors.email}</p>}
-                    </div>
-
-                    <div>
+   <div>
                       <label htmlFor="c_website" className="block text-[14px] text-[#6A7682] font-medium mb-1">
                         Website Url
                       </label>
@@ -579,81 +511,10 @@ console.log(updated);
                         className="block w-full h-[44px] text-[#1B1D21] placeholder-[#1B1D21] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] focus:outline-none"
                       />
                     </div>
-                  </div>
-<div className="grid grid-cols-2 gap-4 mt-4">
-                    <div>
-                      <label htmlFor="Name" className="block text-[14px] text-[#6A7682] font-medium mb-1">
-                   SRA/CLC Number <span className = "text-red-500">*</span>
-                      </label>
-                      <input
-                        id="Name"
-                        name="SRA_CLC_number"
-                        value={formData.SRA_CLC_number}
-                        onChange={handleChange}
-                        placeholder="Enter Company name"
-                        className={`block w-full h-[44px] rounded-[10px] border ${errors.company_name ? "border-red-500" : "border-[#D1D5DB]"}  text-[#1B1D21] placeholder-[#1B1D21] px-3 text-[14px] focus:outline-none`}
-                      />
-                      {errors.company_name && <p className="text-red-500 text-[12px] mt-1">{errors.company_name}</p>}
-                    </div>
-       
-<div className="flex flex-col gap-2">
-    <label className="block text-sm font-medium text-[#6A7682]">
-      Services We Offered <span className="text-red-500">*</span>
-    </label>
-
-    {/* <Select
-      options={serviceoptions}
-      isMulti
-      name="service_id"
-      instanceId="region-select"
-      value={selectedServices}
-      onChange={togglesercice}
-      placeholder="Choose Services..."
-      className="text-black mt-2"
-    /> */}
-
-    <div className="grid grid-cols-4 gap-3 mt-2">
-  {serviceoptions.map((opt) => (
-    <label key={opt.id} className="flex items-center gap-2 ">
-      <input
-        type="checkbox"
-        checked={selectedServices.some(s => s.id === opt.id)}
-        onChange={() => togglesercice(opt)}
-      />
-   {opt.label.length <= 5 ? (
-  <span className="text-black text-sm font-medium ">{opt.label}</span>
-) :  <span className="text-black text-sm font-medium">{opt.label}</span>}
-
-    </label>
-  ))}
 </div>
-  </div>
-         
-                  </div>
-
-                  {/* Row 3 - Logo Upload */}
-             <div className="grid grid-cols-2 gap-6 mt-4">
-  
-  {/* LEFT COLUMN — Jurisdictions */}
-  <div className="flex flex-col gap-2">
-    <label className="block text-sm font-medium text-[#6A7682]">
-      Jurisdictions Covered <span className="text-red-500">*</span>
-    </label>
-
-    <Select
-      options={jurisdictions}
-      isMulti
-      name="regions"
-      instanceId="region-select"
-      value={selectedJurisdictions}
-      onChange={toggleJurisdiction}
-      placeholder="Choose regions..."
-      className="text-black mt-2"
-    />
-  </div>
-
-  {/* RIGHT COLUMN — Languages */}
-   <div className="flex flex-col items-start">
+                    
+                    </div>
+<div className="flex flex-col items-start">
 <label className="text-[14px] text-[#6A7682] font-medium mb-2 block">
     Company Logo
   </label>
@@ -693,10 +554,102 @@ console.log(updated);
 
   </div>
   </div>
+                 
+                  </div>
+
+                  {/* Row 2 */}
+                  <div className="grid grid-cols-2 gap-4 mt-4">
+                    <div>
+                      <label htmlFor="email" className="block text-[14px] text-[#6A7682] font-medium mb-1">
+                        Email<span className = "text-red-500">*</span>
+                      </label>
+                      <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="Enter email"
+                        className={`block w-full h-[44px] text-[#1B1D21] placeholder-[#1B1D21] rounded-[10px] border ${errors.email ? "border-red-500" : "border-[#D1D5DB]"} px-3 text-[14px] focus:outline-none`}
+                      />
+                      {errors.email && <p className="text-red-500 text-[12px] mt-1">{errors.email}</p>}
+                    </div>
+
+                      <div>
+                      <label htmlFor="Name" className="block text-[14px] text-[#6A7682] font-medium mb-1">
+                   SRA/CLC Number <span className = "text-red-500">*</span>
+                      </label>
+                      <input
+                        id="Name"
+                        name="SRA_CLC_number"
+  value={formData.SRA_CLC_number || ""}
+                          onChange={handleChange}
+                        placeholder="Enter Company name"
+                        className={`block w-full h-[44px] rounded-[10px] border ${errors.company_name ? "border-red-500" : "border-[#D1D5DB]"}  text-[#1B1D21] placeholder-[#1B1D21] px-3 text-[14px] focus:outline-none`}
+                      />
+                      {errors.company_name && <p className="text-red-500 text-[12px] mt-1">{errors.company_name}</p>}
+                    </div>
+                  </div>
+<div className="grid grid-cols-2 gap-4 mt-4">
+                 
+       
+
+         
+                  </div>
+
+                  {/* Row 3 - Logo Upload */}
+            
+  
+  {/* LEFT COLUMN — Jurisdictions */}
+          <div className="grid grid-cols-1 mt-2">
+<div className="flex flex-col gap-2">
+    <label className="block text-sm font-medium text-[#6A7682]">
+      Services We Offered <span className="text-red-500">*</span>
+    </label>
+
+    <div className="grid grid-cols-4 gap-3 mt-2">
+  {serviceoptions.map((opt) => (
+    <label key={opt.id} className="flex items-center gap-2 ">
+      <input
+        type="checkbox"
+        checked={selectedServices.some(s => s.id === opt.id)}
+        onChange={() => togglesercice(opt)}
+        className="w-4 h-4"
+      />
+   {opt.label.length <= 5 ? (
+  <span className="text-[#6A7682] text-sm font-medium ">{opt.label}</span>
+) :  <span className="text-[#6A7682] text-sm font-medium">{opt.label}</span>}
+    </label>
+  ))}
+</div>
+ 
+   
 
 </div>
+        <div className="flex flex-col gap-2 mt-2">
+    <label className="block text-sm font-medium text-[#6A7682]">
+      Jurisdictions Covered <span className="text-red-500">*</span>
+    </label>
 
-       
+
+
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
+  {jurisdictions.map((opt, index) => (
+    <label key={index} className="flex items-center gap-2 cursor-pointer text-[#6A7682]">
+      <input
+        type="checkbox"
+checked={ (selectedJurisdictions).some(item => item.value === opt.value) }
+        onChange={() => toggleJurisdiction(opt)}
+        className="w-4 h-4"
+      />
+      <span>{opt.label}</span>
+    </label>
+  ))}
+</div>
+
+  </div>
+          </div>
+
               
 <div className="mt-5 grid grid-cols-1 gap-4">
  
@@ -745,6 +698,8 @@ console.log(updated);
 </div>
 
     </div>
+    
+
                <div className="mt-20 flex justify-end gap-4 w-full ">
             
 
