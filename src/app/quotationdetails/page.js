@@ -42,7 +42,6 @@ const [notesData, setnotesData] = useState("");
 const [loading, setLoading] = useState(false);
 const timers = useRef({});
 
-const[reviewshow,setreviewshow]=useState(false);
 
   const modules = {
     toolbar: [
@@ -166,6 +165,7 @@ const handleSubmit = async () => {
  
   setlegalFeesError([]);
   const hasErrors = validatePriceList(pricingList);
+  console.log(hasErrors)
 if (hasErrors == false) {
   Swal.fire({
     icon: "error",
@@ -195,7 +195,6 @@ if (hasErrors == false) {
     };
 setFinalPayload(payload);  
 setShowConfirm(true);
-setreviewshow(true)
 
  } catch (error) {
     console.log("Error building payload:", error);
@@ -393,7 +392,7 @@ const handleChange = (index, field, value) => {
   setLegalcostrows(updated);
 };
 
-const validatePriceList = (list) => { //console.loglog('',list);
+const validatePriceList = (list) => { 
   let errors=[];
   for (let i = 0; i < list.length; i++) { 
     if(list[i]['fees_category_id']==1)
@@ -401,6 +400,11 @@ const validatePriceList = (list) => { //console.loglog('',list);
         for(let j=0;j<list[i]['price_list'].length;j++)
           {
           const { min, max } = list[i].price_list[j];
+
+          if(min==null || min ==""){
+
+          }
+          
 
           if ((min !== null && min !== "") && (max === null || max === "")) {
             errors.push(`Row ${i + 1}: max value is required when min is present`);
@@ -2143,7 +2147,7 @@ const formatPound = (value) => {
       <div className="flex gap-3">
         <button
           className="w-1/2 bg-yellow-400 text-gray-700 py-2 rounded-lg font-semibold hover:bg-yellow-300 transition"
-         onClick={() => {setShowConfirm(false),setreviewshow(true);}}
+         onClick={() => {setShowConfirm(false)}}
 
         >
           Yes, Review
