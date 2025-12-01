@@ -137,7 +137,7 @@ const [loginformdata, setloginformdata] = useState({
     {
       label: "Purchase",
       icon: <Home className="w-10 h-10 text-[#256041]" />,
-      desc: "Buying your dream property -1",
+      desc: "Buying your dream property ",
       "service_id":2,
       page:"purchase"
     },
@@ -182,6 +182,10 @@ const [loginformdata, setloginformdata] = useState({
       router.push(`/getquote/${type.replace(/\s+/g, "").toLowerCase()}`);
     }, 3000);
   };
+  const closeModal = () => {
+    console.log("closing...");
+    setModalopen(false);
+  };
 
    
   return (
@@ -198,7 +202,7 @@ const [loginformdata, setloginformdata] = useState({
 
 
       {/* --- 2. HERO SECTION --- */}
-      <section className="bg-white pt-16 pb-24 border-b border-gray-100 mt-20">
+      <section className="bg-white pt-16 pb-24 border-b border-gray-100 mt-5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-12 items-center">
           <div>
             <h1 className="text-5xl font-extrabold text-gray-900 leading-tight">
@@ -249,8 +253,8 @@ const [loginformdata, setloginformdata] = useState({
         {/* Card Row */}
         <div className="flex flex-wrap gap-6 justify-center">
           {options.map((opt) => (
-            <div
-              key={opt.label}
+            <div onClick={() => handleSelect(opt.page,opt.service_id)}
+              key={opt.label} style={{ cursor: "pointer" }}
               className="bg-white w-60 sm:w-64 lg:w-64 hover:shadow-2xl hover:border-[#256041] transition-all duration-300 p-6 rounded-2xl flex flex-col items-center text-center border border-gray-200"
             >
               <div className="flex flex-col items-center space-y-3">
@@ -558,7 +562,7 @@ const [loginformdata, setloginformdata] = useState({
         </p>
       </section>
         {modalopen && (
-                        <Signinmodal></Signinmodal>
+                        <Signinmodal closeModal={closeModal} ></Signinmodal>
                         )}
       
       {/* ---------------------------------------------------------------------------------- */}

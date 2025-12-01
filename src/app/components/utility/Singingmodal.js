@@ -4,14 +4,14 @@ import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
 import { useRouter } from 'next/navigation';
 import { v4 as uuidv4 } from 'uuid';
 
-export default function Signinmodal() {
+export default function Signinmodal({ closeModal }) {
      const router = useRouter();
      const [loginformshow,setloginformshow]=useState(false);
      const [loginformdata, setloginformdata] = useState({
   email: "",
   password: "",
 });
-
+console.log("props:", closeModal);
 const [modalopen, setModalopen] = useState(false);
   const [formData, setFormData] = useState({
     stages:"",
@@ -121,11 +121,11 @@ async function logindata() {
                                         </div>
         
                                         {/* RIGHT SIDE (Content Section - 65%) */}
-                                        {!loginformshow && (
+                                       {!loginformshow && (
                                         <div className="relative p-8 flex flex-col justify-center text-center md:text-left">
                                             {/* Close Button */}
                                             <button
-                                            onClick={() => setModalopen(false)}
+                                           onClick={closeModal}
                                             className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-3xl font-bold leading-none"
                                             >
                                             X
@@ -137,23 +137,24 @@ async function logindata() {
                                             Would you like to continue as a <b>logged-in user</b> or a <b>guest user</b>?
                                             </p>
         
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                        <button
-                                        className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
-                                        onClick={() => { setloginformshow(true); }}
-                                        >
-                                        Sign In
-                                        </button>
-        
-                                        <button
-                                        onClick={createguestuser}
-                                        className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
-                                        >
-                                        Guest User
-                                        </button>
-                                    </div>
+                                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                              <button
+                                              className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
+                                              onClick={() => { setloginformshow(true); }}
+                                              >
+                                              Sign In
+                                              </button>
+              
+                                              <button
+                                              onClick={createguestuser}
+                                              className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
+                                              >
+                                              Guest User
+                                              </button>
+                                          </div>
+                                      
                                         </div>
-                                        )}
+                                        )};
         
                                         {/* LOGIN FORM */}
                                         {loginformshow && (

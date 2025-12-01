@@ -42,6 +42,10 @@ const handleUnknownPostcode = () => {
     [`country`]: "",
   }));
 };
+ const closeModal = () => {
+    console.log("closing...");
+    setModalopen(false);
+  };
 
 const handleUnknownPostcode_purchase = () => {
   // 1️⃣ Condition: user clicked "I don’t know the postcode yet"
@@ -60,6 +64,7 @@ const handleUnknownPostcode_purchase = () => {
 };
 
 const [rawValue, setRawValue] = useState("");
+const [rawValuePurchase, setRawValuePurchase] = useState("");
 useEffect(() => {
   const storedData = localStorage.getItem("getquote");
 
@@ -69,30 +74,66 @@ useEffect(() => {
   fetchdata()
 }, []);
    const [formData, setFormData] = useState({
-    address: "",
-        address_line1: "",
-        address_line2: "",
-        country: "",
-        town: "",
+    sales_address: "",
+    sales_address_line1: "",    
+    sales_address_line2: "",
+    sales_country: "",
+    sales_city: "",
     price: "",
     bedrooms: "",
     tenure: "", 
     propertyType: "",
     sharedOwnership: "",
-    address_purchase: "",
-        address_line1_purchase: "",
-        address_line2_purchase: "",
-        country_purchase: "",
-        town_purchase: "",
-    price_purchase: "",
+    sales_shared_ownership:"",
+    purchase_address: "",
+    purchase_address_line1: "",
+    purchase_address_line2: "",
+    purchase_country: "",
+    purchase_town: "",
+    purchase_price: "",
     bedrooms_purchase: "",
     tenure_purchase: "", 
     propertyType_purchase: "",
     sharedOwnership_purchase: "",
-    b2l:"",
+    buy_to_let:"",
     languages:[],
     service_type:1
   });
+  const [postData, setPostData] = useState({user_id: null, guest_user: null, service_type: null,
+  // SALES FIELDS
+  sales_address_line1: "",sales_address_line2: "", sales_city: null, sales_country: null,
+  sales_stages: null,sales_address: "",sales_price: "",sales_no_of_bedrooms:null,
+  sales_property_type: null,
+  sales_leasehold_or_free: null,
+
+  // PURCHASE FIELDS
+  address_line1: "",
+  address_line2: "",
+  town_city: null,
+  country: null,
+  stages: null,
+  address: "",
+  no_of_bedrooms: null,
+  property_type: null,
+  leasehold_or_free: null,
+  purchase_price: null,
+
+  // ADDITIONAL FIELDS
+  sales_shared_ownership: null,
+  existing_mortgage: null,
+  new_build: null,
+  buy_to_let: null,
+  govt_by_scheme:null,
+  obtaining_mortgage: null,
+  gift_deposit: null,
+  ownership_housing_asso: null,
+  specal_instruction: null,
+
+  // ARRAYS
+  languages: null,
+  lenders: null
+});
+
   
 
   const [errors, setErrors] = useState({});
@@ -105,26 +146,21 @@ useEffect(() => {
             password: "",
           });
 
-//    const handleChange = (e) => {
-//   const { name, value } = e.target;
 
-//   // Handle phone separately
-//   if (name === "phone") {
-//     const numericValue = value.replace(/\D/g, "").slice(0, 12);
-//     setFormData((prev) => ({ ...prev, [name]: numericValue }));
-//   } else {
-//     setFormData((prev) => ({ ...prev, [name]: value }));
-//   }
-//   setErrors((prev) => ({ ...prev, [name]: "" }));
-// };
-
-const handleChange = (e) => {
-  const { name, value } = e.target;
+const handleChange = (name,value) => {
+  //const { name, value } = e.target;
 
   if (name === "price") {
     const cleaned = value.replace(/[^0-9.]/g, ""); 
     setRawValue(cleaned); 
     setFormData((prev) => ({ ...prev, price: cleaned })); 
+  }
+  else if (name === "sales_price" || name === "purchase_price") {
+  const cleaned = value.replace(/[^0-9.]/g, "");
+
+    const numericValue = Number(value);
+    setRawValue(cleaned);
+    setFormData((prev) => ({ ...prev, [name]: cleaned}));
   }
   else if (name === "phone") {
     const numericValue = value.replace(/\D/g, "").slice(0, 12);
@@ -133,16 +169,16 @@ const handleChange = (e) => {
   else {
     setFormData((prev) => ({ ...prev, [name]: value }));
   }
-
+  //console.log(formData);
   setErrors((prev) => ({ ...prev, [name]: "" }));
 };
 
 
 useEffect(() => {
-    if (rawValue === "") return;
+    if (rawValuePurchase === "") return;
 
     const timer = setTimeout(() => {
-      const num = Number(rawValue.replace(/,/g, ""));
+      const num = Number(rawValuePurchase.replace(/,/g, ""));
 
       if (!isNaN(num)) {
         // Format as UK number WITHOUT pound symbol
@@ -152,85 +188,17 @@ useEffect(() => {
         }).format(num);
 
        // setValue(formatted);
-         setFormData((prev) => ({ ...prev, price: formatted }))
+         setFormData((prev) => ({ ...prev, purchase_price: formatted }))
       }
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, [rawValue])
+  }, [rawValuePurchase])
 
 
 
   const validate = () => {
     const newErrors = {};
-  
-   
-//     if (!formData.address.trim()) {
-//       newErrors.address = "Property address is required";
-//     } else if (formData.address.trim().length < 5) {
-//       newErrors.address = "Address must be at least 5 characters";
-//     }
-  
-    
-//     if (!formData.price) {
-//       newErrors.price = "Agreed sales price is required";
-//     } else if (Number(formData.price) <= 0) {
-//       newErrors.price = "Price must be a positive number";
-//     }
-  
-   
-//     if (!formData.bedrooms) {
-//       newErrors.bedrooms = "Please select number of bedrooms";
-//     }
-  
-  
-//     if (!formData.tenure) {
-//       newErrors.tenure = "Please select leasehold or freehold";
-//     }
-  
-   
-//     if (!formData.propertyType) {
-//       newErrors.propertyType = "Please select a property type";
-//     }
-  
-//       if (!formData.sharedOwnership) {
-//       newErrors.sharedOwnership = "Please select a ownership";
-//     }
-
-//     if (!formData.address_purchase?.trim()) {
-//       newErrors.address_purchase = "Property address is required";
-//     } else if (formData.address_purchase?.trim().length < 5) {
-//       newErrors.address_purchase = "Address must be at least 5 characters";
-//     }
-  
-    
-//     if (!formData.price_purchase) {
-//       newErrors.price_purchase = "Agreed sales price is required";
-//     } else if (Number(formData.price_purchase) <= 0) {
-//       newErrors.price_purchase = "Price must be a positive number";
-//     }
-  
-   
-//     if (!formData.bedrooms_purchase) {
-//       newErrors.bedrooms_purchase = "Please select number of bedrooms";
-//     }
-  
-  
-//     if (!formData.tenure_purchase) {
-//       newErrors.tenure_purchase = "Please select leasehold or freehold";
-//     }
-  
-   
-//     if (!formData.propertyType_purchase) {
-//       newErrors.propertyType_purchase = "Please select a property type";
-//     }
-  
-//       if (!formData.sharedOwnership_purchase) {
-//       newErrors.sharedOwnership_purchase = "Please select a ownership";
-//       }
-//       if (!formData.b2l || formData.b2l === "No") {
-//   newErrors.b2l = "Please select a Buy to Let option";
-// }
   
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -251,6 +219,26 @@ useEffect(() => {
       console.log("❌ Validation failed:", errors);
     }
   };
+  useEffect(() => {
+      if (rawValue === "") return;
+  
+      const timer = setTimeout(() => {
+        const num = Number(rawValue.replace(/,/g, ""));
+  
+        if (!isNaN(num)) {
+          // Format as UK number WITHOUT pound symbol
+          const formatted = new Intl.NumberFormat("en-GB", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          }).format(num);
+  
+         // setValue(formatted);
+           setFormData((prev) => ({ ...prev, sales_price: formatted }))
+        }
+      }, 2000);
+  
+      return () => clearTimeout(timer);
+    }, [rawValue]);
   
 
     const [selectedLenders, setSelectedLenders] = useState([]);
@@ -273,6 +261,7 @@ useEffect(() => {
         const notRequiredOption = lender.find(opt => opt.value === "Not Required");
         setSelectedLenders([notRequiredOption]);
         console.log("Selected lenders: [0]");
+        
      handleChange({
     target: {
       name:"lender",
@@ -283,13 +272,14 @@ useEffect(() => {
         // Normal behavior for other lenders
         setSelectedLenders(selectedOptions);
         const ids = selectedOptions.map(item => item.id);
+         setFormData((prev) => ({ ...prev, ["lender"]: ids }));
         console.log("Selected lenders:", ids);
-      handleChange({
+      /*handleChange({
     target: {
      name: "lender",
       value:ids
     }
-  });
+  });*/
       }
     };
     
@@ -396,31 +386,82 @@ console.log(language);
       }
  
 
-     if (hasNotRequired) {
-        // Keep only "Not Required" selected
-        const notRequiredOption = lang.find(opt => opt.value === "Not Required");
-        setSelectedLanguage([notRequiredOption]);
-        console.log("Selected language: [0]");
-         handleChange({
-    target: {
-      name:"languages",
-      value:[0]
-    }
-  });
+      if (hasNotRequired) {
+                    // Keep only "Not Required" selected
+                    const notRequiredOption = lang.find(opt => opt.value === "Not Required");
+                    setSelectedLanguage([notRequiredOption]);
+                    console.log("Selected language: [0]");
+                    handleChange("languages",selectedOptions.id);
       } else {
         // Normal behavior for other lenders
         setSelectedLanguage(selectedOptions);
       
-          handleChange({
-    target: {
-      name:"languages",
-      value:[selectedOptions.id]
-    }
-  });
+        handleChange("languages",selectedOptions.id);
   console.log(selectedOptions.id)
       }
     
   }
+  const onSelectAddress = (type) => async (selected) => {
+  if (!selected) return;
+
+  // Clear purchase error if there was one
+  clearAddressError();
+
+  // Save the selected address
+  saveSelectedAddress(selected);
+
+  // Fetch full details based on selected address
+  await fetchAddressDetailsAndUpdate(selected.udprn,type);
+};
+
+// Function to clear the address error
+const clearAddressError = () => {
+  if (errors.address) {
+    setErrors((prev) => ({ ...prev, address: "" }));
+  }
+};
+
+// Function to save selected address and update formData
+const saveSelectedAddress = (selected) => {
+  setFormData((prev) => ({
+    ...prev,
+    selectedId_purchase: selected.id,
+    address: selected.suggestion,
+  }));
+};
+
+// Function to fetch full address details based on UDPRN
+const fetchAddressDetailsAndUpdate = async (udprn,type) => {
+  const details = await fetchAddressDetails(udprn);
+
+  if (details) {
+    updateFormDataWithAddressDetails(details,type);
+  } else {
+    setErrors((prev) => ({
+      ...prev,
+      address: "Failed to fetch full address details.",
+    }));
+  }
+};
+
+// Function to update formData with address details
+const updateFormDataWithAddressDetails = (details,type) => { console.log(details,type)
+  if(type=="sales"){
+     setFormData((prev) => ({
+    ...prev,
+    sales_city: details.post_town || details.admin_district || "",
+    sales_country: details.country || "",
+  }));
+  }
+  else{
+  setFormData((prev) => ({
+    ...prev,
+    purchase_city: details.post_town || details.admin_district || "",
+    purchase_country: details.country || "",
+  }));
+}
+};
+
 
   async function fetchdata() {
     try{
@@ -572,7 +613,7 @@ console.log(e);
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     What stage are you at?
                                 </label>
-                                <select id="stage" name="stage" className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10">
+                                <select value={formData.sales_stages}  onChange={(e)=>{handleChange("sales_stages",e.target.value)}} id="stage" name="stage" className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10">
                                     {[ "Please select", "Just researching / budgeting", "Have received an offer", "Sale agreed",].map((opt) => (
                                     <option key={opt} value={opt === "Please select" ? "" : opt}> {opt} </option>))}
                                 </select>
@@ -584,49 +625,12 @@ console.log(e);
                         <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
                          Property address:<span className="text-red-500">*</span>
                          </label>
-                        <LocationSearch
-                        readOnly={showAddressLines}
-                        onSelectAddress={async (selected) => {
-                          if (!selected) return;
-                          // Clear address error immediately when selecting
-                           if (errors.address) {
-                            setErrors((prev) => ({ ...prev, address: "" }));
-                            }
-                            // Update formData with selected suggestion
-                            setFormData((prev) => ({
-                              ...prev,
-                              selectedId: selected.id,
-                              address: selected.suggestion,
-                            }));
-                            // Fetch full address details
-                            const details = await fetchAddressDetails(selected.udprn);
-                              if (details) {
-                                setFormData((prev) => ({
-                                  ...prev,
-                                  town: details.post_town || details.admin_district || "",
-                                  country: details.country || "",
-                                  }));
-                                } else {
-                                  setErrors((prev) => ({
-                                    ...prev,
-                                    address: "Failed to fetch full address details.",
-                                    }));
-                                  }
-                                }}
-                                onInputChange={() => {
-                                  // Clear the error immediately when user types
-                                if (errors.address) {
-                                  setErrors((prev) => ({ ...prev, address: "" }));
-                                   }
-                                  }}
-                                  />
+                        <LocationSearch readOnly={showAddressLines}   onSelectAddress={onSelectAddress("sales")}  />
 
-                                          <div className="flex justify-between items-center mt-1">
-                                            {/* Left: Error message */}
-                                            <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
-                              errors.address ? "text-red-500 opacity-100" : "opacity-0"
-                            }`}>
-                              {errors.address || "placeholder"} {/* placeholder keeps same height */}
+                           <div className="flex justify-between items-center mt-1">
+                              <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+                              errors.sales_address ? "text-red-500 opacity-100" : "opacity-0" }` } >
+                              {errors.sales_address || "placeholder"} {/* placeholder keeps same height */}
                             </p>
 
                     {/* “I don’t know postcode” button */}
@@ -644,6 +648,7 @@ console.log(e);
 
                     {/* Always render AddressFields */}
                     <AddressFields
+                    prefix="sales_"
                       formData={formData}
                       errors={errors}
                       showAddressLines={showAddressLines} // only used inside AddressFields
@@ -665,8 +670,8 @@ console.log(e);
                                 id="price"
                                 name="price"
                                 type="text"
-                                value={formData.price ?? ""} 
-                                onChange={handleChange}
+                                value={formData.sales_price ?? ""} 
+                                onChange={(e)=>{handleChange("sales_price",e.target.value)}} 
                                 className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
                               />
                               
@@ -674,8 +679,8 @@ console.log(e);
                             
                              </div>
                            
-                            {errors.address && (
-                                <span className="text-red-500 text-xs mt-1">{errors.price}</span>
+                            {errors.sales_address && (
+                                <span className="text-red-500 text-xs mt-1">{errors.sales_price}</span>
                               )}
                        </div>
 
@@ -692,13 +697,13 @@ console.log(e);
         type="button"
         onClick={() => {
           // ✅ update formData
-          setFormData((prev) => ({ ...prev, bedrooms: opt }));
+          setFormData((prev) => ({ ...prev, sales_no_of_bedrooms: opt }));
           // ✅ clear error for this field
-          setErrors((prev) => ({ ...prev, bedrooms: "" }));
+          setErrors((prev) => ({ ...prev, sales_no_of_bedrooms: "" }));
         }}
         className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm
           ${
-            formData.bedrooms === opt
+            formData.sales_no_of_bedrooms === opt
               ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
               : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
           }`}
@@ -708,8 +713,8 @@ console.log(e);
     ))}
   </div>
 
-  {errors.bedrooms && (
-    <p className="text-red-500 text-[12px] mt-1">{errors.bedrooms}</p>
+  {errors.sales_no_of_bedrooms && (
+    <p className="text-red-500 text-[12px] mt-1">{errors.sales_no_of_bedrooms}</p>
   )}
 </div>
 
@@ -759,20 +764,20 @@ console.log(e);
         type="button"
         onClick={() => {
           // ✅ Update property type in formData
-          setFormData((prev) => ({ ...prev, propertyType: opt.label }));
+          setFormData((prev) => ({ ...prev, sales_property_type: opt.label }));
           // ✅ Clear the specific error
-          setErrors((prev) => ({ ...prev, propertyType: "" }));
+          setErrors((prev) => ({ ...prev, sales_property_type: "" }));
         }}
         className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 transition-all duration-200 shadow-sm w-[170.76px]
           ${
-            formData.propertyType === opt.label
+            formData.sales_property_type === opt.label
               ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
               : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
           }`}
       >
         <span
           className={`${
-            formData.propertyType === opt.label ? "text-white" : "text-gray-700"
+            formData.sales_property_type === opt.label ? "text-white" : "text-gray-700"
           } text-[18px]`}
         >
           {opt.icon}
@@ -781,8 +786,8 @@ console.log(e);
       </button>
     ))}
   </div>
-  {errors.propertyType && (
-    <p className="text-red-500 text-[12px] mt-1">{errors.propertyType}</p>
+  {errors.sales_property_type && (
+    <p className="text-red-500 text-[12px] mt-1">{errors.sales_property_type}</p>
   )}
 
 </div>
@@ -803,8 +808,8 @@ console.log(e);
                         <select
                           id="sharedOwnership"
                           name="sharedOwnership"
-                          value={formData.sharedOwnership}
-                          onChange={handleChange}
+                          value={formData.sales_shared_ownership}
+                          onChange={(e)=>{handleChange("sales_shared_ownership",e.target.value)}} 
                           className={"block w-full h-[44px] rounded-xl border px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"}
                         >
                           {["Please select","Yes (housing association)","Yes (Help To Buy)","No"].map((option) => (
@@ -859,7 +864,7 @@ console.log(e);
                                <label className="block text-sm font-medium text-gray-700 mb-1">
                                  What stage are you at?
                                 </label>
-                                 <select id="stage" name="stage" className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10">
+                                 <select  value={formData.stages}  onChange={(e)=>{handleChange("stages",e.target.value)}}  id="stage" name="stage" className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10">
                                 {[ "Please select", "Just researching / budgeting", "Have received an offer", "Sale agreed",].map((opt) => (
                                 <option key={opt} value={opt === "Please select" ? "" : opt}> {opt} </option>))}
                                 </select>
@@ -869,47 +874,14 @@ console.log(e);
                         <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
                          Property address:<span className="text-red-500">*</span>
                          </label>
-                        <LocationSearch
-  readOnly={showAddressLines_purchase}
-  onSelectAddress={async (selected) => {
-    if (!selected) return;
-
-    // Clear purchase error
-    if (errors.address_purchase) {
-      setErrors((prev) => ({ ...prev, address_purchase: "" }));
-    }
-
-    // Save suggestion
-    setFormData((prev) => ({
-      ...prev,
-      selectedId_purchase: selected.id,
-      address_purchase: selected.suggestion,
-    }));
-
-    // Fetch full details
-    const details = await fetchAddressDetails(selected.udprn);
-
-    if (details) {
-      setFormData((prev) => ({
-        ...prev,
-        town_purchase: details.post_town || details.admin_district || "",
-        country_purchase: details.country || "",
-      }));
-    } else {
-      setErrors((prev) => ({
-        ...prev,
-        address_purchase: "Failed to fetch full address details.",
-      }));
-    }
-  }}
-/>
+                        <LocationSearch readOnly={showAddressLines}   onSelectAddress={onSelectAddress("purchase")}  />
 
                                           <div className="flex justify-between items-center mt-1">
                                             {/* Left: Error message */}
                                             <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
-                              errors.address_purchase ? "text-red-500 opacity-100" : "opacity-0"
+                              errors.address ? "text-red-500 opacity-100" : "opacity-0"
                             }`}>
-                              {errors.address_purchase || "placeholder"} {/* placeholder keeps same height */}
+                              {errors.address || "placeholder"} {/* placeholder keeps same height */}
                             </p>
 
                     {/* “I don’t know postcode” button */}
@@ -928,7 +900,7 @@ console.log(e);
 
                 {/* Always render AddressFields */}
 <AddressFields
-  prefix="_purchase"
+  prefix="purchase_"
   formData={formData}
   errors={errors}
   showAddressLines={showAddressLines_purchase}
@@ -954,27 +926,16 @@ console.log(e);
     <input
       id="price_purchase"
       name="price_purchase"
-      type="number"
-      value={formData.price_purchase}
-      onChange={(e) => {
-        const { name, value } = e.target;
-
-        // ✅ Prevent non-numeric characters and negatives
-        const cleanValue = value.replace(/[^0-9]/g, "");
-
-        // ✅ Update form data
-        setFormData((prev) => ({ ...prev, [name]: cleanValue }));
-
-        // ✅ Clear only this field’s error
-        setErrors((prev) => ({ ...prev, [name]: "" }));
-      }}
-      placeholder="Enter sales price"
+      type="text"
+      value={formData.purchase_price}
+      onChange={(e)=>{handleChange("purchase_price",e.target.value)}} 
+      placeholder="Enter purchase price"
       className={`block w-full h-[44px] rounded-xl border pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors `}
     />
   </div>
 
-  {errors.price_purchase && (
-    <span className="text-red-500 text-xs mt-1">{errors.price_purchase}</span>
+  {errors.purchase_price && (
+    <span className="text-red-500 text-xs mt-1">{errors.purchase_price}</span>
   )}
 </div>
 
@@ -991,14 +952,14 @@ console.log(e);
         type="button"
         onClick={() => {
           // ✅ Update form data
-          setFormData((prev) => ({ ...prev, bedrooms_purchase: opt }));
+          setFormData((prev) => ({ ...prev, no_of_bedrooms: opt }));
           setBedrooms_purchase(opt);
           // ✅ Clear error when clicked
-          setErrors((prev) => ({ ...prev, bedrooms_purchase: "" }));
+          setErrors((prev) => ({ ...prev, no_of_bedrooms: "" }));
         }}
         className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm
           ${
-            formData.bedrooms_purchase === opt
+            formData.no_of_bedrooms === opt
               ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
               : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
           }`}
@@ -1008,8 +969,8 @@ console.log(e);
     ))}
   </div>
 
-  {errors.bedrooms_purchase && (
-    <p className="text-red-500 text-[12px] mt-1">{errors.bedrooms_purchase}</p>
+  {errors.no_of_bedrooms && (
+    <p className="text-red-500 text-[12px] mt-1">{errors.no_of_bedrooms}</p>
   )}
 </div>
 
@@ -1027,13 +988,13 @@ console.log(e);
           type="button"
           onClick={() => {
             // ✅ Update form data
-            setFormData((prev) => ({ ...prev, tenure_purchase: opt }));
+            setFormData((prev) => ({ ...prev, leasehold_or_free: opt }));
             setTenure_purchase(opt);
             // ✅ Clear error when clicked
-            setErrors((prev) => ({ ...prev, tenure_purchase: "" }));
+            setErrors((prev) => ({ ...prev, leasehold_or_free: "" }));
           }}
           className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-            formData.tenure_purchase === opt
+            formData.leasehold_or_free === opt
               ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
               : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
           }`}
@@ -1043,8 +1004,8 @@ console.log(e);
       ))}
     </div>
 
-    {errors.tenure_purchase && (
-      <p className="text-red-500 text-[12px] mt-1">{errors.tenure_purchase}</p>
+    {errors.leasehold_or_free && (
+      <p className="text-red-500 text-[12px] mt-1">{errors.leasehold_or_free}</p>
     )}
   </div>
 </div>
@@ -1128,7 +1089,7 @@ console.log(e);
                   {/* 6. Buy to Let? (Inline Select) */}
                   <div className="flex flex-col h-full">
   <label
-    htmlFor="b2l"
+    htmlFor="buy_to_let"
     className="block text-sm font-medium text-gray-700 mb-1"
   >
     Buy to Let?<span className="text-red-500">*</span>
@@ -1136,9 +1097,9 @@ console.log(e);
 
   <div className="relative mt-auto">
     <select
-      id="b2l"
-      name="b2l"
-      value={formData.b2l} // ✅ controlled input
+      id="buy_to_let"
+      name="buy_to_let"
+      value={formData.buy_to_let} // ✅ controlled input
       onChange={(e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({ ...prev, [name]: value }));
@@ -1160,8 +1121,8 @@ console.log(e);
     />
   </div>
 
-  {errors.b2l && (
-    <p className="text-red-500 text-[12px] mt-1">{errors.b2l}</p>
+  {errors.buy_to_let && (
+    <p className="text-red-500 text-[12px] mt-1">{errors.buy_to_let}</p>
   )}
 </div>
 
@@ -1334,7 +1295,7 @@ console.log(e);
   <label className="block text-sm font-semibold text-gray-800 mb-1">
     Special instructions (Optional)
   </label>
-  <textarea
+  <textarea onChange={(e)=>{handleChange("specal_instruction",e.target.value)}}
     className="w-full border border-gray-300 rounded-lg px-3 py-2 h-28 resize-none focus:outline-none focus:ring-2 focus:ring-[#1E5C3B] text-black placeholder-black"
     placeholder="Enter any special instructions..."
   ></textarea>
@@ -1342,7 +1303,7 @@ console.log(e);
 
                     </form>
                      {modalopen && (
-                          <Signinmodal></Signinmodal>
+                          <Signinmodal closeModal={closeModal}></Signinmodal>
                         )}
 
                     <div className="mt-12 flex justify-end gap-4">

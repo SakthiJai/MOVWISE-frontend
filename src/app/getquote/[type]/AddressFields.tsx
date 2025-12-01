@@ -18,9 +18,9 @@ const AddressFields: React.FC<AddressFieldsProps> = ({
   prefix , // default for SALE
 }) => {
 
-  const line1 = `address_line1${prefix}`;
-  const line2 = `address_line2${prefix}`;
-  const town_city = `${prefix}town_city`;
+  const line1 = `${prefix}address_line1`;
+  const line2 = `${prefix}address_line2`;
+  const town_city = `${prefix}city`;
   const country = `${prefix}country`;
 
   return (
