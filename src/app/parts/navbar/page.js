@@ -45,7 +45,7 @@ setlogintype(localStorage.getItem("logintype"));
       </Link>
 
       {/* Nav */}
-      <nav className="flex-1 items-center text-[16px] text-[#1D2630] justify-end ">
+      <nav className="items-center text-[16px] text-[#1D2630] justify-end ">
         {links.map((link) => {
           const isActive =
             pathname === link.href || pathname.startsWith(link.href + "/");

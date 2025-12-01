@@ -98,7 +98,7 @@ const Myprofile = () => {
             className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition duration-150"
           >
             <p className="text-gray-700 italic font-medium mb-2 sm:mb-0 max-w-2xl">
-              "{quote.text}"
+               {`"${quote.text}"`}
             </p>
             <div className="flex items-center space-x-3 flex-shrink-0">
               <StatusButton status={quote.status} />

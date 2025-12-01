@@ -127,31 +127,37 @@ console.log("check")
 
                                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
                                     <div className="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-4xl h-[500px] md:h-auto grid grid-cols-1 md:grid-cols-[35%_65%] animate-scale-in relative">
-                                        
+                                        <button
+                                           onClick={closeModal}
+                                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold leading-none"
+                                            >
+                                            X
+                                            </button>
                                         {/* LEFT SIDE (Brand Section - 35%) */}
                                         <div className="text-center bg-gradient-to-br from-[#1E5C3B] to-green-600 text-white flex flex-col justify-between items-center md:items-start p-8">
-                                        <div className="mt-12">
-                                            <h2 className="text-4xl font-extrabold tracking-wide mb-2">MOVWISE</h2>
-                                            <p className="text-sm opacity-90 leading-relaxed mt-12">
-                                            Making property transactions simple, secure, and smart.
-                                            </p>
-                                        </div>
+                                            <div className="mt-12">
+                                                <h2 className="text-4xl font-extrabold tracking-wide mb-2">MOVWISE</h2>
+                                                <p className="text-sm opacity-90 leading-relaxed mt-12">
+                                                Making property transactions simple, secure, and smart.
+                                                </p>
+                                            </div>
                                         
-                                        <Link
-                                            href="/components/personaldetails"
-                                            className="mt-8 mx-auto bg-white text-[#1E5C3B] font-semibold px-8 py-3 rounded-full hover:bg-gray-100 transition-all duration-300 shadow-lg transform hover:scale-105"
-                                        >
-                                            Sign Up
-                                        </Link>
+                                              <Link
+                                                  href="/components/personaldetails"
+                                                  className="mt-8 mx-auto bg-white text-[#1E5C3B] font-semibold px-8 py-3 rounded-full hover:bg-gray-100 transition-all duration-300 shadow-lg transform hover:scale-105"
+                                              >
+                                                  Sign Up
+                                              </Link>
                                         </div>
         
                                         {/* RIGHT SIDE (Content Section - 65%) */}
-                                        {(!loginformshow&&!guestformshow) &&  (
+                                        {(!loginformshow&&!guestformshow) &&  
+                                        (
                                         <div className="relative p-8 flex flex-col justify-center text-center md:text-left">
                                             {/* Close Button */}
                                             <button
                                            onClick={closeModal}
-                                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-3xl font-bold leading-none"
+                                            className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold leading-none"
                                             >
                                             X
                                             </button>
@@ -190,7 +196,7 @@ console.log("check")
                                        
                                       
                                         </div>
-                                        )};
+                                        )}
         
                                         {/* LOGIN FORM */}
                                         {loginformshow && (
@@ -204,7 +210,7 @@ console.log("check")
                                             >
                                                 
                                             <h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">
-                                                Login 👋
+                                                User / Partner  Login 👋
                                             </h2>
         
                                             {/* Email */}
@@ -270,10 +276,29 @@ console.log("check")
                                             >
                                                 
                                             <h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">
-                                               Guest Login 👋
+                                               Guest Users Please Fill Below Details 
                                             </h2>
         
                                             {/* Email */}
+                                             <div className="mb-6">
+                                                <label
+                                                htmlFor="Name"
+                                                className="block text-sm font-semibold text-gray-700 mb-2"
+                                                >
+                                                Full Name
+                                                </label>
+                                                <input
+                                                id="Name"
+                                                name="guest_name"
+                                                type="text"
+                                                required
+                                                placeholder="Enter your Name"
+                                                value={guestformsdata.guest_name || ""}
+                                                onChange={(e) => handleguestformchange("guest_name", e.target.value)}
+                                                autoComplete="current-password"
+                                                className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
+                                                />
+                                            </div>
                                             <div className="mb-5">
                                                 <label
                                                 htmlFor="email"
@@ -294,32 +319,20 @@ console.log("check")
                                             </div>
         
                                             {/* Password */}
-                                            <div className="mb-6">
-                                                <label
-                                                htmlFor="Name"
-                                                className="block text-sm font-semibold text-gray-700 mb-2"
-                                                >
-                                                Password
-                                                </label>
-                                                <input
-                                                id="Name"
-                                                name="guest_name"
-                                                type="text"
-                                                required
-                                                placeholder="Enter your Name"
-                                                value={guestformsdata.guest_name || ""}
-                                                onChange={(e) => handleguestformchange("guest_name", e.target.value)}
-                                                autoComplete="current-password"
-                                                className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
-                                                />
-                                            </div>
+                                           
         
                                             {/* Submit Button */}
                                             <button
                                                 type="submit"
                                                 className="w-full bg-[#1E5C3B] text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md transform hover:scale-105"
                                             >
-                                                Login
+                                                Proceed
+                                            </button>
+                                             <button
+                                                type="button"
+                                                className="mt-1 w-full bg-[#ffd954] text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md transform hover:scale-105"
+                                            >
+                                                Back
                                             </button>
                                             </form>
                                         </div>
