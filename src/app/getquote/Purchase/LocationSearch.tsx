@@ -13,7 +13,7 @@ export interface PostcodeResult {
   udprn: number;
 }
 
-const API_KEY = "ak_mie745342OYxduUJmojB2pHvhQqqZ"; 
+const API_KEY = "ak_min1rf9h031s7IsXyxTGMBUxTbcyz"; 
 
 export async function fetchAddressDetails(udprn: number) {
   const url = `https://api.ideal-postcodes.co.uk/v1/udprn/${udprn}?api_key=${API_KEY}`;

@@ -429,7 +429,9 @@ console.log(updated);
     <div>
     <div className="min-h-screen bg-white antialiased  font-outfit mb-5">
       {/* Navbar */}
-      <Navbar />
+      <div  className="bg-white shadow-md sticky top-0 p-4">
+      <Navbar  originalstyle={true} />
+      </div>
 <main className="grid grid-cols-12 pt-10">
   <div className="flex gap-12 col-span-8 col-start-3 ">
 

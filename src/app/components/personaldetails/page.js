@@ -33,14 +33,14 @@ export default function Personaldetails() {
 
   // If status === 0 → inactive → show popup
   if (response.status === 0) {
-    setPopupMessage("Please check your email for activation.");
-  setShowPopup(true);
+   emailsetPopupMessage("Please check your email for activation.");
+  emailsetShowPopup(true);
   setShouldRedirect(false); 
   }
 
   // If status === 1 → active → redirect to login page
   if (response.status === 1) {
-      setPopupMessage("Email already registered and account is active. Go to login page.");
+      setPopupMessage("Your Account has been  Register Sucessfully Please Check Your Mail and Activate you Account.");
   setShowPopup(true);
   setShouldRedirect(true); // redirect after closing popup
   localStorage.setItem("loginshow", "true");
@@ -53,7 +53,9 @@ setModalopen(true);
 
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState("");
-const [shouldRedirect, setShouldRedirect] = useState(false);
+  const [emailshowPopup, emailsetShowPopup] = useState(false);
+  const [emailpopupMessage, emailsetPopupMessage] = useState("");
+  const [shouldRedirect, setShouldRedirect] = useState(false);
 
 useEffect(() => {
   if (!showPopup && shouldRedirect) {
@@ -105,11 +107,13 @@ useEffect(() => {
     <div className="min-h-screen bg-white antialiased font">
       {/* Top bar */}
   
-      <Navbar/>
+     <div className="bg-white shadow-md sticky top-0 p-4">
+        <Navbar originalstyle={true} />
+      </div>
 
       {/* Body */}
       <main className="mx-auto max-w-[1200px] pt-10">
-        <div className="flex gap-12">
+        <div className="flex gap-12 mt-24">
           {/* Left rail: stepper panel */}
           <aside className="relative w-[400px]    rounded-[40px] overflow-hidden bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)]
 shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
@@ -270,7 +274,7 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
           </section>
         </div>
         <div>
-          {showPopup && (
+          {/* {showPopup && (
   <div className="fixed inset-0 bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] bg-opacity-50 flex items-center justify-center z-50">
     <div className="bg-white p-6 rounded-xl shadow-lg w-80 text-center">
       <p className="text-gray-800 font-medium mb-4">{popupMessage}</p>
@@ -283,7 +287,93 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]">
       </button>
     </div>
   </div>
+)} */}
+
+{showPopup && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    <div className="relative bg-white p-8 rounded-xl shadow-2xl w-[420px] max-w-[90%] animate-popup text-center">
+      <button
+        onClick={() => setShowPopup(false)}
+        className="absolute top-3 right-4 text-gray-500 hover:text-black text-2xl cursor-pointer"
+      >
+        ×
+      </button>
+      <h2 className="text-[30px] font-extrabold text-[#1E5C3B] mb-4 w-full text-center">
+        MovWise
+      </h2>
+      <div className="flex justify-center mb-5">
+        <div className="w-16 h-16 rounded-full bg-[#13815D] flex items-center justify-center shadow-lg">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth="3"
+            stroke="white"
+            className="w-9 h-9"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+      </div>
+      <p className="text-gray-800 mb-6 text-[17px] leading-relaxed cursor-pointer">
+        {popupMessage}
+      </p>
+      <button
+        onClick={() => setShowPopup(false)}
+        className="bg-[#13815D] text-white px-4 py-2 rounded-md"
+      >
+        OK
+      </button>
+
+    </div>
+  </div>
 )}
+
+
+{emailshowPopup && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+    <div className="relative bg-white p-8 rounded-xl shadow-2xl w-[420px] max-w-[90%] animate-popup text-center">
+      <button
+        onClick={() => emailsetShowPopup(false)}
+        className="absolute top-3 right-4 text-gray-500 hover:text-black text-2xl cursor-pointer"
+      >
+        ×
+      </button>
+      <h2 className="text-[30px] font-extrabold text-[#1E5C3B] mb-4 w-full text-center">
+        MovWise
+      </h2>
+  <div className="flex justify-center mb-5">
+  <div className="w-16 h-16 rounded-full bg-[#DC2626] flex items-center justify-center shadow-lg">
+    <svg 
+      xmlns="http://www.w3.org/2000/svg" 
+      fill="none" 
+      viewBox="0 0 24 24" 
+      strokeWidth="3" 
+      stroke="white" 
+      className="w-9 h-9"
+    >
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86l-7.05 12.2A1 1 0 004.1 18h15.8a1 1 0 00.86-1.94l-7.05-12.2a1 1 0 00-1.72 0z" />
+    </svg>
+  </div>
+</div>
+
+      <p className="text-gray-800 mb-6 text-[17px] leading-relaxed cursor-pointer">
+        {emailpopupMessage}
+      </p>
+      <button
+        onClick={() => emailsetShowPopup(false)}
+        className="bg-[#13815D] text-white px-4 py-2 rounded-md"
+      >
+        OK
+      </button>
+
+    </div>
+  </div>
+)}
+
+
+
+
         </div>
       </main>
       </div>
