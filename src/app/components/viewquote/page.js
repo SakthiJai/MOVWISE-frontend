@@ -1,5 +1,5 @@
 "use client";
-import React, { Suspense, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Rating } from "react-simple-star-rating";
 import Navbar from "../../parts/navbar/page";
 import Footer from "../../parts/Footer/footer";
@@ -9,14 +9,8 @@ import { useRouter } from "next/navigation";
 
 
 export default function ViewQuote() {
-
-function QuoteInner() {
   const params = useSearchParams();
   const ref_no = params.get("ref_no");
-  console.log(ref_no)
-
-  return <div>Reference: {ref_no}</div>;
-}
 
   const [data, setData] = useState(null);
   const router = useRouter();
@@ -42,9 +36,7 @@ function QuoteInner() {
   return (
     <>
       <Navbar />
- <Suspense fallback={<div>Loading...</div>}>
-      <QuoteInner />
-    </Suspense>
+
       <div className="font-family min-h-screen p-5 mx-90 text-black">
 
         {/* ---------- TOP BUTTONS ---------- */}

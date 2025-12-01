@@ -11,7 +11,12 @@ export default function Signinmodal({ closeModal }) {
   email: "",
   password: "",
 });
-console.log("props:", closeModal);
+const [guestformshow,setguestformshow]=useState(false);
+ const [guestformsdata, setguestformsdata] = useState({
+ guest_email: "",
+  guest_name: "",
+});
+
 const [modalopen, setModalopen] = useState(false);
   const [formData, setFormData] = useState({
     stages:"",
@@ -38,6 +43,12 @@ function handleloginformchange(name, value) {
     [name]: value,
   }));
 }
+function handleguestformchange(name,value){
+  setguestformsdata((prev)=>({
+    ...prev,
+    [name]:value
+  }))
+}
 async function logindata() {
 
   try {
@@ -56,6 +67,10 @@ async function logindata() {
         let data = JSON.parse(localStorage.getItem("getquote") || "{}")
         data.user_id = userId;
         data.service_type = Number(localStorage.getItem("service"));
+        data.guest_email=null
+        data.guest_name=null
+        data.guest_user=null
+        
         console.log("service",data.service_type)
         localStorage.setItem("getquote", JSON.stringify(data));
         //router.push("/components/comparequotes");
@@ -83,8 +98,11 @@ async function logindata() {
              
                 const updatedForm = {
               ...formData,
-              "guest_user ": guest_id,
-              "service_type":2
+              "guest_user": guest_id,
+              "guest_name":guestformsdata.guest_name,
+              "guest_email":guestformsdata.guest_email,
+              "service_type":2,
+              "user_id":null
             };
           
             setFormData(updatedForm);
@@ -121,7 +139,7 @@ async function logindata() {
                                         </div>
         
                                         {/* RIGHT SIDE (Content Section - 65%) */}
-                                       {!loginformshow && (
+                                        {(!loginformshow&&!guestformshow) &&  (
                                         <div className="relative p-8 flex flex-col justify-center text-center md:text-left">
                                             {/* Close Button */}
                                             <button
@@ -222,6 +240,72 @@ async function logindata() {
                                             </form>
                                         </div>
                                         )}
+                                        {guestformshow && (
+                                        <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-6">
+                                            <form
+                                            onSubmit={(e) => {
+                                                e.preventDefault();
+                                                createguestuser();
+                                            }}
+                                            className="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg border border-gray-200"
+                                            >
+                                                
+                                            <h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">
+                                               Guest Login 👋
+                                            </h2>
+        
+                                            {/* Email */}
+                                            <div className="mb-5">
+                                                <label
+                                                htmlFor="email"
+                                                className="block text-sm font-semibold text-gray-700 mb-2"
+                                                >
+                                                Email Address
+                                                </label>
+                                                <input
+                                                id="email"
+                                                name="guest_email"
+                                                type="email"
+                                                required
+                                                placeholder="Enter your email"
+                                                value={guestformsdata.guest_email || ""}
+                                                onChange={(e) => handleguestformchange("guest_email", e.target.value)}
+                                                className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
+                                                />
+                                            </div>
+        
+                                            {/* Password */}
+                                            <div className="mb-6">
+                                                <label
+                                                htmlFor="Name"
+                                                className="block text-sm font-semibold text-gray-700 mb-2"
+                                                >
+                                                Password
+                                                </label>
+                                                <input
+                                                id="Name"
+                                                name="guest_name"
+                                                type="text"
+                                                required
+                                                placeholder="Enter your Name"
+                                                value={guestformsdata.guest_name || ""}
+                                                onChange={(e) => handleguestformchange("guest_name", e.target.value)}
+                                                autoComplete="current-password"
+                                                className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
+                                                />
+                                            </div>
+        
+                                            {/* Submit Button */}
+                                            <button
+                                                type="submit"
+                                                className="w-full bg-[#1E5C3B] text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md transform hover:scale-105"
+                                            >
+                                                Login
+                                            </button>
+                                            </form>
+                                        </div>
+                                        )}
+                                        
                                     </div>
                                 </div>
     )

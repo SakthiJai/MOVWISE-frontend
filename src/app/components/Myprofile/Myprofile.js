@@ -15,10 +15,10 @@ const Myprofile = () => {
   };
 
   const quotesList = [
-    { id: 1, text: "ABC Legal Hub", status: "Active" },
-    { id: 2, text: "Digital Work", status: "Active" },
-    { id: 3, text: "cd_Tech ltd.", status: "Active" },
-    { id: 4, text: "ZOHO", status: "Active" },
+    { id: 1, text: "ABC Legal Hub", status: "Status" },
+    { id: 2, text: "Digital Work", status: "Status" },
+    { id: 3, text: "cd_Tech ltd.", status: "Status" },
+    { id: 4, text: "ZOHO", status: "Status" },
   ];
   // -----------------------------------
 
@@ -31,7 +31,7 @@ const Myprofile = () => {
   const StatusButton = ({ status }) => {
     let colorClass = '';
     switch (status) {
-      case 'Active':
+      case 'Status':
         colorClass = 'bg-green-100 text-green-800';
         break;
       case 'Published':
@@ -109,10 +109,10 @@ const Myprofile = () => {
       <div className="bg-white shadow-md sticky top-0 p-4">
         <Navbar originalstyle={true} />
       </div>
-      <div className='mx-auto px-4 lg:px-6 grid grid-cols-1 md:grid-cols-4  gap-8 govt_by_scheme mt-30 mb-10'>
+      <div className='mx-auto px-4 lg:px-16  grid grid-cols-1 md:grid-cols-4  gap-8 govt_by_scheme mt-30 mb-10'>
 
         {/* 2. ASIDE/SIDEBAR: Spans 1 column. Styled for a menu look. */}
-        <aside className="govt_by_scheme md:col-span-1 govt_by_scheme p-6 h-auto max-h-80 bg-white shadow-lg rounded-xl">
+        <aside className="govt_by_scheme md:col-span-1 govt_by_scheme p-6 h-auto max-h-80 bg-white shadow-lg rounded-xl font">
           <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">DevaPrasad</h3>
           <div className="flex md:flex-col space-x-4 md:space-x-0 md:space-y-2">
             <span
@@ -148,9 +148,8 @@ const Myprofile = () => {
                  <div className='mt-5'>
                   <PriceBreakdownCard/>
                  </div>
-               
               </div>
-             
+              
             ) : (
               <ProfileContent />
 

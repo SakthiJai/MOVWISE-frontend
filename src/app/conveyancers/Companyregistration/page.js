@@ -31,7 +31,7 @@ export default function Companyregistration() {
  },[]);
 
  const [lang, setLang] = useState ([
-   { value: "Not Required", label: "Not Required", id: 0 },
+   
  ]);
 
   const router = useRouter();
@@ -44,7 +44,9 @@ export default function Companyregistration() {
     websiter: "",
   });
   const [languagepreference, setlanguagepreference] = useState(" ");
+
   const [language, setLanguage] = useState([]);
+
    const [selectedLanguage, setSelectedLanguage] = useState([]); 
 const [notes, setNotes] = useState("");
  let initialcompanydata={
@@ -125,7 +127,7 @@ const [jurisdictions,setjuisdictions]=useState([])
 );
 
 
-      setLanguage( region)
+   
       
   
    console.log(languages.users)
@@ -135,13 +137,21 @@ const [jurisdictions,setjuisdictions]=useState([])
         label: l.language_name,
         id: l.id,
       }));
-      setLanguage([{ value: "Not Required", id: 0,label: "Not Required" }, ...languageOptions]);
-      handleChange({ name: "languages", value: JSON.parse(localStorage.getItem("companyData")).languages })
+
+      setLanguage([ ...languageOptions]);
+
+      // handleChange({ name: "languages", value: JSON.parse(localStorage.getItem("companyData")).languages })
+
       if(localStorage.getItem("companyData"))
       {
        
         let templang =[];
+
+const data = JSON.parse(localStorage.getItem("companyData"));
+console.log(data.languages);
+
         languageOptions.forEach(element => {
+          
         if(JSON.parse(localStorage.getItem("companyData")).languages.indexOf(element.id)>=0){
         
           templang.push(element)
@@ -152,7 +162,7 @@ const [jurisdictions,setjuisdictions]=useState([])
      
    }
    
-   if(localStorage.getItem("companyData"))
+   if(localStorage.getItem("companyData") && JSON.parse(localStorage.getItem("companyData")).regions)
       {
        
         let templang =[];
@@ -190,25 +200,43 @@ const [jurisdictions,setjuisdictions]=useState([])
   }, []);
    
 
-const handleChangeLang = (selectedOptions = []) => {
-     const hasNotRequired = selectedOptions.some(
-    (option) => option.value === "Not Required"
-  );
- if (hasNotRequired) {
-    // Keep only "Not Required" selected
-    const notRequiredOption = lang.find(opt => opt.value === "Not Required");
-    setSelectedLanguage([notRequiredOption]);
-   handleChange({ name: "languages", value: [0] })
+// const handleChangeLang = (selectedOptions = []) => {
+//      const hasNotRequired = selectedOptions.some(
+//     (option) => option.value === "Not Required"
+//   );
+//  if (hasNotRequired) {
+//     // Keep only "Not Required" selected
+//     const notRequiredOption = lang.find(opt => opt.value === "Not Required");
+//     setSelectedLanguage([notRequiredOption]);
+//    handleChange({ name: "languages", value: [0] })
     
-  } else {
-    // Normal behavior for other lenders
-    setSelectedLanguage(selectedOptions);
-    const ids = selectedOptions.map(item => item.id);
-   handleChange({ name: "languages", value: ids })
-  }
-}
+//   } else {
+//     // Normal behavior for other lenders
+//     setSelectedLanguage(selectedOptions);
+//     const ids = selectedOptions.map(item => item.id);
+//    handleChange({ name: "languages", value: ids })
+//   }
+// }
 
- 
+ const handleChangeLang = (lang=[]) => {
+  setSelectedLanguage((prev) => {
+    const exists = prev.some((item) => item.value === lang.value);
+
+    let updated;
+updated = [...prev, opt];
+    
+
+console.log("updataed",updated)
+    // update form data also
+    setFormData((f) => ({
+      ...f,
+      languages: updated.map((x) => x.id), // or array
+    }));
+
+    return updated;
+  });
+};
+
 
 
   // Error & Image states
@@ -396,6 +424,7 @@ console.log(formData)
     // Navigate only if valid
     if (Object.keys(newErrors).length === 0) {
       updateCompanyData({ ...formData, logo: image });
+      localStorage.removeItem("companyData")
       localStorage.setItem("companyData", JSON.stringify({ ...formData}));
       console.log("inside navigation")
       router.push(`${API_BASE_URL}/quotationdetails`);
@@ -422,10 +451,22 @@ console.log(selectedOptions)
 
 const [selectedServices, setSelectedServices] = useState([]);
 
-const togglesercice = (selectedOptions) => {
-  setSelectedServices(selectedOptions);
-  const values = selectedOptions.map(opt => opt.id);
-   handleChange({ name: "service_id", value: values })
+const togglesercice = (opt) => {
+ 
+  setSelectedServices((prev) => {
+    const exists = prev.some(item => item.id === opt.id);
+
+    let updated;
+updated = [...prev, opt];
+console.log(updated);
+    // update form
+    const values = updated.map(x => x.id);
+    handleChange({ name: "service_id", value: values });
+
+    return updated;
+  });
+
+
 }
 
 
@@ -554,22 +595,39 @@ const togglesercice = (selectedOptions) => {
                       />
                       {errors.company_name && <p className="text-red-500 text-[12px] mt-1">{errors.company_name}</p>}
                     </div>
-                     <div className="flex flex-col gap-2">
+       
+<div className="flex flex-col gap-2">
     <label className="block text-sm font-medium text-[#6A7682]">
-      Language Availability <span className="text-red-500">*</span>
+      Services We Offered <span className="text-red-500">*</span>
     </label>
 
-    <Select
-      options={language}
+    {/* <Select
+      options={serviceoptions}
       isMulti
-      instanceId="language-select"
-      value={selectedLanguage || formData.languages}
-      onChange={handleChangeLang}
-      placeholder="Choose languages..."
+      name="service_id"
+      instanceId="region-select"
+      value={selectedServices}
+      onChange={togglesercice}
+      placeholder="Choose Services..."
       className="text-black mt-2"
-    />
-  </div>
+    /> */}
 
+    <div className="grid grid-cols-4 gap-3 mt-2">
+  {serviceoptions.map((opt) => (
+    <label key={opt.id} className="flex items-center gap-2 ">
+      <input
+        type="checkbox"
+        checked={selectedServices.some(s => s.id === opt.id)}
+        onChange={() => togglesercice(opt)}
+      />
+   {opt.label.length <= 5 ? (
+  <span className="text-black text-sm font-medium ">{opt.label}</span>
+) :  <span className="text-black text-sm font-medium">{opt.label}</span>}
+
+    </label>
+  ))}
+</div>
+  </div>
          
                   </div>
 
@@ -595,31 +653,7 @@ const togglesercice = (selectedOptions) => {
   </div>
 
   {/* RIGHT COLUMN — Languages */}
- 
-<div className="flex flex-col gap-2">
-    <label className="block text-sm font-medium text-[#6A7682]">
-      Services We Offered <span className="text-red-500">*</span>
-    </label>
-
-    <Select
-      options={serviceoptions}
-      isMulti
-      name="service_id"
-      instanceId="region-select"
-      value={selectedServices}
-      onChange={togglesercice}
-      placeholder="Choose Services..."
-      className="text-black mt-2"
-    />
-  </div>
-</div>
-
-       
-              
-<div className="mt-5 grid grid-cols-2 gap-4">
- 
-  {/* Label */}
-  <div className="flex flex-col items-start">
+   <div className="flex flex-col items-start">
 <label className="text-[14px] text-[#6A7682] font-medium mb-2 block">
     Company Logo
   </label>
@@ -659,7 +693,44 @@ const togglesercice = (selectedOptions) => {
 
   </div>
   </div>
-  <div className="mt-10">
+
+</div>
+
+       
+              
+<div className="mt-5 grid grid-cols-1 gap-4">
+ 
+  {/* Label */}
+ 
+            <div className="flex flex-col gap-2 w-full">
+    <label className="block text-sm font-medium text-[#6A7682]">
+      Language Availability <span className="text-red-500">*</span>
+    </label>
+
+   
+  <div className="grid grid-cols-9 gap-3 mt-3 border p-2 w-full font">
+  {language.map((lang, index) => (
+    <label key={index} className="flex items-center gap-2">
+      <input
+        type="checkbox"
+        value={lang.value}
+        checked={selectedLanguage?.some(l => l.value === lang.value)}
+        onChange={() => handleChangeLang(lang)}
+      />
+      <span className="font text-[#6A7682]" >{lang.label}</span>
+    </label>
+  ))}
+</div>
+
+
+  </div>
+ 
+       
+</div>
+<div className="mt-5 grid grid-cols-1 gap-4">
+
+</div>
+     <div className="mt-10">
       <label className="block text-sm font-semibold text-gray-800 mb-2">
         Enter Additional Information
       </label>
@@ -674,9 +745,6 @@ const togglesercice = (selectedOptions) => {
 </div>
 
     </div>
-       
-</div>
-    
                <div className="mt-20 flex justify-end gap-4 w-full ">
             
 

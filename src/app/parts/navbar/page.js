@@ -23,9 +23,9 @@ const Navbar = ({ originalstyle = false }) => {
 
   return (
     <header
-      className={`w-full bg-white z-50   ${
+      className={`w-full bg-white z-100   ${
         originalstyle ? "" : "pt-3"
-      }  flex items-center `} 
+      }  flex items-center px-5`} 
     >
       {/* Logo */}
       <Link href="/" className="flex-1 items-center select-none">
@@ -83,7 +83,7 @@ const Navbar = ({ originalstyle = false }) => {
 
       {/* Dropdown */}
       {open && (
-        <div className="absolute right-0  z-10 bg-neutral-primary-medium border bg-white  rounded-base shadow-lg w-44 animate-fade-in">
+        <div className="absolute right-0  z-10 bg-neutral-primary-medium border bg-white  rounded-base shadow-lg w-44 animate-fade-in font">
           <ul className="p-0.5 text-sm text-body font-medium">
             <li className="hover:bg-yellow-400 hover:rounded-sm text-black">
               <Link className="block w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded" href="/components/Myprofile">

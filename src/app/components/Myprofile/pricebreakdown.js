@@ -2,72 +2,6 @@
 
 import React, { useState } from "react";
 
-// Helper Component for the S-Shaped Progress Graph
-// const SShapedProgress = ({ progress = 70 }) => {
-//   // SVG dimensions
-//   const width = 180;
-//   const height = 180;
-//   const strokeWidth = 10;
-//   const radius = (height - strokeWidth) / 2;
-
-//   // The path data for the S shape
-//   // M: Move to (start point)
-//   // C: Cubic Bezier curve (control points, end point)
-//   const pathData = `
-//     M ${strokeWidth} ${height - strokeWidth}
-//     C ${width / 2} ${height - strokeWidth},
-//       ${width / 2} ${strokeWidth},
-//       ${width - strokeWidth} ${strokeWidth}
-//   `;
-
-//   // Calculate the path length for stroke-dasharray/offset
-//   // A rough estimate of the path length for demonstration purposes
-//   const pathLength = 300;
-
-//   // Calculate the dash offset based on progress (70% means 30% offset)
-//   const offset = pathLength * (1 - progress / 100);
-
-//   return (
-//     <div className="flex justify-center items-center h-full w-full font">
-//       <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
-//         {/* Background S-path */}
-//         <path
-//           d={pathData}
-//           fill="none"
-//           stroke="#e0e7ff" // Light blue/indigo for background
-//           strokeWidth={strokeWidth}
-//           strokeLinecap="round"
-//         />
-
-//         {/* Progress S-path */}
-//         <path
-//           d={pathData}
-//           fill="none"
-//           stroke="#4f46e5" // Indigo for progress
-//           strokeWidth={strokeWidth}
-//           strokeLinecap="round"
-//           // Animation properties for progress visualization
-//           strokeDasharray={pathLength}
-//           strokeDashoffset={offset}
-//           style={{ transition: "stroke-dashoffset 1s ease-in-out" }}
-//         />
-
-//         {/* Progress Percentage Text */}
-//         <text
-//           x={width / 2}
-//           y={height / 2}
-//           alignmentBaseline="middle"
-//           textAnchor="middle"
-//           className="text-lg font-bold"
-//           fill="#1f2937" // Dark text
-//         >
-//           {progress}%
-//         </text>
-//       </svg>
-//     </div>
-//   );
-// };
-
 const PriceBreakdownCard = () => {
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -168,15 +102,18 @@ const PriceBreakdownCard = () => {
         </div>
 
         {/* RIGHT SIDE: Progress Graph (Col Span 2) */}
-       <div className="relative z-0 flex">
+       <div className=" flex flex-wrap  " style={{width:"430px"}}>
+        
       <svg
-        width="700"
-        height="1000"
+width="420"
+        height="600"
         viewBox="0 0 800 1000"
-        className="overflow-visible z-0"
+        className="overflow-visible justify-center ml-10"
       >
+
         {/* Background Path */}
-        <path
+       
+  <path
           d="
             M 60 80
             H 330
@@ -196,19 +133,24 @@ const PriceBreakdownCard = () => {
           strokeLinecap="round"
           strokeLinejoin="round"
         />
+      
+      
 
         {/* Milestones Inside SVG */}
         {steps.map((s, i) => (
+
           <foreignObject
+          className="z-1"
             key={i}
             x={s.x - 20}
             y={s.y - 20}
             width="120"
             height="120"
           >
+
             <div
               onClick={() => setActiveIndex(i)}
-              className="absolute z-0"
+              className=""
               style={{
                 cursor: "pointer",
                 display: "flex",
@@ -216,11 +158,13 @@ const PriceBreakdownCard = () => {
                 alignItems: "center"
               }}
             >
+                 {/*    flag */}
               <div
-                className={`milestone-circle ${
+                className={`milestone-circle  ${
                   activeIndex === i ? "active" : ""
                 }`}
               >
+                   {/*    flag */}
                 <svg width="26" height="26" viewBox="0 0 24 24">
                   <path
                     d="M6 2v20M6 4h10l-2 3 2 3H6"
@@ -228,7 +172,8 @@ const PriceBreakdownCard = () => {
                     strokeWidth="2"
                     fill="none"
                   />
-                </svg>
+                  </svg> 
+             
               </div>
 
               <p className="text-xs text-gray-500 mt-2">

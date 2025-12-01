@@ -318,25 +318,8 @@ useEffect(() => {
         
         const router = useRouter();
 
-        function   handlelanguagechange(e){
-          console.log(e.target.value);
-              setlanguagepreference(e.target.value);
-              setLanguage([]); 
-           }
-           function languagecheckboxchange(item,checked,id){
-            if(checked){
-              console.log(item);
-        setLanguage(prev => [...prev, item]);
-        handleChange("languages",[...formData.languages, id])
-        console.log(language);
-        
-            }
-            else{
-              setLanguage(prev=>prev.filter(lang=>lang!==item))
-            }
-                
-              
-               }
+       
+       
 
         // Initial state for the toggle buttons
         const [scheme, setScheme] = useState("yes");
@@ -345,7 +328,7 @@ useEffect(() => {
         const [shared_ownership, setshared_ownership] = useState("yes");
 
   return (
-                <div className="flex flex-col lg:flex-row gap-8">
+                <div className="flex flex-col lg:flex-row gap-8 mt-7">
                 {/* Left stepper */}
           <aside className="z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-50% lg:max-h-[600px] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white   lg:top-22">
                              <div className="p-6">

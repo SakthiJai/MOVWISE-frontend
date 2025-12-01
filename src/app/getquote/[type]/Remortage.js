@@ -16,6 +16,7 @@ import Image from "next/image";
 import Swal  from "sweetalert2";
 import LocationSearch, { fetchAddressDetails } from '../Purchase/LocationSearch';
 import AddressFields from './AddressFields';
+import Signinmodal from "../../components/utility/Singingmodal";
 
 
 // import Select from "react-select";
@@ -27,12 +28,7 @@ import AddressFields from './AddressFields';
 
 export default function Remortage() {
   useEffect(() => {
-  const storedData = localStorage.getItem("getquote");
-
-
-  if (storedData) {
-    setFormData(JSON.parse(storedData));
-  }
+ 
  
   fetchPropertyTypes();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -45,6 +41,8 @@ const handleUnknownPostcode = () => {
   // 2️⃣ Reset address-related fields
   setFormData(prev => ({
     ...prev,
+    [`address`]: "",          // ← THIS is the missing one
+    [`selectedId`]: "",
     [`address_line1`]: "",
     [`address_line2`]: "",
     [`town`]: "",
@@ -67,24 +65,31 @@ const [lang, setLang] = useState ([
   
 
 const [selectedLanguage, setSelectedLanguage] = useState([]);
-const handleChangeLang = (selectedOptions = []) => {
-     const hasNotRequired = selectedOptions.some(
-    (option) => option.value === "Not Required"
-  );
- if (hasNotRequired) {
-    // Keep only "Not Required" selected
-    const notRequiredOption = lang.find(opt => opt.value === "Not Required");
-    setSelectedLanguage([notRequiredOption]);
-    console.log("Selected language: [0]");
-    handleChange("languages", [0]);
-  } else {
-    // Normal behavior for other lenders
-    setSelectedLanguage(selectedOptions);
-    const ids = selectedOptions.map(item => item.id);
-    console.log("Selected languages:", ids);
-    handleChange("languages", ids);
+const handleChangeLang = (selectedOptions) => {
+      //    const hasNotRequired = selectedOptions.some(
+      //   (option) => option.value === "Not Required"
+      // );
+     const  hasNotRequired=false
+      console.log(selectedOptions)
+      if(selectedOptions=="Not Required"){
+      const  hasNotRequired=true
+      }
+ 
+
+     if (hasNotRequired) {
+        // Keep only "Not Required" selected
+        const notRequiredOption = lang.find(opt => opt.value === "Not Required");
+        setSelectedLanguage([notRequiredOption]);
+        console.log("Selected language: [0]");
+        handleChange("languages", [0]);
+      } else {
+        // Normal behavior for other lenders
+        setSelectedLanguage(selectedOptions);
+      console.log(selectedOptions)
+     handleChange("languages",[selectedOptions.id]);
+      }
+    
   }
-}
 const handleChange_l = (selectedOptions = []) => {
   const hasNotRequired = selectedOptions.some(
     (option) => option.value === "Not Required"
@@ -95,13 +100,13 @@ const handleChange_l = (selectedOptions = []) => {
     const notRequiredOption = lender.find(opt => opt.value === "Not Required");
     setSelectedLenders([notRequiredOption]);
     console.log("Selected lenders: [0]");
-    handleChange("lender", [0]);
+    handleChange("lenders", [0]);
   } else {
     // Normal behavior for other lenders
     setSelectedLenders(selectedOptions);
     const ids = selectedOptions.map(item => item.id);
     console.log("Selected lenders:", ids);
-    handleChange("lender", ids);
+    handleChange("lenders", ids);
   }
 };
 
@@ -111,8 +116,6 @@ const handleChange_l = (selectedOptions = []) => {
   "address": "",
   "address_line1": "",
   "address_line2": "",
-  "country": "",
-  "town": "",
   "property_values": 0,
   "no_of_bedrooms": "",
   "property_type": "",
@@ -163,47 +166,52 @@ function handleloginformchange(name, value) {
 
  
   
-  if(!formData.languages){
-    newErrors.languages="please select a language"
-  }
+  // if(!formData.languages){
+  //   newErrors.languages="please select a language"
+  // }
 
      
-      if (!formData.address.trim()) {
-        newErrors.address = "Property address is required";
-      } else if (formData.address.trim().length < 5) {
-        newErrors.address = "Address must be at least 5 characters";
-      }
+      // if (!formData?.address?.trim()) {
+      //   newErrors.address = "Property address is required";
+      // } else if (formData.address.trim().length < 5) {
+      //   newErrors.address = "Address must be at least 5 characters";
+      // }
     
       
-      if (!formData.property_values
-) {
-        newErrors.property_values
- = "property_valuesis required";
-      } else if (Number(formData.property_values
-) <= 0) {
-        newErrors.property_values
- = "property_values must be a positive number";
-      }
+//       if (!formData.property_values
+// ) {
+//         newErrors.property_values
+//  = "property_valuesis required";
+//       } else if (Number(formData.property_values
+// ) <= 0) {
+//         newErrors.property_values
+//  = "property_values must be a positive number";
+//       }
 
- if(!formData.no_of_bedrooms){
-  newErrors.no_of_bedrooms="please select a no. of bedrooms"
- }
-  if(!formData.property_type){
-  newErrors.property_type="please select a property_type"
- }
-   if(!formData.leasehold_or_free){
-  newErrors.leasehold_or_free="please select a leasehold_or_free"
- }
+//  if(!formData.no_of_bedrooms){
+//   newErrors.no_of_bedrooms="please select a no. of bedrooms"
+//  }
+//   if(!formData.property_type){
+//   newErrors.property_type="please select a property_type"
+//  }
+//    if(!formData.leasehold_or_free){
+//   newErrors.leasehold_or_free="please select a leasehold_or_free"
+//  }
 
-if(!formData.buy_to_let){
-  newErrors.buy_to_let="please select buy_to_let"
-}
-    setErrors(newErrors);
-    console.log(errors)
+// if(!formData.buy_to_let){
+//   newErrors.buy_to_let="please select buy_to_let"
+// }
+//     setErrors(newErrors);
+//     console.log(errors)
 
     // if no errors, submit
   if (Object.keys(newErrors).length === 0) {
-  console.log("✅ Form submitted:", formData);
+     localStorage.removeItem("getquote");
+
+      console.log("✅ Form submitted:", formData);
+            localStorage.setItem("service", JSON.stringify(4));
+                  localStorage.setItem("getquote", JSON.stringify(formData));
+
 
   Swal.fire({
     title: "Success!",
@@ -272,38 +280,7 @@ console.log(language);
         const router = useRouter();
         const [sharedOwnership, setSharedOwnership] = useState("");
 
-  async function logindata() {
 
-  try {
-    console.log(loginformdata)
-    const loginResponse = await postData(API_ENDPOINTS.login, loginformdata);
-    console.log("Login response:", loginResponse);
-
-    if (loginResponse.code === 200) {
-      const userId = loginResponse.user?.id; // <-- get it from API response
-console.log(userId)
-      if (userId) {
-        // ✅ Update formData
-      const updatedForm = {
-    ...formData,
-    "user_id": userId,
-    "service_type":4
-  };
-
-
-  // ✅ Update React state
-  setFormData(updatedForm);
-    localStorage.setItem("getquote", JSON.stringify(updatedForm));
-
-      }
-
-      router.push("/components/comparequotes");
-    }
-  } catch (error) {
-    console.error("Error logging in:", error);
-  }
-
-}
 const getIconForType = (type) => {
   switch (type.toLowerCase()) {
     case "flat":
@@ -320,31 +297,7 @@ const getIconForType = (type) => {
   }
 };
 
-async function createguestuser(){
 
- try {
-  const guest_id = uuidv4();
-console.log(guest_id);
-   
-      const updatedForm = {
-    ...formData,
-    "guest_user": guest_id,
-    "user_id":null,
-    "service_type":4
-  };
-
-  // ✅ Update React state
-  setFormData(updatedForm);
-    localStorage.setItem("getquote", JSON.stringify(updatedForm));
- router.push("/components/comparequotes");
-      }
-
-     
-    
-   catch (error) {
-    console.error("Error logging in:", error);
-  }
-}
  const [propertyTypeOptions, setPropertyTypeOptions] = useState([]);
 
 
@@ -498,7 +451,7 @@ console.log(guest_id);
                               if (details) {
                                 setFormData((prev) => ({
                                   ...prev,
-                                  town: details.post_town || details.admin_district || "",
+                                  town_city: details.post_town || details.admin_district || "",
                                   country: details.country || "",
                                   }));
                                 } else {
@@ -544,6 +497,7 @@ console.log(guest_id);
                       onChange={(field, value) =>
                         setFormData((prev) => ({ ...prev, [field]: value }))
                       }
+                      prefix=""
                     />
 
 
@@ -557,7 +511,7 @@ console.log(guest_id);
                             </span>
                             <input
                                 id="price"
-                                type="number"
+                                type="text"
                                   value={formData?.property_values ?? ""}
                                 className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
                             name="property_values
@@ -768,16 +722,15 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
    <div className="mt-2">
   
 
-  
-  <Select
-    options={lang}
-    isMulti
-              instanceId="language-select"
-    value={selectedLanguage || formData.languages}
-    onChange={handleChangeLang}
-    placeholder="Choose languages..."
-    className="text-black mt-2"
-  />
+   <Select
+        options={lang}
+    
+                  instanceId="language-select"
+        value={selectedLanguage || formData.languages}
+        onChange={handleChangeLang}
+        placeholder="Choose languages..."
+        className="text-black mt-2"
+      />
  
 </div>
     <p
@@ -827,168 +780,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
   
                     </form>
  {modalopen && (
-  <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    <div className="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-3xl h-[500px] grid grid-cols-1 md:grid-cols-[35%_65%] animate-scale-in relative">
-      
-      {/* LEFT SIDE (Brand Section - 30%) */}
-      <div className="text-center bg-gradient-to-br from-[#1E5C3B] to-green-600 text-white flex flex-col justify-between items-center md:items-start p-8">
-        <div className="mt-20">
-          <h2 className="text-3xl font-extrabold tracking-wide mb-2">MOVWISE</h2>
-          <p className="text-sm opacity-90 leading-relaxed mt-20">
-            Making property transactions simple, secure, and smart.
-          </p>
-        </div>
-
-        <Link
-        type="button"
- href="/components/personaldetails" 
-         className="mt-8 mx-auto bg-white text-[#1E5C3B] font-semibold px-8 py-2 rounded-full hover:bg-gray-100 transition-all duration-200 shadow-md">
-          Sign Up
-        </Link>
-      </div>
-
-      {/* RIGHT SIDE (Content Section - 70%) */}
-    {!loginformshow &&  ( <div className="relative p-8 flex flex-col justify-center text-center md:text-left">
-        {/* Close Button */}
-        <button
-          onClick={() => setModalopen(false)}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-3xl font-bold leading-none"
-        >
-          &times;
-        </button>
-
-        <h2 className="text-2xl font-bold text-white mb-3">Became a Member</h2>
-        <p className="text-white mb-8 leading-relaxed" >
-          You’re about to submit your <b>Property Details</b>.  
-          Please to continue as a <b>Sign in</b> or proceed as a <b>Guest</b>?
-        </p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 mt-6 gap-4">
-      <button
-  // use your actual route path
-  className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
-          onClick={()=>{setloginformshow(true)}}
->
-    Sign in 
-</button>
- {/* <Link
-          href="/components/comparequotes"
-          className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
-           onClick={createguestuser} >
-         
-        </Link> */}
- <Link
-          href="/components/comparequotes"
-          className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
-           onClick={createguestuser} >
-          Guest 
-        </Link>
-          </div>
-          <div>
-          <Link
-    href="/auth/forgetpassword"
-    className="absolute mt-2 right-6 text-white hover:underline text-sm"
-  >
-             Forget Password
-          </Link>
-          
-
-        </div>
-<div class="w-full flex justify-center mt-15">
-  <button
-    class="inline-flex items-center gap-2 
-           px-5 py-2 border border-gray-300 
-           rounded-full bg-white hover:bg-gray-50 
-           transition shadow-sm">
-    
-    <Image
-    width={"10"}
-    height={"10"}
-      src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-      class="w-5 h-5"
-      alt="Google" />
-
-    <span class="text-gray-700 font-medium">Sign in with Google</span>
-  </button>
-</div>
-
-
-      </div>)}
-{loginformshow && (
-  <div className="flex justify-center items-center min-h-[70vh]  rounded-xl shadow-md p-6">
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        logindata();
-       
-      }}
-      className="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg border border-gray-200"
-    >
-      <button
-          onClick={() => setModalopen(false)}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-3xl font-bold leading-none"
-        >
-          &times;
-        </button>
-      <h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">
-        Welcome Back 👋
-      </h2>
-
-      {/* Email */}
-      <div className="mb-5">
-        <label
-          htmlFor="email"
-          className="block text-sm font-semibold text-gray-700 mb-2"
-        >
-          Email Address
-        </label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          required
-          placeholder="Enter your email"
-          value={loginformdata.email || ""}
-          onChange={(e) => handleloginformchange("email", e.target.value)}
-          className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
-        />
-      </div>
-
-      {/* Password */}
-      <div className="mb-6">
-        <label
-          htmlFor="password"
-          className="block text-sm font-semibold text-gray-700 mb-2"
-        >
-          Password
-        </label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          required
-          placeholder="Enter your password"
-          value={loginformdata.password || ""}
-          onChange={(e) => handleloginformchange("password", e.target.value)}
-          autoComplete="current-password"
-          className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
-        />
-      </div>
-
-      {/* Submit Button */}
-      <button
-        type="submit"
-        className="w-full bg-[#1E5C3B] text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-all duration-200 shadow-md"
-      >
-        Login
-      </button>
-    </form>
-  </div>
-)}
-
-
-    </div>
-  </div>
+  <Signinmodal></Signinmodal>
 )}
                     <div className="mt-12 flex justify-end gap-4">
                     <button

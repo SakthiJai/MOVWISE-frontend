@@ -13,6 +13,7 @@ import Select from "react-select";
 import Footer from "../../parts/Footer/footer";
 import LocationSearch, { fetchAddressDetails } from '../Purchase/LocationSearch';
 import AddressFields from './AddressFields';
+import Signinmodal from "../../components/utility/Singingmodal";
 
 // import Select from "react-select";
 
@@ -23,38 +24,75 @@ import AddressFields from './AddressFields';
 export default function Equity() {
     const [selectedLenders, setSelectedLenders] = useState([]);
         const [loginformshow,setloginformshow]=useState(false)
-        const lenders = [
-      { id: 1, lenders_name: "Lender A" },
-      { id: 2, lenders_name: "Lender B" },
-      { id: 3, lenders_name: "Lender C" },
-      { id: 4, lenders_name: "Lender D" },
-      { id: 5, lenders_name: "Lender E" },
-      { id: 6, lenders_name: "Lender F" },
-      { id: 7, lenders_name: "Lender G" },
-      { id: 8, lenders_name: "Lender H" },
-      { id: 9, lenders_name: "Lender I" },
-      { id: 10, lenders_name: "Lender J" },
-    ];
+        const [lender, setLender] = useState([
+             { value: "Not Required", label: "Not Required", id: 0 },
+           ]);
+
+          const [selectedLanguage, setSelectedLanguage] = useState([]);
+    
     
       // Convert lenders into react-select format
-      const options_l = lenders.map((lender) => ({
+      const options_l = lender.map((lender) => ({
         value: lender.id,
         label: lender.lenders_name,
       }));
     
-      const handleChange_l = (selectedOptions) => {
+       const handleChange_l = (selectedOptions = []) => {
+      const hasNotRequired = selectedOptions.some(
+        (option) => option.value === "Not Required"
+      );
+    
+      if (hasNotRequired) {
+        // Keep only "Not Required" selected
+        const notRequiredOption = lender.find(opt => opt.value === "Not Required");
+        setSelectedLenders([notRequiredOption]);
+        console.log("Selected lenders: [0]");
+        handleChange("lenders", [0]);
+      } else {
+        // Normal behavior for other lenders
         setSelectedLenders(selectedOptions);
-        const ids = selectedOptions.map(item => item.value);
+        const ids = selectedOptions.map(item => item.id);
         console.log("Selected lenders:", ids);
-        handleChange("lender",ids)
-      };
+        handleChange("lenders", ids);
+      }
+    };
+    
+    
+    async function fetchdata(){
+      try{
+     const languages = await getData(API_ENDPOINTS.languages);
+                const lenderData = await getData(API_ENDPOINTS.lenders);
+     
+                  if(Array.isArray(languages.users)){
+              const languageOptions = languages.users.map((l) => ({
+                value: l.language_name,
+                label: l.language_name,
+                id: l.id,
+              }));
+              setLang([{ value: "Not Required", id: 0,label: "Not Required" }, ...languageOptions]);
+           }
+              if (Array.isArray(lenderData.users)) {
+              const lenderOptions = lenderData.users.map((l) => ({
+                value: l.lenders_name,
+                label: l.lenders_name,
+                id: l.id,
+              }));
+                 console.log(lenderOptions)
+        
+                   setLender([{ value: "Not Required", id: 0,label: "Not Required" }, ...lenderOptions]);
+                       console.log(lender)
+                  }
+      }
+      catch(e){
+    console.log(e);
+      }
+      
+    }
     
     useEffect(() => {
-      const storedData = localStorage.getItem("getquote");
+      fetchdata()
     
-      if (storedData) {
-        setFormData(JSON.parse(storedData));
-      }
+     
     }, []);
 
       const [showAddressLines, setShowAddressLines] = useState(false);
@@ -64,20 +102,18 @@ export default function Equity() {
       "address": "",
       "address_line1": "",
       "address_line2": "",
-      "country": "",
-      "town": "",
-      "property_value": 0,
+      "property_values": 0,
       "number_of_peoples": "",
       "property_type": "",
       "leasehold_or_free": "",
       "buy_to_let": "",
-      "mortgage_lender": "not required",
       "ownership_housing_asso": 1,
       "languages": [],
       "special_instruction": "",
       "user_id":[],
-      "lender":[],
-      "type_id":3
+      "lenders":[],
+      "type_id":3,
+      
             
       });
     
@@ -100,7 +136,8 @@ export default function Equity() {
   // 2️⃣ Reset address-related fields
   setFormData(prev => ({
     ...prev,
-    [`address`]: "",
+    [`address`]: "",          // ← THIS is the missing one
+    [`selectedId`]: "",
     [`address_line1`]: "",
     [`address_line2`]: "",
     [`town`]: "",
@@ -139,9 +176,9 @@ export default function Equity() {
           }
         
           
-          if (!formData.property_value) {
+          if (!formData.property_values) {
             newErrors.property_value = "property_value  is required";
-          } else if (Number(formData.property_value) <= 0) {
+          } else if (Number(formData.property_values) <= 0) {
             newErrors.property_value = "property_value must be a positive number";
           }
     
@@ -163,9 +200,15 @@ export default function Equity() {
     
         // if no errors, submit
         if (Object.keys(newErrors).length === 0) {
-          console.log("✅ Form submitted:", formData);
-          alert("");
-              setModalopen(true)
+
+           localStorage.removeItem("getquote");
+
+      console.log("✅ Form submitted:", formData);
+            localStorage.setItem("service", JSON.stringify(5));
+
+      localStorage.setItem("getquote", JSON.stringify(formData));
+      //alert("Form submitted successfully!");
+       setModalopen(true)
     
         }
     
@@ -174,18 +217,9 @@ export default function Equity() {
         const [modalopen, setModalopen] = useState(false);
           const [languagepreference, setlanguagepreference] = useState(" ");
           const [language, setLanguage] = useState([]);
-                const lang=[
-      { id: 1, language_name: "English" },
-      { id: 2, language_name: "Spanish" },
-      { id: 3, language_name: "French" },
-      { id: 4, language_name: "German" },
-      { id: 5, language_name: "Chinese" },
-      { id: 6, language_name: "Hindi" },
-      { id: 7, language_name: "Arabic" },
-      { id: 8, language_name: "Portuguese" },
-      { id: 9, language_name: "Russian" },
-      { id: 10, language_name: "Japanese" },
-    ];
+        const [lang, setLang] = useState ([
+                    { value: "Not Required", label: "Not Required", id: 0 },
+                  ]);
     
           function   handlelanguagechange(e){
           console.log(e.target.value);
@@ -228,35 +262,32 @@ export default function Equity() {
             const router = useRouter();
             const [sharedOwnership, setSharedOwnership] = useState("");
     
-      async function logindata() {
     
-      try {
-        console.log(loginformdata)
-        const loginResponse = await postData(API_ENDPOINTS.login, loginformdata);
-        console.log("Login response:", loginResponse);
-    
-        if (loginResponse.code === 200) {
-          const userId = loginResponse.user?.id; // <-- get it from API response
-    console.log(userId)
-          if (userId) {
-            // ✅ Update formData
-          const updatedForm = {
-        ...formData,
-        "user_id": userId,
-      };
-    
-      // ✅ Update React state
-      setFormData(updatedForm);
-        localStorage.setItem("getquote", JSON.stringify(updatedForm));
-    
-          }
-    
-          router.push("/components/comparequotes");
-        }
-      } catch (error) {
-        console.error("Error logging in:", error);
+     const handleChangeLang = (selectedOptions) => {
+      //    const hasNotRequired = selectedOptions.some(
+      //   (option) => option.value === "Not Required"
+      // );
+     const  hasNotRequired=false
+      console.log(selectedOptions)
+      if(selectedOptions=="Not Required"){
+      const  hasNotRequired=true
       }
-    }
+ 
+
+     if (hasNotRequired) {
+        // Keep only "Not Required" selected
+        const notRequiredOption = lang.find(opt => opt.value === "Not Required");
+        setSelectedLanguage([notRequiredOption]);
+        console.log("Selected language: [0]");
+        handleChange("languages", [0]);
+      } else {
+        // Normal behavior for other lenders
+        setSelectedLanguage(selectedOptions);
+      console.log(selectedOptions)
+     handleChange("languages",[selectedOptions.id]);
+      }
+    
+  }
           return (
                 <div className="flex flex-col lg:flex-row gap-8 mt-8">
                 {/* Left stepper */}
@@ -361,7 +392,7 @@ export default function Equity() {
                               if (details) {
                                 setFormData((prev) => ({
                                   ...prev,
-                                  town: details.post_town || details.admin_district || "",
+                                  town_city: details.post_town || details.admin_district || "",
                                   country: details.country || "",
                                   }));
                                 } else {
@@ -410,6 +441,7 @@ export default function Equity() {
                       onChange={(field, value) =>
                         setFormData((prev) => ({ ...prev, [field]: value }))
                       }
+                      prefix=""
                     />
 
 
@@ -427,8 +459,8 @@ export default function Equity() {
                                 id="price"
                                 type="number"
                                 className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
-                            name="property_value"
-                            onChange={(e)=>{handleChange("property_value",Number(e.target.value))}}
+                            name="property_values"
+                            onChange={(e)=>{handleChange("property_values",Number(e.target.value))}}
                             />
                             </div>
                               <p
@@ -614,40 +646,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                     </div>
 <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
                   </div>
-<div className="flex flex-col h-full">
-  <label
-    htmlFor="b2l"
-    className="block text-sm font-medium text-gray-700 mb-1"
-  >
-    Mortgage Lender
-  </label>
 
-  <div className="relative mt-auto">
-    <select
-      id="b2l"
-      name="mortgage_lender"
-      value={formData.mortgage_lender || ""} // ✅ controlled value
-      onChange={(e) => handleChange("mortgage_lender", e.target.value)} // ✅ updates formData
-      className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"
-    >
-      {["Please select", "Not Known", "Not Required", "Lender Name Look Up"].map(
-        (opt) => (
-          <option key={opt} value={opt}>
-            {opt}
-          </option>
-        )
-      )}
-    </select>
-
-    <ChevronDown
-      size={16}
-      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
-    />
-  </div>
-   <p
-className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
-></p>
-</div>
 
 
                 </div>
@@ -655,24 +654,26 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
               <div className="space-y-4">
   {/* Label + Main dropdown */}
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-  <div>
-    <label className="block text-sm font-semibold text-gray-800 mb-1">
-      Prefer solicitor in your first language?
-    </label>
-    <select
-      className="text-black placeholder-black w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#1E5C3B]"
-      onChange={handlelanguagechange}
-      value={languagepreference}
-    >
-      <option value="">Please select</option>
-      <option>No Preference</option>
-      <option>Yes</option>
-      <option>Maybe</option>
-    </select>
-     <p
-className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
-></p>
-  </div>
+<div>
+        <label className="block text-sm font-semibold text-gray-800 mb-1">
+          Prefer solicitor in your first language?
+        </label>
+        <div className="mt-2">
+      
+    
+      
+      <Select
+        options={lang}
+                  instanceId="language-select"
+        value={selectedLanguage || formData.languages}
+        onChange={handleChangeLang}
+        placeholder="Choose languages..."
+        className="text-black mt-2"
+      />
+     
+    </div>
+        <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
+      </div>
 
  
 
@@ -682,7 +683,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
         Select Lenders
       </label>
       <Select
-        options={options_l}
+        options={lender}
           instanceId="lenders-select"
         isMulti
         value={selectedLenders} 
@@ -724,6 +725,9 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
 </div>
 
   )}</div>
+
+
+
     </div>
           
                     {/* 🌐 SPECIAL INSTRUCTIONS */}
@@ -744,127 +748,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
   
                     </form>
  {modalopen && (
-  <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-    <div className="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-3xl h-[500px] grid grid-cols-1 md:grid-cols-[35%_65%] animate-scale-in relative">
-      
-      {/* LEFT SIDE (Brand Section - 30%) */}
-      <div className="text-center bg-gradient-to-br from-[#1E5C3B] to-green-600 text-white flex flex-col justify-between items-center md:items-start p-8">
-        <div className="mt-20">
-          <h2 className="text-3xl font-extrabold tracking-wide mb-2">MOVWISE</h2>
-          <p className="text-sm opacity-90 leading-relaxed mt-20">
-            Making property transactions simple, secure, and smart.
-          </p>
-        </div>
-
-        <Link
-        type="button"
- href="/components/personaldetails" 
-         className="mt-8 mx-auto bg-white text-[#1E5C3B] font-semibold px-8 py-2 rounded-full hover:bg-gray-100 transition-all duration-200 shadow-md">
-          Sign Up
-        </Link>
-      </div>
-
-      {/* RIGHT SIDE (Content Section - 70%) */}
-    {!loginformshow &&  ( <div className="relative p-8 flex flex-col justify-center text-center md:text-left">
-        {/* Close Button */}
-        <button
-          onClick={() => setModalopen(false)}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-3xl font-bold leading-none"
-        >
-          &times;
-        </button>
-
-        <h2 className="text-2xl font-bold text-[#1E5C3B] mb-3">Confirm Submission</h2>
-        <p className="text-gray-600 mb-8 leading-relaxed">
-          You’re about to submit your <b>Property Details</b>.  
-          Would you like to continue as a <b>logged-in user</b> or a <b>guest user</b>?
-        </p>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-      <button
-  // use your actual route path
-  className="border border-[#1E5C3B] text-[#1E5C3B] px-6 py-3 rounded-lg hover:bg-[#1E5C3B] hover:text-white transition-all duration-200 shadow-sm flex items-center justify-center"
-onClick={()=>{setloginformshow(true)}}
->
-  Continue as Logged-in User
-</button>
-          <Link
- href="/components/comparequotes"
-             className="border border-[#1E5C3B] text-[#1E5C3B] px-6 py-3 rounded-lg hover:bg-[#1E5C3B] hover:text-white transition-all duration-200 shadow-sm"
-          >
-            Continue as Guest User
-          </Link>
-        </div>
-      </div>)}
-{loginformshow && (
-  <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 rounded-xl shadow-md p-6">
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        logindata();
-       
-      }}
-      className="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg border border-gray-200"
-    >
-      <h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">
-        Welcome Back 👋
-      </h2>
-
-      {/* Email */}
-      <div className="mb-5">
-        <label
-          htmlFor="email"
-          className="block text-sm font-semibold text-gray-700 mb-2"
-        >
-          Email Address
-        </label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          required
-          placeholder="Enter your email"
-          value={loginformdata.email || ""}
-          onChange={(e) => handleloginformchange("email", e.target.value)}
-          className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
-        />
-      </div>
-
-      {/* Password */}
-      <div className="mb-6">
-        <label
-          htmlFor="password"
-          className="block text-sm font-semibold text-gray-700 mb-2"
-        >
-          Password
-        </label>
-        <input
-          id="password"
-          name="password"
-          type="password"
-          required
-          placeholder="Enter your password"
-          value={loginformdata.password || ""}
-          onChange={(e) => handleloginformchange("password", e.target.value)}
-          autoComplete="current-password"
-          className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
-        />
-      </div>
-
-      {/* Submit Button */}
-      <button
-        type="submit"
-        className="w-full bg-[#1E5C3B] text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-all duration-200 shadow-md"
-      >
-        Login
-      </button>
-    </form>
-  </div>
-)}
-
-
-    </div>
-  </div>
+<Signinmodal></Signinmodal>
 )}
                     <div className="mt-12 flex justify-end gap-4">
                     <button

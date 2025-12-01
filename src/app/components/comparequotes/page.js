@@ -71,7 +71,7 @@ useEffect(() => {
   async function qutesdata(formData) {
     try {
       const response = await postData(API_ENDPOINTS.services, formData);
-            console.log("✅ Remortgage API Response:", response?.service?.quote_ref_number);
+            console.log("✅ service API Response:", response?.service?.quote_ref_number);
             setref( response.service.quote_ref_number);
             if(response.code==200){
               localStorage.clear()
@@ -82,8 +82,8 @@ useEffect(() => {
             }
 
 
-      const propety_id = response.data;
-      console.log("property_id",propety_id);//property_id
+      // const propety_id = response.data;
+      // console.log("property_id",propety_id);//property_id
       
      const userid = formData.user_id || formData["guest_user "]; // note the space
 console.log("User ID or Guest ID:", userid);// user_id
@@ -389,16 +389,7 @@ alt={quote.company_name||"company logo"}
             </div>
 
             {/* Bottom actions */}
-            <div className="mt-18 flex justify-end gap-4">
-              <button
-                onClick={() => router.back()}
-                className="font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1B1D21]"
-              >
-                Back
-              </button>
-
-             
-            </div>
+        
           </section>
 
           {/* Popup Modal for Instruct */}
