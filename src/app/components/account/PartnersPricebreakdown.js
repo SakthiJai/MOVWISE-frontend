@@ -49,6 +49,7 @@ const transactionOptions = [
      setlogintype(localStorage.getItem("logintype"));
  
      }
+     const user     = localStorage.getItem("user");
     // Define async function inside useEffect
     const fetchData = async () => { console.log("121212",localStorage.getItem("logintype"));
       try {
@@ -59,6 +60,7 @@ const transactionOptions = [
           getData(API_ENDPOINTS.feecatgory),
           getData(API_ENDPOINTS.feetype+"/2"),
           getData(API_ENDPOINTS.pricing),
+          getData(API_ENDPOINTS.getCompanyFee+"/"+user),
         ]);
 
         const storedData = JSON.parse(localStorage.getItem("companyData"));

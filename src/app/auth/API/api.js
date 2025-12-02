@@ -32,6 +32,8 @@ export const API_ENDPOINTS = {
     quotesfilter:`${BASE_URL}/quotes`,
     instruct:`${BASE_URL}/quote-mail`,
     servicelist:`${BASE_URL}/service`,
+    getCompanyInformation:`${BASE_URL}/companyInformation`,
+    getCompanyFee:`${BASE_URL}/feeDetails`,
 
 }
   // add more endpoints here

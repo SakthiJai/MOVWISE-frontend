@@ -36,7 +36,9 @@ const Partnersprofile = () => {
       //handleChange({})
       
       const ids = formData.languages.map(item => item.id);
+      if(storedData!=undefined && storedData!=""){
      handleChange({ name: "languages", value: JSON.parse(storedData).languages })
+      }
     }
    },[]);
   
@@ -52,6 +54,7 @@ const Partnersprofile = () => {
       phone_number: "",
       email: "",
       websiter: "",
+      languages:[]
     });
     const [languagepreference, setlanguagepreference] = useState(" ");
   
@@ -64,7 +67,7 @@ const Partnersprofile = () => {
   const [jurisdictions,setjuisdictions]=useState([])
   
   
-     const fetchlanguages = async () => {
+  const fetchlanguages = async () => {
       try {
         const  languages = await getData(API_ENDPOINTS.languages)
         const region = await getData(API_ENDPOINTS.region);
@@ -146,8 +149,30 @@ const Partnersprofile = () => {
         console.error("Error fetching languages:", error);
       }
     };
+const fetchCompanyInforamtion = async ()=>
+  {
+     const user     = localStorage.getItem("user");
+     const  details = await getData(API_ENDPOINTS.getCompanyInformation+"/"+user);
+     
+     if(details && details.data) {
+       setFormData({
+         company_name: details.data.company_name || "",
+         phone_number: details.data.phone_number || "",
+         email: details.data.email || "",
+         websiter: details.data.website || "",
+         SRA_CLC_number: details.data.SRA_CLC_number || "",
+         additional_info: details.data.additional_info || "",
+         languages: details.data.languages || []
+       });
+       
+       if(details.data.logo) {
+         setImage(details.data.logo);
+       }
+     }
+  } ;   
     useEffect(() => {
       fetchlanguages();
+      fetchCompanyInforamtion();
     }, []);
      
   
