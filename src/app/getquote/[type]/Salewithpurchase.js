@@ -213,7 +213,14 @@ useEffect(() => {
                   localStorage.setItem("service", JSON.stringify(1));
 
       localStorage.setItem("getquote", JSON.stringify(formData));
-        setModalopen(true)    
+      if(localStorage.getItem("user")){
+            formData.user_id=localStorage.getItem("user");
+            localStorage.setItem("getquote", JSON.stringify(formData));
+            router.push("/components/comparequotes");
+          }
+          else{
+          setModalopen(true)
+          }
     }
      else {
       console.log("❌ Validation failed:", errors);

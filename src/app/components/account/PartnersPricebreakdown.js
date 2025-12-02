@@ -25,6 +25,7 @@ const [disbursementFeesError, setdisbursementFeesError] = useState([]);
 const [leasedisbursementFeesError, setleasedisbursementFeesError] = useState([]);
 const [additionalServiceError, setadditionalServiceError] = useState([]);
 const [headings, setHeadings] = useState([]);
+const [serviceType, setserviceType] = useState([]);
 const [formData, setformData] = useState({});
 const [notesData, setnotesData] = useState("");
 const [loading, setLoading] = useState(false);
@@ -56,7 +57,7 @@ const transactionOptions = [
        // setLoading(true);
 
         // Call both APIs in parallel
-        const [response1, response2,response3] = await Promise.all([
+        const [response1, response2,response3,response4] = await Promise.all([
           getData(API_ENDPOINTS.feecatgory),
           getData(API_ENDPOINTS.feetype+"/2"),
           getData(API_ENDPOINTS.pricing),
@@ -73,14 +74,17 @@ const transactionOptions = [
         {
           response1.data[2][0]['sub_categories'].push({"sub_category" : "Sales Transaction Supplements"})
         }*/
-        console.log(response1.data[2][0]['sub_categories'])
+        console.log(response4)
         setfeeCategory(response1.data)
         setpurchaseFeeTypeList(response2.purchase??[]);
         setsalesFeeTypeList(response2.sales??[]);
         setstandardDisbursementList(response2.standard_disbursement??[]);
         setleaseholdDisbursementList(response2.leasehold_disbursement??[]);
         setadditionalServiceList(response2.additional_service??[]);
-        setpricingList(response3.pricing??[])
+        setpricingList(response4.data.pricing??[])
+        setserviceType(response4.data.service)
+      
+         console.log(formData)
       } catch (err) {
         //console.logerror(err);
         setErrors("Failed to fetch data");
@@ -160,23 +164,23 @@ const transactionOptions = [
                           Max £
                         </th>
 
-                        {(formData['service_id']?.includes(1) ||
-                          formData['service_id']?.includes(3)) && (
+                        {(serviceType?.includes(1) ||
+                          serviceType?.includes(3)) && (
                           <>
                             <th className="px-3 py-2 text-center">Purchase Leasehold £</th>
                             <th className="px-3 py-2 text-center">Purchase Freehold £</th>
                           </>
                         )}
 
-                        {(formData['service_id']?.includes(2) ||
-                          formData['service_id']?.includes(3)) && (
+                        {(serviceType?.includes(2) ||
+                          serviceType?.includes(3)) && (
                           <>
                             <th className="px-3 py-2 text-center">Sales Leasehold £</th>
                             <th className="px-3 py-2 text-center">Sales Freehold £</th>
                           </>
                         )}
 
-                        {formData['service_id']?.includes(4) && (
+                        {serviceType?.includes(4) && (
                           <th className="px-3 py-2 text-center">Remortgage</th>
                         )}
 
@@ -239,8 +243,8 @@ const transactionOptions = [
                                 </div>
                               </td>
 
-                              {(formData['service_id']?.includes(1) ||
-                                formData['service_id']?.includes(3)) && (
+                              {(serviceType?.includes(1) ||
+                                serviceType?.includes(3)) && (
                                 <td className="px-3 py-2">
                                   <div className="flex flex-col">
                                     <input
@@ -262,8 +266,8 @@ const transactionOptions = [
                               )}
 
                               {/* PURCHASE FREEHOLD */}
-                              {(formData['service_id']?.includes(1) ||
-                                formData['service_id']?.includes(3)) && (
+                              {(serviceType?.includes(1) ||
+                                serviceType?.includes(3)) && (
                                 <td className="px-3 py-2">
                                   <div className="flex flex-col">
                                     <input
@@ -284,8 +288,8 @@ const transactionOptions = [
                               )}
 
                               {/* SALES LEASEHOLD */}
-                              {(formData['service_id']?.includes(2) ||
-                                formData['service_id']?.includes(3)) && (
+                              {(serviceType?.includes(2) ||
+                                serviceType?.includes(3)) && (
                                 <td className="px-3 py-2">
                                   <div className="flex flex-col">
                                     <input
@@ -307,8 +311,8 @@ const transactionOptions = [
                               )}
 
                               {/* SALES FREEHOLD */}
-                              {(formData['service_id']?.includes(2) ||
-                                formData['service_id']?.includes(3)) && (
+                              {(serviceType?.includes(2) ||
+                                serviceType?.includes(3)) && (
                                 <td className="px-3 py-2">
                                   <div className="flex flex-col">
                                     <input
