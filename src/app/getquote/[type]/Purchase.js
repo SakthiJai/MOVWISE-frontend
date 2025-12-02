@@ -108,7 +108,8 @@ export default function Purchase() {
   "gift_deposit": "",
   "ownership_housing_asso": 0,
   "specal_instruction": "",
-  "lenders": ""             
+  "lenders": "",
+  "service_type":null,             
       });
 
      
@@ -228,7 +229,7 @@ useEffect(() => {
       const [languagepreference, setlanguagepreference] = useState(" ");
       const [language, setLanguage] = useState([]);
       const handleSubmit = (e) => {
-
+        setFormData((prev) => ({ ...prev, ['service_type']: localStorage.getItem("service")}));
         e.preventDefault();
 
         let newErrors = {};
@@ -253,11 +254,11 @@ useEffect(() => {
   newErrors.lenders = "Please select at least one lender";
 }
         
-              if (!formData.address.trim()) {
+            /*  if (!formData.address.trim()) {
             newErrors.address = "Property address is required";
           } else if (formData.address.trim().length < 5) {
             newErrors.address = "Address must be at least 5 characters";
-                }
+                }*/
         
       if (!formData.purchase_price) {
             newErrors.purchase_price = "purchase_price  is required";
@@ -290,8 +291,15 @@ useEffect(() => {
 
           console.log("✅ Form submitted:", formData);
           localStorage.setItem("getquote", JSON.stringify(formData));
-          localStorage.setItem("service",JSON.stringify(2))
-              setModalopen(true)
+          //localStorage.setItem("service",JSON.stringify(2))
+          if(localStorage.getItem("user")){
+            formData.user_id=localStorage.getItem("user");
+            localStorage.setItem("getquote", JSON.stringify(formData));
+            router.push("/components/comparequotes");
+          }
+          else{
+          setModalopen(true)
+          }
     
         }
     

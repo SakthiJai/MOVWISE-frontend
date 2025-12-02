@@ -44,6 +44,7 @@ const [languagepreference, setlanguagepreference] = useState(" ");
   specal_instruction:"",
   lenders:"",  
   user_id:null,
+  service_type:null,
 });
 
 
@@ -158,11 +159,11 @@ const handleSubmit = (e) => {
 
 
  
-  if (!formData.sales_address.trim()) {
+  /*if (!formData.sales_address.trim()) {
     newErrors.address = "Property address is required";
   } else if (formData.sales_address.trim().length < 5) {
     newErrors.address = "Address must be at least 5 characters";
-  }
+  }*/
 
   
   if (!formData.sales_price) {
@@ -185,12 +186,14 @@ const handleSubmit = (e) => {
 
 
    setErrors(newErrors);
-    console.log(errors)
-
+    
+  setFormData((prev) => ({ ...prev, ['service_type']: localStorage.getItem("service")}));
     // if no errors, submit
     if (Object.keys(newErrors).length === 0) {
-            localStorage.removeItem("getquote");
-
+           // localStorage.removeItem("getquote");
+      formData.service_type=localStorage.getItem("service");
+      console.log(formData)
+       localStorage.setItem("getquote", JSON.stringify(formData));
       console.log("✅ Form submitted:", formData);
             localStorage.setItem("service", JSON.stringify(3));
 
@@ -198,8 +201,8 @@ const handleSubmit = (e) => {
       
       if(localStorage.getItem("user")){
         formData.user_id=localStorage.getItem("user");
-              localStorage.setItem("getquote", JSON.stringify(formData));
-      router.push("/components/comparequotes");
+        localStorage.setItem("getquote", JSON.stringify(formData));
+         router.push("/components/comparequotes");
       }
       else{
        setModalopen(true)

@@ -74,7 +74,9 @@ useEffect(() => {
             console.log("✅ service API Response:", response?.service?.quote_ref_number);
             setref( response.service.quote_ref_number);
             if(response.code==200){
-              localStorage.clear()
+              localStorage.removeItem("getquote");
+              localStorage.removeItem("service");
+              
               setquotefound(true)
             }
             else{
