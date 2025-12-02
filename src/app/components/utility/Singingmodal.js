@@ -10,6 +10,7 @@ export default function Signinmodal({ closeModal }) {
   const [loginformdata, setloginformdata] = useState({
     email: "",
     password: "",
+    type: "",
   });
   const [logintype, setlogintype] = useState();
   const [guestformshow, setguestformshow] = useState(false);
@@ -53,31 +54,30 @@ export default function Signinmodal({ closeModal }) {
       [name]: value,
     }));
   }
-  async function logindata() {
+   async function logindata() {
 
-      try {
-        const res = await axios.post("YOUR_LOGIN_API_URL", loginformdata);
 
-        if (res.data?.status === true) {
-            setLoginError(""); // clear error
-            // login success code here...
-        } else {
-            setLoginError("Invalid email or password");
-        }
-    } catch (error) {
-        setLoginError("Invalid email or password");
-    }
     console.log(logintype);
 
-    if (logintype) {
-      localStorage.setItem("logintype", logintype);
+    if (!logintype) {
+      setLoginError("Please select a login type");
+      return;
     }
+
+    localStorage.setItem("logintype", logintype);
 
     console.log("check");
     try {
       let data = JSON.parse(localStorage.getItem("getquote") || "{}");
-      console.log(loginformdata);
-      const loginResponse = await postData(API_ENDPOINTS.login, loginformdata);
+      
+      const dataToSubmit = {
+        ...loginformdata,
+        type: logintype,
+      };
+
+    console.log("loginformdata:", dataToSubmit);
+
+      const loginResponse = await postData(API_ENDPOINTS.login, dataToSubmit);
       console.log("Login response:", loginResponse);
 
       if (loginResponse.code === 200) {
@@ -110,7 +110,12 @@ export default function Signinmodal({ closeModal }) {
           router.push("/#quote_type");
         }
       }
+      else  if (loginResponse.status === false)
+      {
+         setLoginError("Invalid email or password");
+      }
     } catch (error) {
+      setLoginError("Invalid email or password");
       console.error("Error logging in:", error);
     }
   }
@@ -199,6 +204,7 @@ export default function Signinmodal({ closeModal }) {
                 onClick={() => {
                   setloginformshow(true);
                   setlogintype("user");
+                  setLoginError(false);
                 }}
               >
                 Sign In
@@ -207,6 +213,7 @@ export default function Signinmodal({ closeModal }) {
               <button
                 onClick={() => {
                   setguestformshow(true);
+                  setLoginError(false);
                 }}
                 className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
               >
@@ -220,6 +227,7 @@ export default function Signinmodal({ closeModal }) {
                 onClick={() => {
                   setloginformshow(true);
                   setlogintype("partner");
+                  setLoginError(false);
                 }}
               >
                 Partner Login
@@ -306,6 +314,7 @@ export default function Signinmodal({ closeModal }) {
                 onClick={() => {
                   setloginformshow(false);
                   setguestformshow(false);
+                  setLoginError(false);
                 }}
                 className="mt-1 w-full bg-[#ffd954] text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md transform hover:scale-105"
               >
@@ -324,7 +333,7 @@ export default function Signinmodal({ closeModal }) {
               }}
               className="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg border border-gray-200"
             >
-              <h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">
+              <h2 className="text-xl font-bold text-[#1E5C3B] mb-6 text-center">
                 Guest Users Please Fill Below Details
               </h2>
 
