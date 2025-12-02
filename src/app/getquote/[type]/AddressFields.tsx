@@ -65,7 +65,7 @@ const AddressFields: React.FC<AddressFieldsProps> = ({
       {/* Town */}
       <div className="flex flex-col h-full">
         <label className="block text-sm font-medium text-gray-700 mb-1">
-          Town / City <span className="text-red-500">*</span>
+          Town / City 
         </label>
         <input
           type="text"
@@ -94,9 +94,15 @@ const AddressFields: React.FC<AddressFieldsProps> = ({
           <option value="Wales">Wales</option>
           <option value="Northern Ireland">Northern Ireland</option>
         </select>
-        <p className="text-[12px] text-red-500 min-h-[16px]">
+        {/* <p className="text-[12px] text-red-500 min-h-[16px]">
           {errors[country]}
-        </p>
+        </p> */}
+        <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+  errors["sales_country"] ? "text-red-500 opacity-100" : "opacity-0"
+}`}>
+  {errors["sales_country"] || "placeholder"}
+</p>
+
       </div>
 
     </>

@@ -68,7 +68,9 @@ export default function Purchase() {
         console.log("Selected lenders:", ids);
         handleChange("lenders", ids);
       }
-    };
+  };
+  
+  const options = ["1", "2", "3", "4", "5", "5+"];
 
     const handleUnknownPostcode = () => {
   // 1️⃣ Condition: user clicked "I don’t know the postcode yet"
@@ -96,15 +98,15 @@ export default function Purchase() {
   "service_type":2,
   "stages":"", 
    "purchase_price": "",
-  "no_of_bedrooms": "",
-  "property_type": "",
-  "leasehold_or_free": "",
+  "no_of_bedrooms": options[0],
+  "property_type": "Flat",
+  "leasehold_or_free": "Leasehold",
   "new_build": "",
   "buy_to_let": "",
-  "govt_by_scheme": "",
-  "obtaining_mortgage": "",
+  "govt_by_scheme": 0,
+  "obtaining_mortgage": 0,
   "gift_deposit": "",
-  "ownership_housing_asso": "",
+  "ownership_housing_asso": 0,
   "specal_instruction": "",
   "lenders": ""             
       });
@@ -230,10 +232,33 @@ useEffect(() => {
         e.preventDefault();
 
         let newErrors = {};
-      if(!formData.languages){
-        newErrors.languages="please select a language"
-      }
-     
+
+        if (!formData.stages) {
+  newErrors.stages = "Please select a stage";
+  }
+
+
+              if (!formData.country) {
+                newErrors.sales_country = "Please select a country";
+        }
+        
+               if(!formData.languages){
+               newErrors.languages="please select a language"
+        }
+
+        if (!selectedLanguage || selectedLanguage.length === 0) {
+    newErrors.preferLanguage = "Please select a language";
+  }
+         if (!selectedLenders || selectedLenders.length === 0) {
+  newErrors.lenders = "Please select at least one lender";
+}
+        
+              if (!formData.address.trim()) {
+            newErrors.address = "Property address is required";
+          } else if (formData.address.trim().length < 5) {
+            newErrors.address = "Address must be at least 5 characters";
+                }
+        
       if (!formData.purchase_price) {
             newErrors.purchase_price = "purchase_price  is required";
           } else if (Number(formData.purchase_price) <= 0) {
@@ -278,7 +303,7 @@ useEffect(() => {
       const [bedrooms, setBedrooms] = useState("");
     
     
-      const options = ["1", "2", "3", "4", "5", "5+"];
+      // const options = ["1", "2", "3", "4", "5", "5+"];
     
       const [propertyType, setPropertyType] = useState("");
     
@@ -972,7 +997,7 @@ return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
       <div>
         <label className="block text-sm font-semibold text-gray-800 mb-1">
-          Prefer solicitor in your first language?
+          Prefer solicitor in your first language? <span className="text-red-500">*</span>
         </label>
         <div className="mt-2">
       
@@ -983,12 +1008,22 @@ return (
     
                   instanceId="language-select"
         value={selectedLanguage || formData.languages}
-        onChange={handleChangeLang}
+         onChange={(selectedOption) => {
+    handleChangeLang(selectedOption); // existing handler to update formData / state
+
+    // Clear the error immediately
+    if (errors.preferLanguage) {
+      setErrors((prev) => ({ ...prev, preferLanguage: "" }));
+    }
+  }}
         placeholder="Choose languages..."
         className="text-black mt-2"
       />
      
-    </div>
+              </div>
+               <p className="text-[12px] mt-1 min-h-[16px] text-red-500">
+  {errors.preferLanguage}
+</p>
         <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
       </div>
     
@@ -997,7 +1032,7 @@ return (
     
       <div className="flex flex-col h-full">
           <label className="block text-sm font-semibold text-gray-800 mb-2">
-            Select Lenders
+            Select Lenders <span className="text-red-500">*</span>
           </label>
            <Select
             options={lender}
@@ -1008,7 +1043,12 @@ return (
             placeholder="Choose lenders..."
             className="text-black"
     
-          /> 
+              /> 
+              <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+  errors.lenders ? "text-red-500 opacity-100" : "opacity-0"
+}`}>
+  {errors.lenders || "placeholder"}
+</p>
           <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
         </div> {/* Show only when needed */}
     </div></div>

@@ -21,6 +21,7 @@ export default function Sales() {
 
 const [languagepreference, setlanguagepreference] = useState(" ");
 
+  const options = ["1", "2", "3", "4", "5" , "5+"];
 
   const [formData, setFormData] = useState({
     "sales_stages":"",
@@ -30,11 +31,15 @@ const [languagepreference, setlanguagepreference] = useState(" ");
   "sales_country": "",
   "sales_town_city": "",
   sales_price: "",
-  sales_no_of_bedrooms: "",
-  sales_leasehold_or_free: "", 
-  sales_property_type: "",
+    //sales_no_of_bedrooms: "",
+  sales_no_of_bedrooms: options[0],
+    //sales_leasehold_or_free: "", 
+  sales_leasehold_or_free: "Leasehold", 
+    //sales_property_type: "",
+  sales_property_type: "Flat",
   shared_ownership: "",
-  existing_mortgage:"yes",
+    //existing_mortgage:"yes",
+  existing_mortgage:0,
   languages:"",
   specal_instruction:"",
   lenders:"",  
@@ -132,6 +137,25 @@ const handleSubmit = (e) => {
     // simple validation
     let newErrors = {};
  
+  
+  
+  if (!formData.sales_stages) {
+  newErrors.sales_stages = "Please select a stage";
+  }
+  
+  if (!formData.sales_country) {
+  newErrors.sales_country = "Please select a country";
+}
+
+  if (!selectedLanguage || selectedLanguage.length === 0) {
+    newErrors.preferLanguage = "Please select a language";
+  }
+
+  if (!selectedLenders || selectedLenders.length === 0) {
+  newErrors.lenders = "Please select at least one lender";
+}
+
+
 
  
   if (!formData.sales_address.trim()) {
@@ -304,7 +328,7 @@ useEffect(() => {
 
      const [no_of_bedrooms, setno_of_bedrooms] = useState("");
 
-     const options = ["1", "2", "3", "4", "5" , "5+"];
+    //  const options = ["1", "2", "3", "4", "5" , "5+"];
 
      const [property_type, setproperty_type] = useState("");
         const property_typeOptions = [
@@ -412,7 +436,7 @@ useEffect(() => {
                          {/* whay stages are you at? */}
                             <div className="">
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    What stages are you at?
+                                    What stages are you at? <span className="text-red-500">*</span>
                                 </label>
                                 <select id="stages" name="sales_stages"
                                  value={formData.sales_stages} // ✅ controlled value
@@ -423,7 +447,13 @@ useEffect(() => {
                                     {[ "Please select", "Just researching / budgeting", "Have received an offer", "Sale agreed",].map((opt) => (
                                     <option key={opt} value={opt === "Please select" ? "" : opt}> {opt} </option>))}
                                 </select>
-                                {/* Dropdown icon */}
+                {/* Dropdown icon */}
+                              <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+                errors.sales_stages ? "text-red-500 opacity-100" : "opacity-0"
+              }`}>
+                {errors.sales_stages || "placeholder"}
+              </p>
+
         <ChevronDown
           size={18}
           className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
@@ -754,22 +784,34 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
   {/* Label + Main dropdown */}
  <div>
         <label className="block text-sm font-semibold text-gray-800 mb-1">
-          Prefer solicitor in your first language?
+          Prefer solicitor in your first language? <span className="text-red-500">*</span>
         </label>
         <div className="mt-2">
       
-    
-      
-      <Select
-        options={lang}
-                  instanceId="language-select"
-        value={selectedLanguage || formData.languages}
-        onChange={handleChangeLang}
-        placeholder="Choose languages..."
-        className="text-black mt-2"
-      />
+    <Select
+  options={lang}
+  instanceId="language-select"
+  value={selectedLanguage || formData.languages}
+  onChange={(selectedOption) => {
+    handleChangeLang(selectedOption); // existing handler to update formData / state
+
+    // Clear the error immediately
+    if (errors.preferLanguage) {
+      setErrors((prev) => ({ ...prev, preferLanguage: "" }));
+    }
+  }}
+  placeholder="Choose languages..."
+  className="text-black mt-2"
+/>
+
      
-    </div>
+                </div>
+                
+                <p className="text-[12px] mt-1 min-h-[16px] text-red-500">
+  {errors.preferLanguage}
+</p>
+
+     
         <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
       </div>
 
@@ -781,7 +823,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
 {/* //imp */}
  <div className="flex flex-col h-full">
       <label className="block text-sm font-semibold text-gray-800 mb-1 rounded-lg focus:ring-2 focus:ring-[#1E5C3B]">
-        Select Lenders
+        Select Lenders <span className="text-red-500">*</span>
       </label>
 
       {isClient ? (
@@ -800,6 +842,11 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
         <div className="h-[44px] bg-gray-100 rounded-lg animate-pulse" />
       )}
 
+              <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+  errors.lenders ? "text-red-500 opacity-100" : "opacity-0"
+}`}>
+  {errors.lenders || "placeholder"}
+</p>
       {/* Debug preview */}
        <p
 className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
