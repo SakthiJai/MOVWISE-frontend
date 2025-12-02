@@ -533,13 +533,13 @@ const [serviceOptions, setServiceOptions] = useState({
 
   //supplement handlers
 
-const handlesuplement = (e, rowIndex) => {
+const handleSupplement = (e, rowIndex) => {
   const value = e.target.value;
   const updated = [...PurchasTransactionSupplementsrows];
 
   // If the row had previous value → restore it back to dropdown
   if (updated[rowIndex].type && updated[rowIndex].type !== "others") {
-    setsuplementOptions((prev) => [
+    setSupplementOptions((prev) => [
       ...prev,
       { label: updated[rowIndex].type, value: updated[rowIndex].type }
     ]);
@@ -553,7 +553,7 @@ const handlesuplement = (e, rowIndex) => {
     updated[rowIndex].type = value;
 
     // remove selected option
-    setsuplementOptions((prev) =>
+    setSupplementOptions((prev) =>
       prev.filter((item) => item.value !== value)
     );
   }
@@ -598,11 +598,11 @@ const handleDisField = (index, field, value) => {
   setDisbursementRows(updated);
 };
 
-let [supplementOptions,setsuplementOptions] =useState( [
+let [supplementOptions,setSupplementOptions] =useState( [
   
 ])
 
-let [salessupplementOptions,setsalessuplementOptions] =useState( [
+let [salessupplementOptions,setsalesSupplementOptions] =useState( [
   
 ])
 const [disbursementRows, setDisbursementRows] = useState([
@@ -938,10 +938,10 @@ const formatPound = (value) => {
                         </div>
                         {transactionFeesError && <p style={{ color: "red" }}>{transactionFeesError}</p>}
                             <div className="grid  grid-cols-4 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
-                                <div className="text-center">Suplement Type £</div>
-                                <div className="text-center">Fee Amount £</div>
+                                <div className="text-center">Supplement Type £</div>
+                                <div className="text-center">Fee Cost £</div>
                                 <div className="text-center">Description </div>
-                                <div className="text-center">Action</div>
+                                <div className="text-end me-14">Action</div>
                             </div>
                             { pricingList.find(item => item.fees_category_id === numIndex).price_list.map((row, i) => 
                             (
@@ -966,12 +966,12 @@ const formatPound = (value) => {
                                 ) : (
                                   <div>
                                   <input
-                                  id="suplement_type"
+                                  id="Supplement_type"
                                     type="text"
                                     placeholder="Enter other Supplement Type"
                                     value={row.type}
                                     onChange={(e) => handlePriceChange(numIndex, i, "type_id", e.target.value)}
-                                    className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
+                                    className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
                                   />
                                   </div>
                                 )}
@@ -982,7 +982,7 @@ const formatPound = (value) => {
                                   placeholder="Fee Amount"
                                   value={row.fee_amount}
                                   onChange={(e) => handlePriceChange(numIndex, i, "fee_amount", e.target.value)}
-                                  className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
+                                  className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
                                 />
                                 
                                 
@@ -993,13 +993,13 @@ const formatPound = (value) => {
                                   placeholder="Description"
                                   value={row.description}
                                   onChange={(e) => handlePriceChange(numIndex, i, "description", e.target.value)}
-                                  className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
+                                  className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
                                 />
 
                                 {/* REMOVE BUTTON */}
                                 
                                 {/* ADD Row Button */}
-                                <div className="flex justify-center gap-4">   
+                                <div className="flex justify-end me-6 gap-4">   
                               
                                   <button
                                     className="text-green-500 tooltip"
@@ -1040,21 +1040,21 @@ const formatPound = (value) => {
                             {sub.sub_category}
                         </div>
                         {disbursementFeesError && <p style={{ color: "red" }}>{disbursementFeesError}</p>}
-                        <div className="grid grid-cols-5 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
+                        <div className="grid grid-cols-4 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
 
                                 <div className="text-center">Disbursement Type £</div>
                                 <div className="text-center">Fee Cost £</div>
                                 <div className="text-center">Paid To</div>
-                                <div className="text-center">Transaction Type</div>
-                                <div className="text-center">Action</div>
+                                {/* <div className="text-center">Transaction Type</div> */}
+                                <div className="text-end pr-14">Action</div>
 
                         </div>
                         {pricingList.find(item => item.fees_category_id === numIndex).price_list.map((row, i) => (
-                        <div key={i} className="grid grid-cols-5 gap-3 px-3 py-2">
+                        <div key={i} className="grid grid-cols-4 gap-3 px-3 py-2">
           
                             {!row.isOthers ? (
                                 <select
-                                className="poundtransform border border-gray-400 rounded py-0.5 w-auto  text-sm text-left text-black"
+                                className="poundtransform border border-gray-400 rounded py-0.5 w-auto  text-sm text-left text-black pl-2"
                                 onChange={(e) => handlePriceChange(numIndex, i, "type_id", e.target.value)}
                                 value={row.type}
                                 >
@@ -1069,10 +1069,10 @@ const formatPound = (value) => {
                                 <div>
                                 <input
                                 type="text"
-                                placeholder="Enter other suplement"
+                                placeholder="Enter other supplement"
                                 value={row.type}
                                 onChange={(e) => handlePriceChange(numIndex, i, "type_id", e.target.value)}
-                                className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-gray-900"
+                                className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-gray-900 pl-2"
                                 />
                                 </div>
                             )}
@@ -1083,12 +1083,12 @@ const formatPound = (value) => {
                                 placeholder="Fee Cost"
                                 value={row.fee_amount}
                                 onChange={(e) => handlePriceChange(numIndex, i, "fee_amount", e.target.value)}
-                                className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black "
+                                className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
                                 />
 
                                 {/* PAID TO */}
                                 <select
-                                className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black  placeholder:text-gray-800"
+                                className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black  placeholder:text-gray-800 pl-2"
                                 value={row.paidTo}
                                 onChange={(e) => handlePriceChange(numIndex, i, "paid_to", e.target.value)}
                             >
@@ -1101,7 +1101,7 @@ const formatPound = (value) => {
                                 </select>
 
                                 {/* TRANSACTION TYPE */}
-                                    <select
+                                    {/* <select
                                     className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black  "
                                     value={row.transactionType}
                                     onChange={(e) => handlePriceChange(numIndex, i, "paid_to", e.target.value)}
@@ -1112,10 +1112,10 @@ const formatPound = (value) => {
                                         {opt.label}
                                     </option>
                                     ))}
-                                    </select>
+                                    </select> */}
 
                                     {/* ACTION BUTTONS */}
-                                    <div className="flex justify-center gap-4">
+                                    <div className="flex justify-end me-6 gap-4">
                                         {/* ADD ROW – only last row */}
                                         {i === disbursementRows.length - 1 && (
                                         <button
@@ -1171,14 +1171,14 @@ const formatPound = (value) => {
 
                     {/* RESPONSIVE WRAPPER */}
                     <div className=" w-full">
-                      <table className="min-w-max w-full text-xs font-semibold text-gray-600 ">
+                      <table className="min-w-max w-full text-xs font-semibold text-gray-600 table-fixed">
                         <thead className="bg-gray-100">
                           <tr className="">
-                            <th className="px-3 py-2 text-center">Leasehold Service</th>
-                            <th className="px-3 py-2 text-center">Fee Type</th>
-                            <th className="px-3 py-2 text-center">Amount £</th>
-                            <th className="px-3 py-2 text-center">Paid To</th>
-                            <th className="px-3 py-2 text-center">Action</th>
+                            <th className="px-2 py-2 text-center w-1/4">Leasehold Service</th>
+                            <th className="px-2 py-2 text-center w-1/4">Fee Type</th>
+                            <th className="px-2 py-2 text-center w-1/4">Cost £</th>
+                            {/* <th className="px-3 py-2 text-center w-1/4">Paid To</th> */}
+                            <th className="px-2 py-2 text-end pr-16 w-1/4">Action</th>
                           </tr>
                         </thead>
 
@@ -1189,7 +1189,7 @@ const formatPound = (value) => {
                               <tr key={i} className="border-b">
 
                                 {/* LEASEHOLD SERVICE SELECT */}
-                                <td className="px-3 py-2 text-center">
+                                <td className="pl-2 py-2 text-center">
                                   {!row.isOthers ? (
                                     <select
                                       className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
@@ -1219,7 +1219,7 @@ const formatPound = (value) => {
                                 </td>
 
                                 {/* COST */}
-                                <td className="px-3 py-2 text-center">
+                                <td className="pl-2 py-2 text-center">
                                   <input
                                     type="text"
                                     placeholder="Fee Cost"
@@ -1232,7 +1232,7 @@ const formatPound = (value) => {
                                 </td>
 
                                 {/* PAID TO */}
-                                <td className="px-3 py-2 text-center">
+                                <td className="pl-2 py-2 text-center">
                                   <select
                                     className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
                                     value={row.paidTo}
@@ -1250,7 +1250,7 @@ const formatPound = (value) => {
                                 </td>
 
                                 {/* TRANSACTION TYPE */}
-                                <td className="px-3 py-2 text-center">
+                                {/* <td className="px-3 py-2 text-center">
                                   <select
                                     className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
                                     value={row.transactionType}
@@ -1265,11 +1265,11 @@ const formatPound = (value) => {
                                       </option>
                                     ))}
                                   </select>
-                                </td>
+                                </td> */}
 
                                 {/* ACTION BUTTONS */}
                                 <td className="px-3 py-2 text-center">
-                                  <div className="flex justify-center gap-4">
+                                  <div className="flex justify-end me-6 gap-4">
                                     
                                     {/* ADD ROW - LAST ROW ONLY */}
                                     {i === disbursementRows.length - 1 && (
@@ -1319,13 +1319,13 @@ const formatPound = (value) => {
   )}
 
   {/* TABLE WRAPPER (for responsive scrolling) */}
-  <div className="overflow-x-auto w-full">
-    <table className="min-w-max w-full text-xs font-semibold text-gray-600 ">
+  <div className=" w-full">
+    <table className="min-w-max w-full text-xs font-semibold text-gray-600 table-fixed">
       <thead className="bg-gray-100">
         <tr className="">
-          <th className="px-3 py-2 text-center">Select Service</th>
-          <th className="px-3 py-2 text-center">Amount £</th>
-          <th className="px-3 py-2 text-center">Action</th>
+          <th className="px-3 py-2 text-center w-1/4">Select Service</th>
+          <th className="px-3 py-2 text-center w-1/4">Cost £</th>
+          <th className="px-3 py-2 text-end pr-16 w-1/2">Action</th>
         </tr>
       </thead>
 
@@ -1336,7 +1336,7 @@ const formatPound = (value) => {
             <tr key={i} className="border-b">
               
               {/* SELECT SERVICE */}
-              <td className="px-3 py-2 text-center">
+              <td className="pl-2 py-2 text-center">
                 <select
                   className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
                   value={row.type}
@@ -1354,7 +1354,7 @@ const formatPound = (value) => {
               </td>
 
               {/* FEE COST */}
-              <td className="px-3 py-2 text-center">
+              <td className="pl-2 py-2 text-center">
                 <input
                   type="text"
                   placeholder="Fee Cost"
@@ -1368,7 +1368,7 @@ const formatPound = (value) => {
 
               {/* ACTION BUTTONS */}
               <td className="px-3 py-2 text-center">
-                <div className="flex justify-center gap-3">
+                <div className="flex justify-end me-6 gap-3">
 
                   {/* ADD ROW - only last row */}
                   {i === disbursementRows.length - 1 && (
@@ -1758,8 +1758,8 @@ const formatPound = (value) => {
                         </div>
                         {transactionFeesError && <p style={{ color: "red" }}>{transactionFeesError}</p>}
                             <div className="grid  grid-cols-4 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
-                                <div className="text-center">Suplement Type £</div>
-                                <div className="text-center">Fee Amount £</div>
+                                <div className="text-center">Supplement Type £</div>
+                                <div className="text-center">Fee Cost £</div>
                                 <div className="text-center">Description </div>
                             </div>
                             { pricingList.find(item => item.fees_category_id === numIndex).price_list.map((row, i) => 
@@ -1788,7 +1788,7 @@ const formatPound = (value) => {
                                   <div>
                                   <input
                                   disabled
-                                  id="suplement_type"
+                                  id="Supplement_type"
                                     type="text"
                                     placeholder="Enter other Supplement Type"
                                     value={row.type}
@@ -1873,7 +1873,7 @@ const formatPound = (value) => {
                                 <input
                                  readOnly
                                 type="text"
-                                placeholder="Enter other suplement"
+                                placeholder="Enter other Supplement"
                                 value={row.type}
                                 onChange={(e) => handlePriceChange(numIndex, i, "type_id", e.target.value)}
                                 className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-gray-900"
@@ -1957,7 +1957,7 @@ const formatPound = (value) => {
                           <tr className="">
                             <th className="px-3 py-2 text-center">Leasehold Service</th>
                             <th className="px-3 py-2 text-center">Fee Type</th>
-                            <th className="px-3 py-2 text-center">Amount £</th>
+                            <th className="px-3 py-2 text-center">Cost £</th>
                             <th className="px-3 py-2 text-center">Paid To</th>
                           </tr>
                         </thead>
@@ -2080,7 +2080,7 @@ const formatPound = (value) => {
       <thead className="bg-gray-100">
         <tr className="">
           <th className="px-3 py-2 text-center">Select Service</th>
-          <th className="px-3 py-2 text-center">Amount £</th>
+          <th className="px-3 py-2 text-center">Cost £</th>
         </tr>
       </thead>
 
