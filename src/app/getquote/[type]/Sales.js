@@ -29,7 +29,7 @@ const [languagepreference, setlanguagepreference] = useState(" ");
  "sales_address_line1": "",
   "sales_address_line2": "",
   "sales_country": "",
-  "sales_town_city": "",
+  "sales_city": "",
   sales_price: "",
     //sales_no_of_bedrooms: "",
   sales_no_of_bedrooms: options[0],
@@ -46,7 +46,7 @@ const [languagepreference, setlanguagepreference] = useState(" ");
   user_id:null,
   service_type:null,
 });
-
+ console.log("formdata:" , formData)
 
 const [rawValue, setRawValue] = useState("");
 const handleUnknownPostcode = () => {
@@ -60,7 +60,7 @@ const handleUnknownPostcode = () => {
     [`selectedId`]: "",
     [`sales_address_line1`]: "",
     [`sales_address_line2`]: "",
-    [`sales_town_city`]: "",
+    [`sales_city`]: "",
     [`sales_country`]: "",
   }));
 };
@@ -486,7 +486,7 @@ useEffect(() => {
                               if (details) {
                                 setFormData((prev) => ({
                                   ...prev,
-                                  sales_town_city: details.post_town || details.admin_district || "",
+                                  sales_city: details.post_town || details.admin_district || "",
                                   sales_country: details.country || "",
                                   }));
                                 } else {

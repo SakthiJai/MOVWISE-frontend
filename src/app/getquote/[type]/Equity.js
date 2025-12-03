@@ -102,6 +102,8 @@ export default function Equity() {
       "address": "",
       "address_line1": "",
       "address_line2": "",
+      "town_city" : "",
+      "country" : "",
       "property_values": 0,
       "number_of_peoples": "",
       "property_type": "",
@@ -140,7 +142,7 @@ export default function Equity() {
     [`selectedId`]: "",
     [`address_line1`]: "",
     [`address_line2`]: "",
-    [`town`]: "",
+    [`town_city`]: "",
     [`country`]: "",
   }));
 };

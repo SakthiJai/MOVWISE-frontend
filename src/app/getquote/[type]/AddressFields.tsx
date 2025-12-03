@@ -20,9 +20,11 @@ const AddressFields: React.FC<AddressFieldsProps> = ({
 
   const line1 = `${prefix}address_line1`;
   const line2 = `${prefix}address_line2`;
-  const town_city = `${prefix}city`;
-  const country = `${prefix}country`;
+const town_city = prefix ? `${prefix}city` : "town_city";
+const country = prefix ? `${prefix}country` : "country";
 
+console.log("location:" , town_city);
+console.log("country:" , country);
   return (
     <>
 

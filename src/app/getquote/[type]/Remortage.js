@@ -45,7 +45,7 @@ const handleUnknownPostcode = () => {
     [`selectedId`]: "",
     [`address_line1`]: "",
     [`address_line2`]: "",
-    [`town`]: "",
+    [`town_city`]: "",
     [`country`]: "",
   }));
 };
@@ -116,6 +116,8 @@ const handleChange_l = (selectedOptions = []) => {
   "address": "",
   "address_line1": "",
   "address_line2": "",
+  "town_city" : "",
+  "country" : "" ,
   "property_values": 0,
   "no_of_bedrooms": "",
   "property_type": "",
