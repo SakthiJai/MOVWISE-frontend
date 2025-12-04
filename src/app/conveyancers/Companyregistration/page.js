@@ -631,7 +631,7 @@ export default function Companyregistration() {
                         )}
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-4 mt-4"></div>
+                  
 
                     {/* Row 3 - Logo Upload */}
 
@@ -650,9 +650,7 @@ export default function Companyregistration() {
         type="checkbox"
         checked={selectedServices.some(s => s.id === opt.id)}
         onChange={() => togglesercice(opt)}
-        className="w-4 h-4 appearance-none w-5 h-5 rounded-full border border-gray-400 
-           checked:bg-green-900 checked:border-green-900
-           relative"
+        className="w-4 h-4"
       />
    {opt.label.length <= 5 ? (
   <span className="text-[#6A7682] text-sm font-medium ">{opt.label}</span>
@@ -665,80 +663,74 @@ export default function Companyregistration() {
 
 </div>
         <div className="flex flex-col gap-2 mt-2">
-    <label className="block text-sm font-medium text-[#6A7682]">
-      Jurisdictions Covered <span className="text-red-500">*</span>
-    </label>
+        <label className="block text-sm font-medium text-[#6A7682]">
+          Jurisdictions Covered <span className="text-red-500">*</span>
+        </label>
 
 
 
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
-  {jurisdictions.map((opt, index) => (
-    <label key={index} className="flex items-center gap-2 cursor-pointer text-[#6A7682]">
-      <input
-        type="checkbox"
-checked={ (selectedJurisdictions).some(item => item.value === opt.value) }
-        onChange={() => toggleJurisdiction(opt)}
-        className="appearance-none w-5 h-5 rounded-full border border-gray-400 
-           checked:bg-green-900 checked:border-green-900
-           relative w-4 h-4"
-      />
-      <span>{opt.label}</span>
-    </label>
-  ))}
-</div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
+          {jurisdictions.map((opt, index) => (
+            <label key={index} className="flex items-center gap-2 cursor-pointer text-[#6A7682]">
+              <input
+                type="checkbox"
+        checked={ (selectedJurisdictions).some(item => item.value === opt.value) }
+                onChange={() => toggleJurisdiction(opt)}
+                className="w-4 h-4"
+              />
+              <span>{opt.label}</span>
+            </label>
+          ))}
+        </div>
 
   </div>
-          </div>
+                  </div>
 
               
-<div className="mt-5 grid grid-cols-1 gap-4">
- 
-  {/* Label */}
- 
-            <div className="flex flex-col gap-2 w-full">
-    <label className="block text-sm font-medium text-[#6A7682]">
-      Language Availability <span className="text-red-500">*</span>
-    </label>
+                  <div className="mt-5 grid grid-cols-1 gap-4">
+                  
+                    {/* Label */}
+                  
+                              <div className="flex flex-col gap-2 w-full">
+                              <label className="block text-sm font-medium text-[#6A7682]">
+                                Language Availability <span className="text-red-500">*</span>
+                              </label>
 
-   
-  <div className="grid grid-cols-9 gap-3 mt-3 border p-2 w-full font">
-  {language.map((lang, index) => (
-    <label key={index} className="flex items-center gap-2">
-      <input className="appearance-none w-5 h-5 rounded-full border border-gray-400 
-           checked:bg-green-900 checked:border-green-900
-           relative"
-        type="checkbox"
-        value={lang.value}
-        checked={selectedLanguage?.some(l => l.value === lang.value)}
-        onChange={() => handleChangeLang(lang)}
-      />
-      <span className="font text-[#6A7682]" >{lang.label}</span>
-    </label>
-  ))}
-</div>
+                    
+                              <div className="grid grid-cols-9 gap-3 mt-3 border p-2 w-full font">
+                              {language.map((lang, index) => (
+                                <label key={index} className="flex items-center gap-2">
+                                  <input
+                                    type="checkbox"
+                                    value={lang.value}
+                                    checked={selectedLanguage?.some(l => l.value === lang.value)}
+                                    onChange={() => handleChangeLang(lang)}
+                                  />
+                                  <span className="font text-[#6A7682]" >{lang.label}</span>
+                                </label>
+                              ))}
+                            </div>
 
 
-  </div>
- 
-       
-</div>
-<div className="mt-5 grid grid-cols-1 gap-4">
-
-</div>
-     <div className="mt-10">
-      <label className="block text-sm font-semibold text-gray-800 mb-2">
-        Enter Additional Information
-      </label>
-
-                      <div className="bg-white border border-gray-300 rounded-md">
-                        <textarea
-                          name="additional_info"
-                          onChange={handleChange}
-                          placeholder="Type your message here..."
-                          className="min-h-[150px] w-full text-black p-2 outline-none rounded-md"
-                        ></textarea>
-                      </div>
                     </div>
+                  
+                        
+                  </div>
+
+                      <div className="mt-10">
+                        <label className="block text-sm font-semibold text-gray-800 mb-2">
+                          Enter Additional Information
+                        </label>
+
+                                        <div className="bg-white border border-gray-300 rounded-md">
+                                          <textarea
+                                            name="additional_info"
+                                            onChange={handleChange}
+                                            placeholder="Type your message here..."
+                                            className="min-h-[150px] w-full text-black p-2 outline-none rounded-md"
+                                          ></textarea>
+                                        </div>
+                                      </div>
 
                     <div className="mt-44 flex justify-end gap-4 w-full ">
                       <button
@@ -749,7 +741,7 @@ checked={ (selectedJurisdictions).some(item => item.value === opt.value) }
                         Continue to Price breakdown →
                       </button>
                     </div>
-                    </div>
+                
                   </form>
                 </div>
               </div>
