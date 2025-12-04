@@ -17,6 +17,7 @@ export default function Signinmodal({ closeModal }) {
   const [guestformsdata, setguestformsdata] = useState({
     guest_email: "",
     guest_name: "",
+    guest_phonenumber: [],
   });
 
   const [loginError, setLoginError] = useState("");
@@ -80,7 +81,8 @@ export default function Signinmodal({ closeModal }) {
       const loginResponse = await postData(API_ENDPOINTS.login, dataToSubmit);
       console.log("Login response:", loginResponse);
 
-      if (loginResponse.code === 200) {
+      // if (loginResponse.code === 200) {
+      if (loginResponse.code === 200||loginResponse.status==true) {
         const userId = loginResponse.user?.id; // <-- get it from API response
         console.log(userId);
         localStorage.setItem("user", userId);
@@ -96,6 +98,7 @@ export default function Signinmodal({ closeModal }) {
             data.service_type = Number(localStorage.getItem("service"));
             data.guest_email = null;
             data.guest_name = null;
+            data.guest_phonenumber = null;
             data.guest_user = null;
 
             console.log("service", data.service_type);
@@ -132,6 +135,7 @@ export default function Signinmodal({ closeModal }) {
         guest_user: guest_id,
         guest_name: guestformsdata.guest_name,
         guest_email: guestformsdata.guest_email,
+        guest_phonenumber: guestformsdata.guest_phonenumber,
         service_type: 2,
         user_id: null,
       };
@@ -386,6 +390,34 @@ export default function Signinmodal({ closeModal }) {
                   className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
                 />
               </div>
+                <div className="mb-5">
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Phone Number
+                  </label>
+                <input
+  type="text"
+  name="guest_phonenumber"
+  maxLength={10}
+  inputMode="numeric"
+  required
+  placeholder="Enter your phone number"
+  value={guestformsdata.guest_phonenumber || ""}
+  onChange={(e) => {
+    const value = e.target.value;
+
+    // Allow only numbers
+    if (/^\d*$/.test(value)) {
+      handleguestformchange("guest_phonenumber", value);
+    }
+  }}
+  className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 
+    text-[14px] text-gray-800 placeholder-gray-400 
+    focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] 
+    outline-none transition-all"
+/>
+
+
+                </div>
 
               {/* Password */}
 

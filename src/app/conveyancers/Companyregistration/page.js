@@ -42,6 +42,7 @@ export default function Companyregistration() {
     phone_number: "",
     email: "",
     websiter: "",
+    password: "",
   });
   const [languagepreference, setlanguagepreference] = useState(" ");
 
@@ -514,23 +515,6 @@ export default function Companyregistration() {
                               {errors.phone_number}
                             </p>
                           )}
-                          <div className="mt-3">
-                            <label
-                              htmlFor="c_website"
-                              className="block text-[14px] text-[#6A7682] font-medium mb-1"
-                            >
-                              Website Url
-                            </label>
-                            <input
-                              id="c_website"
-                              name="websiter"
-                              type="text"
-                              value={formData.websiter}
-                              onChange={handleChange}
-                              placeholder="Enter Website Url"
-                              className="block w-full h-[44px] text-[#1B1D21] placeholder-[#1B1D21] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] focus:outline-none"
-                            />
-                          </div>
                         </div>
                       </div>
                       <div className="flex flex-col items-start">
@@ -577,7 +561,44 @@ export default function Companyregistration() {
                         </div>
                       </div>
                     </div>
-
+                    <div className="grid grid-cols-2 gap-4 mt-4 ">
+                    <div >
+                            <label
+                              htmlFor="c_website"
+                              className="block text-[14px] text-[#6A7682] font-medium mb-1"
+                            >
+                              Website Url
+                            </label>
+                            <input
+                              id="c_website"
+                              name="websiter"
+                              type="text"
+                              value={formData.websiter}
+                              onChange={handleChange}
+                              placeholder="Enter Website Url"
+                              className="block w-full h-[44px] text-[#1B1D21] placeholder-[#1B1D21] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] focus:outline-none"
+                            />
+                          </div>
+                          <div>
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
+                  Password
+                </label>
+                <input
+                              id="password"
+                  name="password"
+                  type="password"
+                              value={formData.password}
+                              onChange={handleChange}
+                              placeholder="Enter your password"
+                              autoComplete="current-password"
+                              className="block w-full h-[44px] text-[#1B1D21] placeholder-[#1B1D21] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] focus:outline-none"
+                            />
+              
+              </div>
+</div>
                     {/* Row 2 */}
                     <div className="grid grid-cols-2 gap-4 mt-4">
                       <div>
