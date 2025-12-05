@@ -86,22 +86,22 @@ const timers = useRef({});
   }, []);
 
 
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(5);
 
     const steps = [
-    { level: 1, label: "Start Here", x: 0, y: 46 },
-    { level: 2, label: "Foundation", x: 356, y: 207 },
-    { level: 3, label: "Foundation", x: 0, y: 379 },
-    { level: 4, label: "Foundation", x: 356, y: 549 },
-    { level: 5, label: "Foundation", x: 0, y: 720 },
-    { level: 6, label: "Achievement", x:356, y: 900 }
+    { level: 1, label: "Start Here", x: 0, y: 46,status: 'raised' },
+    { level: 2, label: "Foundation", x: 356, y: 207,status: 'Approved' },
+    { level: 3, label: "Foundation", x: 0, y: 379,status: 'Waiting' },
+    { level: 4, label: "Foundation", x: 356, y: 549 ,status: 'completed'},
+    { level: 5, label: "Foundation", x: 0, y: 720 ,status: 'Rollout'},
+    { level: 6, label: "Achievement", x:356, y: 900 ,status: 'Done'}
   ];
 
 
 
   // --- Static Data ---
   const quoteDetails = {
-    quoteId: "QTE-2025-481A",
+    quoteId: "QTE-2025-481A11",
     service: "Purchase",
     client: "Global Tech Inc.",
     status: "Active",
@@ -193,96 +193,87 @@ const timers = useRef({});
         </div>
 
        <div className=" flex flex-wrap  " style={{width:"430px"}}>
-        
-      <svg
-width="420"
-        height="600"
-        viewBox="0 0 800 1000"
-        className="overflow-visible justify-center ml-10"
+              <svg
+  width="420"
+  height="1200"
+  viewBox="0 0 800 2500"
+  className="overflow-visible justify-center ml-10"
+>
+  {/* Zigzag segments */}
+  {[
+    "M60 80 H330",
+    "M330 80 V260",
+    "M330 260 H60",
+    "M60 260 V440",
+    "M60 440 H330",
+    "M330 440 V620",
+    "M330 620 H60",
+    "M60 620 V800",
+    "M60 800 H330",
+    "M330 800 V980",
+  ].map((d, i) => (
+    <path
+      key={i}
+      d={d}
+      fill="none"
+      stroke={i <= activeIndex ? "#32a852" : "#e5f2ec"}
+      strokeWidth="48"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  ))}
+
+  {/* CORNER MILESTONES */}
+  {[
+    { x: 60, y: 80, label: "Level 1" },
+    { x: 330, y: 80, label: "Level 2" },
+    { x: 330, y: 260, label: "Level 3" },
+    { x: 60, y: 260, label: "Level 4" },
+    { x: 60, y: 440, label: "Level 5" },
+    { x: 330, y: 440, label: "Level 6" },
+    { x: 330, y: 620, label: "Level 7" },
+    { x: 60, y: 620, label: "Level 8" },
+    { x: 60, y: 800, label: "Level 9" },
+    { x: 330, y: 800, label: "Level 10" },
+    { x: 330, y: 980, label: "Level 11" },
+  ].map((s, i) => (
+    <foreignObject key={i} x={s.x - 30} y={s.y - 30} width="120" height="120">
+      <div
+        onClick={() => setActiveIndex(i)}
+        style={{
+          cursor: "pointer",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
       >
+        {/* Circle */}
+        <div
+          className={`milestone-circle ${
+            activeIndex >= i ? "active" : ""
+          }`}
+        >
+          <svg width="26" height="26" viewBox="0 0 24 24">
+            <path
+              d="M6 2v20M6 4h10l-2 3 2 3H6"
+              stroke="white"
+              strokeWidth="2"
+              fill="none"
+            />
+          </svg>
+        </div>
 
-        {/* Background Path */}
+        {/* Label */}
+        <p className={activeIndex >= i ? "text-green-600 font-bold" : "text-gray-400"}>
+          {s.label}
+        </p>
+      </div>
+    </foreignObject>
+  ))}
+</svg>
+
        
-  <path
-          d="
-            M 60 80
-            H 330
-            V 260
-            H 60
-            V 440
-            H 330
-            V 620
-            H 60
-            V 800
-            H 330
-            V 980
-          "
-          fill="none"
-          stroke="#e5f2ec"
-          strokeWidth="48"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      
-      
-
-        {/* Milestones Inside SVG */}
-        {steps.map((s, i) => (
-
-          <foreignObject
-          className="z-1"
-            key={i}
-            x={s.x - 20}
-            y={s.y - 20}
-            width="120"
-            height="120"
-          >
-
-            <div
-              onClick={() => setActiveIndex(i)}
-              className=""
-              style={{
-                cursor: "pointer",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center"
-              }}
-            >
-                 {/*    flag */}
-              <div
-                className={`milestone-circle  ${
-                  activeIndex === i ? "active" : ""
-                }`}
-              >
-                   {/*    flag */}
-                <svg width="26" height="26" viewBox="0 0 24 24">
-                  <path
-                    d="M6 2v20M6 4h10l-2 3 2 3H6"
-                    stroke="white"
-                    strokeWidth="2"
-                    fill="none"
-                  />
-                  </svg> 
-             
-              </div>
-
-              <p className="text-xs text-gray-500 mt-2">
-                Level {s.level}
-              </p>
-
-              <p
-                className={
-                  activeIndex === i
-                    ? "text-green-600 font-bold"
-                    : "text-gray-400"
-                }
-              >
-                {s.label}
-              </p>
-            </div>
-          </foreignObject>
-        ))}
-      </svg>
+   
     </div>
       </div>
 

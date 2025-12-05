@@ -112,7 +112,7 @@ const transactionOptions = [
 
   // --- Static Data ---
   const quoteDetails = {
-    quoteId: "QTE-2025-481A",
+    quoteId: "QTE-2025-481AAAA",
     service: "Purchase",
     client: "Global Tech Inc.",
     status: "Active",

@@ -283,6 +283,20 @@ export default function Quotationdetails() {
       )
     );
   };
+  const handleDeleteRow = (feesCategoryId, rowIndex) =>{ 
+  setpricingList(prev =>
+    prev.map(item =>
+      item.fees_category_id === feesCategoryId
+        ? {
+            ...item,
+            price_list: item.price_list.map((row, i) =>
+              i === rowIndex ? { ...row, is_delete: 1 } : row
+            )
+          }
+        : item
+    )
+  );
+}
   const handle_transaction_sales = (index) => {
     setpricingList((prev) =>
       prev.map((item) =>
@@ -473,9 +487,15 @@ export default function Quotationdetails() {
     for (let i = 0; i < list.length; i++) {
       if (list[i]["fees_category_id"] == 1) {
         for (let j = 0; j < list[i]["price_list"].length; j++) {
+          if(list[i]["is_delete"]!=1)
+          {
           const { min, max } = list[i].price_list[j];
 
           if (min == null || min == "") {
+            errors.push(
+              `Row ${i + 1}: min  and max value is required`
+            );
+            break;
           }
 
           if (min !== null && min !== "" && (max === null || max === "")) {
@@ -512,6 +532,7 @@ export default function Quotationdetails() {
             }
           }
         }
+      }
         if (errors.length > 0) {
           setlegalFeesError(errors);
           return false;
@@ -519,12 +540,14 @@ export default function Quotationdetails() {
       } else if (list[i]["fees_category_id"] == 2) {
         let terror = [];
         for (let j = 0; j < list[i]["price_list"].length; j++) {
+          if(list[i]["is_delete"]!=1){
           const { type_id, fee_amount } = list[i].price_list[j];
           if (type_id != "" && Number(fee_amount) <= 0) {
             terror.push(`Row ${i + 1}: Fee amount is missing`);
             //return false;
             break;
           }
+        }
         }
         if (terror.length > 0) {
           settransactionFeesError(terror);
@@ -533,12 +556,14 @@ export default function Quotationdetails() {
       } else if (list[i]["fees_category_id"] == 3) {
         let terror3 = [];
         for (let j = 0; j < list[i]["price_list"].length; j++) {
+          if(list[i]["is_delete"]!=1){
           const { type_id, fee_amount } = list[i].price_list[j];
           if (type_id != "" && Number(fee_amount) <= 0) {
             terror3.push(`Row ${i + 1}: Fee amount is missing`);
             //return false;
             break;
           }
+        }
         }
         if (terror3.length > 0) {
           setdisbursementFeesError(terror3);
@@ -547,12 +572,14 @@ export default function Quotationdetails() {
       } else if (list[i]["fees_category_id"] == 4) {
         let terror4 = [];
         for (let j = 0; j < list[i]["price_list"].length; j++) {
+          if(list[i]["is_delete"]!=1){
           const { type_id, fee_amount } = list[i].price_list[j];
           if (type_id != "" && Number(fee_amount) <= 0) {
             terror4.push(`Row ${i + 1}: Fee amount is missing`);
             //return false;
             break;
           }
+        }
         }
         if (terror4.length > 0) {
           setleasedisbursementFeesError(terror4);
@@ -561,12 +588,14 @@ export default function Quotationdetails() {
       } else if (list[i]["fees_category_id"] == 5) {
         let terror5 = [];
         for (let j = 0; j < list[i]["price_list"].length; j++) {
+          if(list[i]["is_delete"]!=1){
           const { type_id, fee_amount } = list[i].price_list[j];
           if (type_id != "" && Number(fee_amount) <= 0) {
             terror5.push(`Row ${i + 1}: Fee amount is missing`);
             //return false;
             break;
           }
+        } 
         }
         if (terror5.length > 0) {
           setadditionalServiceError(terror5);
@@ -810,10 +839,10 @@ export default function Quotationdetails() {
                               .find(
                                 (item) => item.fees_category_id === numIndex
                               )
-                              .price_list.map((row, i) => (
+                              .price_list.filter(row => row.is_delete !== 1).map((row, i) => (
                                 <tr key={i} className="border-b">
                                   <td className="px-3 py-2 text-center">
-                                    {i + 1}
+                                    {i + 1}.
                                   </td>
                                   <td className="px-3 py-2">
                                     <div className="flex flex-col">
@@ -1037,24 +1066,24 @@ export default function Quotationdetails() {
 
                                   {/* ADD ROW BUTTON */}
                                   <td className="px-3 py-2 text-center">
-                                    {/* <button
-                                      className="text-green-500 tooltip"
+                                    
+                                  {i === 0 && (
+                                    <button
+                                      className="text-green-600 tooltip  items-center justify-center "
                                       onClick={() => handle_addrow(numIndex)}
                                     >
-                                      <Plus />
+                                      <FaPlus size={16} />
                                       <span className="tooltiptext font">
                                         Add new row
-                                      </span>
-                                    </button> */}
-                                      <button
-                                    className="text-green-600 tooltip w-8 h-8 flex items-center justify-center "
-                                     onClick={() => handle_addrow(numIndex)}
-                                  >
-                                    <FaPlus size={16} />
-                                    <span className="tooltiptext font">
-                                      Add new row
-                                    </span>
+                                      </span> 
+                                    </button>
+                                  )} &nbsp;&nbsp;&nbsp;
+                                  
+                                  <button className="text-red-600 tooltip" onClick={() => handleDeleteRow(numIndex, i)}>
+                                    <FaTrash size={16} />
+                                    <span className="tooltiptext">Delete current row</span>
                                   </button>
+                                 
                                   </td>
                                 </tr>
                               ))}
@@ -1087,7 +1116,7 @@ export default function Quotationdetails() {
                           </div>
                           {pricingList
                             .find((item) => item.fees_category_id === numIndex)
-                            .price_list.map((row, i) => (
+                            .price_list.filter(row => row.is_delete !== 1).map((row, i) => (
                               <div
                                 key={i}
                                 className="grid grid-cols-4 gap-3 px-3 py-2"
@@ -1106,7 +1135,7 @@ export default function Quotationdetails() {
                                     value={row.type}
                                   >
                                     <option value="">
-                                      Select Supplement Type
+                                      Select Supplement Type-{row.delete_status}
                                     </option>
 
                                     {purchaseFeeTypeList.map((opt, index) => (
@@ -1170,8 +1199,9 @@ export default function Quotationdetails() {
 
                                 {/* ADD Row Button */}
                                 <div className="flex justify-end me-6 gap-4">
+                                   {i === 0 && (
                                   <button
-                                    className="text-green-600 tooltip w-8 h-8 flex items-center justify-center "
+                                    className="text-green-600 tooltip items-center justify-center "
                                     onClick={() =>
                                       handle_transaction_sales(numIndex)
                                     }
@@ -1182,17 +1212,13 @@ export default function Quotationdetails() {
                                     </span>
                                   </button>
 
-                                  <button
-                                    className="text-red-600 tooltip w-8 h-8 flex items-center justify-center"
-                                    onClick={() =>
-                                      handle_transaction_sales(numIndex)
-                                    }
-                                  >
+                                   )}
+                                  &nbsp;&nbsp;
+                                  <button className="text-red-600 tooltip" onClick={() => handleDeleteRow(numIndex, i)}>
                                     <FaTrash size={16} />
-                                    <span className="tooltiptext">
-                                      Delete current row
-                                    </span>
+                                    <span className="tooltiptext">Delete current row</span>
                                   </button>
+                                    
                                 </div>
                               </div>
                             ))}
@@ -1317,35 +1343,11 @@ export default function Quotationdetails() {
                                   ))}
                                 </select>
 
-                                {/* TRANSACTION TYPE */}
-                                {/* <select
-                                    className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black  "
-                                    value={row.transactionType}
-                                    onChange={(e) => handlePriceChange(numIndex, i, "paid_to", e.target.value)}
-                                    >
-                                    <option value="">Select Type</option>
-                                    {transactionOptions.map((opt) => (
-                                    <option key={opt.value} value={opt.value}>
-                                        {opt.label}
-                                    </option>
-                                    ))}
-                                    </select> */}
-
-                                {/* ACTION BUTTONS */}
+                               
                                 <div className="flex justify-end me-6 gap-4">
                                   {/* ADD ROW – only last row */}
-                                  {i === disbursementRows.length - 1 && (
-                                    // <button
-                                    //   className="text-green-600 tooltip"
-                                    //   onClick={() =>
-                                    //     handle_standard_disbursement(numIndex)
-                                    //   }
-                                    // >
-                                    //   <Plus />
-                                    //   <span className="tooltiptext font">
-                                    //     Add new row-{numIndex}
-                                    //   </span>
-                                    // </button>
+                                   {i === 0 && (
+                                   
 
                                     <button
                                     className="text-green-600 tooltip w-8 h-8 flex items-center justify-center "
@@ -1362,35 +1364,9 @@ export default function Quotationdetails() {
                                     
                                   )}
 
-                                  {/* REMOVE */}
-                                  {/* <button
-                                    className="text-red-600 tooltip"
-                                    onClick={() => {
-                                      const updated = disbursementRows.filter(
-                                        (_, idx) => idx !== i
-                                      );
-                                      setDisbursementRows(updated);
-                                    }}
-                                  >
-                                    <X />
-                                    <span className="tooltiptext">
-                                      {" "}
-                                      Delete current row
-                                    </span>
-                                  </button> */}
-                                  <button
-                                    className="text-red-600 tooltip w-8 h-8 flex items-center justify-center"
-                                    onClick={() => {
-                                      const updated = disbursementRows.filter(
-                                        (_, idx) => idx !== i
-                                      );
-                                      setDisbursementRows(updated);
-                                    }}
-                                  >
+                                  <button className="text-red-600 tooltip" onClick={() => handleDeleteRow(numIndex, i)}>
                                     <FaTrash size={16} />
-                                    <span className="tooltiptext">
-                                      Delete current row
-                                    </span>
+                                    <span className="tooltiptext">Delete current row</span>
                                   </button>
                                 </div>
                               </div>
@@ -1538,44 +1514,14 @@ export default function Quotationdetails() {
                                         </select>
                                       </td>
 
-                                      {/* TRANSACTION TYPE */}
-                                      {/* <td className="px-3 py-2 text-center">
-                                  <select
-                                    className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
-                                    value={row.transactionType}
-                                    onChange={(e) =>
-                                      handlePriceChange(numIndex, i, "transactionType", e.target.value)
-                                    }
-                                  >
-                                    <option value="">Select Type</option>
-                                    {transactionOptions.map((opt) => (
-                                      <option key={opt.value} value={opt.value}>
-                                        {opt.label}
-                                      </option>
-                                    ))}
-                                  </select>
-                                </td> */}
+                                     
 
                                       {/* ACTION BUTTONS */}
                                       <td className="px-3 py-2 text-center">
                                         <div className="flex justify-end me-6 gap-4">
                                           {/* ADD ROW - LAST ROW ONLY */}
-                                          {i ===
-                                            disbursementRows.length - 1 && (
-                                            // <button
-                                            //   className="text-green-600 tooltip"
-                                            //   onClick={() =>
-                                            //     handle_leasehold_disbursement(
-                                            //       numIndex
-                                            //     )
-                                            //   }
-                                            // >
-                                            //   <Plus />
-                                            //   <span className="tooltiptext font">
-                                            //     Add new row
-                                            //   </span>
-                                            // </button>
-
+                                           {i === 0 && (
+                                            
                                              <button
                                     className="text-green-600 tooltip w-8 h-8 flex items-center justify-center "
                                       onClick={() =>
@@ -1590,38 +1536,9 @@ export default function Quotationdetails() {
                                     </span>
                                   </button>
                                           )}
-
-                                          {/* DELETE ROW */}
-                                          {/* <button
-                                            className="text-red-600 tooltip"
-                                            onClick={() => {
-                                              const updated =
-                                                disbursementRows.filter(
-                                                  (_, idx) => idx !== i
-                                                );
-                                              setDisbursementRows(updated);
-                                            }}
-                                          >
-                                            <X />
-                                            <span className="tooltiptext">
-                                              Delete current row
-                                            </span>
-                                          </button> */}
-
-                                           <button
-                                    className="text-red-600 tooltip w-8 h-8 flex items-center justify-center"
-                                    onClick={() => {
-                                              const updated =
-                                                disbursementRows.filter(
-                                                  (_, idx) => idx !== i
-                                                );
-                                              setDisbursementRows(updated);
-                                            }}
-                                  >
+                                          <button className="text-red-600 tooltip" onClick={() => handleDeleteRow(numIndex, i)}>
                                     <FaTrash size={16} />
-                                    <span className="tooltiptext">
-                                      Delete current row
-                                    </span>
+                                    <span className="tooltiptext">Delete current row</span>
                                   </button>
                                         </div>
                                       </td>
@@ -1717,18 +1634,8 @@ export default function Quotationdetails() {
                                   <td className="px-3 py-2 text-center">
                                     <div className="flex justify-end me-6 gap-3">
                                       {/* ADD ROW - only last row */}
-                                      {i === disbursementRows.length - 1 && (
-                                        // <button
-                                        //   className="text-green-600 tooltip"
-                                        //   onClick={() =>
-                                        //     handle_additional_service(numIndex)
-                                        //   }
-                                        // >
-                                        //   <Plus />
-                                        //   <span className="tooltiptext font">
-                                        //     Add new row
-                                        //   </span>
-                                        // </button>
+                                      {i === 0 && (
+                                        
                                          <button
                                     className="text-green-600 tooltip w-8 h-8 flex items-center justify-center "
                                         onClick={() =>
@@ -1742,22 +1649,7 @@ export default function Quotationdetails() {
                                   </button>
                                       )}
 
-                                      {/* DELETE ROW */}
-                                      {/* <button
-                                        className="text-red-600 tooltip"
-                                        onClick={() => {
-                                          const updated =
-                                            disbursementRows.filter(
-                                              (_, idx) => idx !== i
-                                            );
-                                          setDisbursementRows(updated);
-                                        }}
-                                      >
-                                        <X />
-                                        <span className="tooltiptext">
-                                          Delete current row
-                                        </span>
-                                      </button> */}
+                                    
 
                                       <button
                                     className="text-red-600 tooltip w-8 h-8 flex items-center justify-center"
