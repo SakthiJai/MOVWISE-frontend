@@ -81,8 +81,7 @@ export default function Signinmodal({ closeModal }) {
       const loginResponse = await postData(API_ENDPOINTS.login, dataToSubmit);
       console.log("Login response:", loginResponse);
 
-      // if (loginResponse.code === 200) {
-      if (loginResponse.code === 200||loginResponse.status==true) {
+      if (loginResponse.code === 200) {
         const userId = loginResponse.user?.id; // <-- get it from API response
         console.log(userId);
         localStorage.setItem("user", userId);
@@ -190,7 +189,7 @@ export default function Signinmodal({ closeModal }) {
             </button>
 
             
-          <p className="text-gray-600 mb-8 leading-relaxed">
+          <div className="text-gray-600 mb-8 leading-relaxed">
             {isEmptyQuote ? (
               <><h2 class="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">Access your account or Register a new one to proceed.</h2></>
             ) : (
@@ -199,7 +198,7 @@ export default function Signinmodal({ closeModal }) {
                 like to continue as a <b>logged-in user</b> or a <b>guest user</b>?
               </>
             )}
-          </p>
+          </div>
 
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">

@@ -4,7 +4,14 @@ import { useRouter } from "next/navigation";
 import React, { useEffect, useRef, useState } from "react";
 import { API_ENDPOINTS, getData } from "../../auth/API/api";
 
-const PriceBreakdownCard = () => {
+const PriceBreakdownCard = ({companydetails, quoteId }) => {
+
+   useEffect(() => {
+    console.log("Fetching breakdown for:", quoteId);
+    console.log("fetching company",companydetails)
+    // call API here
+  }, [quoteId]);
+
   const [logintype,setlogintype]=useState()
   const [feeCategory, setfeeCategory] = useState({});
 const router = useRouter();
@@ -115,21 +122,29 @@ const timers = useRef({});
 
   return (
   <div>
+
 {logintype=="user"&&(
    <div className="p-6 bg-white shadow-lg rounded-xl min-h-[300px] font">
       <h2 className="text-2xl font-extrabold text-gray-900 mb-6 border-b pb-2">
         Quote Details
       </h2>
 
-      {/* Grid for two columns: Details (3/5) and Graph (2/5) */}
+      
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-        {/* LEFT SIDE: Quote Details and Price Breakdown (Col Span 3) */}
+
         <div className="lg:col-span-3  space-y-6">
           {/* Quote Details Section */}
           <div className="p-4 bg-indigo-50 rounded-lg border-l-4 border-indigo-600">
             <h3 className="text-lg font-semibold text-indigo-800 mb-2">
               Quote Details
             </h3>
+         {companydetails?.map((item, index) => (
+          quoteId==item.property_id&&(
+              <p key={index} className="text-black">{item.company_name}</p>
+          )
+         ))}
+              
+          
             <div className="text-sm space-y-1 text-black">
               <p>
                 <strong>Quote ID:</strong> {quoteDetails.quoteId}
@@ -149,7 +164,6 @@ const timers = useRef({});
             </div>
           </div>
 
-          {/* Price Breakdown Table */}
           <div className="mt-4 p-3">
             <h3 className="text-lg font-semibold text-gray-800 mb-3">
               Cost Breakdown
@@ -178,7 +192,6 @@ const timers = useRef({});
           </div>
         </div>
 
-        {/* RIGHT SIDE: Progress Graph (Col Span 2) */}
        <div className=" flex flex-wrap  " style={{width:"430px"}}>
         
       <svg
@@ -272,6 +285,7 @@ width="420"
       </svg>
     </div>
       </div>
+
     </div>
    )} 
 

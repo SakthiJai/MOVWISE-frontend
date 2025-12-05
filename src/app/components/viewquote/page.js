@@ -9,10 +9,11 @@ import { useRouter } from "next/navigation";
 
 
 export default function ViewQuote() {
-  const params = useSearchParams();
-  const ref_no = params.get("ref_no");
+  // const params = useSearchParams();
+  // const ref_no = params.get("ref_no");
+  const ref_no=""
 
-  const [data, setData] = useState(null);
+  const [view_data, setview_data] = useState(null);
   const router = useRouter();
 
  useEffect(() => {
@@ -21,8 +22,8 @@ export default function ViewQuote() {
     async function fetchData() {
       try {
         const response = await getData(`${API_ENDPOINTS.quotesfilter}/${ref_no}`);
-        setData(response.data[0]);
-        console.log(response);
+        setview_data(response.data[0]);
+        console.log(view_data);
       } catch (e) {
         console.log(e);
       }
@@ -31,7 +32,7 @@ export default function ViewQuote() {
     fetchData();
   }, [ref_no]); 
 
-  if (!data) return <p className="p-5">Loading...</p>;
+  if (!view_data) return <p className="p-5">Loading...</p>;
 
   return (
     <>
@@ -48,7 +49,7 @@ export default function ViewQuote() {
   Back
 </button>
           <span className="text-[34px] ml-15 p-2 leading-none font-extrabold text-[#1E5C3B] tracking-tight">
-            {data?.appsetting_details?.company_name || "MovWise"}
+            {view_data?.appsetting_details?.company_name || "MovWise"}
           </span>
 
           <button className="bg-[#F8C537] text-white px-8 py-2 text-sm font-medium mt-4 ml-5 flex items-center justify-center rounded">
@@ -78,7 +79,7 @@ export default function ViewQuote() {
             <div className="ml-6">
               <img
                 src={
-                  data?.appsetting_details?.logo ||
+                  view_data?.appsetting_details?.logo ||
                   "/logo.png"
                 }
                 alt="Company Logo"
@@ -88,21 +89,21 @@ export default function ViewQuote() {
               <p className="mt-2 font-semibold text-base quotes">Contact Details</p>
 
               <p className="font-semibold mt-1 text-base ">
-                {data?.appsetting_details?.phone_number || "N/A"}
+                {view_data?.appsetting_details?.phone_number || "N/A"}
               </p>
 
               <a
-                href={`mailto:${data?.appsetting_details?.email}`}
+                href={`mailto:${view_data?.appsetting_details?.email}`}
                 className="text-emerald-600 text-xs"
               >
-                {data?.appsetting_details?.email}
+                {view_data?.appsetting_details?.email}
               </a>
             </div>
 
             <div className="mt-6">
               <div className="flex items-center text-green-500 text-xs mt-1">
                 <Rating
-                  initialValue={data?.conveying_details?.rating || 0}
+                  initialValue={view_data?.conveying_details?.rating || 0}
                   readonly  
                   size={20}
                 />
@@ -120,22 +121,22 @@ export default function ViewQuote() {
               <div className="flex">
                 <span className="font-semibold w-26">Name</span>
                 <span className="ml-5">
-                  {data?.customer_details?.first_name}{" "}
-                  {data?.customer_details?.last_name}
+                  {view_data?.customer_details?.first_name}{" "}
+                  {view_data?.customer_details?.last_name}
                 </span>
               </div>
 
               <div className="flex">
                 <span className="font-semibold w-20">Email</span>
                 <span className="ml-10">
-                  {data?.customer_details?.email || "--"}
+                  {view_data?.customer_details?.email || "--"}
                 </span>
               </div>
 
               <div className="flex">
                 <span className="font-semibold w-20">Phone #1</span>
                 <span className="ml-10">
-                  {data?.conveying_details?.phone_number || "--"}
+                  {view_data?.conveying_details?.phone_number || "--"}
                 </span>
               </div>
 
@@ -154,17 +155,17 @@ export default function ViewQuote() {
 
             <div className="flex mt-3">
               <span className="font-semibold w-32">Value</span>
-              <span>£{data?.property_value || "--"}</span>
+              <span>£{view_data?.property_value || "--"}</span>
             </div>
 
             <div className="flex">
               <span className="font-semibold w-32">Tenure</span>
-              <span>{data?.tenure || "--"}</span>
+              <span>{view_data?.tenure || "--"}</span>
             </div>
 
             <div className="flex">
               <span className="font-semibold w-32">Mortgage?</span>
-              <span>{data?.mortgage ? "Yes" : "No"}</span>
+              <span>{view_data?.mortgage ? "Yes" : "No"}</span>
             </div>
           </div>
 
@@ -177,18 +178,18 @@ export default function ViewQuote() {
               <div className="space-y-2 text-sm">
                 <div className="flex justify-between">
                   <span>Legal Fee</span>
-                  <span>£{data?.legal_fees}.00</span>
+                  <span>£{view_data?.legal_fees}.00</span>
                 </div>
 
                 <div className="flex justify-between">
                   <span>VAT</span>
-                  <span>£{data?.vat}.00</span>
+                  <span>£{view_data?.vat}.00</span>
                 </div>
               </div>
 
               <div className="flex justify-between font-semibold mt-3 text-base">
                 <span>Total Fees</span>
-                <span>£{Number(data?.legal_fees) + Number(data?.vat)}.00</span>
+                <span>£{Number(view_data?.legal_fees) + Number(view_data?.vat)}.00</span>
               </div>
             </div>
 
@@ -201,13 +202,13 @@ export default function ViewQuote() {
               <div className="space-y-2    text-sm">
                 <div className="flex justify-between">
                   <span>Total Disbursements</span>
-                  <span>£{data?.disbursements}</span>
+                  <span>£{view_data?.disbursements}</span>
                 </div>
               </div>
 
               <div className="flex justify-between font-semibold mt-3 text-base">
                 <span>Total Fees & Disbursements</span>
-                <span>£{data?.total}.00</span>
+                <span>£{view_data?.total}.00</span>
               </div>
             </div>
           </div>
@@ -218,7 +219,7 @@ export default function ViewQuote() {
           <div>
             <h4>Notes</h4>
             <p className="text-xs mt-4">
-              {data?.conveying_details?.short_notes ||
+              {view_data?.conveying_details?.short_notes ||
                 "No notes provided by the firm."}
             </p>
           </div>
