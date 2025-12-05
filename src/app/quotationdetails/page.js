@@ -723,14 +723,14 @@ const formatPound = (value) => {
                         </th>
 
                         {(formData['service_id']?.includes(1) ||
-                          formData['service_id']?.includes(3)) && (
+                          formData['service_id']?.includes(2)) && (
                           <>
                             <th className="px-3 py-2 text-center">Purchase Leasehold £</th>
                             <th className="px-3 py-2 text-center">Purchase Freehold £</th>
                           </>
                         )}
 
-                        {(formData['service_id']?.includes(2) ||
+                        {(formData['service_id']?.includes(1) ||
                           formData['service_id']?.includes(3)) && (
                           <>
                             <th className="px-3 py-2 text-center">Sales Leasehold £</th>
@@ -803,7 +803,7 @@ const formatPound = (value) => {
                               </td>
 
                               {(formData['service_id']?.includes(1) ||
-                                formData['service_id']?.includes(3)) && (
+                                formData['service_id']?.includes(2)) && (
                                 <td className="px-3 py-2">
                                   <div className="flex flex-col">
                                     <input
@@ -825,7 +825,7 @@ const formatPound = (value) => {
 
                               {/* PURCHASE FREEHOLD */}
                               {(formData['service_id']?.includes(1) ||
-                                formData['service_id']?.includes(3)) && (
+                                formData['service_id']?.includes(2)) && (
                                 <td className="px-3 py-2">
                                   <div className="flex flex-col">
                                     <input
@@ -845,7 +845,7 @@ const formatPound = (value) => {
                               )}
 
                               {/* SALES LEASEHOLD */}
-                              {(formData['service_id']?.includes(2) ||
+                              {(formData['service_id']?.includes(1) ||
                                 formData['service_id']?.includes(3)) && (
                                 <td className="px-3 py-2">
                                   <div className="flex flex-col">
@@ -867,7 +867,7 @@ const formatPound = (value) => {
                               )}
 
                               {/* SALES FREEHOLD */}
-                              {(formData['service_id']?.includes(2) ||
+                              {(formData['service_id']?.includes(1) ||
                                 formData['service_id']?.includes(3)) && (
                                 <td className="px-3 py-2">
                                   <div className="flex flex-col">

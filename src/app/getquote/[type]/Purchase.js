@@ -23,6 +23,17 @@ export default function Purchase() {
     const [lang, setLang] = useState ([
       { value: "Not Required", label: "Not Required", id: 0 },
     ]);
+    const stampDutyOptions = [
+  { label: "Standard Residential", value: "standard" },
+  { label: "First-Time Buyer Relief", value: "firstTime" },
+  { label: "Additional Property (Second Home)", value: "additional" },
+  { label: "Commercial / Non-Residential", value: "commercial" }
+];
+
+
+
+
+
     const [selectedLanguage, setSelectedLanguage] = useState([]);
    const handleChangeLang = (selectedOptions = []) => {
       //    const hasNotRequired = selectedOptions.some(
@@ -109,7 +120,8 @@ export default function Purchase() {
   "ownership_housing_asso": 0,
   "specal_instruction": "",
   "lenders": "",
-  "service_type":null,             
+  "service_type":null, 
+  "purchase_mode":null            
       });
 
      
@@ -281,6 +293,9 @@ useEffect(() => {
     
     if(!formData.buy_to_let){
       newErrors.buy_to_let="please select buy to let"
+    }
+    if(!formData.purchase_mode){
+      newErrors.purchase_mode="please select purchase_mode"
     }
         setErrors(newErrors);
         console.log(errors)
@@ -749,6 +764,40 @@ return (
                       {/* 6. Buy to Let? (Inline Select) */}
                <div className="flex flex-col h-full">
                                  <label htmlFor="b2l" className="block text-sm font-medium text-gray-700 mb-1">
+                                  purchase_mode<span className="text-red-500">*</span>
+                                 </label>
+                             <div className="relative mt-auto">
+               <select
+                 name="purchase_mode"
+                 id="b2l"
+                 value={formData.purchase_mode || ""}  // ✅ controlled value
+                 onChange={(e) => handleChange("purchase_mode", e.target.value)}  // ✅ update formData
+                 className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"
+               >
+                 {stampDutyOptions.map((opt) => (
+    <option key={opt.value} value={opt.value}>
+      {opt.label}
+    </option>
+  ))}
+               </select>
+             
+               <ChevronDown
+                 size={16}
+                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+               />
+             </div>
+     <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+       errors.purchase_mode ? "text-red-500 opacity-100" : "opacity-0"
+    }`}>
+      {errors.purchase_mode || "placeholder"} {/* placeholder keeps same height */}
+    </p>
+                               </div>
+    
+    
+                      {/* 7. Government Right to Buy scheme? (Inline ButtonGroup) */}
+            
+   <div className="flex flex-col h-full">
+                                 <label htmlFor="b2l" className="block text-sm font-medium text-gray-700 mb-1">
                                    Buy to Let?<span className="text-red-500">*</span>
                                  </label>
                              <div className="relative mt-auto">
@@ -780,56 +829,7 @@ return (
     </p>
                                </div>
     
-    
-                      {/* 7. Government Right to Buy scheme? (Inline ButtonGroup) */}
-                      <div className="flex flex-col h-full">
-      <label className="block text-sm font-medium text-gray-700 mb-1">
-        Using Government Right to Buy scheme?
-      </label>
-    
-      <div className="grid grid-cols-2 gap-3 mt-auto">
-        <button
-          type="button"
-          onClick={() => {
-            setFormData({ ...formData, govt_by_scheme: 1 }); // ✅ store 1 for yes
-            if (errors.govt_by_scheme) {
-              setErrors({ ...errors, govt_by_scheme: "" }); // clear error
-            }
-          }}
-          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-            formData.govt_by_scheme === 1
-              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
-              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-          }`}
-        >
-          <span>Yes</span>
-        </button>
-    
-        <button
-          type="button"
-          onClick={() => {
-            setFormData({ ...formData, govt_by_scheme: 0 }); // ✅ store 0 for no
-            if (errors.govt_by_scheme) {
-              setErrors({ ...errors, govt_by_scheme: "" }); // clear error
-            }
-          }}
-          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-            formData.govt_by_scheme === 0
-              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
-              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-          }`}
-        >
-          <span>No</span>
-        </button>
-      </div>
-    
-    <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
-    </div>
-    
-    
-    
-    
-    <div className="flex flex-col h-full">
+<div className="flex flex-col h-full">
       <label className="block text-sm font-medium text-gray-700 mb-1">
         Obtaining a mortgage?
       </label>
@@ -870,47 +870,17 @@ return (
         </button>
       </div>
     <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
-    </div>
+    </div>    
     
     
     
     
-                      {/* 9. Mortgage Lender (Inline Select) */}
-               {/* <div className="flex flex-col h-full">
-                 <label
-                   htmlFor="b2l"
-                   className="block text-sm font-medium text-gray-700 mb-1"
-                 >
-                   Mortgage Lender
-                 </label>
-               
-                 <div className="relative mt-auto">
-                   <select
-                     id="b2l"
-                     name="mortgage_lender"
-                     value={formData.mortgage_lender || ""} // ✅ controlled value
-                     onChange={(e) => handleChange("mortgage_lender", e.target.value)} // ✅ updates formData
-                     className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"
-                   >
-                     {["Please select", "Not Known", "Not Required", "Lender Name Look Up"].map(
-                       (opt) => (
-                         <option key={opt} value={opt}>
-                           {opt}
-                         </option>
-                       )
-                     )}
-                   </select>
-               
-                   <ChevronDown
-                     size={16}
-                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
-                   />
-                   <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
-                 </div>
-               </div> */}
     
     
-                      {/* 10. Receiving a gifted deposit? (Inline Select) */}
+    
+    
+    
+                 
                       <div className="flex flex-col h-full">
       <label htmlFor="gift_deposit" className="block text-sm font-medium text-gray-700 mb-1">
         Receiving a gifted deposit?
@@ -992,7 +962,49 @@ return (
     
     <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
     </div>
+                   <div className="flex flex-col h-full">
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        Using Government Right to Buy scheme?
+      </label>
     
+      <div className="grid grid-cols-2 gap-3 mt-auto">
+        <button
+          type="button"
+          onClick={() => {
+            setFormData({ ...formData, govt_by_scheme: 1 }); // ✅ store 1 for yes
+            if (errors.govt_by_scheme) {
+              setErrors({ ...errors, govt_by_scheme: "" }); // clear error
+            }
+          }}
+          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+            formData.govt_by_scheme === 1
+              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          <span>Yes</span>
+        </button>
+    
+        <button
+          type="button"
+          onClick={() => {
+            setFormData({ ...formData, govt_by_scheme: 0 }); // ✅ store 0 for no
+            if (errors.govt_by_scheme) {
+              setErrors({ ...errors, govt_by_scheme: "" }); // clear error
+            }
+          }}
+          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+            formData.govt_by_scheme === 0
+              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          <span>No</span>
+        </button>
+      </div>
+    
+    <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
+    </div>
     
                     </div>
                   </div> {/* End PURCHASE FINANCE */}

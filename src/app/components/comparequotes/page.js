@@ -41,12 +41,15 @@ export default function Comparequotes() {
   }
 
   // On instruct button, show popup modal with message
-  function handleInstruct(companyName,user_id,conveyancer_id,quote_id) {
+  function handleInstruct(companyName,guest_id,conveyancer_id,quote_id,user_id) {
     const instructpayload={
-"user_id":user_id,
 "conveyancer_id":conveyancer_id,
 "quote_id":quote_id
     }
+     if (user_id) instructpayload.user_id = user_id;
+  else if (guest_id) instructpayload.guest_id = guest_id;
+
+  console.log(instructpayload);
     console.log(instructpayload)
     const instruct = postData(API_ENDPOINTS.instruct,instructpayload)
     setPopupData({ visible: true, companyName:companyName });
@@ -363,7 +366,7 @@ alt={quote.company_name||"company logo"}
 
   <button
     className="px-3 py-1.5 bg-[#4A7C59] text-white text-sm rounded-full hover:bg-[#3b6248]"
-    onClick={() => handleInstruct(quote.conveying_details.company_name,quote.guest_id,quote.conveying_details.conveying_id,quote.quote_id) }
+    onClick={() => handleInstruct(quote.conveying_details.company_name,quote.guest_id,quote.conveying_details.conveying_id,quote.quote_id,quote.customer_details.customer_id) }
   >
     Instruct
   </button>

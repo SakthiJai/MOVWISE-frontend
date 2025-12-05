@@ -91,6 +91,7 @@ useEffect(() => {
     purchase_country: "",
     purchase_town: "",
     purchase_price: "",
+    purchase_mode:"",
     bedrooms_purchase: "",
     tenure_purchase: "", 
     propertyType_purchase: "",
@@ -134,7 +135,13 @@ useEffect(() => {
   lenders: null
 });
 
-  
+   const stampDutyOptions = [
+  { label: "Standard Residential", value: "standard" },
+  { label: "First-Time Buyer Relief", value: "firstTime" },
+  { label: "Additional Property (Second Home)", value: "additional" },
+  { label: "Commercial / Non-Residential", value: "commercial" }
+];
+
 
   const [errors, setErrors] = useState({});
   
@@ -1102,7 +1109,7 @@ console.log(e);
     Buy to Let?<span className="text-red-500">*</span>
   </label>
 
-  <div className="relative mt-auto">
+  <div className="relative ">
     <select
       id="buy_to_let"
       name="buy_to_let"
@@ -1134,35 +1141,36 @@ console.log(e);
 </div>
 
                   {/* 7. Government Right to Buy scheme? (Inline ButtonGroup) */}
-                  <div className="flex flex-col h-full">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Using Government Right to Buy scheme?
-                    </label>
-                    <div className="grid grid-cols-2 gap-3 mt-auto">
-                      <button
-                        type="button"
-                        onClick={() => setScheme_purchase("yes")}
-                        className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-                          scheme_purchase === "yes"
-                            ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
-                            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                        }`}
-                      >
-                        <span>Yes</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setScheme_purchase("no")}
-                        className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-                          scheme_purchase === "no"
-                            ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
-                            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                        }`}
-                      >
-                        <span>No</span>
-                      </button>
-                    </div>
-                  </div>
+                   <div className="flex flex-col h-full">
+                                                   <label htmlFor="b2l" className="block text-sm font-medium text-gray-700 mb-1">
+                                                    purchase_mode<span className="text-red-500">*</span>
+                                                   </label>
+                                               <div className="relative mt-auto">
+                                 <select
+                                   name="purchase_mode"
+                                   id="b2l"
+                                   value={formData.purchase_mode || ""}  // ✅ controlled value
+                                   onChange={(e) => handleChange("purchase_mode", e.target.value)}  // ✅ update formData
+                                   className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"
+                                 >
+                                   {stampDutyOptions.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                                 </select>
+                               
+                                 <ChevronDown
+                                   size={16}
+                                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+                                 />
+                               </div>
+                       <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+                         errors.purchase_mode ? "text-red-500 opacity-100" : "opacity-0"
+                      }`}>
+                        {errors.purchase_mode || "placeholder"} {/* placeholder keeps same height */}
+                      </p>
+                                                 </div>
 
                   {/* 8. Obtaining a mortgage? (Inline ButtonGroup) */}
                   <div className="flex flex-col h-full">
@@ -1218,7 +1226,7 @@ console.log(e);
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Shared Ownership via housing association?
                     </label>
-                    <div className="grid grid-cols-2 gap-3 mt-auto">
+                    <div className="grid grid-cols-2 gap-3 ">
                       <button
                         type="button"
                         onClick={() => setSharedOwnership_purchase("yes")}
@@ -1235,6 +1243,36 @@ console.log(e);
                         onClick={() => setSharedOwnership_purchase("no")}
                         className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
                           sharedOwnership_purchase === "no"
+                            ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+                            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                        }`}
+                      >
+                        <span>No</span>
+                      </button>
+                    </div>
+                  </div>
+                 
+                                                   <div className="flex flex-col h-full">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Using Government Right to Buy scheme?
+                    </label>
+                    <div className="grid grid-cols-2 gap-3 mt-auto">
+                      <button
+                        type="button"
+                        onClick={() => setScheme_purchase("yes")}
+                        className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+                          scheme_purchase === "yes"
+                            ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+                            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+                        }`}
+                      >
+                        <span>Yes</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setScheme_purchase("no")}
+                        className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+                          scheme_purchase === "no"
                             ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
                             : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                         }`}
