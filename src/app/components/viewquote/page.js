@@ -9,28 +9,27 @@ import { useRouter } from "next/navigation";
 
 
 export default function ViewQuote() {
-  // const params = useSearchParams();
-  // const ref_no = params.get("ref_no");
-  const ref_no=""
+const params = useSearchParams();
+const ref_no = params.get("ref_no"); // fetch ref_no from URL
 
-  const [view_data, setview_data] = useState(null);
-  const router = useRouter();
+const [view_data, setview_data] = useState(null);
 
- useEffect(() => {
-    if (!ref_no) return;   // Wait until query param is available
+useEffect(() => {
+  if (!ref_no) return; // only fetch if ref_no exists
 
-    async function fetchData() {
-      try {
-        const response = await getData(`${API_ENDPOINTS.quotesfilter}/${ref_no}`);
-        setview_data(response.data[0]);
-        console.log(view_data);
-      } catch (e) {
-        console.log(e);
-      }
+  async function fetchData() {
+    try {
+      const response = await getData(`${API_ENDPOINTS.quotesfilter}/${ref_no}`);
+      setview_data(response.data[0]);
+      console.log(response.data[0]);
+    } catch (e) {
+      console.log(e);
     }
+  }
 
-    fetchData();
-  }, [ref_no]); 
+  fetchData();
+}, [ref_no]);
+
 
   if (!view_data) return <p className="p-5">Loading...</p>;
 
