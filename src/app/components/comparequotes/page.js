@@ -11,6 +11,7 @@ import {formatGBP}from "../utility/poundconverter"
 
 import { Check, X } from "lucide-react";
 import { Rating } from "react-simple-star-rating";
+import Footer from '../../parts/Footer/footer';
 
 
 
@@ -118,7 +119,10 @@ console.log("User ID or Guest ID:", userid);// user_id
           : { guest_user: "guest_user" };   // guest user
 
       const quoteResponse = await getData(`${API_ENDPOINTS.quotesfilter}/${localStorage.getItem('ref_no')}`);
+      if(quoteResponse?.data?.[0]!=undefined){
       setview_data(quoteResponse.data[0]);
+
+      }
         console.log(quoteResponse);
 
 
@@ -172,7 +176,7 @@ setcompanydata(formatted);
       <Navbar />
 
       {/* Body */}
-      <main className="mx-auto max-w-[1200px] pt-10 px-4 lg:px-0">
+      <main className="mx-auto max-w-[1200px] pt-10 px-4 lg:px-0 mb-10">
         {/* KEY CHANGE: The main layout switches from a single column (default) to a two-column grid on 'lg' screens. */}
         <div className="grid lg:grid-cols-[400px_1fr] gap-8 lg:gap-12">
           
@@ -327,20 +331,28 @@ alt={quote.company_name||"company logo"}
                         <div className="p-4 sm:p-6 flex flex-col gap-6 font">
                           <div className="grid grid-cols-1 lg:grid-cols-3 items-start gap-6 lg:gap-10">
                             {/* Left: Reviews - Static placeholder */}
-                            <div className="flex flex-col gap-2">
-                              <div className="flex items-center gap-1  text-yellow-400"><div className="flex items-center text-green-500 text-xs">
-  <Rating
-    initialValue={5}
-    readonly
-    size={20}
-    className="testing rating-style"
-  />
-</div></div>
-                              <p className="text-sm">
-                                <span className="font-bold text-[#4A7C59]">{quote.conveying_details.rating} out of 5</span> <span className='text-black'>(356 reviews)</span>
-                              </p>
-                             
-                            </div>
+                              <div className="flex flex-col">
+  <div className="flex items-center">
+    <Rating
+      initialValue={quote.conveying_details?.rating ?? 0} // dynamic rating from API
+      readonly
+      size={20}
+      allowFraction
+    />
+  </div>
+
+  <p className="text-sm mt-1">
+    <span className="font-bold text-[#4A7C59]">
+      {quote.conveying_details?.rating ?? 0} out of 5
+    </span>
+
+    {quote.conveying_details?.reviews_count && (
+      <span className="text-black">
+        {" "}({quote.conveying_details.reviews_count} reviews)
+      </span>
+    )}
+  </p>
+</div>
 
                             {/* Middle: Features - Static placeholder */}
                             <ul className="text-xs text-gray-700 space-y-2 font-normal text-[12px] list-none pl-4">
@@ -375,6 +387,44 @@ alt={quote.company_name||"company logo"}
                           </div>
 
                           {/* Description + Price Breakdown */}
+                            {dropdownOpenId === quote.quote_id && (
+  <div className="border-t border-gray-200 pt-6 flex justify-end">
+    <div className="text-xs text-gray-700 w-full max-w-[280px]">
+      <h4 className="font-semibold mb-3 text-left">Price Breakdown:</h4>
+
+      <ul className="space-y-2 text-gray-600">
+       <li className="flex justify-between">
+  <span>Legal fees</span>
+ <span className="font-bold text-gray-800">{formatGBP(quote.legal_fees)}</span>
+</li>
+
+
+
+        <li className="flex justify-between">
+          <span>Disbursements</span>
+          <span className="font-bold text-gray-800">
+            {formatGBP(quote.disbursements)}
+          </span>
+        </li>
+
+        <li className="flex justify-between border-b border-b-gray-500">
+          <span>VAT</span>
+          <span className="font-bold text-gray-800">
+            {formatGBP(quote.vat)}
+          </span>
+        </li>
+
+        <li className="flex justify-between">
+          <span>Total</span>
+          <span className="font-bold text-gray-800">
+            {formatGBP(quote.total)}
+          </span>
+        </li>
+       
+      </ul>
+    </div>
+  </div>
+)}
      {(dropdownOpenId === quote.quote_id && viewquotes) && (
 
 
@@ -626,6 +676,7 @@ alt={quote.company_name||"company logo"}
 
         </div>
       </main>
+      <Footer ></Footer>
     </div>
 
   );

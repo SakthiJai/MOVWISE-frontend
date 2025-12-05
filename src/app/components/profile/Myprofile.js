@@ -50,6 +50,7 @@ useEffect(() => {
     phone_number:userprofile[0].phone_number,
 email:userprofile[0].email,
    })
+
    setcompany(companydetails)
 
        }
@@ -184,7 +185,7 @@ email:userprofile[0].email,
               onClick={() => handlechangepage(1)}
               className={`cursor-pointer w-full text-center md:text-left px-4 py-2 text-md font-medium rounded-lg transition-colors duration-200 ${
                 show
-                  ? 'bg-indigo-600 text-white shadow-md'
+                  ? 'bg-green-600 text-white shadow-md'
                   : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
@@ -194,7 +195,7 @@ email:userprofile[0].email,
               onClick={() => handlechangepage(2)}
               className={`cursor-pointer w-full text-center md:text-left px-4 py-2 text-md font-medium rounded-lg transition-colors duration-200 ${
                 !show
-                  ? 'bg-indigo-600 text-white shadow-md'
+                  ? 'bg-green-600 text-white shadow-md'
                   : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
@@ -220,8 +221,8 @@ email:userprofile[0].email,
                    <PriceBreakdownCard companydetails={company} quoteId={selectedQuoteId}/>
                    </div>
                 </div>
-
                 )}
+              
                
                
               </div>

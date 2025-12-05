@@ -11,11 +11,19 @@ import { Languages, Pencil } from "lucide-react";
 import Select from "react-select";
 import { API_ENDPOINTS, getData, postData } from "../../auth/API/api";
 import { set } from "react-hook-form";
+import Myprofile from "../profile/Myprofile"
+import Quotepricebreakdown from "./Quotepricebreakdown"
 
 const Partnersprofile = () => {
   const [show, setshow] = useState(1);
   const [logintype, setlogintype] = useState();
   const [showpricebreakdown, setshowpricebreakdown] = useState();
+  const[company,setcompany]=useState([]);
+   const [user,setuser]=useState({
+      first_name:"",
+    })
+      const [selectedQuoteId, setSelectedQuoteId] = useState(null);
+    
 
   useEffect(() => {
     if (localStorage.getItem("logintype")) {
@@ -42,6 +50,11 @@ const Partnersprofile = () => {
       }
     }
   }, []);
+
+  function handlecom_detailsopen(property_id){
+    setSelectedQuoteId(property_id)
+    console.log("<>selectedQuoteId",selectedQuoteId);
+  }
 
   const [lang, setLang] = useState([]);
 
@@ -171,6 +184,7 @@ const Partnersprofile = () => {
   useEffect(() => {
     fetchlanguages();
     fetchCompanyInforamtion();
+    fetchapi()
   }, []);
 
   const handleChangeLang = (lang = []) => {
@@ -305,6 +319,7 @@ const Partnersprofile = () => {
   // ✅ Handle submit
   const handleSubmit = (e) => {
     e.preventDefault();
+    
     if (validate()) {
       console.log("✅ Valid form:", formData);
       alert("");
@@ -480,7 +495,59 @@ const Partnersprofile = () => {
       </span>
     );
   };
+ const QuotesContent = () => (
+    <div className="p-6 bg-white shadow-lg rounded-xl min-h-[300px] font h-[500px] overflow-auto" >
+      <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">My Quotes List </h2>
+      <div className="space-y-4">
+        {company.map((quote,index) => (
+          <div
+            key={index}
+            className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition duration-150"
+          >
+            <p className="text-gray-700 italic font-medium mb-2 sm:mb-0 max-w-2xl">
+               {`"${quote.company_name}"`}
+            </p>
+            <div className="flex items-center space-x-3 flex-shrink-0">
+              <span onClick={()=>{handlecom_detailsopen(quote.property_id)}}>
+   <StatusButton
+  status={
+    (() => {
+      if (quote.status === 1) {
+        return "Active";
+      } else if (quote.status === 0) {
+        return "Inactive";
+      } else {
+        return "Unknown";
+      }
+    })()
+  }
+/>
+              </span>
+        
+          
+            </div>
+          </div>
+        ))}
 
+          <div
+  className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition duration-150"
+>
+  <p className="text-gray-700 italic font-medium mb-2 sm:mb-0 max-w-2xl">
+    {"\"MovWise Conveyancing Ltd\""}
+  </p>
+
+  <div className="flex items-center space-x-3 flex-shrink-0">
+    <span onClick={() => { handlecom_detailsopen(101); }}>
+      <StatusButton status="Active" />
+    </span>
+  </div>
+</div>
+
+        
+
+      </div>
+    </div>
+  );
   // Content for the 'MY Profile' section (Unchanged)
   const ProfileContent = () => (
     <div className="p-6 bg-white shadow-lg rounded-xl min-h-[300px] font">
@@ -511,34 +578,41 @@ const Partnersprofile = () => {
     </div>
   );
 
+  async function fetchapi() {
+    console.log('chcek')
+      try{
+        if(localStorage.getItem("user")){
+           const payload = {
+        user_id: Number(localStorage.getItem("user")),
+        type:"partner"
+      };
+  
+        
+     let profiledetails = await postData(API_ENDPOINTS.intstructquote_list,payload);
+     let userprofile=profiledetails.data[0].user_details
+     let companydetails = profiledetails.data[0].company_details
+     console.log(userprofile)
+     console.log(companydetails)
+   
+     setuser({
+      first_name:userprofile[0].first_name,
+      last_name:userprofile[0].last_name,
+      phone_number:userprofile[0].phone_number,
+  email:userprofile[0].email,
+     })
+     
+     setcompany(companydetails)
+  
+         }
+    }
+       catch(e){
+      console.log(e)
+    }
+    
+    }
+
   // Content for the 'MY Quotes' section (Unchanged)
-  const QuotesContent = () => (
-    <div className="p-6 bg-white shadow-lg rounded-xl min-h-[300px] font">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">
-        My Quotes List ({quotesList.length})
-      </h2>
-      <div className="space-y-4">
-        {quotesList.map((quote) => (
-          <div
-            key={quote.id}
-            className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition duration-150"
-          >
-            <p className="text-gray-700 italic font-medium mb-2 sm:mb-0 max-w-2xl">
-              {quote.text}
-            </p>
-            <div
-              className="flex items-center space-x-3 flex-shrink-0"
-              onClick={() => {
-                setshowpricebreakdown(true);
-              }}
-            >
-              <StatusButton status={quote.status} />
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  
 
   const Partnerquotescontent = () => {
     return (
@@ -873,16 +947,17 @@ const Partnersprofile = () => {
       </div>
       <div className="mx-auto px-4 lg:px-16  grid grid-cols-1 md:grid-cols-4  gap-8 govt_by_scheme mt-30 mb-10">
         {/* 2. ASIDE/SIDEBAR: Spans 1 column. Styled for a menu look. */}
+
         <aside className="govt_by_scheme md:col-span-1 govt_by_scheme p-6 h-auto max-h-80 bg-white shadow-lg rounded-xl font">
           <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">
-            DevaPrasad
+            {userDetails.name}
           </h3>
           <div className="flex md:flex-col space-x-4 md:space-x-0 md:space-y-2">
             <span
               onClick={() => handlechangepage(1)}
               className={`cursor-pointer w-full text-center md:text-left px-4 py-2 text-md font-medium rounded-lg transition-colors duration-200 ${
                 show
-                  ? "bg-indigo-600 text-white shadow-md"
+                  ? "bg-green-600 text-white shadow-md"
                   : "text-gray-600 hover:bg-gray-100"
               }`}
             >
@@ -892,11 +967,21 @@ const Partnersprofile = () => {
               onClick={() => handlechangepage(2)}
               className={`cursor-pointer w-full text-center md:text-left px-4 py-2 text-md font-medium rounded-lg transition-colors duration-200 ${
                 !show
-                  ? "bg-indigo-600 text-white shadow-md"
+                  ? "bg-green-600 text-white shadow-md"
                   : "text-gray-600 hover:bg-gray-100"
               }`}
             >
               📜 Fee Details
+            </span>
+             <span
+              onClick={() => handlechangepage(3)}
+              className={`cursor-pointer w-full text-center md:text-left px-4 py-2 text-md font-medium rounded-lg transition-colors duration-200 ${
+                !show
+                  ? "bg-green-600 text-white shadow-md"
+                  : "text-gray-600 hover:bg-gray-100"
+              }`}
+            >
+              📜Quote Raised
             </span>
           </div>
         </aside>
@@ -910,6 +995,14 @@ const Partnersprofile = () => {
 
                 <div className="mt-5">
                   {show == 2 && <PriceBreakdownCard />}
+                </div>
+                <div className="mt-5">
+                  {show == 3 && (<div>
+                 <QuotesContent/>
+                 <div className="mt-5">
+                  <Quotepricebreakdown/>
+                  </div>
+                    </div>)}
                 </div>
               </div>
             </div>

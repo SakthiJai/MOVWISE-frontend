@@ -211,17 +211,14 @@ function handleloginformchange(name, value) {
      localStorage.removeItem("getquote");
 
       console.log("✅ Form submitted:", formData);
+      console.log("property_values =", formData.property_values);
+console.log("type =", typeof formData.property_values);
+
+formData.property_values=formData.property_values.toString()
+
             localStorage.setItem("service", JSON.stringify(4));
                   localStorage.setItem("getquote", JSON.stringify(formData));
 
-
-  Swal.fire({
-    title: "Success!",
-    text: "",
-    icon: "success",
-    confirmButtonText: "OK",
-    life:1000
-  });
 
   setModalopen(true); // if you still want to open your modal
 }
