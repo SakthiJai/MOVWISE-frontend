@@ -461,7 +461,7 @@ const transactionOptions = [
                             {sub.sub_category}
                         </div>
                         {disbursementFeesError && <p style={{ color: "red" }}>{disbursementFeesError}</p>}
-                        <div className="grid grid-cols-5 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
+                        <div className="grid grid-cols-4 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
 
                                 <div className="text-center">Disbursement Type £</div>
                                 <div className="text-center">Fee Cost £</div>
@@ -470,7 +470,7 @@ const transactionOptions = [
 
                         </div>
                         {pricingList.find(item => item.fees_category_id === numIndex).price_list.map((row, i) => (
-                        <div key={i} className="grid grid-cols-5 gap-3 px-3 py-2">
+                        <div key={i} className="grid grid-cols-4 gap-3 px-3 py-2">
           
                             {!row.isOthers ? (
                                 <select
@@ -570,13 +570,13 @@ const transactionOptions = [
 
                     {/* RESPONSIVE WRAPPER */}
                     <div className=" w-full">
-                      <table className="min-w-max w-full text-xs font-semibold text-gray-600 ">
+                      <table className="min-w-max w-full text-xs font-semibold text-gray-600 table-fixed">
                         <thead className="bg-gray-100">
                           <tr className="">
-                            <th className="px-3 py-2 text-center">Leasehold Service</th>
-                            <th className="px-3 py-2 text-center">Fee Type</th>
-                            <th className="px-3 py-2 text-center">Amount £</th>
-                            <th className="px-3 py-2 text-center">Paid To</th>
+                            <th className="px-3 py-2 text-center w-1/4">Leasehold Service</th>
+                            <th className="px-3 py-2 text-center w-1/4">Fee Type</th>
+                            <th className="px-3 py-2 text-center w-1/4">Amount £</th>
+                            <th className="px-3 py-2 text-center w-1/4">Paid To</th>
                           </tr>
                         </thead>
 
@@ -587,7 +587,7 @@ const transactionOptions = [
                               <tr key={i} className="border-b">
 
                                 {/* LEASEHOLD SERVICE SELECT */}
-                                <td className="px-3 py-2 text-center">
+                                <td className="pl-2 py-2 text-center">
                                   {!row.isOthers ? (
                                     <select
                                      disabled
@@ -619,7 +619,7 @@ const transactionOptions = [
                                 </td>
 
                                 {/* COST */}
-                                <td className="px-3 py-2 text-center">
+                                <td className="pl-2 py-2 text-center">
                                   <input
                                    readOnly
                                     type="text"
@@ -633,7 +633,7 @@ const transactionOptions = [
                                 </td>
 
                                 {/* PAID TO */}
-                                <td className="px-3 py-2 text-center">
+                                <td className="pl-2 py-2 text-center">
                                   <select
                                    disabled
                                     className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
@@ -652,7 +652,7 @@ const transactionOptions = [
                                 </td>
 
                                 {/* TRANSACTION TYPE */}
-                                <td className="px-3 py-2 text-center">
+                                <td className="pl-2 py-2 text-center">
                                   <select
                                    disabled
                                     className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
@@ -694,11 +694,13 @@ const transactionOptions = [
 
   {/* TABLE WRAPPER (for responsive scrolling) */}
   <div className="overflow-x-auto w-full">
-    <table className="min-w-max w-full text-xs font-semibold text-gray-600 ">
+    <table className="min-w-max w-full text-xs font-semibold text-gray-600 table-fixed">
       <thead className="bg-gray-100">
         <tr className="">
-          <th className="px-3 py-2 text-center">Select Service</th>
-          <th className="px-3 py-2 text-center">Amount £</th>
+          <th className="px-3 py-2 text-center w-1/4">Select Service</th>
+          <th className="px-3 py-2 text-center w-1/4">Amount £</th>
+          <th className="w-1/4"></th>
+          <th className="w-1/4"></th>
         </tr>
       </thead>
 
@@ -709,7 +711,7 @@ const transactionOptions = [
             <tr key={i} className="border-b">
               
               {/* SELECT SERVICE */}
-              <td className="px-3 py-2 text-center">
+              <td className="pl-2 py-2 text-center">
                 <select
                   className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
                   value={row.type}
@@ -728,7 +730,7 @@ const transactionOptions = [
               </td>
 
               {/* FEE COST */}
-              <td className="px-3 py-2 text-center">
+              <td className="pl-2 py-2 text-center">
                 <input
                  readOnly
                   type="text"

@@ -1,177 +1,160 @@
-'use client';
-import React, { useEffect, useState } from 'react';
-import Navbar from '../../parts/navbar/page';
+"use client";
+import React, { useEffect, useState } from "react";
+import Navbar from "../../parts/navbar/page";
 import { RiArrowDropDownLine } from "react-icons/ri";
-import Link from 'next/link';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
+import Link from "next/link";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { getData, postData, API_ENDPOINTS } from "../../auth/API/api";
 import Swal from "sweetalert2";
-import {formatGBP}from "../utility/poundconverter"
+import { formatGBP } from "../utility/poundconverter";
 
 import { Check, X } from "lucide-react";
 import { Rating } from "react-simple-star-rating";
-import Footer from '../../parts/Footer/footer';
-
-
-
-
+import Footer from "../../parts/Footer/footer";
 
 export default function Comparequotes() {
-
   // State to hold companies data (initialized with static data)
 
-  const [companydata,setcompanydata]=useState();
+  const [companydata, setcompanydata] = useState();
 
-  const[ref,setref]=useState("")
-  const[quotefound,setquotefound]=useState(false);
-    const [view_data, setview_data] = useState(null);
-    const[viewquotes,showviewquotes]=useState(false)
-  
-  
+  const [ref, setref] = useState("");
+  const [quotefound, setquotefound] = useState(false);
+  const [view_data, setview_data] = useState(null);
+  const [viewquotes, showviewquotes] = useState(false);
 
   // Track which card dropdown is open (by quote_id)
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
   // Popup modal visibility and selected company state
-  const [popupData, setPopupData] = useState({ visible: false, companyName: '' });
+  const [popupData, setPopupData] = useState({
+    visible: false,
+    companyName: "",
+  });
 
   // Toggle dropdown for a particular quote card
   function toggleDropdown(id) {
-    setDropdownOpenId(prev => (prev === id ? null : id));
+    setDropdownOpenId((prev) => (prev === id ? null : id));
     showviewquotes(true);
   }
 
   // On instruct button, show popup modal with message
-  function handleInstruct(companyName,guest_id,conveyancer_id,quote_id,user_id) {
-    const instructpayload={
-"conveyancer_id":conveyancer_id,
-"quote_id":quote_id
-    }
-     if (user_id) instructpayload.user_id = user_id;
-  else if (guest_id) instructpayload.guest_id = guest_id;
+  function handleInstruct(
+    companyName,
+    guest_id,
+    conveyancer_id,
+    quote_id,
+    user_id
+  ) {
+    const instructpayload = {
+      conveyancer_id: conveyancer_id,
+      quote_id: quote_id,
+    };
+    if (user_id) instructpayload.user_id = user_id;
+    else if (guest_id) instructpayload.guest_id = guest_id;
 
-  console.log(instructpayload);
-    console.log(instructpayload)
-    const instruct = postData(API_ENDPOINTS.instruct,instructpayload)
-    setPopupData({ visible: true, companyName:companyName });
-    console.log(companyName)
-    console.log(popupData)
+    console.log(instructpayload);
+    console.log(instructpayload);
+    const instruct = postData(API_ENDPOINTS.instruct, instructpayload);
+    setPopupData({ visible: true, companyName: companyName });
+    console.log(companyName);
+    console.log(popupData);
   }
 
   // Close popup
   function closePopup() {
-    setPopupData({ visible: false, companyName: '' });
-    router.push('/'); // Redirect to home page after closing
+    setPopupData({ visible: false, companyName: "" });
+    router.push("/"); // Redirect to home page after closing
   }
-
 
   const router = useRouter();
 
+  useEffect(() => {
+    if (localStorage.getItem("getquote")) {
+      console.log("check1");
+      const data = localStorage.getItem("getquote");
+      if (localStorage.getItem("service")) {
+        console.log("check1");
 
-  
+        if (data) {
+          const parsedData = JSON.parse(data);
+          parsedData.service_type = localStorage.getItem("service");
 
-useEffect(() => {
-  if(localStorage.getItem("getquote")){
-    console.log("check1")
-  const data = localStorage.getItem("getquote");
-  if(localStorage.getItem("service")){
-        console.log("check1")
+          qutesdata(parsedData);
+          console.log(parsedData);
+        }
 
-  if (data) {
-    const parsedData = JSON.parse(data); 
-      parsedData.service_type=localStorage.getItem("service")
+        async function qutesdata(formData) {
+          try {
+            const response = await postData(API_ENDPOINTS.services, formData);
+            console.log(
+              "✅ service API Response:",
+              response?.service?.quote_ref_number
+            );
 
-    qutesdata(parsedData);
-    console.log(parsedData)
-  }
-
-  async function qutesdata(formData) {
-    try {
-      const response = await postData(API_ENDPOINTS.services, formData);
-            console.log("✅ service API Response:", response?.service?.quote_ref_number);
-            
-          
             localStorage.setItem("ref_no", response?.service?.quote_ref_number);
-            
-            if(response.code==200){
-                          setref(localStorage.getItem("ref_no"));
+
+            if (response.code == 200) {
+              setref(localStorage.getItem("ref_no"));
 
               // localStorage.removeItem("getquote");
               // localStorage.removeItem("service");
 
-              
-              setquotefound(true)
+              setquotefound(true);
+            } else {
+              setquotefound(false);
             }
-            else{
-              setquotefound(false)
-            } 
 
+            // const propety_id = response.data;
+            // console.log("property_id",propety_id);//property_id
 
-      // const propety_id = response.data;
-      // console.log("property_id",propety_id);//property_id
-      
-     const userid = formData.user_id || formData["guest_user "]; // note the space
-console.log("User ID or Guest ID:", userid);// user_id
-      if (response.code === 200) {
-        try{
-            const filterPayload = formData.user_id
-          ? { user_id: formData.user_id }   // logged-in user
-          : { guest_user: "guest_user" };   // guest user
+            const userid = formData.user_id || formData["guest_user "]; // note the space
+            console.log("User ID or Guest ID:", userid); // user_id
+            if (response.code === 200) {
+              try {
+                const filterPayload = formData.user_id
+                  ? { user_id: formData.user_id } // logged-in user
+                  : { guest_user: "guest_user" }; // guest user
 
-      const quoteResponse = await getData(`${API_ENDPOINTS.quotesfilter}/${localStorage.getItem('ref_no')}`);
-      if(quoteResponse?.data?.[0]!=undefined){
-      setview_data(quoteResponse.data[0]);
+                const quoteResponse = await getData(
+                  `${API_ENDPOINTS.quotesfilter}/${localStorage.getItem(
+                    "ref_no"
+                  )}`
+                );
+                if (quoteResponse?.data?.[0] != undefined) {
+                  setview_data(quoteResponse.data[0]);
+                }
+                console.log(quoteResponse);
 
-      }
-        console.log(quoteResponse);
+                console.log("Quotes Filter API Response:", quoteResponse);
 
+                // Decode Base64 logo before storing
+                const formatted = quoteResponse?.data?.map((item) => {
+                  return {
+                    ...item,
+                    conveying_details: {
+                      ...item.conveying_details,
+                      logo: item.conveying_details.logo
+                        ? `data:image/png;base64,${item.conveying_details.logo}`
+                        : null,
+                    },
+                  };
+                });
 
-console.log("Quotes Filter API Response:", quoteResponse);
-
-
-
-
-// Decode Base64 logo before storing
-const formatted = quoteResponse?.data?.map((item) => {
-  return {
-    ...item,
-    conveying_details: {
-      ...item.conveying_details,
-      logo: item.conveying_details.logo
-        ? `data:image/png;base64,${item.conveying_details.logo}`
-        : null,
-    },
-  };
-});
-
-setcompanydata(formatted);
-   
-
-  }
-        
-        
-        catch(error){
-          console.error("❌ Failed to post services:", error);
+                setcompanydata(formatted);
+              } catch (error) {
+                console.error("❌ Failed to post services:", error);
+              }
+            }
+          } catch (error) {
+            console.error("❌ Failed to post remortgage:", error);
+          }
         }
-      
       }
-    } catch (error) {
-      console.error("❌ Failed to post remortgage:", error);
     }
-  }
-
-  }
-  }
-
-
-  
-}, []);
-
-
-
+  }, []);
 
   return (
-   <div className="min-h-screen bg-white antialiased">
+    <div className="min-h-screen bg-white antialiased">
       {/* Top bar */}
       <Navbar />
 
@@ -179,12 +162,13 @@ setcompanydata(formatted);
       <main className="mx-auto max-w-[1200px] pt-10 px-4 lg:px-0 mb-10">
         {/* KEY CHANGE: The main layout switches from a single column (default) to a two-column grid on 'lg' screens. */}
         <div className="grid lg:grid-cols-[400px_1fr] gap-8 lg:gap-12">
-          
           {/* Left rail: stepper panel (Sidebar) */}
           {/* KEY CHANGE: Removed w-[400px] from here. It now spans the full width on small screens and is controlled by the grid on 'lg'. */}
           <aside className="relative rounded-[40px] overflow-hidden bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] shadow-[inset_0_1px_0_rgba(0,0,0,0.03)] p-6 lg:p-0">
-             {/* Added p-6 for padding on small screens since the original design had 'absolute inset-0 p-8' */}
-            <div className="relative z-10 p-2 lg:p-8"> {/* Re-adjusted padding for lg */}
+            {/* Added p-6 for padding on small screens since the original design had 'absolute inset-0 p-8' */}
+            <div className="relative z-10 p-2 lg:p-8">
+              {" "}
+              {/* Re-adjusted padding for lg */}
               {/* Step 1 - Completed */}
               <div className="flex items-start">
                 <div className="relative mr-4">
@@ -198,19 +182,27 @@ setcompanydata(formatted);
                       stroke="currentColor"
                       className="w-5 h-5"
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                   </div>
                   <div className="absolute left-[22px] top-[44px] w-[2px] h-[56px] bg-[#CFE3CF]" />
                 </div>
                 <div>
-                  <div className="text-[12px] font-semibold pesonaldetails-steps font-gilroy">STEP 1</div>
-                  <div className="font-outfit text-[20px] text-gray-900 font-semibold">Personal Details</div>
-                  <div className="text-[12px] font-medium text-[#2D7C57] mt-1">Completed</div>
-
+                  <div className="text-[12px] font-semibold pesonaldetails-steps font-gilroy">
+                    STEP 1
+                  </div>
+                  <div className="font-outfit text-[20px] text-gray-900 font-semibold">
+                    Personal Details
+                  </div>
+                  <div className="text-[12px] font-medium text-[#2D7C57] mt-1">
+                    Completed
+                  </div>
                 </div>
               </div>
-
               {/* Step 2 - Completed */}
               <div className="flex items-start mt-8">
                 <div className="relative mr-4">
@@ -224,33 +216,59 @@ setcompanydata(formatted);
                       stroke="currentColor"
                       className="w-5 h-5"
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                   </div>
                   <div className="absolute left-[22px] top-[44px] w-[2px] h-[56px] bg-[#CFE3CF]" />
                 </div>
                 <div>
-                  <div className="text-[12px] font-semibold pesonaldetails-steps font-gilroy">STEP 2</div>
-                  <div className="font-outfit text-[20px] text-gray-900 font-semibold">Property Details</div>
-                                    <div className="text-[12px] font-medium text-[#2D7C57] mt-1">Completed</div>
-
+                  <div className="text-[12px] font-semibold pesonaldetails-steps font-gilroy">
+                    STEP 2
+                  </div>
+                  <div className="font-outfit text-[20px] text-gray-900 font-semibold">
+                    Property Details
+                  </div>
+                  <div className="text-[12px] font-medium text-[#2D7C57] mt-1">
+                    Completed
+                  </div>
                 </div>
               </div>
-
               {/* Step 3 - In progress (keep as current) */}
               <div className="flex items-start mt-8">
                 <div className="mr-4">
                   <div className="w-11 h-11 rounded-full border-[2px] border-[#1E5C3B] bg-white text-[#1E5C3B] flex items-center justify-center">
-                    <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true">
-                      <circle cx="10" cy="10" r="8" fill="none" stroke="currentColor" strokeWidth="2" />
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 20 20"
+                      aria-hidden="true"
+                    >
+                      <circle
+                        cx="10"
+                        cy="10"
+                        r="8"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      />
                       <circle cx="10" cy="10" r="3" fill="currentColor" />
                     </svg>
                   </div>
                 </div>
                 <div>
-                  <div className="text-[12px] font-semibold pesonaldetails-steps font-gilroy">STEP 3</div>
-                  <div className="font-outfit text-[20px] font-semibold text-gray-900">Compare Quotes</div>
-                  <div className="text-[12px] mt-1 font-semibold font-gilroy text-[#A38320]">In Progress</div>
+                  <div className="text-[12px] font-semibold pesonaldetails-steps font-gilroy">
+                    STEP 3
+                  </div>
+                  <div className="font-outfit text-[20px] font-semibold text-gray-900">
+                    Compare Quotes
+                  </div>
+                  <div className="text-[12px] mt-1 font-semibold font-gilroy text-[#A38320]">
+                    In Progress
+                  </div>
                 </div>
               </div>
             </div>
@@ -262,373 +280,490 @@ setcompanydata(formatted);
               className="h-full lg:absolute inset-x-0 bottom-0 lg:h-[45%] "
               style={{
                 background:
-                  'radial-gradient(120% 80% at 0% 100%, rgba(178,196,160,0.45) 0%, rgba(178,196,160,0.25) 35%, transparent 70%)',
+                  "radial-gradient(120% 80% at 0% 100%, rgba(178,196,160,0.45) 0%, rgba(178,196,160,0.25) 35%, transparent 70%)",
               }}
             />
           </aside>
 
           {/* Right section (Main Content) */}
           {/* KEY CHANGE: Removed col-start-2. The natural flow of the grid handles the stacking on mobile and placement on 'lg' */}
-               <section>
+          <section>
             <div className="overflow-auto space-y-6 pr-2 rounded-[18px] border border-[#f2eded] shadow-[0_6px_24px_rgba(16,24,40,0.04)] bg-white w-full lg:h-[500px]">
               <div className="p-4 sm:p-8">
-                <nav className="text-[13px] text-[#6B7280] mb-1 flex items-center gap-4" aria-label="Breadcrumb">
-                  <Link href="/" className="other-page whitespace-nowrap">Home</Link>
+                <nav
+                  className="text-[13px] text-[#6B7280] mb-1 flex items-center gap-4"
+                  aria-label="Breadcrumb"
+                >
+                  <Link href="/" className="other-page whitespace-nowrap">
+                    Home
+                  </Link>
                   <span className="hidden sm:inline">/</span>
-                  <span className="other-page hidden sm:inline">Personal Details</span>
+                  <span className="other-page hidden sm:inline">
+                    Personal Details
+                  </span>
                   <span className="hidden sm:inline">/</span>
-                  <span className="other-page hidden sm:inline">Property Details</span>
+                  <span className="other-page hidden sm:inline">
+                    Property Details
+                  </span>
                   <span>/</span>
-                  <span className="live-page whitespace-nowrap">Compare Quotes</span>
+                  <span className="live-page whitespace-nowrap">
+                    Compare Quotes
+                  </span>
                 </nav>
 
-                <h1 className="text-[20px] sm:text-[24px] font-semibold font-Outfit text-[#1B1D21]">Compare Quotes</h1>
+                <h1 className="text-[20px] sm:text-[24px] font-semibold font-Outfit text-[#1B1D21]">
+                  Compare Quotes
+                </h1>
                 <p className="mt-1 text-[14px] leading-5 text-[#6B7280] font-outfit">
-                  By completing this form your details are shared with up to 5 firms providing the quotes, but absolutely no one else.
+                  By completing this form your details are shared with up to 5
+                  firms providing the quotes, but absolutely no one else.
                 </p>
 
                 <div className="mt-8 space-y-6">
-                  {companydata?.map((quote,index) => (
-                    <div key={index} className="font border border-gray-200 rounded-2xl overflow-hidden bg-white w-full">
+                  {companydata?.map((quote, index) => (
+                    <div
+                      key={index}
+                      className="font border border-gray-200 rounded-2xl overflow-hidden bg-white w-full"
+                    >
                       {/* Card Header */}
-                      <div  className={`flex flex-col sm:flex-row items-center justify-between   ${index % 2 === 0 ? "bg-green-50" : "bg-red-50"}  mx-2 mt-2 rounded-2xl p-4 sm:px-8 sm:py-5`}>
+                      <div
+                        className={`flex flex-col sm:flex-row items-center justify-between   ${
+                          index % 2 === 0 ? "bg-green-50" : "bg-red-50"
+                        }  mx-2 mt-2 rounded-2xl p-4 sm:px-8 sm:py-5`}
+                      >
                         <div className="flex items-center gap-5 mb-3 sm:mb-0">
                           {quote.logo ? (
-<Image
-  src={quote.conveying_details.logo}
-alt={quote.company_name||"company logo"}
-    // <- controls visible size
-/>
+                            <Image
+                              src={quote.conveying_details.logo}
+                              alt={quote.company_name || "company logo"}
+                              // <- controls visible size
+                            />
                           ) : (
-                            <Image width={35} height={35} src="https://cdn-icons-png.flaticon.com/512/295/295128.png" alt={quote.company_name||"company logo"} className="object-contain" />
+                            <Image
+                              width={35}
+                              height={35}
+                              src="https://cdn-icons-png.flaticon.com/512/295/295128.png"
+                              alt={quote.company_name || "company logo"}
+                              className="object-contain"
+                            />
                           )}
-                          <h3 className="font-semibold text-base sm:text-lg text-gray-800">{quote.conveying_details.company_name}</h3>
+                          <h3 className="font-semibold text-base sm:text-lg text-gray-800">
+                            {quote.conveying_details.company_name}
+                          </h3>
                         </div>
                         <div className="flex items-center gap-4">
                           <div className="text-right">
-                            <p className="text-xl font-bold text-gray-900">{formatGBP(quote.total)}</p>
+                            <p className="text-xl font-bold text-gray-900">
+                              {formatGBP(quote.total)}
+                            </p>
                             <button
                               className="text-green-700 text-sm font-medium hover:underline"
                               onClick={() => toggleDropdown(quote.quote_id)}
                             >
-                              {dropdownOpenId === quote.quote_id ? <u> Price Breakdown</u> : <u>Price Breakdown</u>}
+                              {dropdownOpenId === quote.quote_id ? (
+                                <u> Price Breakdown</u>
+                              ) : (
+                                <u>Price Breakdown</u>
+                              )}
                             </button>
                           </div>
                           <div
                             className="w-7 h-7 flex items-center justify-center bg-white border border-gray-300 rounded-md shadow-sm cursor-pointer"
                             onClick={() => toggleDropdown(quote.quote_id)}
                           >
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor"
-                              className={`w-4 h-4 text-gray-600 transform transition-transform duration-200 ${dropdownOpenId === quote.quote_id ? 'rotate-180' : ''}`}>
-                              <path strokeLinecap="round" strokeLinejoin="round" d="M6 9l6 6 6-6" />
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              strokeWidth="1.5"
+                              stroke="currentColor"
+                              className={`w-4 h-4 text-gray-600 transform transition-transform duration-200 ${
+                                dropdownOpenId === quote.quote_id
+                                  ? "rotate-180"
+                                  : ""
+                              }`}
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                d="M6 9l6 6 6-6"
+                              />
                             </svg>
                           </div>
                         </div>
                       </div>
 
                       {/* Expandable Content */}
-                   
-                        <div className="p-4 sm:p-6 flex flex-col gap-6 font">
-                          <div className="grid grid-cols-1 lg:grid-cols-3 items-start gap-6 lg:gap-10">
-                            {/* Left: Reviews - Static placeholder */}
-                              <div className="flex flex-col">
-  <div className="flex items-center">
-    <Rating
-      initialValue={quote.conveying_details?.rating ?? 0} // dynamic rating from API
-      readonly
-      size={20}
-      allowFraction
-    />
-  </div>
 
-  <p className="text-sm mt-1">
-    <span className="font-bold text-[#4A7C59]">
-      {quote.conveying_details?.rating ?? 0} out of 5
-    </span>
+                      <div className="p-4 sm:p-6 flex flex-col gap-6 font">
+                        <div className="grid grid-cols-1 lg:grid-cols-3 items-start gap-6 lg:gap-10">
+                          {/* Left: Reviews - Static placeholder */}
+                          <div className="flex flex-col">
+                            <div className="flex items-center">
+                              <Rating
+                                initialValue={
+                                  quote.conveying_details?.rating ?? 0
+                                } // dynamic rating from API
+                                readonly
+                                size={20}
+                                allowFraction
+                              />
+                            </div>
 
-    {quote.conveying_details?.reviews_count && (
-      <span className="text-black">
-        {" "}({quote.conveying_details.reviews_count} reviews)
-      </span>
-    )}
-  </p>
-</div>
+                            <p className="text-sm mt-1">
+                              <span className="font-bold text-[#4A7C59]">
+                                {quote.conveying_details?.rating ?? 0} out of 5
+                              </span>
 
-                            {/* Middle: Features - Static placeholder */}
-                            <ul className="text-xs text-gray-700 space-y-2 font-normal text-[12px] list-none pl-4">
-                              <li className="relative before:content-['•'] before:absolute before:left-0 before:text-[#4A7C59] before:text-base pl-3">
-                              {quote?.conveying_details.short_notes?.length > 60 
-  ? `${quote.conveying_details.short_notes.slice(0, 100)}...`
-  : quote?.short_notes}
-                              </li>
-                              
-                            </ul>
-
-                            {/* Right: Buttons */}
-                            <div className="flex flex-row gap-2 justify-start lg:col-start-3 lg:justify-end">
-<Link
-  href={`/components/viewquote?ref_no=${ref}&id=${quote.quote_id}`}
-  className="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-full hover:bg-gray-100 transition font-medium"
->
-  View
-</Link>
-
-
-
-
-  <button
-    className="px-3 py-1.5 bg-[#4A7C59] text-white text-sm rounded-full hover:bg-[#3b6248]"
-    onClick={() => handleInstruct(quote.conveying_details.company_name,quote.guest_id,quote.conveying_details.conveying_id,quote.quote_id,quote.customer_details.customer_id) }
-  >
-    Instruct
-  </button>
-</div>
-
+                              {quote.conveying_details?.reviews_count && (
+                                <span className="text-black">
+                                  {" "}
+                                  ({quote.conveying_details.reviews_count}{" "}
+                                  reviews)
+                                </span>
+                              )}
+                            </p>
                           </div>
 
-                          {/* Description + Price Breakdown */}
-                            {dropdownOpenId === quote.quote_id && (
-  <div className="border-t border-gray-200 pt-6 flex justify-end">
-    <div className="text-xs text-gray-700 w-full max-w-[280px]">
-      <h4 className="font-semibold mb-3 text-left">Price Breakdown:</h4>
+                          {/* Middle: Features - Static placeholder */}
+                          <ul className="text-xs text-gray-700 space-y-2 font-normal text-[12px] list-none pl-4">
+                            <li className="relative before:content-['•'] before:absolute before:left-0 before:text-[#4A7C59] before:text-base pl-3">
+                              {quote?.conveying_details.short_notes?.length > 60
+                                ? `${quote.conveying_details.short_notes.slice(
+                                    0,
+                                    100
+                                  )}...`
+                                : quote?.short_notes}
+                            </li>
+                          </ul>
 
-      <ul className="space-y-2 text-gray-600">
-       <li className="flex justify-between">
-  <span>Legal fees</span>
- <span className="font-bold text-gray-800">{formatGBP(quote.legal_fees)}</span>
-</li>
+                          {/* Right: Buttons */}
+                          <div className="flex flex-row gap-2 justify-start lg:col-start-3 lg:justify-end">
+                            <Link
+                              href={`/components/viewquote?ref_no=${ref}&id=${quote.quote_id}`}
+                              className="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-full hover:bg-gray-100 transition font-medium"
+                            >
+                              View
+                            </Link>
 
-
-
-        <li className="flex justify-between">
-          <span>Disbursements</span>
-          <span className="font-bold text-gray-800">
-            {formatGBP(quote.disbursements)}
-          </span>
-        </li>
-
-        <li className="flex justify-between border-b border-b-gray-500">
-          <span>VAT</span>
-          <span className="font-bold text-gray-800">
-            {formatGBP(quote.vat)}
-          </span>
-        </li>
-
-        <li className="flex justify-between">
-          <span>Total</span>
-          <span className="font-bold text-gray-800">
-            {formatGBP(quote.total)}
-          </span>
-        </li>
-       
-      </ul>
-    </div>
-  </div>
-)}
-     {(dropdownOpenId === quote.quote_id && viewquotes) && (
-
-
-<div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm animate-fadeIn">
-    <div className="bg-white rounded-2xl p-8 h-[600px] overflow-auto  text-center shadow-2xl border border-green-200 animate-popIn">
-      
-
-          <div className="font-family min-h-screen p-5 mx-90 text-black">
-   
-           {/* ---------- TOP BUTTONS ---------- */}
-           <div className="flex justify-between items-center mb-6 px-4">
-             <button
-     className="border px-4 py-2 rounded text-emerald-600 text-sm flex items-center gap-2"
-     onClick={() => showviewquotes(false)}
-   >
-     Back
-   </button>
-             <span className="text-[34px] ml-15 p-2 leading-none font-extrabold text-[#1E5C3B] tracking-tight">
-               {view_data?.appsetting_details?.company_name || "MovWise"}
-             </span>
-   
-             <button className="bg-[#F8C537] text-white px-8 py-2 text-sm font-medium mt-4 ml-5 flex items-center justify-center rounded">
-               <svg
-                 xmlns="http://www.w3.org/2000/svg"
-                 fill="none"
-                 viewBox="0 0 24 24"
-                 strokeWidth={2}
-                 stroke="white"
-                 className="w-6 mt-2"
-               >
-                 <path
-                   strokeLinecap="round"
-                   strokeLinejoin="round"
-                   d="M16.862 4.487l1.687 1.687m-8.03 8.03l-3.01.753.753-3.01 8.03-8.03a1.5 1.5 0 012.121 0l.146.146a1.5 1.5 0 010 2.121l-8.03 8.03z"
-                 />
-               </svg>
-               <span className="text-base">Instruct Firm</span>
-             </button>
-           </div>
-   
-           {/* ---------- MAIN CONTAINER ---------- */}
-           <div className="border rounded-lg bg-white shadow px-6 py-2 mb-2 space-y-2 quotes">
-   
-             {/* ---------- COMPANY LOGO + RATING ---------- */}
-             <div className="flex justify-between items-start">
-               <div className="ml-6">
-                 <img
-                   src={
-                     view_data?.appsetting_details?.logo ||
-                     "/logo.png"
-                   }
-                   alt="Company Logo"
-                   className="w-30 mt-5 h-10"
-                 />
-   
-                 <p className="mt-2 font-semibold text-base quotes">Contact Details</p>
-   
-                 <p className="font-semibold mt-1 text-base ">
-                   {view_data?.appsetting_details?.phone_number || "N/A"}
-                 </p>
-   
-                 <a
-                   href={`mailto:${view_data?.appsetting_details?.email}`}
-                   className="text-emerald-600 text-xs"
-                 >
-                   {view_data?.appsetting_details?.email}
-                 </a>
-               </div>
-   
-               <div className="mt-6">
-                 <div className="flex items-center text-green-500 text-xs mt-1">
-                   <Rating
-                     initialValue={view_data?.conveying_details?.rating || 0}
-                     readonly  
-                     size={20}
-                   />
-                 </div>
-
-                 {/* Rating number row */}
-                <p className="text-gray-600 text-sm mt-1">
-                  {view_data?.conveying_details?.rating || 0}/5
-                </p>
-               </div>
-             </div>
-   
-             {/* ---------- YOUR DETAILS ---------- */}
-             <div className="py-1 px-5">
-               <div className="text-emerald-600">
-                 <h3 className="text-lg font-semibold">Your Details</h3>
-               </div>
-   
-               <div className="space-y-1 text-sm  mt-3">
-                 <div className="flex">
-                   <span className="font-semibold w-26">Name</span>
-                   <span className="ml-5">
-                     {view_data?.customer_details?.first_name}{" "}
-                     {view_data?.customer_details?.last_name}
-                   </span>
-                 </div>
-   
-                 <div className="flex">
-                   <span className="font-semibold w-20">Email</span>
-                   <span className="ml-10">
-                     {view_data?.customer_details?.email || "--"}
-                   </span>
-                 </div>
-   
-                 <div className="flex">
-                   <span className="font-semibold w-20">Phone #1</span>
-                   <span className="ml-10">
-                     {view_data?.conveying_details?.phone_number || "--"}
-                   </span>
-                 </div>
-   
-                 <div className="flex">
-                   <span className="font-semibold w-24">Phone #2</span>
-                   <span className="ml-6">--</span>
-                 </div>
-               </div>
-             </div>
-   
-             {/* ---------- SALE PROPERTY ---------- */}
-             <div className="py-1 px-5 text-sm ">
-               <div className="text-emerald-600    ">
-                 <h3 className="text-lg   font-semibold"> Property Details</h3>
-               </div>
-   
-               <div className="flex mt-3">
-                 <span className="font-semibold w-32">Value</span>
-                 <span>£{view_data?.property_value || "--"}</span>
-               </div>
-   
-               <div className="flex">
-                 <span className="font-semibold w-32">Tenure</span>
-                 <span>{view_data?.tenure || "--"}</span>
-               </div>
-   
-               <div className="flex">
-                 <span className="font-semibold w-32">Mortgage?</span>
-                 <span>{view_data?.mortgage ? "Yes" : "No"}</span>
-               </div>
-             </div>
-   
-             {/* ---------- FEES SECTION ---------- */}
-             <div>
-               {/* Sale Fees */}
-               <div className="mb-1 p-4">
-                 <p className="font-bold text-black mb-3">Sale Fees</p>
-   
-                 <div className="space-y-2 text-sm">
-                   <div className="flex justify-between">
-                     <span>Legal Fee</span>
-                     <span>£{view_data?.legal_fees}.00</span>
-                   </div>
-   
-                   <div className="flex justify-between">
-                     <span>VAT</span>
-                     <span>£{view_data?.vat}.00</span>
-                   </div>
-                 </div>
-   
-                 <div className="flex justify-between font-semibold mt-3 text-base">
-                   <span>Total Fees</span>
-                   <span>£{Number(view_data?.legal_fees) + Number(view_data?.vat)}.00</span>
-                 </div>
-               </div>
-   
-               <div className="border-t"></div>
-   
-               {/* Disbursements */}
-               <div className="p-4">
-                 <p className="font-bold text-black mb-3">Disbursements</p>
-   
-                 <div className="space-y-2    text-sm">
-                   <div className="flex justify-between">
-                     <span>Total Disbursements</span>
-                     <span>£{view_data?.disbursements}</span>
-                   </div>
-                 </div>
-   
-                 <div className="flex justify-between font-semibold mt-3 text-base">
-                   <span>Total Fees & Disbursements</span>
-                   <span>£{view_data?.total}.00</span>
-                 </div>
-               </div>
-             </div>
-   
-             <div className="border-t  w-full"></div>
-   
-             {/* ---------- NOTES ---------- */}
-             <div>
-               <h4>Notes</h4>
-               <p className="text-xs mt-4">
-                 {view_data?.conveying_details?.short_notes ||
-                   "No notes provided by the firm."}
-               </p>
-             </div>
-           </div>
-         </div>
-
-</div>
-</div>
-)}
+                            <button
+                              className="px-3 py-1.5 bg-[#4A7C59] text-white text-sm rounded-full hover:bg-[#3b6248]"
+                              onClick={() =>
+                                handleInstruct(
+                                  quote.conveying_details.company_name,
+                                  quote.guest_id,
+                                  quote.conveying_details.conveying_id,
+                                  quote.quote_id,
+                                  quote.customer_details.customer_id
+                                )
+                              }
+                            >
+                              Instruct
+                            </button>
                           </div>
+                        </div>
+
+                        {/* Description + Price Breakdown */}
+                        {dropdownOpenId === quote.quote_id && (
+                          <div className="border-t border-gray-200 pt-6 flex justify-end">
+                            <div className="text-xs text-gray-700 w-full max-w-[280px]">
+                              <h4 className="font-semibold mb-3 text-left">
+                                Price Breakdown:
+                              </h4>
+
+                              <ul className="space-y-2 text-gray-600">
+                                <li className="flex justify-between">
+                                  <span>Legal fees</span>
+                                  <span className="font-bold text-gray-800">
+                                    {formatGBP(quote.legal_fees)}
+                                  </span>
+                                </li>
+
+                                <li className="flex justify-between">
+                                  <span>Disbursements</span>
+                                  <span className="font-bold text-gray-800">
+                                    {formatGBP(quote.disbursements)}
+                                  </span>
+                                </li>
+
+                                <li className="flex justify-between border-b border-b-gray-500">
+                                  <span>VAT</span>
+                                  <span className="font-bold text-gray-800">
+                                    {formatGBP(quote.vat)}
+                                  </span>
+                                </li>
+
+                                <li className="flex justify-between">
+                                  <span>Total</span>
+                                  <span className="font-bold text-gray-800">
+                                    {formatGBP(quote.total)}
+                                  </span>
+                                </li>
+                              </ul>
+                            </div>
+                          </div>
+                        )}
+                        {dropdownOpenId === quote.quote_id && viewquotes && (
+                          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm animate-fadeIn">
+                            <div className="bg-white rounded-2xl p-8 w-[90%] min-h-screen overflow-auto  text-center shadow-2xl border border-green-200 animate-popIn">
+                              <div className="absolute top-1 right-32">
+                                <button
+                                  className="text-4xl text-gray-700"
+                                  onClick={() => showviewquotes(false)}
+                                >
+                                  ×
+                                </button>
+                              </div>
+                              <div className="font-family min-h-screen p-5 mx-90 text-black">
+                                {/* ---------- TOP BUTTONS ---------- */}
+                                <div className="flex justify-between items-center mb-6 px-4">
+                                  <button
+                                    className="border px-4 py-2 rounded text-emerald-600 text-sm flex items-center gap-2"
+                                    onClick={() => showviewquotes(false)}
+                                  >
+                                    Back
+                                  </button>
+                                  <span className="text-[34px] ml-15 p-2 leading-none font-extrabold text-[#1E5C3B] tracking-tight">
+                                    {view_data?.appsetting_details
+                                      ?.company_name || "MovWise"}
+                                  </span>
+
+                                  <button className="bg-[#F8C537] text-white px-8 py-2 text-sm font-medium mt-4 ml-5 flex items-center justify-center rounded">
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      fill="none"
+                                      viewBox="0 0 24 24"
+                                      strokeWidth={2}
+                                      stroke="white"
+                                      className="w-6 mt-2"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M16.862 4.487l1.687 1.687m-8.03 8.03l-3.01.753.753-3.01 8.03-8.03a1.5 1.5 0 012.121 0l.146.146a1.5 1.5 0 010 2.121l-8.03 8.03z"
+                                      />
+                                    </svg>
+                                    <span className="text-base">
+                                      Instruct Firm
+                                    </span>
+                                  </button>
+                                </div>
+
+                                {/* ---------- MAIN CONTAINER ---------- */}
+                                <div className="border rounded-lg bg-white shadow px-6 py-2 mb-2 space-y-2 quotes">
+                                  {/* ---------- COMPANY LOGO + RATING ---------- */}
+                                  <div className="flex justify-between items-start">
+                                    <div className="ml-6">
+                                      <img
+                                        src={
+                                          view_data?.appsetting_details?.logo ||
+                                          "/logo.png"
+                                        }
+                                        alt="Company Logo"
+                                        className="w-30 mt-5 h-10"
+                                      />
+
+                                      <p className="mt-2 font-semibold text-base quotes">
+                                        Contact Details
+                                      </p>
+
+                                      <p className="font-semibold mt-1 text-base ">
+                                        {view_data?.appsetting_details
+                                          ?.phone_number || "N/A"}
+                                      </p>
+
+                                      <a
+                                        href={`mailto:${view_data?.appsetting_details?.email}`}
+                                        className="text-emerald-600 text-xs"
+                                      >
+                                        {view_data?.appsetting_details?.email}
+                                      </a>
+                                    </div>
+
+                                    <div className="mt-6">
+                                      <div className="flex items-center text-green-500 text-xs mt-1">
+                                        <Rating
+                                          initialValue={
+                                            view_data?.conveying_details
+                                              ?.rating || 0
+                                          }
+                                          readonly
+                                          size={20}
+                                        />
+                                      </div>
+
+                                      {/* Rating number row */}
+                                      <p className="text-gray-600 text-sm mt-1">
+                                        {view_data?.conveying_details?.rating ||
+                                          0}
+                                        /5
+                                      </p>
+                                    </div>
+                                  </div>
+
+                                  {/* ---------- YOUR DETAILS ---------- */}
+                                  <div className="py-1 px-5">
+                                    <div className="text-emerald-600">
+                                      <h3 className="text-lg font-semibold">
+                                        Your Details
+                                      </h3>
+                                    </div>
+
+                                    <div className="space-y-1 text-sm  mt-3">
+                                      <div className="flex">
+                                        <span className="font-semibold w-26">
+                                          Name
+                                        </span>
+                                        <span className="ml-5">
+                                          {
+                                            view_data?.customer_details
+                                              ?.first_name
+                                          }{" "}
+                                          {
+                                            view_data?.customer_details
+                                              ?.last_name
+                                          }
+                                        </span>
+                                      </div>
+
+                                      <div className="flex">
+                                        <span className="font-semibold w-20">
+                                          Email
+                                        </span>
+                                        <span className="ml-10">
+                                          {view_data?.customer_details?.email ||
+                                            "--"}
+                                        </span>
+                                      </div>
+
+                                      <div className="flex">
+                                        <span className="font-semibold w-20">
+                                          Phone #1
+                                        </span>
+                                        <span className="ml-10">
+                                          {view_data?.conveying_details
+                                            ?.phone_number || "--"}
+                                        </span>
+                                      </div>
+
+                                      <div className="flex">
+                                        <span className="font-semibold w-24">
+                                          Phone #2
+                                        </span>
+                                        <span className="ml-6">--</span>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* ---------- SALE PROPERTY ---------- */}
+                                  <div className="py-1 px-5 text-sm ">
+                                    <div className="text-emerald-600    ">
+                                      <h3 className="text-lg   font-semibold">
+                                        {" "}
+                                        Property Details
+                                      </h3>
+                                    </div>
+
+                                    <div className="flex mt-3">
+                                      <span className="font-semibold w-32">
+                                        Value
+                                      </span>
+                                      <span>
+                                        £{view_data?.property_value || "--"}
+                                      </span>
+                                    </div>
+
+                                    <div className="flex">
+                                      <span className="font-semibold w-32">
+                                        Tenure
+                                      </span>
+                                      <span>{view_data?.tenure || "--"}</span>
+                                    </div>
+
+                                    <div className="flex">
+                                      <span className="font-semibold w-32">
+                                        Mortgage?
+                                      </span>
+                                      <span>
+                                        {view_data?.mortgage ? "Yes" : "No"}
+                                      </span>
+                                    </div>
+                                  </div>
+
+                                  {/* ---------- FEES SECTION ---------- */}
+                                  <div>
+                                    {/* Sale Fees */}
+                                    <div className="mb-1 p-4">
+                                      <p className="font-bold text-black mb-3">
+                                        Sale Fees
+                                      </p>
+
+                                      <div className="space-y-2 text-sm">
+                                        <div className="flex justify-between">
+                                          <span>Legal Fee</span>
+                                          <span>
+                                            £{view_data?.legal_fees}.00
+                                          </span>
+                                        </div>
+
+                                        <div className="flex justify-between">
+                                          <span>VAT</span>
+                                          <span>£{view_data?.vat}.00</span>
+                                        </div>
+                                      </div>
+
+                                      <div className="flex justify-between font-semibold mt-3 text-base">
+                                        <span>Total Fees</span>
+                                        <span>
+                                          £
+                                          {Number(view_data?.legal_fees) +
+                                            Number(view_data?.vat)}
+                                          .00
+                                        </span>
+                                      </div>
+                                    </div>
+
+                                    <div className="border-t"></div>
+
+                                    {/* Disbursements */}
+                                    <div className="p-4">
+                                      <p className="font-bold text-black mb-3">
+                                        Disbursements
+                                      </p>
+
+                                      <div className="space-y-2    text-sm">
+                                        <div className="flex justify-between">
+                                          <span>Total Disbursements</span>
+                                          <span>
+                                            £{view_data?.disbursements}
+                                          </span>
+                                        </div>
+                                      </div>
+
+                                      <div className="flex justify-between font-semibold mt-3 text-base">
+                                        <span>Total Fees & Disbursements</span>
+                                        <span>£{view_data?.total}.00</span>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <div className="border-t  w-full"></div>
+
+                                  {/* ---------- NOTES ---------- */}
+                                  <div>
+                                    <h4>Notes</h4>
+                                    <p className="text-xs mt-4">
+                                      {view_data?.conveying_details
+                                        ?.short_notes ||
+                                        "No notes provided by the firm."}
+                                    </p>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -636,48 +771,53 @@ alt={quote.company_name||"company logo"}
             </div>
 
             {/* Bottom actions */}
-        
           </section>
 
           {/* Popup Modal for Instruct */}
-         {popupData.visible && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm animate-fadeIn">
-    <div className="bg-white rounded-2xl p-8 w-[380px] text-center shadow-2xl border border-green-200 animate-popIn">
- 
-      {/* Icon */}
-       <span className="text-[34px] leading-none font-extrabold text-[#1E5C3B] tracking-tight">
-          MovWise
-        </span>
-      <div className="flex justify-center mb-3">
-          
-        <Check size={100} color="#15803D" className="drop-shadow-md" />
-      </div>
+          {popupData.visible && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm animate-fadeIn">
+              <div className="bg-white rounded-2xl p-8 w-[380px] text-center shadow-2xl border border-green-200 animate-popIn">
+                {/* Icon */}
+                <span className="text-[34px] leading-none font-extrabold text-[#1E5C3B] tracking-tight">
+                  MovWise
+                </span>
+                <div className="flex justify-center mb-3">
+                  <Check
+                    size={100}
+                    color="#15803D"
+                    className="drop-shadow-md"
+                  />
+                </div>
 
-      {/* Title */}
-      <h2 className="text-2xl font-bold text-green-800">Quote Submitted</h2>
+                {/* Title */}
+                <h2 className="text-2xl font-bold text-green-800">
+                  Quote Submitted
+                </h2>
 
-      {/* Message */}
-      <p className="text-gray-700 mt-2 leading-relaxed">
-        Your Instruct Quote has been sent to <br></br>
-        <strong className="text-green-700"> {popupData.companyName}</strong>.
-      </p>
+                {/* Message */}
+                <p className="text-gray-700 mt-2 leading-relaxed">
+                  Your Instruct Quote has been sent to <br></br>
+                  <strong className="text-green-700">
+                    {" "}
+                    {popupData.companyName}
+                  </strong>
+                  .
+                </p>
 
-      {/* Button */}
-      <button
-        className="mt-6 w-auto p-19 py-3 bg-green-700 text-white text-[15px] font-medium rounded-full 
+                {/* Button */}
+                <button
+                  className="mt-6 w-auto p-19 py-3 bg-green-700 text-white text-[15px] font-medium rounded-full 
                    hover:bg-green-800 transition-all duration-300 shadow-md"
-        onClick={closePopup}
-      >
-        Close
-      </button>
-    </div>
-  </div>
-)}
-
+                  onClick={closePopup}
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </main>
-      <Footer ></Footer>
+      <Footer></Footer>
     </div>
-
   );
 }
