@@ -41,7 +41,7 @@ export default function Companyregistration() {
     company_name: "",
     phone_number: "",
     email: "",
-    websiter: "",
+    website: "",
     password: "",
   });
   const [languagepreference, setlanguagepreference] = useState(" ");
@@ -157,19 +157,30 @@ export default function Companyregistration() {
   //   }
   // }
 
-  const handleChangeLang = (lang = []) => {
+  const handleChangeLang = (lang = {}) => {
     setSelectedLanguage((prev) => {
       const exists = prev.some((item) => item.value === lang.value);
 
       let updated;
-      updated = [...prev, lang];
 
-      console.log("updataed", updated);
-      // update form data also
+      if (exists) {
+        // REMOVE → uncheck
+        updated = prev.filter((item) => item.value !== lang.value);
+      } else {
+        // ADD → check
+        updated = [...prev, lang];
+      }
+
+      console.log("updated:", updated);
+
+      // update form data
       setFormData((f) => ({
         ...f,
-        languages: updated.map((x) => x.id), // or array
+        languages: updated.map((x) => x.id),
       }));
+
+      // Clear error
+    setErrors((prevErr) => ({ ...prevErr, language: "" }));
 
       return updated;
     });
@@ -344,6 +355,13 @@ export default function Companyregistration() {
       newErrors.email = "Enter a valid email address";
     }
 
+    if (!formData.password?.trim()) {
+  newErrors.password = "Password is required";
+} else if (formData.password.length < 6) {
+  newErrors.password = "Password must be at least 6 characters";
+}
+
+
     // Services validation
     if (selectedServices.length === 0) {
       newErrors.services = "Please select at least one service";
@@ -359,10 +377,10 @@ export default function Companyregistration() {
     }
 
     // SRA / CLC Number validation
-    if (!formData.SRA_CLC_number?.trim()) {
-      newErrors.SRA_CLC_number = "SRA / CLC Number is required";
-    } else if (formData.SRA_CLC_number.trim().length < 3) {
-      newErrors.SRA_CLC_number = "Enter a valid SRA / CLC Number";
+    if (!formData.sra_clc_number?.trim()) {
+      newErrors.sra_clc_number = "SRA / CLC Number is required";
+    } else if (formData.sra_clc_number.trim().length < 3) {
+      newErrors.sra_clc_number = "Enter a valid SRA / CLC Number";
     }
 
     // Logo validation
@@ -402,28 +420,34 @@ export default function Companyregistration() {
         value: updated.map((x) => x.value),
       });
 
+       // Clear error
+    setErrors((prevErr) => ({ ...prevErr, jurisdictions: "" }));
+
       return updated;
     });
   };
 
   const [selectedServices, setSelectedServices] = useState([]);
 
-  const togglesercice = (opt) => {
-    setSelectedServices((prev) => {
-      const exists = prev.some((item) => item.value === opt.value);
+const togglesercice = (opt) => {
+  setSelectedServices((prev) => {
+    const exists = prev.some((item) => item.value === opt.value);
 
-      const updated = exists
-        ? prev.filter((item) => item.value !== opt.value)
-        : [...prev, opt];
+    const updated = exists
+      ? prev.filter((item) => item.value !== opt.value)
+      : [...prev, opt];
 
-      console.log(updated);
-      // update form
-      const values = updated.map((x) => x.id);
-      handleChange({ name: "service_id", value: values });
+    // Update form
+    const values = updated.map((x) => x.id);
+    handleChange({ name: "service_id", value: values });
 
-      return updated;
-    });
-  };
+    // Clear error using the SAME key as validation
+    setErrors((prevErr) => ({ ...prevErr, services: "" }));
+
+    return updated;
+  });
+};
+
 
   return (
     <div>
@@ -519,7 +543,7 @@ export default function Companyregistration() {
                       </div>
                       <div className="flex flex-col items-start">
                         <label className="text-[14px] text-[#6A7682] font-medium mb-2 block">
-                          Company Logo
+                          Firm Logo
                         </label>
 
                         {/* Container */}
@@ -562,43 +586,45 @@ export default function Companyregistration() {
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-4 mt-4 ">
-                    <div >
-                            <label
-                              htmlFor="c_website"
-                              className="block text-[14px] text-[#6A7682] font-medium mb-1"
-                            >
-                              Website Url
-                            </label>
-                            <input
-                              id="c_website"
-                              name="websiter"
-                              type="text"
-                              value={formData.websiter}
-                              onChange={handleChange}
-                              placeholder="Enter Website Url"
-                              className="block w-full h-[44px] text-[#1B1D21] placeholder-[#1B1D21] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] focus:outline-none"
-                            />
-                          </div>
-                          <div>
-                <label
-                  htmlFor="password"
-                  className="block text-sm font-semibold text-gray-700 mb-2"
-                >
-                  Password
-                </label>
-                <input
-                              id="password"
-                  name="password"
-                  type="password"
-                              value={formData.password}
-                              onChange={handleChange}
-                              placeholder="Enter your password"
-                              autoComplete="current-password"
-                              className="block w-full h-[44px] text-[#1B1D21] placeholder-[#1B1D21] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] focus:outline-none"
-                            />
-              
-              </div>
-</div>
+                      <div>
+                        <label
+                          htmlFor="c_website"
+                          className="block text-[14px] text-[#6A7682] font-medium mb-1"
+                        >
+                          Website Url
+                        </label>
+                        <input
+                          id="c_website"
+                          name="website"
+                          type="text"
+                          value={formData.website}
+                          onChange={handleChange}
+                          placeholder="Enter Website Url"
+                          className="block w-full h-[44px] text-[#1B1D21] placeholder-[#1B1D21] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] focus:outline-none"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="password"
+                          className="block text-sm font-semibold text-gray-700 mb-2"
+                        >
+                          Password <span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          id="password"
+                          name="password"
+                          type="password"
+                          value={formData.password}
+                          onChange={handleChange}
+                          placeholder="Enter your password"
+                          autoComplete="current-password"
+                          className="block w-full h-[44px] text-[#1B1D21] placeholder-[#1B1D21] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] focus:outline-none"
+                        />
+                        {errors.password && (
+    <p className="text-red-500 text-[12px] mt-1">{errors.password}</p>
+  )}
+                      </div>
+                    </div>
                     {/* Row 2 */}
                     <div className="grid grid-cols-2 gap-4 mt-4">
                       <div>
@@ -606,7 +632,7 @@ export default function Companyregistration() {
                           htmlFor="email"
                           className="block text-[14px] text-[#6A7682] font-medium mb-1"
                         >
-                          Email<span className="text-red-500">*</span>
+                          Email <span className="text-red-500">*</span>
                         </label>
                         <input
                           id="email"
@@ -635,8 +661,8 @@ export default function Companyregistration() {
                         </label>
                         <input
                           id="Name"
-                          name="SRA_CLC_number"
-                          value={formData.SRA_CLC_number || ""}
+                          name="sra_clc_number"
+                          value={formData.sra_clc_number || ""}
                           onChange={handleChange}
                           placeholder="Enter Company name"
                           className={`block w-full h-[44px] rounded-[10px] border ${
@@ -645,14 +671,13 @@ export default function Companyregistration() {
                               : "border-[#D1D5DB]"
                           }  text-[#1B1D21] placeholder-[#1B1D21] px-3 text-[14px] focus:outline-none`}
                         />
-                        {errors.SRA_CLC_number && (
+                        {errors.sra_clc_number && (
                           <p className="text-red-500 text-[12px] mt-1">
-                            {errors.SRA_CLC_number}
+                            {errors.sra_clc_number}
                           </p>
                         )}
                       </div>
                     </div>
-                  
 
                     {/* Row 3 - Logo Upload */}
 
@@ -664,94 +689,128 @@ export default function Companyregistration() {
                           <span className="text-red-500">*</span>
                         </label>
 
-    <div className="grid grid-cols-4 gap-3 mt-2">
-  {serviceoptions.map((opt) => (
-    <label key={opt.id} className="flex items-center gap-2 ">
-      <input
-        type="checkbox"
-        checked={selectedServices.some(s => s.id === opt.id)}
-        onChange={() => togglesercice(opt)}
-        className="w-4 h-4"
-      />
-   {opt.label.length <= 5 ? (
-  <span className="text-[#6A7682] text-sm font-medium ">{opt.label}</span>
-) :  <span className="text-[#6A7682] text-sm font-medium">{opt.label}</span>}
-    </label>
-  ))}
-</div>
- 
-   
+                        <div className="grid grid-cols-4 gap-3 mt-2">
+                          {serviceoptions.map((opt) => (
+                            <label
+                              key={opt.id}
+                              className="flex items-center gap-2 "
+                            >
+                              <input
+                                type="checkbox"
+                                checked={selectedServices.some(
+                                  (s) => s.id === opt.id
+                                )}
+                                onChange={() => togglesercice(opt)}
+                                className="w-4 h-4"
+                              />
 
-</div>
-        <div className="flex flex-col gap-2 mt-2">
-        <label className="block text-sm font-medium text-[#6A7682]">
-          Jurisdictions Covered <span className="text-red-500">*</span>
-        </label>
+                              {opt.label.length <= 5 ? (
+                                <span className="text-[#6A7682] text-sm font-medium ">
+                                  {opt.label}
+                                </span>
+                              ) : (
+                                <span className="text-[#6A7682] text-sm font-medium">
+                                  {opt.label}
+                                </span>
+                              )}
+                            </label>
+                          ))}
+                        </div>
+                        {errors.services && (
+  <p className="text-red-500 text-[12px] mt-1">
+    {errors.services}
+  </p>
+)}
 
-
-
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
-          {jurisdictions.map((opt, index) => (
-            <label key={index} className="flex items-center gap-2 cursor-pointer text-[#6A7682]">
-              <input
-                type="checkbox"
-        checked={ (selectedJurisdictions).some(item => item.value === opt.value) }
-                onChange={() => toggleJurisdiction(opt)}
-                className="w-4 h-4"
-              />
-              <span>{opt.label}</span>
-            </label>
-          ))}
-        </div>
-
-  </div>
-                  </div>
-
-              
-                  <div className="mt-5 grid grid-cols-1 gap-4">
-                  
-                    {/* Label */}
-                  
-                              <div className="flex flex-col gap-2 w-full">
-                              <label className="block text-sm font-medium text-[#6A7682]">
-                                Language Availability <span className="text-red-500">*</span>
-                              </label>
-
-                    
-                              <div className="grid grid-cols-9 gap-3 mt-3 border p-2 w-full font">
-                              {language.map((lang, index) => (
-                                <label key={index} className="flex items-center gap-2">
-                                  <input
-                                    type="checkbox"
-                                    value={lang.value}
-                                    checked={selectedLanguage?.some(l => l.value === lang.value)}
-                                    onChange={() => handleChangeLang(lang)}
-                                  />
-                                  <span className="font text-[#6A7682]" >{lang.label}</span>
-                                </label>
-                              ))}
-                            </div>
-
-
-                    </div>
-                  
-                        
-                  </div>
-
-                      <div className="mt-10">
-                        <label className="block text-sm font-semibold text-gray-800 mb-2">
-                          Enter Additional Information
+                      </div>
+                      <div className="flex flex-col gap-2 mt-2">
+                        <label className="block text-sm font-medium text-[#6A7682]">
+                          Jurisdictions Covered{" "}
+                          <span className="text-red-500">*</span>
                         </label>
 
-                                        <div className="bg-white border border-gray-300 rounded-md">
-                                          <textarea
-                                            name="additional_info"
-                                            onChange={handleChange}
-                                            placeholder="Type your message here..."
-                                            className="min-h-[150px] w-full text-black p-2 outline-none rounded-md"
-                                          ></textarea>
-                                        </div>
-                                      </div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-2">
+                          {jurisdictions.map((opt, index) => (
+                            <label
+                              key={index}
+                              className="flex items-center gap-2 cursor-pointer text-[#6A7682]"
+                            >
+                              <input
+                                type="checkbox"
+                                checked={selectedJurisdictions.some(
+                                  (item) => item.value === opt.value
+                                )}
+                                onChange={() => toggleJurisdiction(opt)}
+                                className="w-4 h-4"
+                              />
+                              <span>{opt.label}</span>
+                            </label>
+                          ))}
+                        </div>
+
+                        {errors.jurisdictions && (
+  <p className="text-red-500 text-[12px] mt-1">
+    {errors.jurisdictions}
+  </p>
+)}
+
+                        
+                      </div>
+                    </div>
+
+                    <div className="mt-5 grid grid-cols-1 gap-4">
+                      {/* Label */}
+
+                      <div className="flex flex-col gap-2 w-full">
+                        <label className="block text-sm font-medium text-[#6A7682]">
+                          Language Availability{" "}
+                          <span className="text-red-500">*</span>
+                        </label>
+
+                        <div className="grid grid-cols-9 gap-3 mt-3 border p-2 w-full font">
+                          {language.map((lang, index) => (
+                            <label
+                              key={index}
+                              className="flex items-center gap-2"
+                            >
+                              <input
+                                type="checkbox"
+                                value={lang.value}
+                                checked={selectedLanguage?.some(
+                                  (l) => l.value === lang.value
+                                )}
+                                onChange={() => handleChangeLang(lang)}
+                              />
+                              <span className="font text-[#6A7682]">
+                                {lang.label}
+                              </span>
+                            </label>
+                          ))}
+                        </div>
+
+                        {errors.language && (
+  <p className="text-red-500 text-[12px] mt-1">
+    {errors.language}
+  </p>
+)}
+
+                      </div>
+                    </div>
+
+                    <div className="mt-10">
+                      <label className="block text-sm font-semibold text-gray-800 mb-2">
+                        Enter Additional Information
+                      </label>
+
+                      <div className="bg-white border border-gray-300 rounded-md">
+                        <textarea
+                          name="additional_info"
+                          onChange={handleChange}
+                          placeholder="Type your message here..."
+                          className="min-h-[150px] w-full text-black p-2 outline-none rounded-md"
+                        ></textarea>
+                      </div>
+                    </div>
 
                     <div className="mt-44 flex justify-end gap-4 w-full ">
                       <button
@@ -762,7 +821,6 @@ export default function Companyregistration() {
                         Continue to Price breakdown →
                       </button>
                     </div>
-                
                   </form>
                 </div>
               </div>

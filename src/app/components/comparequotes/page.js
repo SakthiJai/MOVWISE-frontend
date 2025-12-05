@@ -449,6 +449,11 @@ alt={quote.company_name||"company logo"}
                      size={20}
                    />
                  </div>
+
+                 {/* Rating number row */}
+                <p className="text-gray-600 text-sm mt-1">
+                  {view_data?.conveying_details?.rating || 0}/5
+                </p>
                </div>
              </div>
    
