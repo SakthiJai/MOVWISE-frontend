@@ -100,7 +100,7 @@ useEffect(() => {
             }
             else{
               setquotefound(false)
-            }
+            } 
 
 
       // const propety_id = response.data;
@@ -352,7 +352,7 @@ alt={quote.company_name||"company logo"}
                             {/* Right: Buttons */}
                             <div className="flex flex-row gap-2 justify-start lg:col-start-3 lg:justify-end">
 <Link
-  href={`/components/viewquote?ref_no=${ref}`}
+  href={`/components/viewquote?ref_no=${ref}&id=${quote.quote_id}`}
   className="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-full hover:bg-gray-100 transition font-medium"
 >
   View
