@@ -9,9 +9,13 @@ import { getData, postData, API_ENDPOINTS } from "../../auth/API/api";
 import Swal from "sweetalert2";
 import { formatGBP } from "../utility/poundconverter";
 
-import { Check, X } from "lucide-react";
+import { Check, Rows, X } from "lucide-react";
 import { Rating } from "react-simple-star-rating";
 import Footer from "../../parts/Footer/footer";
+import SalesPropertyDetails from "./Sales_Property";
+import PurchasePropertyDetails from "./PurchasePropertyDetails";
+import SalesPurchasePropertyDetails from "./Sales_Purchase_PropertyDetails";
+import RemortagePropertyDetails from "./RemortagePropertyDetails"
 
 export default function Comparequotes() {
   // State to hold companies data (initialized with static data)
@@ -20,7 +24,8 @@ export default function Comparequotes() {
 
   const [ref, setref] = useState("");
   const [quotefound, setquotefound] = useState(false);
-  const [view_data, setview_data] = useState(null);
+  const [view_data, setview_data] = useState({});
+  const [quoteData, setquoteData] = useState([]);
   const [viewquotes, showviewquotes] = useState(false);
 
   // Track which card dropdown is open (by quote_id)
@@ -35,6 +40,13 @@ export default function Comparequotes() {
   function toggleDropdown(id) {
     setDropdownOpenId((prev) => (prev === id ? null : id));
     showviewquotes(true);
+    quoteData.forEach((elememt)=>{
+      if(elememt.quote_id==id){
+        setview_data(elememt)
+      }
+    })
+    //view_data
+    console.log(quoteData);
   }
 
   // On instruct button, show popup modal with message
@@ -52,10 +64,8 @@ export default function Comparequotes() {
 
     console.log(instructpayload);
     console.log(instructpayload);
-    const instruct = postData(API_ENDPOINTS.instruct, instructpayload);
-
-    // setPopupData({ visible: true, companyName: companyName });
-    router.push("")
+    const instruct = getData(API_ENDPOINTS.instruct + "/" + quote_id);
+    setPopupData({ visible: true, companyName: companyName });
     console.log(companyName);
     console.log(popupData);
   }
@@ -122,6 +132,7 @@ export default function Comparequotes() {
                 );
                 if (quoteResponse?.data?.[0] != undefined) {
                   setview_data(quoteResponse.data[0]);
+                  setquoteData(quoteResponse.data);
                 }
                 console.log(quoteResponse);
 
@@ -540,8 +551,8 @@ export default function Comparequotes() {
                         )}
                         {dropdownOpenId === quote.quote_id && viewquotes && (
                           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm animate-fadeIn">
-                            <div className="bg-white rounded-2xl p-8 w-[90%] min-h-screen overflow-auto  text-center shadow-2xl border border-green-200 animate-popIn">
-                              <div className="absolute top-1 right-32">
+                            <div className="bg-white rounded-2xl p-8 w-[90%] max-h-[90vh] overflow-y-auto text-center shadow-2xl border border-green-200 animate-popIn">
+                              <div className="absolute top-16 right-36">
                                 <button
                                   className="text-4xl text-gray-700"
                                   onClick={() => showviewquotes(false)}
@@ -637,92 +648,55 @@ export default function Comparequotes() {
                                   </div>
 
                                   {/* ---------- YOUR DETAILS ---------- */}
-                                  <div className="py-1 px-5">
-                                    <div className="text-emerald-600">
-                                      <h3 className="text-lg font-semibold">
-                                        Your Details
-                                      </h3>
-                                    </div>
 
-                                    <div className="space-y-1 text-sm  mt-3">
-                                      <div className="flex">
-                                        <span className="font-semibold w-26">
-                                          Name
-                                        </span>
-                                        <span className="ml-5">
-                                          {
-                                            view_data?.customer_details
-                                              ?.first_name
-                                          }{" "}
-                                          {
-                                            view_data?.customer_details
-                                              ?.last_name
-                                          }
-                                        </span>
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="py-1 px-5">
+                                      <div className="text-emerald-600">
+                                        <h3 className="text-lg font-semibold">
+                                          User Details
+                                        </h3>
                                       </div>
 
-                                      <div className="flex">
-                                        <span className="font-semibold w-20">
-                                          Email
-                                        </span>
-                                        <span className="ml-10">
-                                          {view_data?.customer_details?.email ||
-                                            "--"}
-                                        </span>
+                                      <div className="space-y-1 text-sm  mt-3">
+                                        <div className="flex">
+                                          <span className="font-semibold w-26 text-left">
+                                            Name
+                                          </span>
+                                          <span className="ml-5">
+                                            {
+                                              quote?.customer_details
+                                                ?.first_name
+                                            }{" "}
+                                            {quote?.customer_details?.last_name}
+                                          </span>
+                                        </div>
+
+                                        <div className="flex">
+                                          <span className="font-semibold w-20 text-left">
+                                            Email
+                                          </span>
+                                          <span className="ml-10">
+                                            {quote?.customer_details?.email ||
+                                              "--"}
+                                          </span>
+                                        </div>
+
+                                        <div className="flex">
+                                          <span className="font-semibold w-20 text-left">
+                                            Phone
+                                          </span>
+                                          <span className="ml-10">
+                                            {quote?.conveying_details
+                                              ?.phone_number || "--"}
+                                          </span>
+                                        </div>
                                       </div>
-
-                                      <div className="flex">
-                                        <span className="font-semibold w-20">
-                                          Phone #1
-                                        </span>
-                                        <span className="ml-10">
-                                          {view_data?.conveying_details
-                                            ?.phone_number || "--"}
-                                        </span>
-                                      </div>
-
-                                      <div className="flex">
-                                        <span className="font-semibold w-24">
-                                          Phone #2
-                                        </span>
-                                        <span className="ml-6">--</span>
-                                      </div>
                                     </div>
-                                  </div>
-
-                                  {/* ---------- SALE PROPERTY ---------- */}
-                                  <div className="py-1 px-5 text-sm ">
-                                    <div className="text-emerald-600    ">
-                                      <h3 className="text-lg   font-semibold">
-                                        {" "}
-                                        Property Details
-                                      </h3>
-                                    </div>
-
-                                    <div className="flex mt-3">
-                                      <span className="font-semibold w-32">
-                                        Value
-                                      </span>
-                                      <span>
-                                        £{view_data?.property_value || "--"}
-                                      </span>
-                                    </div>
-
-                                    <div className="flex">
-                                      <span className="font-semibold w-32">
-                                        Tenure
-                                      </span>
-                                      <span>{view_data?.tenure || "--"}</span>
-                                    </div>
-
-                                    <div className="flex">
-                                      <span className="font-semibold w-32">
-                                        Mortgage?
-                                      </span>
-                                      <span>
-                                        {view_data?.mortgage ? "Yes" : "No"}
-                                      </span>
-                                    </div>
+                                   {(view_data.service_details[0].service_type == 3 ) && <SalesPropertyDetails quote={quote}/>}   
+                                   {(view_data.service_details[0].service_type == 2 ) && <PurchasePropertyDetails quote={quote}/>}   
+                                   {(view_data.service_details[0].service_type == 1 ) && <SalesPurchasePropertyDetails quote={quote}/>}   
+                                   {(view_data.service_details[0].service_type == 4 ) && <RemortagePropertyDetails quote={quote}/>}   
+                                    
                                   </div>
 
                                   {/* ---------- FEES SECTION ---------- */}
@@ -736,14 +710,12 @@ export default function Comparequotes() {
                                       <div className="space-y-2 text-sm">
                                         <div className="flex justify-between">
                                           <span>Legal Fee</span>
-                                          <span>
-                                            £{view_data?.legal_fees}.00
-                                          </span>
+                                          <span>£{quote?.legal_fees}.00</span>
                                         </div>
 
                                         <div className="flex justify-between">
                                           <span>VAT</span>
-                                          <span>£{view_data?.vat}.00</span>
+                                          <span>£{quote?.vat}.00</span>
                                         </div>
                                       </div>
 
@@ -751,8 +723,8 @@ export default function Comparequotes() {
                                         <span>Total Fees</span>
                                         <span>
                                           £
-                                          {Number(view_data?.legal_fees) +
-                                            Number(view_data?.vat)}
+                                          {Number(quote?.legal_fees) +
+                                            Number(quote?.vat)}
                                           .00
                                         </span>
                                       </div>
@@ -769,15 +741,15 @@ export default function Comparequotes() {
                                       <div className="space-y-2    text-sm">
                                         <div className="flex justify-between">
                                           <span>Total Disbursements</span>
-                                          <span>
-                                            £{view_data?.disbursements}
-                                          </span>
+                                          <span>£{quote?.disbursements}</span>
                                         </div>
                                       </div>
 
                                       <div className="flex justify-between font-semibold mt-3 text-base">
                                         <span>Total Fees & Disbursements</span>
-                                        <span>£{view_data?.total}.00</span>
+                                        <span>
+                                          £{formatGBP(quote.total)}.00
+                                        </span>
                                       </div>
                                     </div>
                                   </div>
@@ -788,8 +760,7 @@ export default function Comparequotes() {
                                   <div>
                                     <h4>Notes</h4>
                                     <p className="text-xs mt-4">
-                                      {view_data?.conveying_details
-                                        ?.short_notes ||
+                                      {quote?.conveying_details?.short_notes ||
                                         "No notes provided by the firm."}
                                     </p>
                                   </div>
