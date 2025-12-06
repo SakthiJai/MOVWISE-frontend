@@ -1143,7 +1143,7 @@ console.log(e);
                   {/* 7. Government Right to Buy scheme? (Inline ButtonGroup) */}
                    <div className="flex flex-col h-full">
                                                    <label htmlFor="b2l" className="block text-sm font-medium text-gray-700 mb-1">
-                                                    purchase_mode<span className="text-red-500">*</span>
+                                                    Purchase mode<span className="text-red-500">*</span>
                                                    </label>
                                                <div className="relative mt-auto">
                                  <select

@@ -571,7 +571,7 @@ const [loginformdata, setloginformdata] = useState({
         </p>
       </section>
         {modalopen && (
-                        <Signinmodal closeModal={closeModal} ></Signinmodal>
+                        <Signinmodal closeModal={closeModal} page={"home"} ></Signinmodal>
                         )}
       
       {/* ---------------------------------------------------------------------------------- */}

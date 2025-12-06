@@ -45,17 +45,17 @@ export default function Comparequotes() {
     quote_id,
     user_id
   ) {
-    const instructpayload = {
-      conveyancer_id: conveyancer_id,
-      quote_id: quote_id,
-    };
+    const instructpayload = {};
+
     if (user_id) instructpayload.user_id = user_id;
     else if (guest_id) instructpayload.guest_id = guest_id;
 
     console.log(instructpayload);
     console.log(instructpayload);
     const instruct = postData(API_ENDPOINTS.instruct, instructpayload);
-    setPopupData({ visible: true, companyName: companyName });
+
+    // setPopupData({ visible: true, companyName: companyName });
+    router.push("")
     console.log(companyName);
     console.log(popupData);
   }
@@ -440,7 +440,7 @@ export default function Comparequotes() {
                           {/* Right: Buttons */}
                           <div className="flex flex-row gap-2 justify-start lg:col-start-3 lg:justify-end">
                             <Link
-                              href={`/components/viewquote?ref_no=${ref}&id=${quote.quote_id}`}
+                              href={`/viewquote?ref_no=${ref}&id=${quote.quote_id}`}
                               className="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-full hover:bg-gray-100 transition font-medium"
                             >
                               View
@@ -448,17 +448,20 @@ export default function Comparequotes() {
 
                             <button
                               className="px-3 py-1.5 bg-[#4A7C59] text-white text-sm rounded-full hover:bg-[#3b6248]"
-                              onClick={() =>
-                                handleInstruct(
-                                  quote.conveying_details.company_name,
-                                  quote.guest_id,
-                                  quote.conveying_details.conveying_id,
-                                  quote.quote_id,
-                                  quote.customer_details.customer_id
-                                )
-                              }
+                             // onClick={() =>
+                                // handleInstruct(
+                                //   quote.conveying_details.company_name,
+                                //   quote.guest_id,
+                                //   quote.conveying_details.conveying_id,
+                                //   quote.quote_id,
+                                //   quote.customer_details.customer_id
+                                // )
+                                
+                             // }
                             >
-                              Instruct
+                           <Link
+                        href={`/Instruct?id=${quote.quote_id}`}
+                           >Instruct</Link>   
                             </button>
                           </div>
                         </div>
@@ -485,6 +488,38 @@ export default function Comparequotes() {
                                     {formatGBP(quote.disbursements)}
                                   </span>
                                 </li>
+                                {
+                                  quote.service_details[0].service_type==2&&(
+                                    <>
+                                     {(quote.service_details[0].country=="England"||quote.country=="Northern Ireland")&&(
+                                     <li className="flex justify-between">
+                                  <span>Stamp Duty</span>
+                                  <span className="font-bold text-gray-800">
+                                    {formatGBP(quote.stamp_duty)}
+                                  </span>
+                                </li>
+                                  )}
+                                   {quote.service_details[0].country=="Scotland"&&(
+                                     <li className="flex justify-between">
+                                  <span>LLT</span>
+                                  <span className="font-bold text-gray-800">
+                                    {formatGBP(quote.llt)}
+                                  </span>
+                                </li>
+                                  )}
+                                  {quote.service_details[0].country=="Wales"&&(
+                                     <li className="flex justify-between">
+                                  <span>LBTT</span>
+                                  <span className="font-bold text-gray-800">
+                                    {formatGBP(quote.lbtt)}
+                                  </span>
+                                </li>
+                                  )}
+                                    </>
+                                 
+                                  )
+                                }
+                                
 
                                 <li className="flex justify-between border-b border-b-gray-500">
                                   <span>VAT</span>

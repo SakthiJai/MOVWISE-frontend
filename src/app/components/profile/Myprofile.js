@@ -1,32 +1,48 @@
 "use client"
 
-import React, { useState,useEffect } from 'react'
+import React, { useState,useEffect, useRef } from 'react'
 import Navbar from '../../parts/navbar/page';
 import Footer from '../../parts/Footer/footer';
 import PriceBreakdownCard from './pricebreakdown'
 import { API_ENDPOINTS, getData, postData } from '../../auth/API/api';
 
+
 const Myprofile = () => {
+  const childRef = useRef();
+
   const [show, setshow] = useState(true);
   const [logintype,setlogintype]=useState();
+  const [showPopup, setShowPopup] = useState(false);
+
   const [user,setuser]=useState({
     first_name:"",
+    last_name:"",
+    phone_number:"",
+    email:"",
+
   }
   )
   const[company,setcompany]=useState([]);
+  const[servicedetails,setservicedetails]=useState([]);
   const [selectedQuoteId, setSelectedQuoteId] = useState(null);
 
-  
+  const [preview, setPreview] = useState("true");
 
 
 
 useEffect(() => {
   if (localStorage.getItem("logintype")) {
     setlogintype(localStorage.getItem("logintype"));
+
     fetchapi();
   }
 }, []);  
 
+  useEffect(() => {
+  if (selectedQuoteId && childRef.current) {
+    childRef.current.refreshCard();
+  }
+}, [selectedQuoteId]);
 
 
 
@@ -34,13 +50,16 @@ useEffect(() => {
     try{
       if(localStorage.getItem("user")){
          const payload = {
-      user_id: Number(localStorage.getItem("user"))
+      user_id: Number(localStorage.getItem("user")),
+      type:logintype,
     };
-
+console.log(payload)
       
    let profiledetails = await postData(API_ENDPOINTS.intstructquote_list,payload);
+  
    let userprofile=profiledetails.data[0].user_details
    let companydetails = profiledetails.data[0].company_details
+   
    console.log(userprofile)
    console.log(companydetails)
  
@@ -52,6 +71,7 @@ email:userprofile[0].email,
    })
 
    setcompany(companydetails)
+   setservicedetails()
 
        }
   }
@@ -71,8 +91,18 @@ email:userprofile[0].email,
   }
   function handlecom_detailsopen(property_id){
     setSelectedQuoteId(property_id)
+    console.log(selectedQuoteId)
+    setShowPopup(true)
+     
+
     console.log("<>selectedQuoteId",selectedQuoteId);
   }
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setPreview(URL.createObjectURL(file)); // Creates preview URL
+    }
+  };
 
   // Helper component to render the status button with dynamic colors (Unchanged)
   const StatusButton = ({ status }) => {
@@ -103,25 +133,124 @@ email:userprofile[0].email,
   const ProfileContent = () => (
     <div className="p-6 bg-white shadow-lg rounded-xl min-h-[300px] font">
       <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">User Profile</h2>
-      <div className="space-y-4">
-        <div className="flex items-center space-x-4">
-          <div className="w-16 h-16 bg-blue-200 rounded-full flex items-center justify-center text-blue-800 text-2xl font-bold">
-            
-          </div>
-          <div>
-            <p className="text-xl font-semibold text-gray-900">{user.first_name}{user.last_name}</p>
-            <p className="text-sm text-gray-600">{user.email}</p>
-          </div>
-        </div>
-        <div className="pt-4 border-t border-gray-100">
-          <p className="text-lg font-medium text-gray-700 mb-1">About Me</p>
-          <p className="text-gray-600 italic">{user.phone_number}</p>
-        </div>
-        
-        {/* <button className="mt-4 px-4 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition duration-150">
-          Edit Profile
-        </button> */}
-      </div>
+      <div className="">
+              <div className="p-8">
+                {/* Breadcrumb */}
+               
+
+                <h1 className="text-[24px] font-semibold font-Outfit text-[#1B1D21] font">Share your Personal Details</h1>
+              
+
+                <form className="mt-6">
+                  {/* Row 1 */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="firstName" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">First Name</label>
+                      <input
+                      value={user.first_name}
+                      readOnly
+                        id="firstName"
+                        name="firstName"
+                        placeholder="Enter your Firstname"
+                        className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="lastName" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">Last Name</label>
+                      <input
+                      value={user.last_name}
+                      readOnly
+                        id="lastName"
+                        name="lastName"
+                        placeholder="Enter your Lastname"
+
+                        className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Row 2 */}
+                  <div className="grid grid-cols-2 gap-4 mt-4">
+                    <div>
+                      <label htmlFor="email" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">Email</label>
+                      <input
+                      value={user.email}
+                      readOnly
+                        id="email"
+                        name="email"
+                        type="email"
+                        placeholder="Enter your Email"
+
+                        className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="phone" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">Phone No.</label>
+                      <div className="relative">
+                        <input
+                        value={user.phone_number}
+                        readOnly
+                          id="phone"
+                          name="phone"
+                        placeholder="Enter your Number"
+
+                          className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
+                        />
+                        {/* optional divider mimic for country code */}
+                        <div className="pointer-events-none absolute left-[108px] top-1/2 -translate-y-1/2 h-[28px] w-px bg-[#E5E7EB]" />
+                      </div>
+                    </div>
+                  </div>
+                  {/* ROW 3 */}
+                  <div className="grid grid-cols-2 gap-4 mt-4">
+                      <div>
+                      <label htmlFor="password" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">Password</label>
+                      <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        placeholder="Enter your Password"
+                        autoComplete="current-password"
+                        className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
+                      />
+                    </div>
+                        <div>
+      <label
+        htmlFor="image"
+        className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1"
+      >
+        Upload Image
+      </label>
+
+      <input
+        id="image"
+        name="image"
+        type="file"
+        accept="image/*"
+        onChange={handleImageChange}
+        className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
+      />
+
+      {/* Image Preview */}
+      {preview && (
+       <div className="mt-3">
+  <img
+    src={preview}
+ 
+    className="w-32 h-32 object-cover rounded-full border text-center text-gray-400"
+  />
+</div>
+
+      )}
+    </div>
+                  </div>
+                  
+
+                  {/* Checkbox */}
+                 
+                </form>
+              </div>
+            </div>
     </div>
   );
  
@@ -209,6 +338,7 @@ email:userprofile[0].email,
         <section className="govt_by_scheme md:col-span-3 govt_by_scheme">
           <main>
             {!show ? (
+
               <div>
                 
                
@@ -217,9 +347,30 @@ email:userprofile[0].email,
                   <div>
                   <QuotesContent />
 
-                  <div className='mt-5'>
-                   <PriceBreakdownCard companydetails={company} quoteId={selectedQuoteId}/>
-                   </div>
+                  {showPopup && (
+  <div className="fixed inset-0  bg-opacity-40 flex justify-center items-center z-50 p-4">
+      
+      <div className="bg-white rounded-xl shadow-xl w-full  h-[550px]  p-6 relative overflow-hidden">
+
+        {/* Close Button */}
+        <button
+          onClick={() => setShowPopup(false)}
+          className="absolute top-3 right-3 text-gray-600 hover:text-black text-xl"
+        >
+          ✖
+        </button>
+
+        {/* Popup Content */}
+        <PriceBreakdownCard
+          companydetails={company}
+          quoteId={selectedQuoteId}
+          ref={childRef}
+        />
+      </div>
+
+  </div>
+)}
+
                 </div>
                 )}
               

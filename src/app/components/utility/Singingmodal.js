@@ -4,8 +4,9 @@ import { getData, postData, API_ENDPOINTS } from "../../auth/API/api";
 import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 
-export default function Signinmodal({ closeModal }) {
+export default function Signinmodal({ closeModal,page }) {
   const router = useRouter();
+  // console.log(page)
   const [loginformshow, setloginformshow] = useState(false);
   const [loginformdata, setloginformdata] = useState({
     email: "",
@@ -191,12 +192,13 @@ export default function Signinmodal({ closeModal }) {
             
           <div className="text-gray-600 mb-8 leading-relaxed">
             {isEmptyQuote ? (
-              <><h2 class="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">Access your account or Register a new one to proceed.</h2></>
-            ) : (
               <>
                 You’re about to submit your <b>Property Details</b>. Would you
                 like to continue as a <b>logged-in user</b> or a <b>guest user</b>?
               </>
+            ) : (
+                            <><h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">Access your account or Register a new one to proceed.</h2></>
+
             )}
           </div>
 
