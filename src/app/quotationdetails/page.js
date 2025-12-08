@@ -1241,12 +1241,11 @@ export default function Quotationdetails() {
                               {disbursementFeesError}
                             </p>
                           )}
-                          <div className="grid grid-cols-4 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
+                          <div className="grid grid-cols-3 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
                             <div className="text-center">
                               Disbursement Type £
                             </div>
                             <div className="text-center">Fee Cost £</div>
-                            <div className="text-center">Paid To</div>
                             {/* <div className="text-center">Transaction Type</div> */}
                             <div className="text-end pr-14">Action</div>
                           </div>
@@ -1255,7 +1254,7 @@ export default function Quotationdetails() {
                             .price_list.map((row, i) => (
                               <div
                                 key={i}
-                                className="grid grid-cols-4 gap-3 px-3 py-2"
+                                className="grid grid-cols-3 gap-3 px-3 py-2"
                               >
                                 {!row.isOthers ? (
                                   <select
@@ -1316,32 +1315,7 @@ export default function Quotationdetails() {
                                   className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
                                 />
 
-                                {/* PAID TO */}
-                                <select
-                                  className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black  placeholder:text-gray-800 pl-2"
-                                  value={row.paidTo}
-                                  onChange={(e) =>
-                                    handlePriceChange(
-                                      numIndex,
-                                      i,
-                                      "paid_to",
-                                      e.target.value
-                                    )
-                                  }
-                                >
-                                  <option value="" className="text-gray-900">
-                                    Select Paid To
-                                  </option>
-                                  {paidToOptions.map((opt) => (
-                                    <option
-                                      key={opt.value}
-                                      value={opt.value}
-                                      className="text-gray-900"
-                                    >
-                                      {opt.label}
-                                    </option>
-                                  ))}
-                                </select>
+                                
 
                                
                                 <div className="flex justify-end me-6 gap-4">
@@ -1406,9 +1380,7 @@ export default function Quotationdetails() {
                                   <th className="px-2 py-2 text-center w-1/4">
                                     Fee Type
                                   </th>
-                                  <th className="px-2 py-2 text-center w-1/4">
-                                    Cost £
-                                  </th>
+                                  
                                   {/* <th className="px-3 py-2 text-center w-1/4">Paid To</th> */}
                                   <th className="px-2 py-2 text-end pr-16 w-1/4">
                                     Action
@@ -1487,32 +1459,7 @@ export default function Quotationdetails() {
                                       </td>
 
                                       {/* PAID TO */}
-                                      <td className="pl-2 py-2 text-center">
-                                        <select
-                                          className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
-                                          value={row.paidTo}
-                                          onChange={(e) =>
-                                            handlePriceChange(
-                                              numIndex,
-                                              i,
-                                              "paid_to",
-                                              e.target.value
-                                            )
-                                          }
-                                        >
-                                          <option value="">
-                                            Select Paid To
-                                          </option>
-                                          {paidToOptions.map((opt) => (
-                                            <option
-                                              key={opt.value}
-                                              value={opt.value}
-                                            >
-                                              {opt.label}
-                                            </option>
-                                          ))}
-                                        </select>
-                                      </td>
+                                      
 
                                      
 
@@ -2234,10 +2181,7 @@ export default function Quotationdetails() {
                                 Disbursement Type £
                               </div>
                               <div className="text-center">Fee Cost £</div>
-                              <div className="text-center">Paid To</div>
-                              <div className="text-center">
-                                Transaction Type
-                              </div>
+                             
                             </div>
                             {pricingList
                               .find(
@@ -2311,54 +2255,11 @@ export default function Quotationdetails() {
                                   />
 
                                   {/* PAID TO */}
-                                  <select
-                                    disabled
-                                    className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black  placeholder:text-gray-800"
-                                    value={row.paidTo}
-                                    onChange={(e) =>
-                                      handlePriceChange(
-                                        numIndex,
-                                        i,
-                                        "paid_to",
-                                        e.target.value
-                                      )
-                                    }
-                                  >
-                                    <option value="" className="text-gray-900">
-                                      Select Paid To
-                                    </option>
-                                    {paidToOptions.map((opt) => (
-                                      <option
-                                        key={opt.value}
-                                        value={opt.value}
-                                        className="text-gray-900"
-                                      >
-                                        {opt.label}
-                                      </option>
-                                    ))}
-                                  </select>
+                                  
+                        
 
                                   {/* TRANSACTION TYPE */}
-                                  <select
-                                    disabled
-                                    className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black  "
-                                    value={row.transactionType}
-                                    onChange={(e) =>
-                                      handlePriceChange(
-                                        numIndex,
-                                        i,
-                                        "paid_to",
-                                        e.target.value
-                                      )
-                                    }
-                                  >
-                                    <option value="">Select Type</option>
-                                    {transactionOptions.map((opt) => (
-                                      <option key={opt.value} value={opt.value}>
-                                        {opt.label}
-                                      </option>
-                                    ))}
-                                  </select>
+                                 
                                 </div>
                               ))}
                           </div>
@@ -2393,15 +2294,11 @@ export default function Quotationdetails() {
                                     <th className="px-3 py-2 text-center">
                                       Leasehold Service
                                     </th>
-                                    <th className="px-3 py-2 text-center">
-                                      Fee Type
-                                    </th>
+                                  
                                     <th className="px-3 py-2 text-center">
                                       Cost £
                                     </th>
-                                    <th className="px-3 py-2 text-center">
-                                      Paid To
-                                    </th>
+                                 
                                   </tr>
                                 </thead>
 
@@ -2481,62 +2378,10 @@ export default function Quotationdetails() {
                                         </td>
 
                                         {/* PAID TO */}
-                                        <td className="px-3 py-2 text-center">
-                                          <select
-                                            disabled
-                                            className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
-                                            value={row.paidTo}
-                                            onChange={(e) =>
-                                              handlePriceChange(
-                                                numIndex,
-                                                i,
-                                                "paid_to",
-                                                e.target.value
-                                              )
-                                            }
-                                          >
-                                            <option value="">
-                                              Select Paid To
-                                            </option>
-                                            {paidToOptions.map((opt) => (
-                                              <option
-                                                key={opt.value}
-                                                value={opt.value}
-                                              >
-                                                {opt.label}
-                                              </option>
-                                            ))}
-                                          </select>
-                                        </td>
+                                      
 
                                         {/* TRANSACTION TYPE */}
-                                        <td className="px-3 py-2 text-center">
-                                          <select
-                                            disabled
-                                            className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
-                                            value={row.transactionType}
-                                            onChange={(e) =>
-                                              handlePriceChange(
-                                                numIndex,
-                                                i,
-                                                "transactionType",
-                                                e.target.value
-                                              )
-                                            }
-                                          >
-                                            <option value="">
-                                              Select Type
-                                            </option>
-                                            {transactionOptions.map((opt) => (
-                                              <option
-                                                key={opt.value}
-                                                value={opt.value}
-                                              >
-                                                {opt.label}
-                                              </option>
-                                            ))}
-                                          </select>
-                                        </td>
+                                       
                                       </tr>
                                     ))}
                                 </tbody>

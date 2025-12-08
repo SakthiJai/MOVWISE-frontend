@@ -497,7 +497,7 @@ const Partnersprofile = () => {
   };
  const QuotesContent = () => (
     <div className="p-6 bg-white shadow-lg rounded-xl min-h-[300px] font h-[500px] overflow-auto" >
-      <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">My Quotes List </h2>
+      <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Progress Quote List </h2>
       <div className="space-y-4">
         {company.map((quote,index) => (
           <div

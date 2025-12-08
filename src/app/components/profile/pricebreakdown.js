@@ -3,8 +3,9 @@
 import { useRouter } from "next/navigation";
 import React, { forwardRef, useEffect, useRef, useState,useImperativeHandle } from "react";
 import { API_ENDPOINTS, getData } from "../../auth/API/api";
+import { formatGBP } from "../utility/poundconverter";
 
-const PriceBreakdownCard = forwardRef(({ companydetails, quoteId }, ref) => {
+const PriceBreakdownCard = forwardRef(({ companydetails, quoteId,quoteUser }, ref) => {
   //  useEffect(() => {
   //   console.log("Fetching breakdown for:", quoteId);
   //   console.log("fetching company",companydetails);
@@ -36,7 +37,7 @@ const timers = useRef({});
     refreshCard() {
   const match = companydetails.find(item => item.property_id == quoteId);
     if (match) {
-      setActiveIndex(match.status);
+      setActiveIndex(match.status||1);
       console.log("Status Updated:", match.status);
     }
       console.log("Child function called! quoteId =", quoteId);
@@ -56,6 +57,25 @@ const timers = useRef({});
     { level: 5, label: "Foundation", x: 0, y: 720 ,status: 'Rollout'},
     { level: 6, label: "Achievement", x:356, y: 900 ,status: 'Done'}
   ];
+  const getStatusLabel = (status) => {
+  switch (status) {
+    case 2:
+      return "Customer Requested";
+    case 3:
+      return "Admin Approved";
+    case 4:
+      return "You have accepted";
+    case 5:
+      return "Quote is under progress";
+    case 6:
+      return "Rejected by you";
+    case 7:
+      return "Quote is about to completed";
+    default:
+      return "Unknown";
+  }
+};
+
 
 
 
@@ -91,7 +111,9 @@ const timers = useRef({});
                       </p>
                       <p>
                         <strong>Status:</strong>
-                        <span className="ml-2 px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full"></span>
+                        <span className="ml-2 px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">
+                           {getStatusLabel(item.status)}
+                        </span>
                       </p>
                     </div>
                   )
@@ -111,25 +133,25 @@ const timers = useRef({});
                         className="grid grid-cols-2 py-2 text-gray-600"
                       >
                         <p>Legal Fees:</p>
-                        <p className="text-end"> {item.legal_fees}</p>
+                        <p className="text-end"> {formatGBP(item.legal_fees)}</p>
                         <p>disbursements:</p>
 
-                        <p className="text-end"> {item.disbursements}</p>
+                        <p className="text-end"> {formatGBP(item.disbursements)}</p>
                         {item.service_type == 2 && (
                           <>
                             {item.purchase_country == "England" &&
                               item.purchase_country == "Northern Ireland" &&
                               (<>
                                 <p>Stamp Duty Price:</p>
-                                <p className="text-end"> {item.stamp_duty}</p>
+                                <p className="text-end"> {formatGBP(item.stamp_duty)}</p>
                               </>)(item.purchase_country == "Scotland") &&
                               (<>
                                 <p>LLT</p>
-                                <p className="text-end"> {item.llt}</p>
+                                <p className="text-end"> {formatGBP(item.llt)}</p>
                               </>)(item.purchase_country == "Wales") && (
                                 <>
                                   <p>LBTT</p>
-                                  <p className="text-end"> {item.lbtt}</p>
+                                  <p className="text-end"> {formatGBP(item.lbtt)}</p>
                                 </>
                               )}
                           </>
@@ -137,11 +159,11 @@ const timers = useRef({});
 
                         <p>VAT:</p>
 
-                        <p className="text-end"> {item.vat}</p>
+                        <p className="text-end">{formatGBP(item.vat)}</p>
                         <div className="flex justify-between text-lg font-bold text-gray-800 pt-4 border-t border-gray-300 mt-4 w-full">
                           <span className="">Total Due</span>
                           <span className="text-indigo-600 text-end">
-                            ${item.total}
+                            {formatGBP(item.total)}
                           </span>
                         </div>
                       </div>
@@ -186,17 +208,18 @@ const timers = useRef({});
 
               {/* CORNER MILESTONES */}
               {[
-                { x: 60, y: 80, label: "Level 1" },
-                { x: 330, y: 80, label: "Level 2" },
-                { x: 330, y: 260, label: "Level 3" },
-                { x: 60, y: 260, label: "Level 4" },
-                { x: 60, y: 440, label: "Level 5" },
-                { x: 330, y: 440, label: "Level 6" },
-                { x: 330, y: 620, label: "Level 7" },
-                { x: 60, y: 620, label: "Level 8" },
-                { x: 60, y: 800, label: "Level 9" },
-                { x: 330, y: 800, label: "Level 10" },
-                { x: 330, y: 980, label: "Level 11" },
+             { x: 60, y: 80, label: "Draft" },
+{ x: 330, y: 80, label: "Submitted" },
+{ x: 330, y: 260, label: "Reviewing" },
+{ x: 60, y: 260, label: "Approved" },
+{ x: 60, y: 440, label: "Processing" },
+{ x: 330, y: 440, label: "In Progress" },
+{ x: 330, y: 620, label: "Completed" },
+{ x: 60, y: 620, label: "Verified" },
+{ x: 60, y: 800, label: "Final Check" },
+{ x: 330, y: 800, label: "Closed" },
+{ x: 330, y: 980, label: "Archived" },
+
               ].map((s, i) => (
                 <foreignObject
                   key={i}

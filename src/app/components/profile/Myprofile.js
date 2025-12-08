@@ -23,11 +23,14 @@ const Myprofile = () => {
   }
   )
   const[company,setcompany]=useState([]);
+  const[quoteUser,setquoteUser]=useState({});
   const[servicedetails,setservicedetails]=useState([]);
   const [selectedQuoteId, setSelectedQuoteId] = useState(null);
 
   const [preview, setPreview] = useState("true");
-
+  const loginType = typeof window !== "undefined" 
+  ? localStorage.getItem("logintype") 
+  : null;
 
 
 useEffect(() => {
@@ -47,11 +50,12 @@ useEffect(() => {
 
 
   async function fetchapi() {
+    console.log("Fetching profile data for login type:", logintype);
     try{
       if(localStorage.getItem("user")){
          const payload = {
       user_id: Number(localStorage.getItem("user")),
-      type:logintype,
+      type:localStorage.getItem("logintype"),
     };
 console.log(payload)
       
@@ -71,6 +75,8 @@ email:userprofile[0].email,
    })
 
    setcompany(companydetails)
+   setquoteUser(profiledetails.data[0].user_details)
+   console.log("companydetails",profiledetails.data[0].user_details)
    setservicedetails()
 
        }
@@ -122,26 +128,57 @@ email:userprofile[0].email,
     }
     return (
       <span
-        className={`px-3 py-1 text-xs font-semibold rounded-full ${colorClass}`}
+        className={`class="ml-2 px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full" ${colorClass}`}
       >
         {status}
       </span>
     );
   };
-
+ const getStatusLabel = (status) => {
+  switch (status) {
+    case 2:
+      return "Customer Requested";
+    case 3:
+      return "Admin Approved";
+    case 4:
+      return "You have accepted";
+    case 5:
+      return "Quote is under progress";
+    case 6:
+      return "Rejected by you";
+    case 7:
+      return "Quote is about to completed";
+    default:
+      return "Unknown";
+  }
+};
+const getServiceTypeLabel = (type) => {
+  switch (type) {
+    case 1:
+      return "Sale&Purchase";
+    case 2:
+      return "Purchase";
+    case 3:
+      return "Sales";
+    case 4:
+      return "Remortage";
+    default:
+      return "Transfer of Equity";
+  }
+};
   // Content for the 'MY Profile' section (Unchanged)
   const ProfileContent = () => (
     <div className="p-6 bg-white shadow-lg rounded-xl min-h-[300px] font">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">User Profile</h2>
+      <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Your Profile</h2>
       <div className="">
               <div className="p-8">
                 {/* Breadcrumb */}
                
 
-                <h1 className="text-[24px] font-semibold font-Outfit text-[#1B1D21] font">Share your Personal Details</h1>
+               
               
 
-                <form className="mt-6">
+                <form className="mt-2">
                   {/* Row 1 */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
@@ -258,39 +295,59 @@ email:userprofile[0].email,
   // Content for the 'MY Quotes' section (Unchanged)
   const QuotesContent = () => (
     <div className="p-6 bg-white shadow-lg rounded-xl min-h-[300px] font h-[500px] overflow-auto" >
-      <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">My Quotes List </h2>
-      <div className="space-y-4">
-        {company.map((quote,index) => (
-          <div
-            key={index}
-            className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition duration-150"
-          >
-            <p className="text-gray-700 italic font-medium mb-2 sm:mb-0 max-w-2xl">
-               {`"${quote.company_name}"`}
-            </p>
-            <div className="flex items-center space-x-3 flex-shrink-0">
-              <span onClick={()=>{handlecom_detailsopen(quote.property_id)}}>
-   <StatusButton
-  status={
-    (() => {
-      if (quote.status === 1) {
-        return "Active";
-      } else if (quote.status === 0) {
-        return "Inactive";
-      } else {
-        return "Unknown";
-      }
-    })()
-  }
-/>
-              </span>
-        
-          
-            </div>
-          </div>
-        ))}
+      <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Requested Quote List </h2>
+     <div className="overflow-x-auto">
+  <table className="min-w-full  table-auto">
+    <thead>
+      <tr className="bg-gray-100 text-left text-black">
+        <th className="p-3 border font-semibold">S.No</th>
+        <th className="p-3 border font-semibold">Service</th>
+        <th className="p-3 border font-semibold">Property Location</th>
+        <th className="p-3 border font-semibold">Property Price</th>
+        <th className="p-3 border font-semibold"> {loginType !== "user" ? "Customer Name" : "Conveyancer Name"}</th>
+        <th className="p-3 border font-semibold">Status</th>
+        <th className="p-3 border font-semibold">View</th>
+      </tr>
+    </thead>
 
-      </div>
+    <tbody>
+      {company.map((quote, index) => (
+        <tr
+          key={index}
+          className="hover:bg-gray-50 transition duration-150 text-black"
+        >
+          <td className="p-3 ">{index + 1}</td>
+          <td className="p-3 ">{getServiceTypeLabel(quote.service_type)}</td>
+
+          <td className="p-3 ">
+            {quote.service_type == 2
+              ? quote.purchase_country
+              : quote.sales_country}
+          </td>
+            
+          <td className="p-3 ">£ {quote.purchase_price}</td>
+          <td className="p-3 "> {loginType === "user" ? quote.company_name : quoteUser[0].first_name + quoteUser[0].last_name} {}</td>
+
+          <td className="p-3 ">
+            <StatusButton
+            status={ getStatusLabel(quote.status)}
+            />
+          </td>
+
+          <td className="p-3  text-center ">
+                          <button onClick={()=>{handlecom_detailsopen(quote.property_id)}} className='bg-blue-100 text-blue-800 px-3  py-1 text-xs font-semibold rounded-full'>
+
+           
+            
+              View
+            </button>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
     </div>
   );
   
@@ -373,14 +430,72 @@ email:userprofile[0].email,
 
                 </div>
                 )}
+
+                {logintype=="partner"&&(
+                  <div>
+                  <QuotesContent />
+
+                  {showPopup && (
+  <div className="fixed inset-0  bg-opacity-40 flex justify-center items-center z-50 p-4">
+      
+      <div className="bg-white rounded-xl shadow-xl w-full  h-[550px]  p-6 relative overflow-hidden">
+
+        {/* Close Button */}
+        <button
+          onClick={() => setShowPopup(false)}
+          className="absolute top-3 right-3 text-gray-600 hover:text-black text-xl"
+        >
+          ✖
+        </button>
+
+        {/* Popup Content */}
+        <PriceBreakdownCard
+          companydetails={company}
+          quoteId={selectedQuoteId}
+          ref={childRef}
+          quoteUser={quoteUser}
+        />
+      </div>
+
+  </div>
+)}
+
+                </div>
+                )}
               
                
                
               </div>
               
             ) : (
+              <>
               <ProfileContent />
+              
+                {showPopup && (
+  <div className="fixed inset-0  bg-opacity-40 flex justify-center items-center z-50 p-4">
+      
+      <div className="bg-white rounded-xl shadow-xl w-full  h-[550px]  p-6 relative overflow-hidden">
 
+        {/* Close Button */}
+        <button
+          onClick={() => setShowPopup(false)}
+          className="absolute top-3 right-3 text-gray-600 hover:text-black text-xl"
+        >
+          ✖
+        </button>
+
+        {/* Popup Content */}
+        <PriceBreakdownCard
+          companydetails={company}
+          quoteId={selectedQuoteId}
+          ref={childRef}
+        />
+      </div>
+
+  </div>
+  
+)}
+</>
             )}
            
           </main>

@@ -27,6 +27,8 @@ export default function Comparequotes() {
   const [view_data, setview_data] = useState({});
   const [quoteData, setquoteData] = useState([]);
   const [viewquotes, showviewquotes] = useState(false);
+  const [instructloader,setinstructloader]=useState(false);
+  const [quoteid,setquoteid]=useState("");
 
   // Track which card dropdown is open (by quote_id)
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
@@ -56,20 +58,34 @@ export default function Comparequotes() {
     conveyancer_id,
     quote_id,
     user_id
-  ) {
-    const instructpayload = {};
+  )
+   {
 
-    if (user_id) instructpayload.user_id = user_id;
-    else if (guest_id) instructpayload.guest_id = guest_id;
+ setinstructloader(true);
+      console.log(instructloader);
+setquoteid(quote_id);
+    instructquote(quote_id)
 
-    console.log(instructpayload);
-    console.log(instructpayload);
-    const instruct = getData(API_ENDPOINTS.instruct + "/" + quote_id);
-    setPopupData({ visible: true, companyName: companyName });
+
+    async function instructquote(quote_id){
+      try{
+const instruct = await getData(API_ENDPOINTS.instruct + "/" + quote_id);
+if(instruct){
+  setinstructloader(false);
+router.push(`/Instruct?id=${quote_id}`);
+  console.log(instructloader);
+}
+      }
+      catch(e){
+        console.log(e);
+      }
+    
+    
+   
     console.log(companyName);
     console.log(popupData);
   }
-
+   }
   // Close popup
   function closePopup() {
     setPopupData({ visible: false, companyName: "" });
@@ -459,45 +475,74 @@ export default function Comparequotes() {
 
                             <button
                               className="px-3 py-1.5 bg-[#4A7C59] text-white text-sm rounded-full hover:bg-[#3b6248]"
-                             // onClick={() =>
-                                // handleInstruct(
-                                //   quote.conveying_details.company_name,
-                                //   quote.guest_id,
-                                //   quote.conveying_details.conveying_id,
-                                //   quote.quote_id,
-                                //   quote.customer_details.customer_id
-                                // )
+                             onClick={() =>
+                                handleInstruct(
+                                  quote.conveying_details.company_name,
+                                  quote.guest_id,
+                                  quote.conveying_details.conveying_id,
+                                  quote.quote_id,
+                                  quote.customer_details.customer_id
+                                )
                                 
-                             // }
+                             }
                             >
-                           <Link
-                        href={`/Instruct?id=${quote.quote_id}`}
-                           >Instruct</Link>   
+                              {quoteid==quote.quote_id?<>
+                                                     <div className="flex items-center gap-2">
+  <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+  <span>{instructloader ? "Instructing..." : "Instruct"}</span>
+</div>
+                              </>:"Instruct"
+
+                                                       
+                           }
+                           
                             </button>
                           </div>
                         </div>
 
                         {/* Description + Price Breakdown */}
                         {dropdownOpenId === quote.quote_id && (
-                          <div className="border-t border-gray-200 pt-6 flex justify-end">
-                            <div className="text-xs text-gray-700 w-full max-w-[280px]">
-                              <h4 className="font-semibold mb-3 text-left">
+                          <div className="border-t border-gray-200 pt-6 grid ">
+                            <div className="text-xs text-gray-700 w-full max-w-[280px] ml-auto">
+                              <div className="grid grid-cols-4 ">
+                                <h4 className="font-semibold mb-3 col-span-2 ">
                                 Price Breakdown:
                               </h4>
+                              <h4>
+                                Fee:
+                              </h4>
+                              <h4> Vat :</h4>
+                                </div>
+                              
+<div className="grid grid-cols-1">
 
-                              <ul className="space-y-2 text-gray-600">
+  <ul className="space-y-2 text-gray-600">
                                 <li className="flex justify-between">
-                                  <span>Legal fees</span>
+                                  <div className="w-full grid grid-cols-4 ">
+                                     <span className="col-span-2">Legal fees</span>
                                   <span className="font-bold text-gray-800">
                                     {formatGBP(quote.legal_fees)}
                                   </span>
+                                   <span className="font-bold text-gray-800">
+                                    {formatGBP(quote.legal_fees*0.2)}
+                                  </span>
+                                  </div>
+                                 
+                                 
                                 </li>
 
                                 <li className="flex justify-between">
-                                  <span>Disbursements</span>
+                                  <div className="w-full grid grid-cols-4 ">
+                                     <span className="col-span-2">Disbursements</span>
                                   <span className="font-bold text-gray-800">
                                     {formatGBP(quote.disbursements)}
                                   </span>
+                                   <span className="font-bold text-gray-800">
+                                    {formatGBP(quote.disbursements*0.2)}
+                                  </span>
+                                  </div>
+
+                                 
                                 </li>
                                 {
                                   quote.service_details[0].service_type==2&&(
@@ -532,20 +577,41 @@ export default function Comparequotes() {
                                 }
                                 
 
-                                <li className="flex justify-between border-b border-b-gray-500">
-                                  <span>VAT</span>
-                                  <span className="font-bold text-gray-800">
-                                    {formatGBP(quote.vat)}
-                                  </span>
-                                </li>
-
-                                <li className="flex justify-between">
-                                  <span>Total</span>
+                             
+                               
+                                      <li className="flex justify-between">
+                                  <div className="w-full grid grid-cols-4 ">
+                                     <span className="col-span-2">Total</span>
                                   <span className="font-bold text-gray-800">
                                     {formatGBP(quote.total)}
                                   </span>
+                                   <span className="font-bold text-gray-800">
+                                    {formatGBP(quote.total*0.2)}
+                                  </span>
+                                  </div>
+
+                                 
+                                </li>
+
+                                 <li className="border-t ">
+                                  <div className="w-full grid grid-cols-4 mt-2 ">
+                                     <span className="col-span-2">Total</span>
+                                  <span className="font-bold text-gray-800">
+                                    {formatGBP(quote.total)}
+                                  </span>
+                                   <span className="font-bold text-gray-800">
+                                    {formatGBP(quote.total*0.2)}
+                                  </span>
+                                  </div>
+
+                                 
                                 </li>
                               </ul>
+
+                      
+
+</div>
+                              
                             </div>
                           </div>
                         )}

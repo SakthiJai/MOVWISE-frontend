@@ -126,7 +126,7 @@ setlogintype(localStorage.getItem("logintype"));
                 localStorage.clear();
                // setOpen(false);
                window.location.reload();
-                
+                router.push("/");
               }}>
                 Sign out
               </Link>
