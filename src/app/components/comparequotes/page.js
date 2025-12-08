@@ -551,8 +551,8 @@ export default function Comparequotes() {
                         )}
                         {dropdownOpenId === quote.quote_id && viewquotes && (
                           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm animate-fadeIn">
-                            <div className="bg-white rounded-2xl p-8 w-[90%] max-h-[90vh] overflow-y-auto text-center shadow-2xl border border-green-200 animate-popIn">
-                              <div className="absolute top-16 right-36">
+                            <div className="bg-white rounded-2xl  w-[90%] min-h-screen overflow-y-auto text-center shadow-2xl border border-green-200 animate-popIn">
+                              <div className="absolute top-3 right-32">
                                 <button
                                   className="text-4xl text-gray-700"
                                   onClick={() => showviewquotes(false)}
@@ -569,12 +569,12 @@ export default function Comparequotes() {
                                   >
                                     Back
                                   </button>
-                                  <span className="text-[34px] ml-15 p-2 leading-none font-extrabold text-[#1E5C3B] tracking-tight">
+                                  <span className=" mr-85 text-[34px] ml-15 p-2 leading-none font-extrabold text-[#1E5C3B] tracking-tight">
                                     {view_data?.appsetting_details
                                       ?.company_name || "MovWise"}
                                   </span>
 
-                                  <button className="bg-[#F8C537] text-white px-8 py-2 text-sm font-medium mt-4 ml-5 flex items-center justify-center rounded">
+                                  {/* <button className="bg-[#F8C537] text-white px-8 py-2 text-sm font-medium mt-4 ml-5 flex items-center justify-center rounded">
                                     <svg
                                       xmlns="http://www.w3.org/2000/svg"
                                       fill="none"
@@ -592,7 +592,7 @@ export default function Comparequotes() {
                                     <span className="text-base">
                                       Instruct Firm
                                     </span>
-                                  </button>
+                                  </button> */}
                                 </div>
 
                                 {/* ---------- MAIN CONTAINER ---------- */}
@@ -652,17 +652,17 @@ export default function Comparequotes() {
                                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="py-1 px-5">
                                       <div className="text-emerald-600">
-                                        <h3 className="text-lg font-semibold">
+                                        <h3 className="text-lg font-semibold mr-55 mt-2">
                                           User Details
                                         </h3>
                                       </div>
 
                                       <div className="space-y-1 text-sm  mt-3">
                                         <div className="flex">
-                                          <span className="font-semibold w-26 text-left">
+                                          <span className="font-semibold w-20 text-left">
                                             Name
                                           </span>
-                                          <span className="ml-5">
+                                          <span className="">
                                             {
                                               quote?.customer_details
                                                 ?.first_name
@@ -675,7 +675,7 @@ export default function Comparequotes() {
                                           <span className="font-semibold w-20 text-left">
                                             Email
                                           </span>
-                                          <span className="ml-10">
+                                          <span className="">
                                             {quote?.customer_details?.email ||
                                               "--"}
                                           </span>
@@ -685,7 +685,7 @@ export default function Comparequotes() {
                                           <span className="font-semibold w-20 text-left">
                                             Phone
                                           </span>
-                                          <span className="ml-10">
+                                          <span className="">
                                             {quote?.conveying_details
                                               ?.phone_number || "--"}
                                           </span>
@@ -700,27 +700,31 @@ export default function Comparequotes() {
                                   </div>
 
                                   {/* ---------- FEES SECTION ---------- */}
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="py-1 px-5">
+                                       </div>
                                   <div>
                                     {/* Sale Fees */}
+                                    
                                     <div className="mb-1 p-4">
-                                      <p className="font-bold text-black mb-3">
+                                      <h3 className="font-bold text-emerald-600 mb-3 ">
                                         Sale Fees
-                                      </p>
+                                      </h3>
 
-                                      <div className="space-y-2 text-sm">
-                                        <div className="flex justify-between">
-                                          <span>Legal Fee</span>
+                                      
+                                        <div className="flex">
+                                        <span className=" w-60 text-left">Legal Fee</span>
                                           <span>£{quote?.legal_fees}.00</span>
                                         </div>
 
-                                        <div className="flex justify-between">
-                                          <span>VAT</span>
+                                       <div className="flex">
+                                        <span className=" w-60 text-left">VAT</span>
                                           <span>£{quote?.vat}.00</span>
                                         </div>
-                                      </div>
+                                      
 
-                                      <div className="flex justify-between font-semibold mt-3 text-base">
-                                        <span>Total Fees</span>
+                                      <div className="flex">
+                                        <span className=" w-60 text-left">Total Fees</span>
                                         <span>
                                           £
                                           {Number(quote?.legal_fees) +
@@ -734,25 +738,27 @@ export default function Comparequotes() {
 
                                     {/* Disbursements */}
                                     <div className="p-4">
-                                      <p className="font-bold text-black mb-3">
+                                      <h3 className="font-bold text-emerald-600 mb-3 ">
                                         Disbursements
-                                      </p>
+                                      </h3>
 
-                                      <div className="space-y-2    text-sm">
-                                        <div className="flex justify-between">
-                                          <span>Total Disbursements</span>
+                                      
+                                       <div className="flex">
+                                        <span className=" w-60 text-left">Total Disbursements</span>
                                           <span>£{quote?.disbursements}</span>
                                         </div>
-                                      </div>
+                                      
 
-                                      <div className="flex justify-between font-semibold mt-3 text-base">
-                                        <span>Total Fees & Disbursements</span>
+                                      <div className="flex">
+                                        <span className=" w-60 text-left">Total Fees & Disbursements</span>
                                         <span>
-                                          £{formatGBP(quote.total)}.00
+                                          {formatGBP(quote.total)}.00
                                         </span>
                                       </div>
                                     </div>
                                   </div>
+                                   </div>
+                                   
 
                                   <div className="border-t  w-full"></div>
 
