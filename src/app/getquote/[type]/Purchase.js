@@ -375,9 +375,9 @@ useEffect(() => {
         const [loginformshow,setloginformshow]=useState(false)
 
 return (
-     <div className="flex flex-col lg:flex-row gap-8">
+     <div className="flex flex-col lg:flex-row gap-8 mt-7">
               {/* Left stepper */}
-              <aside className="z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-50% lg:max-h-[600px] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white   lg:top-22">
+              <aside className="z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-1/2 lg:h-[800px] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white   lg:top-22">
                 <div className="p-6">
                   {/* Step 1 */}
                   <div className="flex items-start">
