@@ -23,10 +23,14 @@ export default function Purchase() {
     const [lang, setLang] = useState ([
       { value: "Not Required", label: "Not Required", id: 0 },
     ]);
+    const [buytolet_readonlyfield,setbuytolet_readonlyfield]=useState(false);
+    
+
     const stampDutyOptions = [
   { label: "Standard Residential", value: "standard" },
   { label: "First-Time Buyer Relief", value: "firstTime" },
   { label: "Additional Property (Second Home)", value: "additional" },
+  { label: "Additional Property (Buy to let)", value: "Buy to let" },
   { label: "Commercial / Non-Residential", value: "commercial" }
 ];
 
@@ -111,7 +115,7 @@ export default function Purchase() {
    "purchase_price": "",
   "no_of_bedrooms": options[0],
   "property_type": "Flat",
-  "leasehold_or_free": "Leasehold",
+  "leasehold_or_free": "Freehold",
   "new_build": "",
   "buy_to_let": "",
   "govt_by_scheme": 0,
@@ -121,7 +125,7 @@ export default function Purchase() {
   "specal_instruction": "",
   "lenders": "",
   "service_type":null, 
-  "purchase_mode":null            
+  "purchase_mode":""            
       });
 
      
@@ -153,6 +157,13 @@ export default function Purchase() {
 
     const handleChange = (field, value) => {
   console.log(field, value);
+  if(field=="purchase_mode" && value=="firstTime" ){
+    setbuytolet_readonlyfield(true);
+    formData.buy_to_let="No"
+  }
+  else{
+    setbuytolet_readonlyfield(false);
+  }
 
   if (field === "purchase_price") {
     const cleaned = value.replace(/[^0-9.]/g, ""); 
@@ -165,6 +176,7 @@ export default function Purchase() {
   if (errors[field]) {
     setErrors(prev => ({ ...prev, [field]: "" }));
   }
+  console.log("updated",formData)
 };
 
 useEffect(() => {
@@ -658,7 +670,7 @@ return (
                                      <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
        errors.leasehold_or_free ? "text-red-500 opacity-100" : "opacity-0"
     }`}>
-      {errors.leasehold_or_free || "placeholder"} {/* placeholder keeps same height */}
+      {errors.leasehold_or_free || "placeholder"} 
     </p>
                                     </div>
     
@@ -804,8 +816,9 @@ return (
                <select
                  name="buy_to_let"
                  id="b2l"
-                 value={formData.buy_to_let || ""}  // ✅ controlled value
-                 onChange={(e) => handleChange("buy_to_let", e.target.value)}  // ✅ update formData
+                 value={formData.buy_to_let || ""} 
+                 onChange={(e) => handleChange("buy_to_let", e.target.value)}
+                 disabled={buytolet_readonlyfield}  
                  className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"
                >
                  {["Please select", "No", "Yes - Personal name", "Yes - Company name"].map(

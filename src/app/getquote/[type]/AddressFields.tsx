@@ -37,6 +37,7 @@ console.log("country:" , country);
           <input
             type="text"
             value={formData[line1] || ""}
+                        readOnly={showAddressLines}
             onChange={(e) => onChange(line1, e.target.value)}
             className="block w-full h-[44px] rounded-xl border border-gray-300 px-4  text-gray-900"
           />
@@ -55,6 +56,8 @@ console.log("country:" , country);
           <input
             type="text"
             value={formData[line2] || ""}
+                        readOnly={showAddressLines}
+
             onChange={(e) => onChange(line2, e.target.value)}
             className="block w-full h-[44px] rounded-xl border border-gray-300 px-4  text-gray-900"
           />

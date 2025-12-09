@@ -15,6 +15,7 @@ const PriceBreakdownCard = forwardRef(({ companydetails, quoteId,quoteUser }, re
 
   const [logintype,setlogintype]=useState()
   const [feeCategory, setfeeCategory] = useState({});
+  const [taxDetails, settaxDetails] = useState();
 const router = useRouter();
 
   
@@ -25,6 +26,16 @@ const timers = useRef({});
    useEffect(() => {
      if(localStorage.getItem("logintype")){
      setlogintype(localStorage.getItem("logintype"));
+     console.log(companydetails)
+     const grouped = companydetails[0].taxDetails.reduce((acc, item) => {
+  if (!acc[item.fee_category]) {
+    acc[item.fee_category] = [];
+  }
+  acc[item.fee_category].push(item);
+  return acc;
+}, {});
+settaxDetails(grouped);
+console.log("Grouped Tax Details:", grouped);
  
      }
     
@@ -83,14 +94,15 @@ const timers = useRef({});
   
 
   return (
-    <div className="h-[400px] ">
+    <div className="h-[500px] overflow-auto ">
+      
       <div className="p-6 bg-white  rounded-xl min-h-[300px] font">
         <h2 className="text-2xl font-extrabold text-gray-900 mb-6 border-b pb-2">
           Quote Details
         </h2>
 
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
-          <div className="lg:col-span-3  space-y-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2  space-y-6">
             {/* Quote Details Section */}
             <div className="p-4 bg-indigo-50 rounded-lg border-l-4 border-indigo-600">
               <h3 className="text-lg font-semibold text-indigo-800 mb-2">
@@ -121,61 +133,107 @@ const timers = useRef({});
             </div>
 
             <div className="mt-4 p-3">
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">
-                Cost Breakdown
-              </h3>
-              <div className="divide-y divide-gray-200">
-                {companydetails.map(
-                  (item, index) =>
-                    quoteId == item.property_id && (
-                      <div
-                        key={index}
-                        className="grid grid-cols-2 py-2 text-gray-600"
-                      >
-                        <p>Legal Fees:</p>
-                        <p className="text-end"> {formatGBP(item.legal_fees)}</p>
-                        <p>disbursements:</p>
+  <h3 className="text-lg font-semibold text-gray-800 mb-3">
+    Cost Breakdown
+  </h3>
 
-                        <p className="text-end"> {formatGBP(item.disbursements)}</p>
-                        {item.service_type == 2 && (
-                          <>
-                            {item.purchase_country == "England" &&
-                              item.purchase_country == "Northern Ireland" &&
-                              (<>
-                                <p>Stamp Duty Price:</p>
-                                <p className="text-end"> {formatGBP(item.stamp_duty)}</p>
-                              </>)(item.purchase_country == "Scotland") &&
-                              (<>
-                                <p>LLT</p>
-                                <p className="text-end"> {formatGBP(item.llt)}</p>
-                              </>)(item.purchase_country == "Wales") && (
-                                <>
-                                  <p>LBTT</p>
-                                  <p className="text-end"> {formatGBP(item.lbtt)}</p>
-                                </>
-                              )}
-                          </>
-                        )}
+  <table className="w-full border-collapse text-black font">
+    <thead>
+      <tr className="border-b border-gray-300 text-left">
+        <th className="p-2 w-1/2">Type</th>
+        <th className="p-2 w-1/4 text-right">Fee Amount</th>
+        <th className="p-2 w-1/4 text-right">VAT</th>
+      </tr>
+    </thead>
 
-                        <p>VAT:</p>
+    <tbody>
+      {companydetails
+        .filter((item) => item.property_id == quoteId)
+        .map((item, index) => (
+          <React.Fragment key={index}>
+          
+            <tr className="border-b border-gray-200">
+              <td className="p-2 break-words font-semibold ">{`Legal Fees`}</td>
+              <td className="p-2 text-right ">{formatGBP(item.legal_fees)}</td>
+              <td className="p-2 text-right">
+                {formatGBP(item.legal_fees_vat) || ""}
+              </td>
+            </tr>
 
-                        <p className="text-end">{formatGBP(item.vat)}</p>
-                        <div className="flex justify-between text-lg font-bold text-gray-800 pt-4 border-t border-gray-300 mt-4 w-full">
-                          <span className="">Total Due</span>
-                          <span className="text-indigo-600 text-end">
-                            {formatGBP(item.total)}
-                          </span>
-                        </div>
-                      </div>
-                    )
+        
+            {Object.entries(taxDetails || {}).map(([category, items]) => (
+              <React.Fragment key={category}>
+                {/* Category Row */}
+                <tr className="bg-gray-50 border-b border-gray-300">
+                  <td className="p-2 font-semibold" colSpan={3}>
+                    {category}
+                  </td>
+                </tr>
+
+                {items?.map((fee, i) => (
+                  <tr key={i} className="border-b border-gray-200 ">
+                    <td className="p-2 break-words "> <div className="ml-4"> {/* margin-left works here */}
+        {fee.fee_type}
+      </div></td>
+                    <td className="p-2 text-right">
+                      {formatGBP(fee.fee_amount)}
+                    </td>
+                    <td className="p-2 text-right">{formatGBP(fee.vat)}</td>
+                  </tr>
+                ))}
+              </React.Fragment>
+            ))}
+
+            {/* Country-specific taxes */}
+            
+
+            {/* TOTAL */}
+            <tr className="bg-gray-100 font-semibold text-gray-800">
+              <td className="p-2">Total </td>
+              <td className="p-2 text-right text-indigo-600">
+                {formatGBP(item.total)}
+               
+              </td>
+              <td></td>
+            </tr>
+            {item.service_type == 2 && (
+              <>
+                {item.purchase_country == "England" && (
+                  <tr className="border-b border-gray-200">
+                    <td className="p-2">Stamp Duty</td>
+                    <td className="p-2 text-right">
+                      {formatGBP(item.stamp_duty)}
+                    </td>
+                    <td></td>
+                  </tr>
                 )}
-              </div>
 
-              {/* Total Section */}
-            </div>
+                {item.purchase_country == "Scotland" && (
+                  <tr className="border-b border-gray-200">
+                    <td className="p-2">LLT</td>
+                    <td className="p-2 text-right">{formatGBP(item.llt)}</td>
+                    <td></td>
+                  </tr>
+                )}
+
+                {item.purchase_country == "Wales" && (
+                  <tr className="border-b border-gray-200">
+                    <td className="p-2">LBTT</td>
+                    <td className="p-2 text-right">{formatGBP(item.lbtt)}</td>
+                    <td></td>
+                  </tr>
+                )}
+              </>
+            )}
+          </React.Fragment>
+        ))}
+    </tbody>
+  </table>
+</div>
+
           </div>
 
-          <div className=" flex flex-wrap  ">
+          <div className=" mx-auto col-span-1">
             <svg
               width="200"
               height="1200"

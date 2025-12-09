@@ -26,6 +26,8 @@ const Myprofile = () => {
   const[quoteUser,setquoteUser]=useState({});
   const[servicedetails,setservicedetails]=useState([]);
   const [selectedQuoteId, setSelectedQuoteId] = useState(null);
+ ;
+
 
   const [preview, setPreview] = useState("true");
   const loginType = typeof window !== "undefined" 
@@ -294,6 +296,7 @@ const getServiceTypeLabel = (type) => {
 
   // Content for the 'MY Quotes' section (Unchanged)
   const QuotesContent = () => (
+    
     <div className="p-6 bg-white shadow-lg rounded-xl min-h-[300px] font h-[500px] overflow-auto" >
       <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Requested Quote List </h2>
      <div className="overflow-x-auto">
@@ -310,9 +313,13 @@ const getServiceTypeLabel = (type) => {
       </tr>
     </thead>
 
+    
+
     <tbody>
       {company.map((quote, index) => (
-        <tr
+    <React.Fragment key={index}> 
+           {((quote.status>1) && (localStorage.getItem("logintype")=="partner")) &&(
+<tr
           key={index}
           className="hover:bg-gray-50 transition duration-150 text-black"
         >
@@ -343,6 +350,54 @@ const getServiceTypeLabel = (type) => {
             </button>
           </td>
         </tr>
+        )}
+        </React.Fragment>
+
+
+
+        
+        
+        
+      ))}
+     {company.map((quote, index) => (
+    <React.Fragment key={index}> 
+           {((quote.status>0) && (localStorage.getItem("logintype")=="user")) &&(
+<tr
+          key={index}
+          className="hover:bg-gray-50 transition duration-150 text-black"
+        >
+          <td className="p-3 ">{index + 1}</td>
+          <td className="p-3 ">{getServiceTypeLabel(quote.service_type)}</td>
+
+          <td className="p-3 ">
+            {quote.service_type == 2
+              ? quote.purchase_country
+              : quote.sales_country}
+          </td>
+            
+          <td className="p-3 ">£ {quote.purchase_price}</td>
+          <td className="p-3 "> {loginType === "user" ? quote.company_name : quoteUser[0].first_name + quoteUser[0].last_name} {}</td>
+
+          <td className="p-3 ">
+            <StatusButton
+            status={ getStatusLabel(quote.status)}
+            />
+          </td>
+
+          <td className="p-3  text-center ">
+                          <button onClick={()=>{handlecom_detailsopen(quote.property_id)}} className='bg-blue-100 text-blue-800 px-3  py-1 text-xs font-semibold rounded-full'>
+
+           
+            
+              View
+            </button>
+          </td>
+        </tr>
+        )}
+        </React.Fragment>
+        
+        
+        
       ))}
     </tbody>
   </table>
