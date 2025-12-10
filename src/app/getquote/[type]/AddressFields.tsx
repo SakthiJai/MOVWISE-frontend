@@ -25,11 +25,12 @@ const country = prefix ? `${prefix}country` : "country";
 
 console.log("location:" , town_city);
 console.log("country:" , country);
+console.log("showAddressLines:" , showAddressLines);
   return (
     <>
 
       {/* Address Line 1 */}
-      {showAddressLines && (
+      {/* {showAddressLines && (
         <div className="flex flex-col h-full">
           <label className="block text-sm font-medium text-gray-700 mb-1">
             Address Line 1 <span className="text-red-900">*</span>
@@ -37,7 +38,7 @@ console.log("country:" , country);
           <input
             type="text"
             value={formData[line1] || ""}
-                        readOnly={showAddressLines}
+                        disabled={showAddressLines}
             onChange={(e) => onChange(line1, e.target.value)}
             className="block w-full h-[44px] rounded-xl border border-gray-300 px-4  text-gray-900"
           />
@@ -47,7 +48,7 @@ console.log("country:" , country);
         </div>
       )}
 
-      {/* Address Line 2 */}
+
       {showAddressLines && (
         <div className="flex flex-col h-full">
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -56,7 +57,7 @@ console.log("country:" , country);
           <input
             type="text"
             value={formData[line2] || ""}
-                        readOnly={showAddressLines}
+                        disabled={showAddressLines}
 
             onChange={(e) => onChange(line2, e.target.value)}
             className="block w-full h-[44px] rounded-xl border border-gray-300 px-4  text-gray-900"
@@ -65,7 +66,7 @@ console.log("country:" , country);
             {errors[line2]}
           </p>
         </div>
-      )}
+      )} */}
 
       {/* Town */}
       <div className="flex flex-col h-full">
@@ -103,9 +104,9 @@ console.log("country:" , country);
           {errors[country]}
         </p> */}
         <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
-  errors["sales_country"] ? "text-red-500 opacity-100" : "opacity-0"
+  errors["country"] ? "text-red-500 opacity-100" : "opacity-0"
 }`}>
-  {errors["sales_country"] || "placeholder"}
+  {errors["country"] || "placeholder"}
 </p>
 
       </div>

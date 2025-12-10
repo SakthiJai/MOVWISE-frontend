@@ -4,14 +4,13 @@ import { useRouter } from "next/navigation";
 import React, { forwardRef, useEffect, useRef, useState,useImperativeHandle } from "react";
 import { API_ENDPOINTS, getData } from "../../auth/API/api";
 import { formatGBP } from "../utility/poundconverter";
+import SalesPropertyDetails from "../comparequotes/Sales_Property";
+import PurchasePropertyDetails from "../comparequotes/PurchasePropertyDetails";
+import SalesPurchasePropertyDetails from "../comparequotes/Sales_Purchase_PropertyDetails";
+import RemortagePropertyDetails from "../comparequotes/RemortagePropertyDetails";
 
 const PriceBreakdownCard = forwardRef(({ companydetails, quoteId,quoteUser }, ref) => {
-  //  useEffect(() => {
-  //   console.log("Fetching breakdown for:", quoteId);
-  //   console.log("fetching company",companydetails);
-  //   console.log("status fetched",status);
-  //   // call API here
-  // }, [quoteId]);
+  
 
   const [logintype,setlogintype]=useState()
   const [feeCategory, setfeeCategory] = useState({});
@@ -68,6 +67,7 @@ console.log("Grouped Tax Details:", grouped);
     { level: 5, label: "Foundation", x: 0, y: 720 ,status: 'Rollout'},
     { level: 6, label: "Achievement", x:356, y: 900 ,status: 'Done'}
   ];
+  
   const getStatusLabel = (status) => {
   switch (status) {
     case 2:
@@ -101,22 +101,24 @@ console.log("Grouped Tax Details:", grouped);
           Quote Details
         </h2>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 h-[600px]">
           <div className="lg:col-span-2  space-y-6">
             {/* Quote Details Section */}
             <div className="p-4 bg-indigo-50 rounded-lg border-l-4 border-indigo-600">
-              <h3 className="text-lg font-semibold text-indigo-800 mb-2">
-                Quote Details
-              </h3>
+             
               {companydetails?.map(
                 (item, index) =>
                   quoteId == item.property_id && (
-                    <div key={index} className="text-sm space-y-1 text-black">
-                      <p>
+                    <div key={index} className="text-sm space-y-1 text-black grid grid-cols-2">
+                      <div>
+                         <h3 className="text-lg font-semibold text-indigo-800 mb-2">
+                Quote Details
+              </h3>
+                         <p>
                         <strong>Reference NO:</strong> {item.quote_ref_number}
                       </p>
                       <p>
-                        <strong>Property ID:</strong> {item.property_id}
+                        <strong>Service:</strong> {item.service_type==1?"Sale With Purchase":item.service_type==2?"Purchase":item.service_type==3?"Sale":"Remortage"}
                       </p>
                       <p>
                         <strong>Company Name:</strong> {item.company_name}
@@ -127,6 +129,15 @@ console.log("Grouped Tax Details:", grouped);
                            {getStatusLabel(item.status)}
                         </span>
                       </p>
+                      </div>
+                      <div>
+                          {(item.service_type == 3 ) && <SalesPropertyDetails quote={item}  page="profile"/>}   
+                          {(item.service_type== 2 ) && <PurchasePropertyDetails quote={item}  page="profile"/>}   
+                          {(item.service_type == 1 ) && <SalesPurchasePropertyDetails quote={item}  page="profile"/>}   
+                          {(item.service_type == 4 ) && <RemortagePropertyDetails quote={item}  page="profile"/>}  
+                                                         
+                        </div>
+                     
                     </div>
                   )
               )}
@@ -266,17 +277,17 @@ console.log("Grouped Tax Details:", grouped);
 
               {/* CORNER MILESTONES */}
               {[
-             { x: 60, y: 80, label: "Draft" },
-{ x: 330, y: 80, label: "Submitted" },
-{ x: 330, y: 260, label: "Reviewing" },
-{ x: 60, y: 260, label: "Approved" },
-{ x: 60, y: 440, label: "Processing" },
-{ x: 330, y: 440, label: "In Progress" },
-{ x: 330, y: 620, label: "Completed" },
-{ x: 60, y: 620, label: "Verified" },
-{ x: 60, y: 800, label: "Final Check" },
-{ x: 330, y: 800, label: "Closed" },
-{ x: 330, y: 980, label: "Archived" },
+             { x: 30, y: 80, label: "Draft" },
+{ x: 370, y: 80, label: "Submitted" },
+{ x: 370, y: 260, label: "Reviewing" },
+{ x: 30, y: 260, label: "Approved" },
+{ x: 30, y: 440, label: "Processing" },
+{ x: 370, y: 440, label: "In Progress" },
+{ x: 370, y: 620, label: "Completed" },
+{ x: 30, y: 620, label: "Verified" },
+{ x: 30, y: 800, label: "Final Check" },
+{ x: 370, y: 800, label: "Closed" },
+{ x: 300, y: 1030, label: "Archived" },
 
               ].map((s, i) => (
                 <foreignObject
@@ -314,7 +325,7 @@ console.log("Grouped Tax Details:", grouped);
                     <p
                       className={
                         activeIndex >= i
-                          ? "text-green-600 font-bold"
+                          ? "text-black font-bold"
                           : "text-gray-400"
                       }
                     >

@@ -34,7 +34,7 @@ export const API_ENDPOINTS = {
     servicelist:`${BASE_URL}/service`,
     getCompanyInformation:`${BASE_URL}/companyInformation`,
     getCompanyFee:`${BASE_URL}/feeDetails`,
-        intstructquote_list:`${BASE_URL}/get-user-quotes`,
+    intstructquote_list:`${BASE_URL}/get-user-quotes`,
 
 
 }

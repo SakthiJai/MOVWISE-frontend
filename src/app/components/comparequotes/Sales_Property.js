@@ -1,11 +1,14 @@
 
 // PropertyDetails.js
-export default function SalesPropertyDetails({ quote, dropdownOpenId }) {
+export default function SalesPropertyDetails({ quote, page }) {
+console.log("PAGE VALUE = ", page);
 
   return (
     <div className="py-1 px-5 text-sm">
-                                      <div className="text-emerald-600">
-                                        <h3 className="text-lg font-semibold mt-2">
+                                      <div className="">
+                                        <h3 className={`text-lg font-semibold ${
+        page == "profile" ? "text-indigo-800 " : "text-red-600"
+      }`}>
                                           Property Details 
                                         </h3>
                                       </div>

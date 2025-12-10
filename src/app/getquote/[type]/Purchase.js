@@ -157,7 +157,8 @@ export default function Purchase() {
 
     const handleChange = (field, value) => {
   console.log(field, value);
-  if(field=="purchase_mode" && value=="firstTime" ){
+  if(field=="purchase_mode" && (value=="firstTime"|| value=="standard"||value=="additional") ){
+    console.log("check")
     setbuytolet_readonlyfield(true);
     formData.buy_to_let="No"
   }
@@ -264,7 +265,7 @@ useEffect(() => {
 
 
               if (!formData.country) {
-                newErrors.sales_country = "Please select a country";
+                newErrors.country = "Please select a country";
         }
         
                if(!formData.languages){
@@ -274,7 +275,7 @@ useEffect(() => {
         if (!selectedLanguage || selectedLanguage.length === 0) {
     newErrors.preferLanguage = "Please select a language";
   }
-         if (!selectedLenders || selectedLenders.length === 0) {
+         if ((!selectedLenders || selectedLenders.length === 0) && formData.obtaining_mortgage==1) {
   newErrors.lenders = "Please select at least one lender";
 }
         
@@ -389,52 +390,52 @@ useEffect(() => {
 return (
      <div className="flex flex-col lg:flex-row gap-8 mt-7">
               {/* Left stepper */}
-              <aside className="z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-1/2 lg:h-[800px] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white   lg:top-22">
-                <div className="p-6">
-                  {/* Step 1 */}
-                  <div className="flex items-start">
-                    <div className="relative mr-4">
-                      <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
-                        <Check size={18} />
-                      </div>
-                      <div className="absolute left-[19px] top-[40px] w-[2px] h-[50px] bg-[#CFE3CF]" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-semibold text-[#1E1E1E]">STEP 1</div>
-                      <div className="text-lg font-extrabold text-[#1E1E1E]">Personal Details</div>
-                      <div className="text-xs text-[#2D7C57] mt-1">Completed</div>
-                    </div>
-                  </div>
-    
-                  {/* Step 2 (Current) */}
-                  <div className="flex items-start mt-6">
-                    <div className="relative mr-4">
-                      <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-white text-[#1E5C3B] flex items-center justify-center">
-                        <div className="w-4 h-4 rounded-full bg-[#1E5C3B]" />
-                      </div>
-                      <div className="absolute left-[19px] top-[40px] w-[2px] h-[50px] bg-gray-200" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-semibold text-[#1E1E1E]">STEP 2</div>
-                      <div className="text-lg font-extrabold text-[#1E1E1E]">Property Details</div>
-                      <div className="text-xs text-[#A38320] mt-1">In Progress</div>
-                    </div>
-                  </div>
-    
-                  {/* Step 3 */}
-                  <div className="flex items-start mt-6">
-                    <div className="mr-4">
-                      <div className="w-10 h-10 rounded-full border-2 border-gray-300 text-gray-400 flex items-center justify-center">
-                        <div className="w-3 h-3 rounded-full border-2 border-gray-300"></div>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs font-semibold text-[#1E1E1E]">STEP 3</div>
-                      <div className="text-lg font-bold text-[#1E1E1E]">Compare Quotes</div>
-                    </div>
-                  </div>
-                </div>
-              </aside>
+             <aside className="z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)]  lg:max-h-[600px] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white   lg:top-22">
+                                          <div className="p-6">
+                                          {/* Step 1 */}
+                                          <div className="flex items-start">
+                                              <div className="relative mr-4">
+                                              <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
+                                                  <Check size={18} />
+                                              </div>
+                                              <div className="absolute left-[19px] top-[40px] w-[2px] h-[50px] bg-[#CFE3CF]" />
+                                              </div>
+                                              <div>
+                                              <div className="text-xs font-semibold text-[#1E1E1E]">STEP 1</div>
+                                              <div className="text-lg font-extrabold text-[#1E1E1E]">Personal Details</div>
+                                              <div className="text-xs text-[#2D7C57] mt-1">Completed</div>
+                                              </div>
+                                          </div>
+                      
+                                          {/* Step 2 (Current) */}
+                                          <div className="flex items-start mt-6">
+                                              <div className="relative mr-4">
+                                              <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-white text-[#1E5C3B] flex items-center justify-center">
+                                                  <div className="w-4 h-4 rounded-full bg-[#1E5C3B]" />
+                                              </div>
+                                              <div className="absolute left-[19px] top-[40px] w-[2px] h-[50px] bg-gray-200" />
+                                              </div>
+                                              <div>
+                                              <div className="text-xs font-semibold text-[#1E1E1E]">STEP 2</div>
+                                              <div className="text-lg font-extrabold text-[#1E1E1E]">Property Details</div>
+                                              <div className="text-xs text-[#A38320] mt-1">In Progress</div>
+                                              </div>
+                                          </div>
+                      
+                                          {/* Step 3 */}
+                                          <div className="flex items-start mt-6">
+                                              <div className="mr-4">
+                                              <div className="w-10 h-10 rounded-full border-2 border-gray-300 text-gray-400 flex items-center justify-center">
+                                                  <div className="w-3 h-3 rounded-full border-2 border-gray-300"></div>
+                                              </div>
+                                              </div>
+                                              <div>
+                                              <div className="text-xs font-semibold text-[#1E1E1E]">STEP 3</div>
+                                              <div className="text-lg font-bold text-[#1E1E1E]">Compare Quotes</div>
+                                              </div>
+                                          </div>
+                                          </div>
+                                      </aside>
     
               {/* Right Form */}
               <section className="flex-1 bg-white border border-gray-200 shadow-xl rounded-2xl p-4 sm:p-8 lg:p-10 lg:ml-83">
@@ -571,9 +572,11 @@ return (
                       formData={formData}
                       errors={errors}
                       showAddressLines={showAddressLines} // only used inside AddressFields
-                      onChange={(field, value) =>
+                      onChange={(field, value) =>{
                         setFormData((prev) => ({ ...prev, [field]: value }))
-                      }
+                        setErrors((prev) => ({ ...prev, [field]: "" }))
+                        
+                      }}
                     />
 
     
@@ -847,7 +850,7 @@ return (
         Obtaining a mortgage?
       </label>
     
-      <div className="grid grid-cols-2 gap-3 mt-auto">
+      <div className="grid grid-cols-2 gap-3 ">
         <button
           type="button"
           onClick={() => {
@@ -868,9 +871,11 @@ return (
         <button
           type="button"
           onClick={() => {
-            setFormData({ ...formData, obtaining_mortgage: 0 }); // ✅ store 0 for no
+            setFormData({ ...formData, obtaining_mortgage: 0 });
+            console.log(formData)
+            setSelectedLenders("") // ✅ store 0 for no
             if (errors.obtaining_mortgage) {
-              setErrors({ ...errors, obtaining_mortgage: "" });
+              setErrors({ ...errors, obtaining_mortgage: "",lenders:"" });
             }
           }}
           className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
@@ -894,6 +899,35 @@ return (
     
     
                  
+               <div className="flex flex-col h-full">
+          <label className="block text-sm font-semibold text-gray-800 mb-2">
+            Select Lenders <span className="text-red-500">*</span>
+          </label>
+           <Select
+            options={lender}
+            isDisabled={formData.obtaining_mortgage==0}
+              instanceId="lenders-select"
+            isMulti
+            value={selectedLenders}
+            onChange={handleChange_l}
+            placeholder="Choose lenders..."
+            className="text-black"
+    
+              /> 
+        {formData.obtaining_mortgage==1&&(
+ <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+  errors.lenders ? "text-red-500 opacity-100" : "opacity-0"
+}`}>
+  {errors.lenders || "placeholder"}
+</p>
+        )}     
+          <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
+        </div> {/* Show only when needed */}
+    
+    
+    
+                      {/* 11. Shared Ownership? (Inline ButtonGroup) */}
+             
                       <div className="flex flex-col h-full">
       <label htmlFor="gift_deposit" className="block text-sm font-medium text-gray-700 mb-1">
         Receiving a gifted deposit?
@@ -924,53 +958,6 @@ return (
           size={16}
           className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
         />
-      </div>
-    
-    <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
-    </div>
-    
-    
-    
-                      {/* 11. Shared Ownership? (Inline ButtonGroup) */}
-                      <div className="flex flex-col h-full">
-      <label className="block text-sm font-medium text-gray-700 mb-1">
-        Shared Ownership via housing association?
-      </label>
-    
-      <div className="grid grid-cols-2 gap-3 mt-auto">
-        <button
-          type="button"
-          onClick={() => {
-            setFormData({ ...formData, ownership_housing_asso: 1 });
-            if (errors.ownership_housing_asso) {
-              setErrors({ ...errors, ownership_housing_asso: "" });
-            }
-          }}
-          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-            formData.ownership_housing_asso === 1
-              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
-              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-          }`}
-        >
-          <span>Yes</span>
-        </button>
-    
-        <button
-          type="button"
-          onClick={() => {
-            setFormData({ ...formData, ownership_housing_asso: 0 });
-            if (errors.ownership_housing_asso) {
-              setErrors({ ...errors, ownership_housing_asso: "" });
-            }
-          }}
-          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-            formData.ownership_housing_asso === 0
-              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
-              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-          }`}
-        >
-          <span>No</span>
-        </button>
       </div>
     
     <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
@@ -1063,27 +1050,52 @@ return (
      
     
     
-      <div className="flex flex-col h-full">
-          <label className="block text-sm font-semibold text-gray-800 mb-2">
-            Select Lenders <span className="text-red-500">*</span>
-          </label>
-           <Select
-            options={lender}
-              instanceId="lenders-select"
-            isMulti
-            value={selectedLenders}
-            onChange={handleChange_l}
-            placeholder="Choose lenders..."
-            className="text-black"
+      
+        
+            <div className="flex flex-col h-full">
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        Shared Ownership via housing association?
+      </label>
     
-              /> 
-              <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
-  errors.lenders ? "text-red-500 opacity-100" : "opacity-0"
-}`}>
-  {errors.lenders || "placeholder"}
-</p>
-          <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
-        </div> {/* Show only when needed */}
+      <div className="grid grid-cols-2 gap-3">
+        <button
+          type="button"
+          onClick={() => {
+            setFormData({ ...formData, ownership_housing_asso: 1 });
+            if (errors.ownership_housing_asso) {
+              setErrors({ ...errors, ownership_housing_asso: "" });
+            }
+          }}
+          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+            formData.ownership_housing_asso === 1
+              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          <span>Yes</span>
+        </button>
+    
+        <button
+          type="button"
+          onClick={() => {
+            setFormData({ ...formData, ownership_housing_asso: 0 });
+            if (errors.ownership_housing_asso) {
+              setErrors({ ...errors, ownership_housing_asso: "" });
+            }
+          }}
+          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+            formData.ownership_housing_asso === 0
+              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          <span>No</span>
+        </button>
+      </div>
+    
+    <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
+    </div>
+    
     </div></div>
               
                         {/* 🌐 SPECIAL INSTRUCTIONS */}

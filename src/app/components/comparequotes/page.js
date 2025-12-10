@@ -31,6 +31,8 @@ export default function Comparequotes() {
   const [quoteid,setquoteid]=useState("");
   const [cardid,setcardid]=useState();
   const [cardshow,setcardshown]=useState(false);
+  const [vattax,setvattax]=useState(0);
+  const [dropdownshow,setdropdownshow]=useState(false);
 
   // Track which card dropdown is open (by quote_id)
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
@@ -43,16 +45,20 @@ export default function Comparequotes() {
 
   // Toggle dropdown for a particular quote card
   function toggleDropdown(id) {
-    setDropdownOpenId((prev) => (prev === id ? null : id));
     showviewquotes(true);
     quoteData.forEach((elememt)=>{
       if(elememt.quote_id==id){
         setview_data(elememt)
       }
     })
+    setcardid(id);
+    setcardshown(!cardshow);
     //view_data
     console.log(quoteData);
+    
+  fetchtaxdetails(id);
   }
+
 function handleprice()
 {
 console.log(companydata)
@@ -176,14 +182,11 @@ router.push(`/Instruct?id=${quote_id}`);
                 });
 
                 setcompanydata(formatted);
-                const grouped = companydata.conveying_details.taxDetails.reduce((acc, item) => {
-  if (!acc[item.fee_category]) {
-    acc[item.fee_category] = [];
-  }
-  acc[item.fee_category].push(item);
-  return acc;
-}, {});
-settaxDetails(grouped);
+                console.log("Formatted Company Data:", formatted);
+                
+          
+
+                
               } catch (error) {
                 console.error("❌ Failed to post services:", error);
               }
@@ -196,9 +199,47 @@ settaxDetails(grouped);
     }
   }, []);
 
-function toggleDropdowncard(id){
-  setcardshown(!cardshow);
-setcardid(id);
+function toggleDropdowncard(id) {
+   if (dropdownOpenId === id) {
+    // toggle same card
+    setDropdownOpenId(prev => !prev);
+  } else {
+    // open new card
+    setDropdownOpenId(id);
+    setdropdownshow(true);
+  }
+  
+}
+
+
+
+function fetchtaxdetails(id){
+
+let selectedquote=companydata.filter((item)=>item.quote_id==id);
+console.log(selectedquote)
+console.log(selectedquote[0].conveying_details.taxDetails);
+
+     const grouped = selectedquote[0].conveying_details.taxDetails.reduce((acc, item) => {
+  if (!acc[item.fee_category]) {
+    acc[item.fee_category] = [];
+  }
+  acc[item.fee_category].push(item);
+
+ 
+  return acc;
+ 
+}, {})
+
+  console.log(grouped);
+  settaxDetails(grouped);
+
+  const totalTaxVat = selectedquote[0].conveying_details.taxDetails.reduce((sum, item) => {
+  return sum + Number(item.vat || 0);
+}, 0);
+
+console.log("Total VAT:", totalTaxVat);
+setvattax(totalTaxVat);
+
 }
 
   return (
@@ -522,112 +563,85 @@ setcardid(id);
                         </div>
 
                         {/* Description + Price Breakdown */}
-                        { (cardid === quote.quote_id && cardshow) && (
-                               <div className="mt-4 p-3">
-                            <h3 className="text-lg font-semibold text-gray-800 mb-3" onClick={()=>{
-                                        handleprice()
-                                      }}>
-                              Cost Breakdown
-                            </h3>
-                          
-                            <table className="w-full border-collapse text-black font">
+                       {(dropdownOpenId === quote.quote_id && dropdownshow) && (
+                          <div className="border-t border-gray-200 pt-6 flex justify-end">
+                           <table className=" border-collapse text-black font">
                               <thead>
-                                <tr className="border-b border-gray-300 text-left">
-                                  <th className="p-2 w-1/2">Type</th>
-                                  <th className="p-2 w-1/4 text-right">Fee Amount</th>
-                                  <th className="p-2 w-1/4 text-right">VAT</th>
+                                <tr className="border-b border-gray-300 text-left grid grid-cols-3 w-full gap-5">
+                                  <th className=" text-sm font-semibold  ">Type</th>
+                                  <th className="text-sm font-semibold  ">Fee Amount</th>
+                                  <th className="text-sm font-semibold ">VAT</th>
                                 </tr>
                               </thead>
                           
-                              <tbody>
-                                {companydata
-                                  .filter((item) => item.quote_id == cardid)
-                                  .map((item, index) => (
-                                    <React.Fragment key={index}>
-                                    
-                                      <tr className="border-b border-gray-200" >
-                                        <td className="p-2 break-words font-semibold ">{`Legal Fees`}</td>
-                                        <td className="p-2 text-right ">{formatGBP(item.legal_fees)}</td>
-                                        <td className="p-2 text-right">
-                                          {formatGBP(item.legal_fees_vat) || ""}
-                                        </td>
-                                      </tr>
-                          
-                                  
-                                      {Object.entries(taxDetails || {}).map(([category, items]) => (
-                                        <React.Fragment key={category}>
-                                          {/* Category Row */}
-                                          <tr className="bg-gray-50 border-b border-gray-300">
-                                            <td className="p-2 font-semibold" colSpan={3}>
-                                              {category}
-                                            </td>
-                                          </tr>
-                          
-                                          {items?.map((fee, i) => (
-                                            <tr key={i} className="border-b border-gray-200 ">
-                                              <td className="p-2 break-words "> <div className="ml-4"> {/* margin-left works here */}
-                                  {fee.fee_type}
-                                </div></td>
-                                              <td className="p-2 text-right">
-                                                {formatGBP(fee.fee_amount)}
-                                              </td>
-                                              <td className="p-2 text-right">{formatGBP(fee.vat)}</td>
-                                            </tr>
-                                          ))}
-                                        </React.Fragment>
-                                      ))}
-                          
-                                      {/* Country-specific taxes */}
-                                      
-                          
-                                      {/* TOTAL */}
-                                      <tr className="bg-gray-100 font-semibold text-gray-800">
-                                        <td className="p-2">Total </td>
-                                        <td className="p-2 text-right text-indigo-600">
-                                          {formatGBP(item.total)}
-                                         
-                                        </td>
-                                        <td></td>
-                                      </tr>
-                                      {item.service_type == 2 && (
-                                        <>
-                                          {item.purchase_country == "England" && (
-                                            <tr className="border-b border-gray-200">
-                                              <td className="p-2">Stamp Duty</td>
-                                              <td className="p-2 text-right">
-                                                {formatGBP(item.stamp_duty)}
-                                              </td>
-                                              <td></td>
-                                            </tr>
-                                          )}
-                          
-                                          {item.purchase_country == "Scotland" && (
-                                            <tr className="border-b border-gray-200">
-                                              <td className="p-2">LLT</td>
-                                              <td className="p-2 text-right">{formatGBP(item.llt)}</td>
-                                              <td></td>
-                                            </tr>
-                                          )}
-                          
-                                          {item.purchase_country == "Wales" && (
-                                            <tr className="border-b border-gray-200">
-                                              <td className="p-2">LBTT</td>
-                                              <td className="p-2 text-right">{formatGBP(item.lbtt)}</td>
-                                              <td></td>
-                                            </tr>
-                                          )}
-                                        </>
-                                      )}
-                                    </React.Fragment>
-                                  ))}
-                              </tbody>
+                          <tbody>
+
+  {/* Legal Fees */}
+  <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
+    <td className="text-sm ">Legal Fees</td>
+    <td className="text-sm ">{formatGBP(quote.legal_fees)}</td>
+    <td className="text-sm ">-</td>
+  </tr>
+
+  {/* Disbursements */}
+  <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
+    <td className="text-sm ">Disbursements</td>
+    <td className="text-sm ">{formatGBP(quote.disbursements)}</td>
+    <td className="text-sm ">
+      {formatGBP(quote.disbursements * 0.2)}
+    </td>
+  </tr>
+
+  {/* Country-Based Taxes (Optional Rows) */}
+  {quote.service_details[0].service_type == 2 && (
+    <>
+      {(quote.service_details[0].country === "England" ||
+        quote.service_details[0].country === "Northern Ireland") && (
+        <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+          <td className="text-sm ">Stamp Duty</td>
+          <td className="text-sm ">{formatGBP(quote.stamp_duty)}</td>
+          <td className="text-sm">-</td>
+        </tr>
+      )}
+
+      {quote.service_details[0].country === "Scotland" && (
+        <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
+          <td className="text-sm ">LLT</td>
+          <td className="text-sm ">{formatGBP(quote.llt)}</td>
+          <td className="text-sm ">-</td>
+        </tr>
+      )}
+
+      {quote.service_details[0].country === "Wales" && (
+        <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
+          <td className="text-sm ">LBTT</td>
+          <td className="text-sm ">{formatGBP(quote.lbtt)}</td>
+          <td className="text-sm ">-</td>
+        </tr>
+      )}
+    </>
+  )}
+
+  {/* TOTAL — Border ONLY ABOVE */}
+  <tr className="grid grid-cols-3 w-full gap-5 border-t border-gray-300 bg-gray-50">
+    <td className="text-sm font-semibold">Total</td>
+    <td className="text-sm font-semibold text-indigo-600">
+      {formatGBP(quote.total)}
+    </td>
+    <td className="text-sm font-semibold text-indigo-600">{formatGBP(vattax)}</td>
+  </tr>
+
+</tbody>
+
                             </table>
                           </div>
                         )}
-                        {dropdownOpenId === quote.quote_id && viewquotes && (
-                          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm animate-fadeIn">
-                            <div className="bg-white rounded-2xl  w-[90%] min-h-screen overflow-y-auto text-center shadow-2xl border border-green-200 animate-popIn">
-                              <div className="absolute top-3 right-32">
+                       
+                       
+                        {cardid === quote.quote_id && viewquotes && (
+                          <div className="fixed inset-0  z-50 flex items-center justify-center  top-10  animate-fadeIn">
+                            <div className="bg-white h-[200px] rounded-2xl  w-[90%] min-h-screen overflow-y-auto text-center shadow-2xl border border-green-200 animate-popIn">
+                              <div className="absolute top-3 right-32 ">
                                 <button
                                   className="text-4xl text-gray-700"
                                   onClick={() => showviewquotes(false)}
@@ -635,43 +649,24 @@ setcardid(id);
                                   ×
                                 </button>
                               </div>
-                              <div className="font-family min-h-screen p-5 mx-90 text-black">
+                              <div className="font-family min-h-screen p-5  text-black">
                                 {/* ---------- TOP BUTTONS ---------- */}
-                                <div className="flex justify-between items-center mb-6 px-4">
+                                <div className="grid grid-cols-12 items-center m-6 px-4 ">
                                   <button
-                                    className="border px-4 py-2 rounded text-emerald-600 text-sm flex items-center gap-2"
+                                    className="border px-4 py-2 rounded text-emerald-600 text-sm  items-center gap-2"
                                     onClick={() => showviewquotes(false)}
                                   >
                                     Back
                                   </button>
-                                  <span className=" mr-85 text-[34px] ml-15 p-2 leading-none font-extrabold text-[#1E5C3B] tracking-tight">
+                                  <span className="  text-[34px] col-span-11  p-2 leading-none font-extrabold text-[#1E5C3B] tracking-tight">
                                     {view_data?.appsetting_details
                                       ?.company_name || "MovWise"}
                                   </span>
 
-                                  {/* <button className="bg-[#F8C537] text-white px-8 py-2 text-sm font-medium mt-4 ml-5 flex items-center justify-center rounded">
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      fill="none"
-                                      viewBox="0 0 24 24"
-                                      strokeWidth={2}
-                                      stroke="white"
-                                      className="w-6 mt-2"
-                                    >
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        d="M16.862 4.487l1.687 1.687m-8.03 8.03l-3.01.753.753-3.01 8.03-8.03a1.5 1.5 0 012.121 0l.146.146a1.5 1.5 0 010 2.121l-8.03 8.03z"
-                                      />
-                                    </svg>
-                                    <span className="text-base">
-                                      Instruct Firm
-                                    </span>
-                                  </button> */}
-                                </div>
+                                                              </div>
 
                                 {/* ---------- MAIN CONTAINER ---------- */}
-                                <div className="border rounded-lg bg-white shadow px-6 py-2 mb-2 space-y-2 quotes">
+                                <div className="border  rounded-lg bg-white shadow px-6 py-2 mb-2 space-y-2 quotes">
                                   {/* ---------- COMPANY LOGO + RATING ---------- */}
                                   <div className="flex justify-between items-start">
                                     <div className="ml-6">
@@ -701,33 +696,15 @@ setcardid(id);
                                       </a>
                                     </div>
 
-                                    <div className="mt-6">
-                                      <div className="flex items-center text-green-500 text-xs mt-1">
-                                        <Rating
-                                          initialValue={
-                                            view_data?.conveying_details
-                                              ?.rating || 0
-                                          }
-                                          readonly
-                                          size={20}
-                                        />
-                                      </div>
-
-                                      {/* Rating number row */}
-                                      <p className="text-gray-600 text-sm mt-1">
-                                        {view_data?.conveying_details?.rating ||
-                                          0}
-                                        /5
-                                      </p>
-                                    </div>
+                                   
                                   </div>
 
                                   {/* ---------- YOUR DETAILS ---------- */}
 
-                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="py-1 px-5">
+                                  <div className="grid grid-cols-1 md:grid-cols-3  gap-6">
+                                    <div className="">
                                       <div className="text-emerald-600">
-                                        <h3 className="text-lg font-semibold mr-55 mt-2">
+                                        <h3 className="text-lg font-semibold text-start mt-2">
                                           User Details
                                         </h3>
                                       </div>
@@ -766,20 +743,128 @@ setcardid(id);
                                           </span>
                                         </div>
                                       </div>
+
+                                      {(view_data.service_details[0].service_type == 3 ) && <SalesPropertyDetails quote={quote}/>}   
+                                   {(view_data.service_details[0].service_type == 2 ) && <PurchasePropertyDetails quote={quote} />}   
+                                   {(view_data.service_details[0].service_type == 1 ) && <SalesPurchasePropertyDetails quote={quote} />}   
+                                   {(view_data.service_details[0].service_type == 4 ) && <RemortagePropertyDetails quote={quote} />}  
                                     </div>
-                                   {(view_data.service_details[0].service_type == 3 ) && <SalesPropertyDetails quote={quote}/>}   
-                                   {(view_data.service_details[0].service_type == 2 ) && <PurchasePropertyDetails quote={quote}/>}   
-                                   {(view_data.service_details[0].service_type == 1 ) && <SalesPurchasePropertyDetails quote={quote}/>}   
-                                   {(view_data.service_details[0].service_type == 4 ) && <RemortagePropertyDetails quote={quote}/>}   
+
+                                    <div className="col-span-2 ">
+                                     
+                                     
+                               <div className=" p-3 ">
+                            <h3 className="text-lg text-start text-emerald-600 font-semibold  mb-3" onClick={()=>{
+                                        handleprice()
+                                      }}>
+                              Fee Breakdown
+                            </h3>
+                          
+                            <table className="w-full border-collapse text-black font">
+                              <thead>
+                                <tr className="border-b border-gray-300 text-left">
+                                  <th className="p-2 w-1/2">Type</th>
+                                  <th className="p-2 w-1/4 text-right">Fee Amount</th>
+                                  <th className="p-2 w-1/4 text-right">VAT</th>
+                                </tr>
+                              </thead>
+                          
+                              <tbody>
+                                {companydata
+                                  .filter((item) => item.quote_id == cardid)
+                                  .map((item, index) => (
+                                    <React.Fragment key={index}>
+                                    
+                                      <tr className="border-b border-gray-200" >
+                                        <td className="p-2 text-sm font-semibold text-start ">{`Legal Fees`}</td>
+                                        <td className="p-2 text-sm text-right ">{formatGBP(item.legal_fees)}</td>
+                                        <td className="p-2 text-sm text-right">
+                                          {"-"}
+                                        </td>
+                                      </tr>
+                          
+                                  
+                                     
+            {Object.entries(taxDetails || {}).map(([category, items]) => (
+              <React.Fragment key={category}>
+                {/* Category Row */}
+                <tr className="bg-gray-50 border-b border-gray-300">
+                  <td className="p-2 font-semibold text-start text-sm" colSpan={3}>
+                    {category}
+                  </td>
+                </tr>
+
+                {items?.map((fee, i) => (
+                  <tr key={i} className="border-b border-gray-200 text-start">
+                    <td className="p-2 break-words text-sm "> <div className="ml-4"> {/* margin-left works here */}
+        {fee.fee_type}
+      </div></td>
+                    <td className="p-2 text-right text-sm">
+                      {formatGBP(fee.fee_amount)}
+                    </td>
+                    <td className="p-2 text-right text-sm">{formatGBP(fee.vat)}</td>
+                  </tr>
+                ))}
+              </React.Fragment>
+            ))}
+                          
+                                      {/* Country-specific taxes */}
+                                      
+                          
+                                      {/* TOTAL */}
+                                      <tr className="bg-gray-100 font-semibold text-gray-800">
+                                        <td className="p-2 text-start">Total </td>
+                                        <td className="p-2 text-right text-indigo-600">
+                                          {formatGBP(item.total)}
+                                         
+                                        </td>
+                                        <td className="p-2 text-right text-indigo-600" > {formatGBP(vattax)}</td>
+                                      </tr>
+                                      {item.service_type == 2 && (
+                                        <>
+                                          {item.purchase_country == "England" && (
+                                            <tr className="border-b border-gray-200">
+                                              <td className="p-2">Stamp Duty</td>
+                                              <td className="p-2 text-right">
+                                                {formatGBP(item.stamp_duty)}
+                                              </td>
+                                              <td></td>
+                                            </tr>
+                                          )}
+                          
+                                          {item.purchase_country == "Scotland" && (
+                                            <tr className="border-b border-gray-200">
+                                              <td className="p-2">LLT</td>
+                                              <td className="p-2 text-right">{formatGBP(item.llt)}</td>
+                                              <td></td>
+                                            </tr>
+                                          )}
+                          
+                                          {item.purchase_country == "Wales" && (
+                                            <tr className="border-b border-gray-200">
+                                              <td className="p-2">LBTT</td>
+                                              <td className="p-2 text-right">{formatGBP(item.lbtt)}</td>
+                                              <td></td>
+                                            </tr>
+                                          )}
+                                        </>
+                                      )}
+                                    </React.Fragment>
+                                  ))}
+                              </tbody>
+                            </table>
+                          </div>
+                       
+                                      </div>
+                                 
                                     
                                   </div>
 
                                   {/* ---------- FEES SECTION ---------- */}
                                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="py-1 px-5">
+                                    <div className="">
                                        </div>
-                                  <div>
-                                    {/* Sale Fees */}
+                                  {/* <div>
                                     
                                     <div className="mb-1 p-4">
                                       <h3 className="font-bold text-emerald-600 mb-3 ">
@@ -811,7 +896,6 @@ setcardid(id);
 
                                     <div className="border-t"></div>
 
-                                    {/* Disbursements */}
                                     <div className="p-4">
                                       <h3 className="font-bold text-emerald-600 mb-3 ">
                                         Disbursements
@@ -831,7 +915,7 @@ setcardid(id);
                                         </span>
                                       </div>
                                     </div>
-                                  </div>
+                                  </div> */}
                                    </div>
                                    
 
@@ -861,47 +945,7 @@ setcardid(id);
           </section>
 
           {/* Popup Modal for Instruct */}
-          {popupData.visible && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm animate-fadeIn">
-              <div className="bg-white rounded-2xl p-8 w-[380px] text-center shadow-2xl border border-green-200 animate-popIn">
-                {/* Icon */}
-                <span className="text-[34px] leading-none font-extrabold text-[#1E5C3B] tracking-tight">
-                  MovWise
-                </span>
-                <div className="flex justify-center mb-3">
-                  <Check
-                    size={100}
-                    color="#15803D"
-                    className="drop-shadow-md"
-                  />
-                </div>
-
-                {/* Title */}
-                <h2 className="text-2xl font-bold text-green-800">
-                  Quote Submitted
-                </h2>
-
-                {/* Message */}
-                <p className="text-gray-700 mt-2 leading-relaxed">
-                  Your Instruct Quote has been sent to <br></br>
-                  <strong className="text-green-700">
-                    {" "}
-                    {popupData.companyName}
-                  </strong>
-                  .
-                </p>
-
-                {/* Button */}
-                <button
-                  className="mt-6 w-auto p-19 py-3 bg-green-700 text-white text-[15px] font-medium rounded-full 
-                   hover:bg-green-800 transition-all duration-300 shadow-md"
-                  onClick={closePopup}
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          )}
+         
         </div>
       </main>
       <Footer></Footer>

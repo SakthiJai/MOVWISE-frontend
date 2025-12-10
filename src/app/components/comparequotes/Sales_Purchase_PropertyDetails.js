@@ -3,8 +3,8 @@
 export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) {
 
   return (
-    <div className="py-1 px-5 text-sm">
-                                      <div className="text-emerald-600">
+    <div className=" text-sm">
+                                      <div className="text-emerald-600 text-start">
                                         <h3 className="text-lg font-semibold">
                                           Property Details 1
                                         </h3>

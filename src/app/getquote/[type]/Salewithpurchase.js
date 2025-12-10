@@ -23,6 +23,7 @@ const Link = ({ href, children, className }) => (
 
 
 export default function Salewithpurchase() {
+    const [buytolet_readonlyfield,setbuytolet_readonlyfield]=useState(false);
 
   const [showAddressLines_purchase, setShowAddressLines_purchase] = useState(false);
     const [showAddressLines, setShowAddressLines] = useState(false);
@@ -135,10 +136,11 @@ useEffect(() => {
   lenders: null
 });
 
-   const stampDutyOptions = [
+     const stampDutyOptions = [
   { label: "Standard Residential", value: "standard" },
   { label: "First-Time Buyer Relief", value: "firstTime" },
   { label: "Additional Property (Second Home)", value: "additional" },
+  { label: "Additional Property (Buy to let)", value: "Buy to let" },
   { label: "Commercial / Non-Residential", value: "commercial" }
 ];
 
@@ -155,6 +157,14 @@ useEffect(() => {
 
 
 const handleChange = (name,value) => {
+  if(name=="purchase_mode" && (value=="firstTime"|| value=="standard"||value=="additional") ){
+    console.log("check")
+    setbuytolet_readonlyfield(true);
+    formData.buy_to_let="No"
+  }
+  else{
+    setbuytolet_readonlyfield(false);
+  }
   //const { name, value } = e.target;
 
   if (name === "price") {
@@ -1113,6 +1123,8 @@ console.log(e);
     <select
       id="buy_to_let"
       name="buy_to_let"
+                       disabled={buytolet_readonlyfield}  
+
       value={formData.buy_to_let} // ✅ controlled input
       onChange={(e) => {
         const { name, value } = e.target;
