@@ -120,12 +120,15 @@ export default function Purchase() {
   "buy_to_let": "",
   "govt_by_scheme": 0,
   "obtaining_mortgage": 0,
+  "lifetime_isa" : 0,
+  "need_hmo" : 0,
   "gift_deposit": "",
   "ownership_housing_asso": 0,
   "specal_instruction": "",
   "lenders": "",
   "service_type":null, 
-  "purchase_mode":""            
+  "purchase_mode":"",
+  "high_raise_support" :0,           
       });
 
      
@@ -201,6 +204,8 @@ useEffect(() => {
     return () => clearTimeout(timer);
   }, [rawValue]);
 
+
+const [highRaiseSupport, setHighRaiseSupport] = useState("");
 
 
       const [query, setQuery] = useState("");
@@ -738,7 +743,15 @@ return (
                                     <button
                                     key={opt.id}
                                     type="button"
-                                    onClick={()=> handleChange ( "property_type",opt.label)}
+                                    onClick={() => {
+                                        handleChange("property_type", opt.label);
+
+                                        if (opt.label === "Flat") {
+                                            setHighRaiseSupport("Yes");
+                                        } else {
+                                            setHighRaiseSupport("");
+                                        }
+                                    }}
                                     className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 transition-all duration-200 shadow-sm w-[170.76px]
                                         ${
                                        formData.property_type === opt.label
@@ -764,9 +777,56 @@ return (
     }`}>
       {errors.property_type || "placeholder"} {/* placeholder keeps same height */}
     </p>
-    </div>
+   </div>
+ 
+    {formData.property_type === "Flat" && (
+       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
+      <div className="flex flex-col">
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        High Raise Support:
+      </label>
     
-                    </div>
+      <div className="grid grid-cols-2 gap-3">
+        <button
+          type="button"
+          onClick={() => {
+            setFormData({ ...formData, high_raise_support: 1 }); // ✅ store numeric 1
+          
+          }}
+          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+            formData.high_raise_support === 1
+              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          <span>Yes</span>
+        </button>
+    
+        <button
+          type="button"
+          onClick={() => {
+            setFormData({ ...formData, high_raise_support: 0 }); // ✅ store numeric 0
+            if (errors.high_raise_support) {
+              setErrors({ ...errors, high_raise_support: "" }); // clear error
+            }
+          }}
+          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+            formData.high_raise_support === 0
+              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          <span>No</span>
+        </button>
+        
+      </div>
+      <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
+     
+    
+    </div>
+    </div>
+)}
+                 </div>
                   </div>
     
                   {/* 💰 PURCHASE FINANCE */}
@@ -888,16 +948,7 @@ return (
         </button>
       </div>
     <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
-    </div>    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    </div>
                  
                <div className="flex flex-col h-full">
           <label className="block text-sm font-semibold text-gray-800 mb-2">
@@ -1044,7 +1095,6 @@ return (
                <p className="text-[12px] mt-1 min-h-[16px] text-red-500">
   {errors.preferLanguage}
 </p>
-        <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
       </div>
     
      
@@ -1096,7 +1146,103 @@ return (
     <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
     </div>
     
-    </div></div>
+    </div>
+<div className="space-y-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+      <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+       Lifetime ISA / Help to Buy ISA Supplement(Are you using any Help to Buy ISAs for your purchase?)
+      </label>
+    
+      <div className="grid grid-cols-2 gap-3 ">
+        <button
+          type="button"
+          onClick={() => {
+            setFormData({ ...formData, lifetime_isa: 1 }); // ✅ store 1 for yes
+            if (errors.lifetime_isa) {
+              setErrors({ ...errors, lifetime_isa: "" }); // clear error on change
+            }
+          }}
+          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+            formData.lifetime_isa === 1
+              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          <span>Yes</span>
+        </button>
+    
+        <button
+          type="button"
+          onClick={() => {
+            setFormData({ ...formData, lifetime_isa: 0 });
+            console.log(formData)
+            setSelectedLenders("") // ✅ store 0 for no
+            if (errors.lifetime_isa) {
+              setErrors({ ...errors, lifetime_isa: "",lenders:"" });
+            }
+          }}
+          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+            formData.lifetime_isa === 0
+              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          <span>No</span>
+        </button>
+      </div>
+    <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
+    </div>
+    <div> 
+    {formData.buy_to_let === "Yes - Personal name" && (
+  <div className="mt-4">
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      Need HMO Support
+    </label>
+
+  <div className="grid grid-cols-2 gap-3 ">
+        <button
+          type="button"
+          onClick={() => {
+            setFormData({ ...formData, need_hmo: 1 }); // ✅ store 1 for yes
+            if (errors.need_hmo) {
+              setErrors({ ...errors, need_hmo: "" }); // clear error on change
+            }
+          }}
+          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+            formData.need_hmo === 1
+              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          <span>Yes</span>
+        </button>
+    
+        <button
+          type="button"
+          onClick={() => {
+            setFormData({ ...formData, need_hmo: 0 });
+            console.log(formData)
+            setSelectedLenders("") // ✅ store 0 for no
+            if (errors.need_hmo) {
+              setErrors({ ...errors, need_hmo: "",lenders:"" });
+            }
+          }}
+          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+            formData.need_hmo === 0
+              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          <span>No</span>
+        </button>
+      </div>
+  </div>
+)}
+</div>
+    </div>
+    </div>
+    </div>
               
                         {/* 🌐 SPECIAL INSTRUCTIONS */}
       

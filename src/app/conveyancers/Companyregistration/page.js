@@ -47,12 +47,17 @@ export default function Companyregistration() {
   const [languagepreference, setlanguagepreference] = useState(" ");
 
   const [language, setLanguage] = useState([]);
+  const [lender, setLender] = useState([]);
+
+  const [selectedlender, setselectedLender] = useState([]);
+
 
   const [selectedLanguage, setSelectedLanguage] = useState([]);
   const [selectedJurisdictions, setSelectedJurisdictions] = useState([]);
   const [notes, setNotes] = useState("");
 
   const [jurisdictions, setjuisdictions] = useState([]);
+
 
   const fetchlanguages = async () => {
     try {
@@ -156,6 +161,53 @@ export default function Companyregistration() {
   //    handleChange({ name: "languages", value: ids })
   //   }
   // }
+const toggleLender = (lenderItem) => {
+  setselectedLender((prev) => {
+    const exists = prev.includes(lenderItem.id);
+
+    const updated = exists
+      ? prev.filter((id) => id !== lenderItem.id)
+      : [...prev, lenderItem.id];
+
+    // Update form data
+    setFormData((f) => ({
+      ...f,
+      lender: updated,
+    }));
+
+    // Clear error
+    setErrors((e) => ({ ...e, lender: "" }));
+
+    return updated;
+  });
+};
+useEffect(() => {
+  const fetchLenders = async () => {
+    try {
+      const res = await getData(API_ENDPOINTS.lenders);
+
+      // Example: API returns { users: [...] }
+      if (Array.isArray(res.users)) {
+        const lenderOptions = res.users.map((l) => ({
+          value: l.lenders_name,
+          label: l.lenders_name,
+          id: l.id,
+        }));
+
+        setLender([
+          { value: "Not Required", id: 0, label: "Not Required" },
+          ...lenderOptions,
+        ]);
+      }
+    } catch (err) {
+      console.error("Error fetching lenders:", err);
+    }
+  };
+
+  fetchLenders();
+}, []);
+
+
 
   const handleChangeLang = (lang = {}) => {
     setSelectedLanguage((prev) => {
@@ -374,6 +426,9 @@ export default function Companyregistration() {
     // Language validation
     if (selectedLanguage.length === 0) {
       newErrors.language = "Please select at least one language";
+    }
+     if (selectedlender.length === 0) {
+      newErrors.lender = "Please select at least one lender";
     }
 
     // SRA / CLC Number validation
@@ -796,6 +851,45 @@ const togglesercice = (opt) => {
 
                       </div>
                     </div>
+
+<div className="mt-5 grid grid-cols-1 gap-4">
+  <div className="flex flex-col gap-2 w-full">
+    <label className="block text-sm font-medium text-[#6A7682]">
+      Select Lenders <span className="text-red-500">*</span>
+    </label>
+
+    {/* Checkbox Grid */}
+    <div
+      className={"grid grid-cols-4 gap-3 mt-3 border p-2 w-full font "}
+    >
+      {lender.map((l, index) => (
+  <label key={index} className="flex items-center gap-2">
+    <input
+      type="checkbox"
+      checked={selectedlender.includes(l.id)}
+      onChange={() => toggleLender(l)}
+      disabled={formData.obtaining_mortgage == 0}
+    />
+    <span className="font text-[#6A7682]">
+      {l.label}
+    </span>
+  </label>
+))}
+
+    </div>
+
+    {/* Error placeholder (always visible) */}
+    <p
+      className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+        errors.lender ? "text-red-500 opacity-100" : "opacity-0"
+      }`}
+    >
+      {errors.lender || "placeholder"}
+    </p>
+  </div>
+</div>
+
+
 
                     <div className="mt-10">
                       <label className="block text-sm font-semibold text-gray-800 mb-2">
