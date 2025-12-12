@@ -54,6 +54,9 @@ export default function Quotationdetails() {
   const [notesData, setnotesData] = useState("");
   const [loading, setLoading] = useState(false);
   const timers = useRef({});
+  const [remainingsupplement, setremainingsupplement] = useState([]);
+  const [remainingdisbursement, setremainingdisbursement] = useState([]);
+  const [remainingleashold, setremainingleashold] = useState([]);
 
   const modules = {
     toolbar: [
@@ -96,7 +99,9 @@ export default function Quotationdetails() {
 
   useEffect(() => {
     // Define async function inside useEffect
+
     const fetchData = async () => {
+      
       //console.loglog("121212");
       try {
         // setLoading(true);
@@ -114,22 +119,24 @@ export default function Quotationdetails() {
           storedData["service_id"]?.indexOf(3) !== -1
         ) {
           response1.data[2][0]["sub_categories"].push({
-            sub_category: "Purchase Transaction Supplements",
+            sub_category: " Sales Transaction Supplements",
           });
+                  setpurchaseFeeTypeList(response2.supplement_fees ?? []);
+
         } else if (
           storedData["service_id"]?.indexOf(2) !== -1 ||
           storedData["service_id"]?.indexOf(3) !== -1
         ) {
           response1.data[2][0]["sub_categories"].push({
-            sub_category: "Sales Transaction Supplements",
+            sub_category: "Purchase Transaction Supplements",
           });
+             setpurchaseFeeTypeList(response2.supplement_fees ?? []);
         }
         //console.loglog(response1.data[2][0]['sub_categories'])
         setfeeCategory(response1.data);
-        setpurchaseFeeTypeList(response2.purchase ?? []);
-        setsalesFeeTypeList(response2.sales ?? []);
         setstandardDisbursementList(response2.standard_disbursement ?? []);
         setleaseholdDisbursementList(response2.leasehold_disbursement ?? []);
+        
         setadditionalServiceList(response2.additional_service ?? []);
         setpricingList(response3.pricing ?? []);
       } catch (err) {
@@ -143,33 +150,10 @@ export default function Quotationdetails() {
     fetchData();
   }, []);
 
-  const handlePoundChange = (e) => {
-    // Check if input has class "poundtransform"
-    if (!e.target.classList.contains("poundtransform")) return;
 
-    const name = e.target.name;
+  
 
-    // Remove non-numeric characters except dot
-    const rawValue = e.target.value.replace(/[^\d.]/g, "");
-    const numberValue = parseFloat(rawValue);
-
-    let formatted = "";
-    if (!isNaN(numberValue)) {
-      formatted = new Intl.NumberFormat("en-GB", {
-        style: "currency",
-        currency: "GBP",
-        minimumFractionDigits: 2,
-      }).format(numberValue);
-    }
-
-    /*setValues({
-      ...values,
-      [name]: formatted,
-    });*/
-  };
-
-  const [selectedFee, setSelectedFee] = useState("");
-  const [feeAmount, setFeeAmount] = useState("");
+  
 
   const handleSubmit = async () => {
     console.log(pricingList, Object.keys(feeCategory));
@@ -196,7 +180,6 @@ export default function Quotationdetails() {
         });
       });
 
-      console.log(tempPrice);
       setLoading(false); // optional loader
 
       const payload = {
@@ -205,6 +188,32 @@ export default function Quotationdetails() {
         notes: notesData,
       };
       setFinalPayload(payload);
+    
+
+const pricingTypeIds = pricingList[1].price_list.map(item => Number(item.type_id));
+const disbursementTypeIds = pricingList[2].price_list.map(item => Number(item.type_id));
+const addittionalleashhold = pricingList[3].price_list.map(item => Number(item.type_id));
+
+const remainingPurchaseItems = purchaseFeeTypeList.filter(
+  item => !pricingTypeIds.includes(item.id)
+);
+
+const remainingDisbursementItems = standardDisbursementList.filter(
+  item => !disbursementTypeIds.includes(item.id)
+);
+
+const remainingadditionalleahold = leaseholdDisbursementList.filter(
+  item => !addittionalleashhold.includes(item.id
+)
+  )
+
+
+
+setremainingsupplement(remainingPurchaseItems);
+setremainingdisbursement(remainingDisbursementItems);
+setremainingleashold(remainingadditionalleahold);
+
+      
       setShowConfirm(true);
     } catch (error) {
       console.log("Error building payload:", error);
@@ -432,49 +441,57 @@ export default function Quotationdetails() {
       maximumFractionDigits: 2,
     }).format(num);
   const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
-    // Only allow numbers and dot
-    const rawValue = value.replace(/[^\d.]/g, "");
+  const rawValue = value.replace(/[^\d.]/g, "");
+    console.log(rowIndex)
 
-    setpricingList((prev) =>
-      prev.map((item) =>
-        item.fees_category_id === feesCategoryId
-          ? {
-              ...item,
-              price_list: item.price_list.map((row, i) =>
-                i === rowIndex
-                  ? {
-                      ...row,
-                      [field]: field == "description" ? value : rawValue,
-                    } // store raw value only
-                  : row
-              ),
-            }
-          : item
-      )
-    );
-    if (timers.current[feesCategoryId])
-      clearTimeout(timers.current[feesCategoryId]);
-    timers.current[feesCategoryId] = setTimeout(() => {
-      const num = Number(rawValue);
-      if (!isNaN(num)) {
-        const formatted = formatNumber(num);
-        setpricingList((prev) =>
-          prev.map((item) =>
-            item.fees_category_id === feesCategoryId
-              ? {
-                  ...item,
-                  price_list: item.price_list.map((row, i) =>
-                    i === rowIndex
-                      ? { ...row, [field]: formatted } // store raw value only
-                      : row
-                  ),
-                }
-              : item
-          )
-        );
-      }
-    }, 2000);
-  };
+
+  setpricingList((prev) =>
+    prev.map((item) =>
+      item.fees_category_id === feesCategoryId
+        ? {
+            ...item,
+            price_list: item.price_list.map((row, i) =>
+              i === rowIndex
+                ? {
+                    ...row,
+                    [field]: field === "description" ? value : rawValue,
+                  }
+                : row
+            ),
+          }
+        : item
+    )
+  );
+
+  if (timers.current[feesCategoryId])
+    clearTimeout(timers.current[feesCategoryId]);
+
+  timers.current[feesCategoryId] = setTimeout(() => {
+    // 🚫 Skip formatting for type_id
+    if (field === "type_id" || field === "description") return;
+
+    const num = Number(rawValue);
+    if (!isNaN(num)) {
+      const formatted = formatNumber(num);
+
+      setpricingList((prev) =>
+        prev.map((item) =>
+          item.fees_category_id === feesCategoryId
+            ? {
+                ...item,
+                price_list: item.price_list.map((row, i) =>
+                  i === rowIndex
+                    ? { ...row, [field]: formatted }
+                    : row
+                ),
+              }
+            : item
+        )
+      );
+    }
+  }, 2000);
+};
+
 
   const handleChange = (index, field, value) => {
     const updated = [...legalcostrows];
@@ -537,20 +554,45 @@ export default function Quotationdetails() {
           setlegalFeesError(errors);
           return false;
         }
-      } else if (list[i]["fees_category_id"] == 2) {
+      } 
+      else if (list[i]["fees_category_id"] == 2) {
         let terror = [];
         for (let j = 0; j < list[i]["price_list"].length; j++) {
           if(list[i]["is_delete"]!=1){
           const { type_id, fee_amount } = list[i].price_list[j];
+         
           if (type_id != "" && Number(fee_amount) <= 0) {
             terror.push(`Row ${i + 1}: Fee amount is missing`);
             //return false;
             break;
           }
+          else if(type_id ==""){
+            console.log('fee_amount',fee_amount,type_id,"+",j)
+            terror.push(` Fee  missing`);
+            break
+          }
+         
         }
         }
+       for (let i = 0; i < list.length; i++) {
+  const seen = new Set();
+if(terror.length==0){
+  for (let k = 0; k < list[i].price_list.length; k++) {
+    const item = list[i].price_list[k];
+
+    if (seen.has(item.type_id)) {
+      console.log("Duplicate found:", item.type_id, item);
+      terror.push(`Row ${i + 1}: Duplicate  found`);
+     
+    } else {
+      seen.add(item.type_id);
+    }
+  }
+}}
+
         if (terror.length > 0) {
           settransactionFeesError(terror);
+          terror=[];
           return false;
         }
       } else if (list[i]["fees_category_id"] == 3) {
@@ -563,10 +605,27 @@ export default function Quotationdetails() {
             //return false;
             break;
           }
+           else if(type_id ==""){
+            console.log('fee_amount',fee_amount,type_id,"+",j)
+            terror3.push(` Fee  missing`);
+            break
+          }
         }
         }
+        for (let k = 0; k < list[i].price_list.length; k++) {
+    const item = list[i].price_list[k];
+  const seen = new Set();
+    if (seen.has(item.type_id)) {
+      console.log("Duplicate found:", item.type_id, item);
+      terror3.push(`Row ${i + 1}: Duplicate  found`);
+     
+    } else {
+      seen.add(item.type_id);
+    }
+  }
         if (terror3.length > 0) {
           setdisbursementFeesError(terror3);
+          terror3=[];
           return false;
         }
       } else if (list[i]["fees_category_id"] == 4) {
@@ -579,9 +638,15 @@ export default function Quotationdetails() {
             //return false;
             break;
           }
+           else if(type_id ==""){
+            console.log('fee_amount',fee_amount,type_id,"+",j)
+            terror4.push(` Fee  missing`);
+            break
+          }
         }
         }
         if (terror4.length > 0) {
+          console.log("terror4",terror4)
           setleasedisbursementFeesError(terror4);
           return false;
         }
@@ -595,11 +660,26 @@ export default function Quotationdetails() {
             //return false;
             break;
           }
+           else if(type_id ==""){
+            console.log('fee_amount',fee_amount,type_id,"+",j)
+            terror5.push(` Fee  missing`);
+          }
         } 
         }
+        for (let k = 0; k < list[i].price_list.length; k++) {
+    const item = list[i].price_list[k];
+  const seen = new Set();
+    if (seen.has(item.type_id)) {
+      console.log("Duplicate found:", item.type_id, item);
+      terror5.push(`Row ${i + 1}: Duplicate  found`);
+     
+    } else {
+      seen.add(item.type_id);
+    }
+  }
         if (terror5.length > 0) {
           setadditionalServiceError(terror5);
-          return false;
+          // return false;
         }
       }
     }
@@ -748,6 +828,7 @@ export default function Quotationdetails() {
       </div>
 
       <main className="pt-10  w-auto  grid grid-cols-12 m-3 ">
+        
         <div className=" bg-white shadow-md rounded-2xl p-8 border col-span-12  border-gray-100  ">
           <div className=" w-[1000px]">
             <nav
@@ -1096,7 +1177,7 @@ export default function Quotationdetails() {
                   {numIndex === 2 && (
                     <div className="transactionblock mb-5">
                       <div className="bg-gray-50  px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
-                        {item.fees_category}
+                        {item.fees_category }
                       </div>
                       {item.sub_categories.map((sub, i) => (
                         <div key={i}>
@@ -1108,10 +1189,9 @@ export default function Quotationdetails() {
                               {transactionFeesError}
                             </p>
                           )}
-                          <div className="grid  grid-cols-4 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
-                            <div className="text-center">Supplement Type £</div>
+                          <div className="grid  grid-cols-3 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
+                            <div className="text-center">Supplement check Type </div>
                             <div className="text-center">Fee Cost £</div>
-                            <div className="text-center">Description </div>
                             <div className="text-end me-14">Action</div>
                           </div>
                           {pricingList
@@ -1119,23 +1199,20 @@ export default function Quotationdetails() {
                             .price_list.filter(row => row.is_delete !== 1).map((row, i) => (
                               <div
                                 key={i}
-                                className="grid grid-cols-4 gap-3 px-3 py-2"
+                                className="grid grid-cols-3 gap-3 px-3 py-2"
                               >
                                 {!row.isOthers ? (
                                   <select
                                     className="border poundtransform border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
-                                    onChange={(e) =>
-                                      handlePriceChange(
-                                        numIndex,
-                                        i,
-                                        "type_id",
-                                        e.target.value
-                                      )
-                                    }
+                                   onChange={(e) => {
+  settransactionFeesError("");
+  handlePriceChange(numIndex, i, "type_id", e.target.value);
+}}
+
                                     value={row.type}
                                   >
                                     <option value="">
-                                      Select Supplement Type-{row.delete_status}
+                                      Select Supplement Type
                                     </option>
 
                                     {purchaseFeeTypeList.map((opt, index) => (
@@ -1144,6 +1221,7 @@ export default function Quotationdetails() {
                                       </option>
                                     ))}
                                   </select>
+                                
                                 ) : (
                                   <div>
                                     <input
@@ -1168,40 +1246,23 @@ export default function Quotationdetails() {
                                 <input
                                   placeholder="Fee Amount"
                                   value={row.fee_amount}
-                                  onChange={(e) =>
+                                  onChange={(e) =>{
+                                      settransactionFeesError("");
+
                                     handlePriceChange(
                                       numIndex,
                                       i,
                                       "fee_amount",
                                       e.target.value
                                     )
-                                  }
+                                  }}
                                   className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
                                 />
 
-                                {/* DESCRIPTION */}
-                                <input
-                                  type="text"
-                                  placeholder="Description"
-                                  value={row.description}
-                                  onChange={(e) =>
-                                    handlePriceChange(
-                                      numIndex,
-                                      i,
-                                      "description",
-                                      e.target.value
-                                    )
-                                  }
-                                  className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
-                                />
-
-                                {/* REMOVE BUTTON */}
-
-                                {/* ADD Row Button */}
                                 <div className="flex justify-end me-6 gap-4">
                                    {i === 0 && (
                                   <button
-                                    className="text-green-600 tooltip items-center justify-center "
+                                    className="text-green-600 tooltip items-center justify-end "
                                     onClick={() =>
                                       handle_transaction_sales(numIndex)
                                     }
@@ -1216,7 +1277,7 @@ export default function Quotationdetails() {
                                   &nbsp;&nbsp;
                                   <button className="text-red-600 tooltip" onClick={() => handleDeleteRow(numIndex, i)}>
                                     <FaTrash size={16} />
-                                    <span className="tooltiptext">Delete current row</span>
+                                    <span className="tooltiptext">Delete  row</span>
                                   </button>
                                     
                                 </div>
@@ -1259,20 +1320,21 @@ export default function Quotationdetails() {
                                 {!row.isOthers ? (
                                   <select
                                     className="poundtransform border border-gray-400 rounded py-0.5 w-auto  text-sm text-left text-black pl-2"
-                                    onChange={(e) =>
+                                    onChange={(e) =>{
+                                      setdisbursementFeesError("");
                                       handlePriceChange(
                                         numIndex,
                                         i,
                                         "type_id",
                                         e.target.value
                                       )
-                                    }
+                                    }}
                                     value={row.type}
                                   >
                                     <option value="">
                                       Select Disbursement
                                     </option>
-                                    {(salesFeeTypeList || []).map(
+                                    {( standardDisbursementList || []).map(
                                       (opt, index) => (
                                         <option key={opt.id} value={opt.id}>
                                           {opt.fee_type}
@@ -1304,14 +1366,16 @@ export default function Quotationdetails() {
                                   type="text"
                                   placeholder="Fee Cost"
                                   value={row.fee_amount}
-                                  onChange={(e) =>
+                                   onChange={(e) =>{
+                                      setdisbursementFeesError("");
+
                                     handlePriceChange(
                                       numIndex,
                                       i,
                                       "fee_amount",
                                       e.target.value
                                     )
-                                  }
+                                  }}
                                   className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
                                 />
 
@@ -1399,20 +1463,21 @@ export default function Quotationdetails() {
                                           <select
                                             className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
                                             value={row.type}
-                                            onChange={(e) =>
+                                            onChange={(e) =>{
+                                              setleasedisbursementFeesError("")
                                               handlePriceChange(
                                                 numIndex,
                                                 i,
                                                 "type_id",
                                                 e.target.value
                                               )
-                                            }
+                                            }}
                                           >
                                             <option value="">
-                                              Select Disbursement
+                                              Select Disbursement for leasehold
                                             </option>
                                             {(
-                                              standardDisbursementList || []
+                                              leaseholdDisbursementList || []
                                             ).map((opt) => (
                                               <option
                                                 key={opt.id}
@@ -1446,14 +1511,16 @@ export default function Quotationdetails() {
                                           type="text"
                                           placeholder="Fee Cost"
                                           value={row.fee_amount}
-                                          onChange={(e) =>
-                                            handlePriceChange(
-                                              numIndex,
-                                              i,
-                                              "fee_amount",
-                                              e.target.value
-                                            )
-                                          }
+                                             onChange={(e) =>{
+                                              setleasedisbursementFeesError("")
+
+                                    handlePriceChange(
+                                      numIndex,
+                                      i,
+                                      "fee_amount",
+                                      e.target.value
+                                    )
+                                  }}
                                           className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
                                         />
                                       </td>
@@ -1717,6 +1784,17 @@ export default function Quotationdetails() {
           </div>
         </div>
       )}
+
+
+
+
+
+
+
+
+
+
+
 
       {showConfirm && (
         <div className="fixed inset-0 mt-20 bg-black/40 backdrop-blur-sm flex  items-center justify-center z-50 animate-fadeIn reviewpopup">
@@ -2055,18 +2133,14 @@ export default function Quotationdetails() {
                             <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
                               {sub.sub_category}
                             </div>
-                            {transactionFeesError && (
-                              <p style={{ color: "red" }}>
-                                {transactionFeesError}
-                              </p>
-                            )}
-                            <div className="grid  grid-cols-4 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
+                          
+                            <div className="grid  grid-cols-2 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
                               <div className="text-center">
-                                Supplement Type £
+                                Supplement Type check
                               </div>
                               <div className="text-center">Fee Cost £</div>
-                              <div className="text-center">Description </div>
                             </div>
+                            
                             {pricingList
                               .find(
                                 (item) => item.fees_category_id === numIndex
@@ -2074,32 +2148,18 @@ export default function Quotationdetails() {
                               .price_list.map((row, i) => (
                                 <div
                                   key={i}
-                                  className="grid grid-cols-4 gap-3 px-3 py-2"
+                                  className="grid grid-cols-2 gap-3 px-3 py-2"
                                 >
                                   {!row.isOthers ? (
-                                    <select
-                                      className="border poundtransform border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
-                                      onChange={(e) =>
-                                        handlePriceChange(
-                                          numIndex,
-                                          i,
-                                          "type_id",
-                                          e.target.value
-                                        )
-                                      }
-                                      value={row.type}
-                                      disabled
-                                    >
-                                      <option value="">
-                                        Select Supplement Type
-                                      </option>
+                                  
+                                      <div>
+                           {purchaseFeeTypeList.map((opt, index) => (
+  opt.id == row.type_id && (
+    <span key={index} className="text-black">{opt.fee_type} </span>
+  ) 
+))}
 
-                                      {purchaseFeeTypeList.map((opt, index) => (
-                                        <option key={opt.id} value={opt.id}>
-                                          {opt.fee_type}
-                                        </option>
-                                      ))}
-                                    </select>
+                                  </div>
                                   ) : (
                                     <div>
                                       <input
@@ -2137,30 +2197,30 @@ export default function Quotationdetails() {
                                     className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
                                   />
 
-                                  {/* DESCRIPTION */}
-                                  <input
+                                
+
+                                  {/* REMOVE BUTTON */}
+                                </div>
+                              ))}
+                              {remainingsupplement.map((item,i)=>(
+                                <div key={i} className="text-black grid grid-cols-2 gap-3 px-3 py-2">
+                                      <span key={index} className="text-black">{item.fee_type} </span>
+                                         <input
                                     readOnly
-                                    type="text"
-                                    placeholder="Description"
-                                    value={row.description}
-                                    onChange={(e) =>
-                                      handlePriceChange(
-                                        numIndex,
-                                        i,
-                                        "description",
-                                        e.target.value
-                                      )
-                                    }
+                                    value={0}
+                                    placeholder="Fee Amount"
+                                   
                                     className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
                                   />
 
-                                  {/* REMOVE BUTTON */}
                                 </div>
                               ))}
                           </div>
                         ))}
                       </div>
                     )}
+
+                    
                     {numIndex === 3 && (
                       <div className="standarddisblock mb-5">
                         <div className="bg-gray-50 px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
@@ -2176,49 +2236,37 @@ export default function Quotationdetails() {
                                 {disbursementFeesError}
                               </p>
                             )}
-                            <div className="grid grid-cols-5 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
+                            <div className="grid grid-cols-2 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
                               <div className="text-center">
-                                Disbursement Type £
+                                Disbursement Type 
                               </div>
                               <div className="text-center">Fee Cost £</div>
                              
                             </div>
                             {pricingList
                               .find(
-                                (item) => item.fees_category_id === numIndex
+                                (item,index) => item.fees_category_id === numIndex
                               )
                               .price_list.map((row, i) => (
                                 <div
                                   key={i}
-                                  className="grid grid-cols-5 gap-3 px-3 py-2"
+                                  className=" grid grid-cols-2 gap-3 px-3 py-2"
                                 >
                                   {!row.isOthers ? (
-                                    <select
-                                      disabled
-                                      className="poundtransform border border-gray-400 rounded py-0.5 w-auto  text-sm text-left text-black"
-                                      onChange={(e) =>
-                                        handlePriceChange(
-                                          numIndex,
-                                          i,
-                                          "type_id",
-                                          e.target.value
-                                        )
-                                      }
-                                      value={row.type}
-                                    >
-                                      <option value="">
-                                        Select Disbursement
-                                      </option>
-                                      {(salesFeeTypeList || []).map(
-                                        (opt, index) => (
-                                          <option key={opt.id} value={opt.id}>
-                                            {opt.fee_type}
-                                          </option>
-                                        )
-                                      )}
-                                    </select>
-                                  ) : (
-                                    <div>
+                                    <div className="col-span-1">{
+                     standardDisbursementList.map((opt, index) => (
+  opt.id == row.type_id && (
+    <span key={index} className="text-black">{opt.fee_type} </span>
+    
+  ) 
+))
+}</div>
+                                  
+   
+
+
+                                                                        ) : (
+                                    <div className="grid grid-cols-1">
                                       <input
                                         readOnly
                                         type="text"
@@ -2238,7 +2286,7 @@ export default function Quotationdetails() {
                                   )}
 
                                   {/* COST */}
-                                  <input
+                                 <input
                                     readOnly
                                     type="text"
                                     placeholder="Fee Cost"
@@ -2251,21 +2299,31 @@ export default function Quotationdetails() {
                                         e.target.value
                                       )
                                     }
-                                    className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black "
+                                    className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black col-span-1"
                                   />
 
-                                  {/* PAID TO */}
-                                  
-                        
-
-                                  {/* TRANSACTION TYPE */}
+                              
                                  
                                 </div>
                               ))}
+                                 {remainingdisbursement.map((item,i)=>(
+                                <div key={i} className="text-black grid grid-cols-2 gap-3 px-3 py-2">
+                                      <span key={index} className="text-black">{item.fee_type} </span>
+                                          <input
+                                    readOnly
+                                    value={0}
+                                    placeholder="Fee Amount"
+                                    className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
+                                  />
+                          </div>
+                          
+                        ))}
                           </div>
                         ))}
                       </div>
                     )}
+
+
                     {numIndex === 4 && (
                       <div className="standarddisblock mb-5">
                         {/* MAIN CATEGORY HEADER */}
@@ -2308,54 +2366,37 @@ export default function Quotationdetails() {
                                       (x) => x.fees_category_id === numIndex
                                     )
                                     .price_list.map((row, i) => (
-                                      <tr key={i} className="border-b">
+                                      <tr key={i} className="">
                                         {/* LEASEHOLD SERVICE SELECT */}
                                         <td className="px-3 py-2 text-center">
                                           {!row.isOthers ? (
-                                            <select
-                                              disabled
-                                              className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
-                                              value={row.type}
-                                              onChange={(e) =>
-                                                handlePriceChange(
-                                                  numIndex,
-                                                  i,
-                                                  "type_id",
-                                                  e.target.value
-                                                )
-                                              }
-                                            >
-                                              <option value="">
-                                                Select Disbursement
-                                              </option>
-                                              {(
-                                                standardDisbursementList || []
-                                              ).map((opt) => (
-                                                <option
-                                                  key={opt.id}
-                                                  value={opt.id}
-                                                >
-                                                  {opt.fee_type}
-                                                </option>
-                                              ))}
-                                            </select>
-                                          ) : (
-                                            <input
-                                              readOnly
-                                              type="text"
-                                              placeholder="Enter other supplement"
-                                              value={row.type}
-                                              onChange={(e) =>
-                                                handlePriceChange(
-                                                  numIndex,
-                                                  i,
-                                                  "type_id",
-                                                  e.target.value
-                                                )
-                                              }
-                                              className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
-                                            />
-                                          )}
+                                  
+                                                          leaseholdDisbursementList.map((opt, index) => (
+  opt.id == row.type_id && (
+    <span key={index} className="text-red-900 font-extrabold px-3 py-2">{opt.fee_type}</span>
+  ) 
+))
+
+
+                                                                        ) : (
+                                    <div>
+                                      <input
+                                        readOnly
+                                        type="text"
+                                        placeholder="Enter other Supplement"
+                                        value={row.type}
+                                        onChange={(e) =>
+                                          handlePriceChange(
+                                            numIndex,
+                                            i,
+                                            "type_id",
+                                            e.target.value
+                                          )
+                                        }
+                                        className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-gray-900"
+                                      />
+                                    </div>
+                                  )}
                                         </td>
 
                                         {/* COST */}
@@ -2388,6 +2429,19 @@ export default function Quotationdetails() {
                               </table>
                             </div>
                           </div>
+                        ))}
+                          
+                     {remainingleashold.map((item,i)=>(
+                                <div key={i} className="text-black grid grid-cols-2 gap-3 px-3 py-2">
+                                      <span key={index} className="text-black">{item.fee_type} </span>
+                                          <input
+                                    readOnly
+                                    value={0}
+                                    placeholder="Fee Amount"
+                                    className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
+                                  />
+                          </div>
+                          
                         ))}
                       </div>
                     )}

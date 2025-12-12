@@ -906,7 +906,7 @@ const togglesercice = (opt) => {
                       </div>
                     </div>
 
-                    <div className="mt-44 flex justify-end gap-4 w-full ">
+                    <div className="mt-6 flex justify-end gap-4 w-full ">
                       <button
                         type="button"
                         onClick={handleContinue}
