@@ -33,6 +33,8 @@ export default function Comparequotes() {
   const [cardshow,setcardshown]=useState(false);
   const [vattax,setvattax]=useState(0);
   const [dropdownshow,setdropdownshow]=useState(false);
+  const [loading, setLoading] = useState(false);
+
 
   // Track which card dropdown is open (by quote_id)
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
@@ -124,6 +126,7 @@ router.push(`/Instruct?id=${quote_id}`);
         }
 
         async function qutesdata(formData) {
+          
           try {
             const response = await postData(API_ENDPOINTS.services, formData);
             console.log(
@@ -151,6 +154,7 @@ router.push(`/Instruct?id=${quote_id}`);
             console.log("User ID or Guest ID:", userid); // user_id
             if (response.code === 200) {
               try {
+                setLoading(true);
                 const filterPayload = formData.user_id
                   ? { user_id: formData.user_id } // logged-in user
                   : { guest_user: "guest_user" }; // guest user
@@ -159,10 +163,18 @@ router.push(`/Instruct?id=${quote_id}`);
                   `${API_ENDPOINTS.quotesfilter}/${localStorage.getItem(
                     "ref_no"
                   )}`
-                );
-                if (quoteResponse?.data?.[0] != undefined) {
+                );            
+                if ( quoteResponse?.status === false) {
+                  setcompanydata([]); 
+                  console.log("No quotes found for your property details");
+                  setLoading(false);
+                  return;
+                }
+                else{
                   setview_data(quoteResponse.data[0]);
                   setquoteData(quoteResponse.data);
+                  console.log("data find");
+                  setLoading(false);
                 }
                 console.log(quoteResponse);
 
@@ -409,6 +421,19 @@ setvattax(totalTaxVat);
                 </p>
 
                 <div className="mt-8 space-y-6">
+                  {loading && (
+                <div className="flex justify-center items-center py-6">
+                  <div className="h-8 w-8 border-2 border-[#4A7C59] border-t-transparent rounded-full animate-spin"></div>
+                </div>
+              )}
+                   {/* SHOW MESSAGE HERE */}
+                {companydata?.length === 0 && (
+                  <div className="text-center py-10">
+                    <p className=" text-[14px] text-[#6B7280]">
+                      No quotes found for your property details
+                    </p>
+                  </div>
+                )}
                   {companydata?.map((quote, index) => (
                     <div
                       key={index}
