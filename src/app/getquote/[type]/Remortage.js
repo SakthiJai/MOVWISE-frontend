@@ -52,7 +52,7 @@ const handleUnknownPostcode = () => {
  
 const [lender, setLender] = useState([
   { value: "Not Known", label: "Not Known", id: 0 },
-  {value:"Not Required", label:"Not Required", id:1},
+  {value:"Not Known", label:"Not Known", id:1},
 ]);
 const [lang, setLang] = useState ([
   { value: "Not Required", label: "Not Required", id: 0 },
@@ -92,12 +92,12 @@ const handleChangeLang = (selectedOptions) => {
   }
 const handleChange_l = (selectedOptions = []) => {
   const hasNotRequired = selectedOptions.some(
-    (option) => option.value === "Not Required"
+    (option) => option.value === "Not Known"
   );
 
   if (hasNotRequired) {
     // Keep only "Not Required" selected
-    const notRequiredOption = lender.find(opt => opt.value === "Not Required");
+    const notRequiredOption = lender.find(opt => opt.value === "Not Known");
     setSelectedLenders([notRequiredOption]);
     console.log("Selected lenders: [0]");
     handleChange("lenders", [0]);
@@ -325,7 +325,7 @@ const getIconForType = (type) => {
       }));
          console.log(lenderOptions)
 
-           setLender([{ value: "Not Required", id: 0,label: "Not Required" },{value:"Not Known",id:1,label:"Not Known"} ,...lenderOptions]);
+           setLender([{ value: "Not Known", id: 0,label: "Not Known" },{value:"Not Known",id:1,label:"Not Known"} ,...lenderOptions]);
                console.log(lender)
 
         

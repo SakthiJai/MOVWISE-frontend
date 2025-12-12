@@ -195,7 +195,7 @@ useEffect(() => {
         }));
 
         setLender([
-          { value: "Not Required", id: 0, label: "Not Required" },
+          { value: "Not Known", id: 0, label: "Not Known" },
           ...lenderOptions,
         ]);
       }

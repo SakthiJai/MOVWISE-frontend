@@ -18,7 +18,7 @@ export default function Purchase() {
     const [showAddressLines, setShowAddressLines] = useState(false);
      const [rawValue, setRawValue] = useState("");
     const [lender, setLender] = useState([
-      { value: "Not Required", label: "Not Required", id: 0 },
+      { value: "Not Known", label: "Not Known", id: 0 },
     ]);
     const [lang, setLang] = useState ([
       { value: "Not Required", label: "Not Required", id: 0 },
@@ -67,12 +67,12 @@ export default function Purchase() {
     
     const handleChange_l = (selectedOptions = []) => {
       const hasNotRequired = selectedOptions.some(
-        (option) => option.value === "Not Required"
+        (option) => option.value === "Not Known"
       );
     
       if (hasNotRequired) {
         // Keep only "Not Required" selected
-        const notRequiredOption = lender.find(opt => opt.value === "Not Required");
+        const notRequiredOption = lender.find(opt => opt.value === "Not Known");
         setSelectedLenders([notRequiredOption]);
         console.log("Selected lenders: [0]");
         handleChange("lenders", [0]);
@@ -235,7 +235,7 @@ const [highRaiseSupport, setHighRaiseSupport] = useState("");
           }));
              console.log(lenderOptions)
     
-               setLender([{ value: "Not Required", id: 0,label: "Not Required" }, ...lenderOptions]);
+               setLender([{ value: "Not Known", id: 0,label: "Not Known" }, ...lenderOptions]);
                    console.log(lender)
               }
             if (data.propertyTypes && Array.isArray(data.propertyTypes)) {

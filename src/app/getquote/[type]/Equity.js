@@ -25,7 +25,7 @@ export default function Equity() {
     const [selectedLenders, setSelectedLenders] = useState([]);
         const [loginformshow,setloginformshow]=useState(false)
         const [lender, setLender] = useState([
-             { value: "Not Required", label: "Not Required", id: 0 },
+             { value: "Not Known", label: "Not Known", id: 0 },
            ]);
 
           const [selectedLanguage, setSelectedLanguage] = useState([]);
@@ -39,12 +39,12 @@ export default function Equity() {
     
        const handleChange_l = (selectedOptions = []) => {
       const hasNotRequired = selectedOptions.some(
-        (option) => option.value === "Not Required"
+        (option) => option.value === "Not Known"
       );
     
       if (hasNotRequired) {
-        // Keep only "Not Required" selected
-        const notRequiredOption = lender.find(opt => opt.value === "Not Required");
+        // Keep only "Not Known" selected
+        const notRequiredOption = lender.find(opt => opt.value === "Not Known");
         setSelectedLenders([notRequiredOption]);
         console.log("Selected lenders: [0]");
         handleChange("lenders", [0]);
@@ -79,7 +79,7 @@ export default function Equity() {
               }));
                  console.log(lenderOptions)
         
-                   setLender([{ value: "Not Required", id: 0,label: "Not Required" }, ...lenderOptions]);
+                   setLender([{ value: "Not Known", id: 0,label: "Not Known" }, ...lenderOptions]);
                        console.log(lender)
                   }
       }
