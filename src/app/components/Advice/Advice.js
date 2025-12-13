@@ -1,7 +1,7 @@
 // This file is assumed to be in a Next.js project (e.g., app/advice/page.tsx or app/blog/page.tsx)
 
 import Head from 'next/head';
-
+import { Search, Lightbulb, Check, Scale } from "lucide-react";
 // import Footer from '../Footer'; // Assuming Footer is implemented below or kept simple
 // import Image from 'next/image'; // Keeping Image import for potential use
 import Navbar from '../../parts/navbar/page';
@@ -85,25 +85,32 @@ export default function AdvicePage() {
           <div className="grid md:grid-cols-4 gap-8 text-center">
             {/* Step 1: Find */}
             <div>
-              <div className="text-2xl font-bold text-white mb-3 mx-auto w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center shadow-md">🔍</div>
-              <h3 className="font-semibold text-lg text-black">Search by Topic</h3>
+              <div className="text-white mb-3 mx-auto w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center shadow-md">
+              <Search className="w-6 h-6" />
+            </div>
+            <h3 className="font-semibold text-lg text-black">Search by Topic</h3>
               <p className="text-sm text-gray-600">Use our search to find specific guides on conveyancing, moving, and property law.</p>
             </div>
             {/* Step 2: Read */}
             <div>
-              <div className="text-2xl font-bold text-white mb-3 mx-auto w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center shadow-md">💡</div>
-              <h3 className="font-semibold text-lg text-black">Gain Clarity</h3>
+              <div className="text-white mb-3 mx-auto w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center shadow-md">
+              <Lightbulb className="w-6 h-6" />
+            </div>
+            <h3 className="font-semibold text-lg text-black">Gain Clarity</h3>
               <p className="text-sm text-gray-600">Read articles written by legal experts, simplified and often with multilingual summaries.</p>
             </div>
             {/* Step 3: Act */}
             <div>
-              <div className="text-2xl font-bold text-white mb-3 mx-auto w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center shadow-md">✅</div>
-              <h3 className="font-semibold text-lg text-black">Take Action</h3>
+             <div className="text-white mb-3 mx-auto w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center shadow-md">
+              <Check className="w-6 h-6" />
+            </div> 
+            <h3 className="font-semibold text-lg text-black">Take Action</h3>
               <p className="text-sm text-gray-600">Use your new knowledge to ask better questions and move forward confidently.</p>
             </div>
             {/* Step 4: Quote */}
             <div>
-              <div className="text-2xl font-bold text-white mb-3 mx-auto w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center shadow-md">⚖️</div>
+              <div className="text-white mb-3 mx-auto w-12 h-12 rounded-full bg-emerald-600 flex items-center justify-center shadow-md">
+              <Scale className="w-6 h-6" /></div>
               <h3 className="font-semibold text-lg text-black">Find Your Solicitor</h3>
               <p className="text-sm text-gray-600">Ready? Get a quote from a firm matched to your specific, well-informed needs.</p>
             </div>

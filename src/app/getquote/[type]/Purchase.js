@@ -1,7 +1,7 @@
 "use client";
 import React, { use, useEffect, useMemo, useState } from "react";
 import Navbar from "../../parts/navbar/page";
-import { Check, MapPin, ChevronDown } from "lucide-react";
+import { Check, MapPin, ChevronDown, Home, Coin, CoinsIcon } from "lucide-react";
 import { FaBuilding, FaHome, FaWarehouse } from "react-icons/fa";
 import { MdHolidayVillage } from "react-icons/md"; // Material icon
 import Select from 'react-select';
@@ -467,7 +467,7 @@ return (
                   {/* 🏡 PURCHASE DETAILS */}
                   <div className="space-y-6 mb-4">
                     <h2 className="text-xl font-bold text-gray-900 border-b-2 border-[#1E5C3B] pb-2 flex items-center gap-2">
-                      <span className="text-2xl">🏡</span> PURCHASE DETAILS
+                      < Home  className="w-7 h-7 text-[#1E5C3B]" /> PURCHASE DETAILS
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-5">
                     <div className="flex flex-col">
@@ -831,7 +831,7 @@ return (
                   {/* 💰 PURCHASE FINANCE */}
                   <div className="space-y-6">
                     <h2 className="text-xl font-bold text-gray-900 border-b-2 border-[#1E5C3B] pb-2 flex items-center gap-2">
-                      <span className="text-2xl">💰</span> PURCHASE FINANCE
+                      < CoinsIcon  className="w-7 h-7 text-yellow-400" /> PURCHASE FINANCE
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
     

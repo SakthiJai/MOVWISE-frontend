@@ -1,13 +1,14 @@
 "use client";
-import { Lightbulb, Users, Handshake, Globe } from "lucide-react";
+import { Lightbulb, Users, Handshake, Globe ,BookOpen, Search, Notebook, CreditCard, AlertTriangle, HelpCircle } from "lucide-react";
 import Head from "next/head";
+
 import Navbar from "../../parts/navbar/page";
 import Link from "next/link";
 import Footer from '../../parts/Footer/footer';
 
 const about = [
   {
-    iconSymbol: "💷",
+    iconSymbol: CreditCard,
     titleText: "Understanding Your Quote",
     descriptionItems: [
       {
@@ -33,10 +34,10 @@ const about = [
         ],
       },
     ],
-    color: "text-blue-600",
+    color: "text-green-700",
   },
   {
-    iconSymbol: "⚠️",
+    iconSymbol: AlertTriangle,
     titleText: "Warning Signs to Watch For",
     descriptionItems: [
       {
@@ -64,10 +65,10 @@ const about = [
         ],
       },
     ],
-    color: "text-blue-600",
+    color: "text-yellow-400",
   },
    {
-    iconSymbol: "🌐",
+    iconSymbol: Globe,
     titleText: "Regional Differences",
     descriptionItems: [
       {
@@ -92,10 +93,10 @@ const about = [
         ],
       },
     ],
-    color: "text-blue-600",
+    color: "text-green-700",
   },
    {
-    iconSymbol: "🆘",
+    iconSymbol: HelpCircle,
     titleText: "Quick Help Guide",
     descriptionItems: [
       {
@@ -124,7 +125,7 @@ const about = [
         ],
       },
     ],
-    color: "text-blue-600",
+    color: "text-red-600",
   },
 ];
 
@@ -179,9 +180,12 @@ export default function ResourcePage() {
       <main className="p-6 sm:p-12 space-y-12 pt-0" style={{ paddingTop: 0 , paddingBottom: 0 }}>
       <div className="min-h-screen bg-white font-sans p-4 sm:p-8">
         <section className="max-w-6xl mx-auto text-center mb-10">
-          <h1 className="text-3xl sm:text-3xl font-bold text-gray-800 mb-4">
-            <span className="text-2xl">📚</span> Glossary of Common Conveyancing Terms
-          </h1>
+          <div className="text-center">
+  <h1 className="text-3xl sm:text-3xl font-bold text-gray-700 mb-4 flex items-center justify-center gap-2">
+    <BookOpen className="w-7 h-7 text-green-700" />
+    Glossary of Common Conveyancing Terms
+  </h1>
+</div>
         </section>
 
         {/* 📝 Summary Note Section */}
@@ -274,9 +278,10 @@ export default function ResourcePage() {
 
 
         <section className="max-w-6xl mx-auto text-center mb-10">
-         <h2 className="text-3xl sm:text-3xl font-bold text-gray-800 mb-6">
-            <span className="text-2xl">🔍</span>  Property Search Types Explained
-          </h2> </section>
+          <div className="text-center">
+  <h2 className="text-3xl sm:text-3xl font-bold text-gray-700 mb-4 flex items-center justify-center gap-2">
+    <Search className="w-7 h-7 text-yellow-400" />  Property Search Types Explained
+          </h2></div> </section>
            <section className="py-20 pb-[30px] pt-0">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           
@@ -304,9 +309,10 @@ export default function ResourcePage() {
 
 
                 <section className="max-w-6xl mx-auto text-center mb-10">
-         <h2 className="text-3xl sm:text-3xl font-bold text-gray-800 mb-6">
-            <span className="text-2xl">📋</span> Common Document Types
-          </h2></section>
+          <div className="text-center">
+  <h2 className="text-3xl sm:text-3xl font-bold text-gray-700 mb-4 flex items-center justify-center gap-2">
+    <Notebook className="w-7 h-7 text-red-500" /> Common Document Types
+          </h2></div></section>
            <section className="py-20  pt-0">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           
@@ -339,9 +345,9 @@ export default function ResourcePage() {
 
       >
         <h4
-          className={`text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2 ${item.color}`}
+          className={`text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2`}
         >
-          <span className="text-1xl">{item.iconSymbol}</span>
+  <item.iconSymbol className={`w-6 h-6  ${item.color}`} />
           {item.titleText}
         </h4>
 

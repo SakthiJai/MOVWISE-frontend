@@ -5,6 +5,7 @@ import Navbar from '../../parts/navbar/page';
 import Footer from '../../parts/Footer/footer';
 import PriceBreakdownCard from './pricebreakdown'
 import { API_ENDPOINTS, getData, postData } from '../../auth/API/api';
+import { BookCheckIcon, User } from 'lucide-react';
 
 
 const Myprofile = () => {
@@ -430,7 +431,7 @@ const getServiceTypeLabel = (type) => {
                   : 'text-gray-600 hover:bg-gray-100'
               }`}
             >
-            👤 MY Profile
+            <User className="inline w-5 h-5 mr-1 text-yellow-400" /> MY Profile
             </span>
             <span
               onClick={() => handlechangepage(2)}
@@ -441,7 +442,7 @@ const getServiceTypeLabel = (type) => {
               }`}
             >
            
-                   📜 MY Quotes
+                   <BookCheckIcon className="inline w-5 h-5 mr-1 text-red-500" />MY Quotes
             </span>
           </div>
         </aside>

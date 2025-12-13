@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Navbar from "../../parts/navbar/page";
-import { Check, MapPin,ChevronDown } from "lucide-react";
+import { Check, MapPin,ChevronDown, CoinsIcon, Home } from "lucide-react";
 import { FaBuilding, FaHome, FaWarehouse } from "react-icons/fa";
 import { MdHolidayVillage } from "react-icons/md"; // Material icon
 import NextLink from 'next/link';
@@ -422,7 +422,7 @@ const getIconForType = (type) => {
                     {/* 🏡 REMORTGAGE DETAILS */}
                     <div className="space-y-6">
                         <h2 className="text-xl font-bold text-gray-900 border-b-2 border-[#1E5C3B] pb-2 flex items-center gap-2">
-                        <span className="text-2xl">🏡</span>REMORTGAGE DETAILS
+                        <Home  className="w-7 h-7 text-[#1E5C3B]" />REMORTGAGE DETAILS
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
 
@@ -635,7 +635,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                          {/* 💰 PURCHASE FINANCE */}
               <div className="space-y-6 mb-4">
                 <h2 className="text-xl font-bold text-gray-900 border-b-2 border-[#1E5C3B] pb-2 flex items-center gap-2">
-                  <span className="text-2xl">💰</span> PURCHASE FINANCE
+                 < CoinsIcon  className="w-7 h-7 text-yellow-400" /> PURCHASE FINANCE
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
 

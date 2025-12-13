@@ -40,12 +40,12 @@ const Loader = () => (
 );
 // --- Utility Components for Icons and Buttons (simplified) ---
 const iconColors = {
-  Scale: "text-blue-500",      
-  Languages: "text-purple-500", 
-  UserCheck: "text-emerald-500",
-  Repeat: "text-indigo-500",   
-  Cloud: "text-sky-500",       
-  Zap: "text-amber-500", 
+  Scale: "text-green-700",      
+  Languages: "text-yellow-400", 
+  UserCheck: "text-red-600",
+  Repeat: "text-red-600",   
+  Cloud: "text-yellow-400",       
+  Zap: "text-green-700", 
 };
 
 const icons = {
@@ -340,6 +340,7 @@ const [loginformdata, setloginformdata] = useState({
   icon="Scale"
   title="Transparent Pricing"
   description="Instant fixed quotes with no hidden extras. See exactly what you'll pay upfront."
+  
 />
 
 <FeatureIcon
@@ -442,13 +443,13 @@ const [loginformdata, setloginformdata] = useState({
               
               <ul className="grid md:grid-cols-2 gap-4 text-gray-700 list-none p-0 mb-6">
                   <li className="flex items-center">
-                      <span className="text-xl text-pink-600 mr-3"><MessageCircle /></span> Translation and explanation services
+                      <span className="text-xl text-red-600 mr-3"><MessageCircle /></span> Translation and explanation services
                   </li>
                   <li className="flex items-center">
-                      <span className="text-xl text-purple-600 mr-3"><Clock /></span> Case tracking and regular follow-ups
+                      <span className="text-xl text-green-700 mr-3"><Clock /></span> Case tracking and regular follow-ups
                   </li>
                   <li className="flex items-center">
-                      <span className="text-xl text-yellow-600 mr-3"><Cloud /></span> Secure digital document storage
+                      <span className="text-xl text-yellow-400 mr-3"><Cloud /></span> Secure digital document storage
                   </li>
                   <li className="flex items-center">
                       <span className="text-xl text-red-600 mr-3"><PhoneCall /></span> Multilingual client support
@@ -534,8 +535,11 @@ const [loginformdata, setloginformdata] = useState({
               <a href="tel:08001234567" className="text-emerald-600 hover:underline">0800 123 4567</a>
             </div>
           </div>
-          <p className="mt-6 text-sm text-gray-500">🕘 Mon–Fri, 9am–6pm (UK time)</p>
-        </div>
+          <div className="flex justify-center mt-6">
+           <p className="mt-6 text-sm text-gray-500 flex items-center gap-2">
+    <Clock className="w-6 h-6 text-gray-700" />
+    Mon–Fri, 9am–6pm (UK time)
+  </p></div></div>
       </section>
 
       {/* ---------------------------------------------------------------------------------- */}

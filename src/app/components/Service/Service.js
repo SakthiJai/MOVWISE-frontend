@@ -76,7 +76,7 @@ const services = [
             {services.map((service) => (
               <div key={service.title} className="">
                 <dt>
-                  <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+                  <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-emerald-600 text-white">
                     <service.icon className="h-6 w-6" aria-hidden="true" />
                   </div>
                   <p className="ml-16 text-lg leading-6 font-medium text-gray-900">{service.title}</p>
@@ -91,7 +91,7 @@ const services = [
         <div className="mt-20 text-center">
           <a
             href="#" // Replace with actual link
-            className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-lg text-white bg-green-600 hover:bg-green-700 transition duration-300 transform hover:scale-105"
+            className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-lg text-white bg-emerald-600 hover:bg-emerald-700 transition duration-300 transform hover:scale-105"
           >
             Get a Free Quote Today
           </a>

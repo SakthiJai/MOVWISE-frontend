@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { getData, postData, API_ENDPOINTS } from "../../auth/API/api";
 import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
+import { Hand } from "lucide-react";
 
 export default function Signinmodal({ closeModal,page }) {
   const router = useRouter();
@@ -251,8 +252,8 @@ export default function Signinmodal({ closeModal,page }) {
               }}
               className="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg border border-gray-200"
             >
-              <h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">
-                User / Partner Login 👋
+             <h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center flex items-center justify-center gap-2">
+                User / Partner Login <Hand className="w-6 h-6 text-yellow-400" />
               </h2>
 
               {loginError && (

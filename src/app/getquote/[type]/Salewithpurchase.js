@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import Navbar from "../../parts/navbar/page";
-import { Check, MapPin,ChevronDown } from "lucide-react";
+import { Check, MapPin,ChevronDown, CoinsIcon, Home, HomeIcon } from "lucide-react";
 import { FaBuilding, FaHome, FaWarehouse } from "react-icons/fa";
 import { MdHolidayVillage } from "react-icons/md"; // Material icon
 import Select from "react-select"; //imp
@@ -630,7 +630,7 @@ console.log(e);
                     {/* 🏡 SALES DETAILS */}
                     <div className="space-y-6">
                         <h2 className="text-xl font-bold text-gray-900 border-b-2 border-[#1E5C3B] pb-2 flex items-center gap-2">
-                        <span className="text-2xl">🏡</span> SALES DETAILS
+                        <Home  className="w-7 h-7 text-[#1E5C3B]" />SALES DETAILS
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="">
@@ -819,7 +819,7 @@ console.log(e);
                     {/* 💰 SALES FINANCE */}
                     <div className="space-y-6">
                         <h2 className="text-xl font-bold text-gray-900 border-b-2 border-[#1E5C3B] pb-2 flex items-center gap-2">
-                        <span className="text-2xl">💰</span> SALES FINANCE
+                        < CoinsIcon  className="w-7 h-7 text-yellow-400" /> SALES FINANCE
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
@@ -881,7 +881,7 @@ console.log(e);
  {/* 🏡 PURCHASE DETAILS */}
                     <div className="space-y-6">
                       <h2 className="text-xl font-bold text-gray-900 border-b-2 border-[#1E5C3B] pb-2 flex items-center gap-2">
-                        <span className="text-2xl">🏡</span> PURCHASE DETAILS
+                        <HomeIcon  className="w-7 h-7 text-[#1E5C3B]" /> PURCHASE DETAILS
                           </h2>
                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                <div className="">
@@ -1106,7 +1106,7 @@ console.log(e);
                     {/* 💰 PURCHASE FINANCE */}
               <div className="space-y-6">
                 <h2 className="text-xl font-bold text-gray-900 border-b-2 border-[#1E5C3B] pb-2 flex items-center gap-2">
-                  <span className="text-2xl">💰</span> PURCHASE FINANCE
+                  < CoinsIcon  className="w-7 h-7 text-yellow-400" /> PURCHASE FINANCE
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
 

@@ -1,6 +1,6 @@
 "use client";  // 
 import React, { useState , useEffect } from 'react'
-import { Check, MapPin, ChevronDown } from "lucide-react";  
+import { Check, MapPin, ChevronDown , Home, DollarSign, Coins } from "lucide-react";  
 import Link from "next/link";
 import { FaBuilding, FaHome, FaWarehouse } from "react-icons/fa";
 import { MdHolidayVillage } from "react-icons/md"; // Material icon
@@ -432,7 +432,7 @@ useEffect(() => {
                     {/* 🏡 SALES DETAILS */}
                     <div className="space-y-6">
                         <h2 className="text-xl font-bold text-gray-900 border-b-2 border-[#1E5C3B] pb-2 flex items-center gap-2">
-                        <span className="text-2xl">🏡</span> SALES DETAILS
+                        < Home  className="w-7 h-7 text-[#1E5C3B]" /> SALES DETAILS
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
 
@@ -691,7 +691,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                     {/* 💰 SALES FINANCE */}
                     <div className="space-y-6">
                         <h2 className="text-xl font-bold text-gray-900 border-b-2 border-[#1E5C3B] pb-2 flex items-center gap-2">
-                        <span className="text-2xl">💰</span> SALES FINANCE
+                        < Coins  className="w-7 h-7 text-yellow-400" /> SALES FINANCE
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>

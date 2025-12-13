@@ -1,6 +1,6 @@
 "use client";
 
-import { Lightbulb, Users, Globe, HomeIcon } from "lucide-react";
+import { Lightbulb, Users, Globe,  Search ,Rocket,Handshake , BarChart3, HeartHandshake,Phone ,Sparkles,Award, Star ,Target,Home, UsersIcon, Heart, Check, X  } from "lucide-react";
 import Head from "next/head";
 import Image from "next/image";
 import Navbar from "../../parts/navbar/page";
@@ -16,7 +16,7 @@ const values = [
       "Smart quote analysis that highlights the best value, not just the cheapest price",
     ],
     icon: Lightbulb,
-    color: "text-blue-600",
+    color: "text-yellow-400",
   },
   {
     title: "Making Every Home Move Simpler",
@@ -26,7 +26,7 @@ const values = [
       "One-platform management for all your legal conveyancing needs",
     ],
     icon: Globe,
-    color: "text-emerald-600",
+    color: "text-yellow-400",
   },
   {
     title: "Making Every Home Move More Supported",
@@ -36,13 +36,13 @@ const values = [
       "Educational resources that empower your decisions",
     ],
     icon: Users,
-    color: "text-purple-600",
+    color: "text-green-700",
   },
 ];
 
 const about = [
   {
-    iconSymbol: "🔍",
+    iconSymbol: Search,
     titleText: "Transparency That Builds Trust",
     descriptionItems: [
       "All-inclusive quotes with no hidden fees",
@@ -53,10 +53,10 @@ const about = [
     ],
     quote:
       "We show you exactly what you're paying for, why it costs that much, and who you're paying it to.",
-    color: "text-blue-600",
+    color: "text-green-700",
   },
   {
-    iconSymbol: "🌍",
+    iconSymbol: Globe,
     titleText: "Inclusivity Through Language & Access",
     descriptionItems: [
       "10+ language support including Tamil, Telugu, Hindi, Malayalam, Spanish, Polish, Urdu, Arabic etc",
@@ -67,10 +67,10 @@ const about = [
     ],
     quote:
       "Whether you're a first-time buyer in Birmingham or Skilled Worker in Reading or an international investor in London, your language shouldn't be a barrier to understanding your property transaction.",
-    color: "text-emerald-600",
+    color: "text-green-700",
   },
   {
-    iconSymbol: "🚀",
+    iconSymbol: Rocket,
     titleText: "Innovation That Serves People",
     descriptionItems: [
       "Smart matching algorithm considering language, location, and specialism",
@@ -81,10 +81,10 @@ const about = [
     ],
     quote:
       "We use technology not to replace human expertise, but to enhance it – connecting you with the right legal expert faster and more efficiently.",
-    color: "text-purple-600",
+    color: "text-yellow-400",
   },
   {
-    iconSymbol: "🤝",
+    iconSymbol: Handshake,
     titleText: "Partnership With Purpose",
     descriptionItems: [
       "SRA/CLC-regulated firms only – no unqualified practitioners",
@@ -95,13 +95,13 @@ const about = [
     ],
     quote:
       "We partner with legal experts who share our commitment to excellence, transparency, and client care.",
-    color: "text-purple-600",
+    color: "text-yellow-400",
   },
 ];
 
 const impact = [
   {
-    iconSymbol: "📊",
+    iconSymbol: BarChart3,
     titleText: "Our Impact",
     descriptionItems: [
       "10,000+ home movers find the right conveyancer",
@@ -110,10 +110,10 @@ const impact = [
       "Reduce completion times by 25% through better matching",
       "Maintain a 4.8/5 customer satisfaction rating",
     ],
-    color: "text-blue-600",
+    color: "text-red-600",
   },
   {
-    iconSymbol: "🤲",
+    iconSymbol: HeartHandshake,
     titleText: "Our Social Responsibility",
     descriptionItems: [
       "Pro bono / Free services for vulnerable home movers",
@@ -121,12 +121,13 @@ const impact = [
       "Partnerships with Charities & Community Groups",
       "Environmental initiatives in our operations",
     ],
-    color: "text-emerald-600",
+    color: "text-red-600",
   },
 ];
 
 const chooseus = [
   {
+    icon: UsersIcon,
     titleText: "Property Experts Who Understand",
     descriptionItems: [
       "Former conveyancing solicitors who know the process inside-out",
@@ -134,9 +135,10 @@ const chooseus = [
       "Technology developers focused on user-friendly solutions",
       "Customer service professionals trained in property law basics",
     ],
-    color: "text-blue-600",
+    color: "text-red-600",
   },
   {
+    icon: Handshake,
     titleText: "You're Not Just a Customer – You're Our Purpose",
     descriptionItems: [
       "A partner committed to your successful move",
@@ -145,7 +147,7 @@ const chooseus = [
       "Inclusion that ensures everyone can participate",
       "Innovation that continuously improves your experience",
     ],
-    color: "text-emerald-600",
+    color: "text-red-600",
   },
 ];
 
@@ -180,9 +182,8 @@ export default function AboutPage() {
         <main className="p-6 sm:p-12 space-y-12" style={{ paddingTop: 0 }}>
           {/* Mission & Overview */}
           <section>
-            <h2 className="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-green-600 pb-2 flex items-center gap-2">
-             
-              <span className="text-2xl">🏡</span> Our Story: Revolutionising Conveyancing
+             <h2 className="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-green-600 pb-2 flex items-center gap-2">
+              < Home  className="w-7 h-7 text-green-700" />  Our Story: Revolutionising Conveyancing
             </h2>
             <p className="mt-6 text-gray-600 leading-relaxed text-justify">
               MovWise was born from a simple observation: The UK property market
@@ -212,8 +213,8 @@ export default function AboutPage() {
 
           {/* Values Section */}
           <section>
-            <h2 className="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-green-600 pb-2">
-              <span className="text-2xl">🎯</span> Our Mission Deep Dive
+             <h2 className="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-green-600 pb-2 flex items-center gap-2">
+              < Target className="w-7 h-7 text-red-600" />  Our Mission Deep Dive
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {values.map((value, index) => (
@@ -239,8 +240,8 @@ export default function AboutPage() {
 
           {/* Technology & Accessibility Section */}
           <section>
-            <h2 className="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-green-600 pb-2">
-              <span className="text-2xl">💫</span> Our Values in Action
+            <h2 className="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-green-600 pb-2 flex items-center gap-2">
+              < Sparkles  className="w-7 h-7 text-yellow-400" /> Our Values in Action
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {about.map((a, index) => (
@@ -249,8 +250,10 @@ export default function AboutPage() {
                   className="p-6 bg-white border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition duration-300"
                 >
                   <h3 className="text-xl font-semibold text-gray-800 mb-2 flex items-center gap-2">
-                    <span className="text-2xl">{a.iconSymbol}</span> {a.titleText}
-                  </h3>
+  <a.iconSymbol className={`w-6 h-6  ${a.color}`}  />
+  {a.titleText}
+</h3>
+
                   <ul className="list-disc pl-5 mt-2 mb-4 space-y-1 max-h-40 overflow-y-auto text-gray-600">
                     {a.descriptionItems.map((desc, i) => (
                       <li key={i}>{desc}</li>
@@ -266,8 +269,8 @@ export default function AboutPage() {
 
           {/* Why Choose MovWise? Section */}
           <section>
-            <h2 className="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-green-600 pb-2">
-              <span className="text-2xl">🎖️</span> Why Choose MovWise?
+            <h2 className="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-green-600 pb-2 flex items-center gap-2">
+              < Award className="w-7 h-7 text-green-700" />  Why Choose MovWise?
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {chooseus.map((c, index) => (
@@ -275,7 +278,8 @@ export default function AboutPage() {
                   key={index}
                   className="p-6 bg-white border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition duration-300"
                 >
-                  <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                  <h3 className="flex items-center text-xl font-semibold text-gray-800 mb-2 gap-2">
+                    <c.icon className={`w-6 h-6  ${c.color}`}  />
                     {c.titleText}
                   </h3>
                   <ul className="list-disc pl-5 mt-2 mb-4 space-y-1 text-gray-600">
@@ -289,53 +293,140 @@ export default function AboutPage() {
           </section>
 
           {/* Why We're Different Table */}
-          <section>
-            <h2 className="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-green-600 pb-2">
-              <span className="text-2xl">🌟</span> Why We are Different
-            </h2>
-            <div className="overflow-x-auto">
-              <table className="min-w-full bg-white border border-gray-200 rounded-lg shadow-md">
-                <thead className="bg-gray-100">
-                  <tr>
-                    <th className="py-3 px-6 text-center font-bold text-gray-800">
-                      Traditional Approach
-                    </th>
-                    <th className="py-3 px-6 text-center font-bold text-gray-800">
-                      MovWise Solution
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-t border-gray-200 hover:bg-gray-50 text-gray-600">
-                    <td className="py-3 px-6 text-center">Complex legal jargon</td>
-                    <td className="py-3 px-6 text-center">Plain English explanations</td>
-                  </tr>
-                  <tr className="border-t border-gray-200 hover:bg-gray-50 text-gray-600">
-                    <td className="py-3 px-6 text-center">Language barriers</td>
-                    <td className="py-3 px-6 text-center">Native-language solicitors</td>
-                  </tr>
-                  <tr className="border-t border-gray-200 hover:bg-gray-50 text-gray-600">
-                    <td className="py-3 px-6 text-center">Hidden costs</td>
-                    <td className="py-3 px-6 text-center">All-inclusive fixed quotes</td>
-                  </tr>
-                  <tr className="border-t border-gray-200 hover:bg-gray-50 text-gray-600">
-                    <td className="py-3 px-6 text-center">One-size-fits-all</td>
-                    <td className="py-3 px-6 text-center">Personalised matching</td>
-                  </tr>
-                  <tr className="border-t border-gray-200 hover:bg-gray-50 text-gray-600">
-                    <td className="py-3 px-6 text-center">Just trust us attitude</td>
-                    <td className="py-3 px-6 text-center">Complete transparency</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </section>
+        <section className="mt-12">
+  <h2 className="text-3xl font-bold text-gray-800 mb-8 flex items-center gap-2 border-b-2 border-green-600 pb-2">
+    <Star className="w-7 h-7 text-yellow-400" />
+    Why We Are Different
+  </h2><div className="inline-block border border-gray-300 rounded-xl overflow-hidden shadow-md shadow-gray-300 ml-80">
+  <table className="border-collapse">
+    
+    <thead className="bg-gray-100">
+      <tr>
+        <th className="py-2 px-3 text-left items-center font-semibold text-gray-700">
+          Traditional
+        </th>
+        <th className="py-2 px-3 text-center font-semibold text-gray-700">
+          Traditional Approach
+        </th>
+        <th className="py-2 px-3 text-center font-semibold text-gray-700">
+          <span className="font-extrabold text-[#1E5C3B] text-[20px]">MovWise</span> Solution
+        </th>
+      </tr>
+    </thead>
+
+    <tbody className="bg-white text-gray-700">
+      
+      <tr className="border-t">
+        <td className="py-2 px-3">Complex legal jargon</td>
+        <td className="py-2 px-3 text-center">
+          <Check className="w-5 h-5 text-green-700 inline"strokeWidth={4} />
+        </td>
+        <td className="py-2 px-3 text-center">
+          <X className="w-5 h-5 text-red-600 inline"strokeWidth={4} />
+        </td>
+      </tr>
+
+      <tr className="border-t bg-gray-50">
+        <td className="py-2 px-3">Language barriers</td>
+        <td className="py-2 px-3 text-center">
+          <Check className="w-5 h-5 text-green-700 inline"strokeWidth={4} />
+        </td>
+        <td className="py-2 px-3 text-center">
+          <X className="w-5 h-5 text-red-600 inline" strokeWidth={4}/>
+        </td>
+      </tr>
+
+      <tr className="border-t">
+        <td className="py-2 px-3">Hidden costs</td>
+        <td className="py-2 px-3 text-center">
+          <Check className="w-5 h-5 text-green-700 inline"strokeWidth={4} />
+        </td>
+        <td className="py-2 px-3 text-center">
+          <X className="w-5 h-5 text-red-600 inline"strokeWidth={4} />
+        </td>
+      </tr>
+
+      <tr className="border-t bg-gray-50">
+        <td className="py-2 px-3">One-size-fits-all</td>
+        <td className="py-2 px-3 text-center">
+          <Check className="w-5 h-5 text-green-700 inline"strokeWidth={4} />
+        </td>
+        <td className="py-2 px-3 text-center">
+          <X className="w-5 h-5 text-red-600 inline"strokeWidth={4} />
+        </td>
+      </tr>
+
+      <tr className="border-t">
+        <td className="py-2 px-3">“Just trust us” attitude</td>
+        <td className="py-2 px-3 text-center">
+          <Check className="w-5 h-5 text-green-700 inline"strokeWidth={4} />
+        </td>
+        <td className="py-2 px-3 text-center">
+          <X className="w-5 h-5 text-red-600 inline"strokeWidth={4} />
+        </td>
+      </tr>
+      <tr className="border-t">
+        <td className="py-2 px-3">Plain English explanations</td>
+        <td className="py-2 px-3 text-center">
+          <X className="w-5 h-5 text-red-600 inline"strokeWidth={4} />
+        </td>
+        <td className="py-2 px-3 text-center">
+          <Check className="w-5 h-5 text-green-700 inline"strokeWidth={4} />
+        </td>
+      </tr>
+      <tr className="border-t">
+        <td className="py-2 px-3">Native-language solicitors</td>
+        <td className="py-2 px-3 text-center">
+          <X className="w-5 h-5 text-red-600 inline"strokeWidth={4} />
+        </td>
+        <td className="py-2 px-3 text-center">
+          <Check className="w-5 h-5 text-green-700 inline" strokeWidth={4} />
+        </td>
+      </tr>
+      <tr className="border-t">
+        <td className="py-2 px-3">All-inclusive fixed quotes</td>
+        <td className="py-2 px-3 text-center">
+          <X className="w-5 h-5 text-red-600 inline"strokeWidth={4} />
+        </td>
+        <td className="py-2 px-3 text-center">
+          <Check className="w-5 h-5 text-green-700 inline" strokeWidth={4} />
+        </td>
+      </tr>
+      <tr className="border-t">
+        <td className="py-2 px-3">Personalised matching</td>
+        <td className="py-2 px-3 text-center">
+          <X className="w-5 h-5 text-red-600 inline"strokeWidth={4} />
+        </td>
+        <td className="py-2 px-3 text-center">
+          <Check className="w-5 h-5 text-green-700 inline" strokeWidth={4} />
+        </td>
+      </tr>
+      <tr className="border-t">
+        <td className="py-2 px-3"> Complete transparency</td>
+        <td className="py-2 px-3 text-center">
+          <X className="w-5 h-5 text-red-600 inline"strokeWidth={4} />
+        </td>
+        <td className="py-2 px-3 text-center">
+          <Check className="w-5 h-5 text-green-700 inline"strokeWidth={4} />
+        </td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>
+
+
+  
+</section>
+
 
           {/* Our Promise Section */}
           <section>
-            <h2 className="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-green-600 pb-2">
-              <span className="text-2xl">📞</span> Our Promise to You:
-            </h2>
+            <h2 className="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-green-600 pb-2 flex items-center gap-2">
+  <Phone  className="w-7 h-7 text-red-600" />
+  Our Promise to You:
+</h2>
+
             <div>
               <p className="mt-6 mb-6 text-gray-600 leading-relaxed text-justify">
                 We believe your dream home shouldnt be lost in translation or
@@ -366,7 +457,8 @@ export default function AboutPage() {
                     className="p-6 bg-white border border-gray-200 rounded-xl shadow-lg hover:shadow-xl transition duration-300"
                   >
                     <h3 className="text-xl font-semibold text-gray-800 mb-2 flex items-center gap-2">
-                      <span className="text-2xl">{imp.iconSymbol}</span> {imp.titleText}
+                      <imp.iconSymbol className={`w-6 h-6 ${imp.color}`} />
+                      {imp.titleText}
                     </h3>
                     <ul className="list-disc pl-5 mt-2 mb-4 space-y-1 max-h-40 overflow-y-auto text-gray-600">
                       {imp.descriptionItems.map((desc, i) => (
