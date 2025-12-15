@@ -173,11 +173,12 @@ export default function Quotationdetails() {
     try {
       let tempPrice = [];
       Object.keys(feeCategory).forEach((key, value) => {
+        console.log(key, value);
         const data = key; // <-- key itself (1,2,3,...)
-
         tempPrice.push({
           [data]: pricingList[value],
         });
+        console.log(tempPrice);
       });
 
       setLoading(false); // optional loader
@@ -857,7 +858,7 @@ if(terror.length==0){
               return (
                 <div key={numIndex}>
                   {numIndex === 1 && (
-                    <div key={numIndex} className="  feecatgoryblock mb-5">
+                    <div key={numIndex} className="  feecatgoryblock mb-5 ">
                       <div className="bg-gray-50  px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
                         {item.fees_category}
                       </div>
@@ -873,7 +874,7 @@ if(terror.length==0){
                         <p style={{ color: "red" }}>{legalFeesError}</p>
                       )}
 
-                      <div className=" w-full">
+                      <div className=" w-full overflow-x-auto">
                         <table className="min-w-max w-full text-xs font-semibold text-gray-600 ">
                           <thead className="bg-gray-100">
                             <tr className="">
@@ -2373,7 +2374,7 @@ if(terror.length==0){
                                   
                                                           leaseholdDisbursementList.map((opt, index) => (
   opt.id == row.type_id && (
-    <span key={index} className="text-red-900 font-extrabold px-3 py-2">{opt.fee_type}</span>
+    <span key={index} className="text-red-900 font-extrabold px-3 py-2 bg- text-sm">{opt.fee_type}</span>
   ) 
 ))
 

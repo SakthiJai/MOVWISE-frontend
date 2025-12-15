@@ -158,11 +158,16 @@ export default function Purchase() {
 
 
     const handleChange = (field, value) => {
+      if(field=="property_type" && value!="Flat"){
+    formData.high_raise_support=0;
+      }
+      
   console.log(field, value);
   if(field=="purchase_mode" && (value=="firstTime"|| value=="standard"||value=="additional") ){
     console.log("check")
     setbuytolet_readonlyfield(true);
-    formData.buy_to_let="No"
+    formData.buy_to_let="No";
+    console.log(formData.buy_to_let)
   }
   else{
     setbuytolet_readonlyfield(false);
@@ -250,7 +255,7 @@ const [highRaiseSupport, setHighRaiseSupport] = useState("");
             }
     
           } catch (error) {
-            console.error("Failed to load property types:", error);
+            console.log("Failed to load property types:", error);
           }
         };
      const [propertyTypeOptions, setPropertyTypeOptions] = useState([]);
@@ -878,15 +883,15 @@ return (
                <select
                  name="buy_to_let"
                  id="b2l"
-                 value={formData.buy_to_let || ""} 
+value={formData.buy_to_let || "NO"}  
                  onChange={(e) => handleChange("buy_to_let", e.target.value)}
                  disabled={buytolet_readonlyfield}  
                  className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"
                >
-                 {["Please select", "No", "Yes - Personal name", "Yes - Company name"].map(
+                 {[{key:"Please select",value: "", },{key:"No",value: "No", },{key:"Yes - Personal name",value:"personal"},{key: "Yes - Company name",value:"company"}].map(
                    (opt) => (
-                     <option key={opt} value={opt}>
-                       {opt}
+                     <option key={opt.key} value={opt.value}>
+                       {opt.key}
                      </option>
                    )
                  )}
@@ -1150,7 +1155,7 @@ return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
       <div>
       <label className="block text-sm font-medium text-gray-700 mb-1">
-       Lifetime ISA / Help to Buy ISA Supplement(Are you using any Help to Buy ISAs for your purchase?)
+       Lifetime ISA / Help to Buy ISA Supplement
       </label>
     
       <div className="grid grid-cols-2 gap-3 ">
