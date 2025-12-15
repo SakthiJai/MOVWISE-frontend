@@ -34,6 +34,7 @@ export default function Comparequotes() {
   const [vattax,setvattax]=useState(0);
   const [dropdownshow,setdropdownshow]=useState(false);
   const [loading, setLoading] = useState(false);
+  const[total,settotal]=useState(0)
 
 
   // Track which card dropdown is open (by quote_id)
@@ -230,12 +231,24 @@ function fetchtaxdetails(id){
 let selectedquote=companydata.filter((item)=>item.quote_id==id);
 console.log(selectedquote)
 console.log(selectedquote[0].conveying_details.taxDetails);
+let sum=0
 
      const grouped = selectedquote[0].conveying_details.taxDetails.reduce((acc, item) => {
-  if (!acc[item.fee_category]) {
-    acc[item.fee_category] = [];
+    
+  if (!acc[item.fees_category]) {
+    acc[item.fees_category] = {
+           items: [],
+        total: 0,
+    };
+     acc[item.fees_category].items.push(item);
+
+     if (Number(item.fee_amount) > 0) {
+      acc[item.fees_category].total += Number(item.fee_amount);
+    }
   }
-  acc[item.fee_category].push(item);
+ 
+
+  
 
  
   return acc;
@@ -246,11 +259,22 @@ console.log(selectedquote[0].conveying_details.taxDetails);
   settaxDetails(grouped);
 
   const totalTaxVat = selectedquote[0].conveying_details.taxDetails.reduce((sum, item) => {
-  return sum + Number(item.vat || 0);
+    if(item.vat==1){
+      sum+=Number(item.fee_amount*0.2)
+    }
+   return sum;
 }, 0);
 
-console.log("Total VAT:", totalTaxVat);
+const totalamount = selectedquote[0].conveying_details.taxDetails.reduce((sum, item) => {
+    if(item.fee_amount>0){
+      sum+=Number(item.fee_amount)
+    }
+   return sum;
+}, 0);
+
+console.log("Total VAT:", totalamount);
 setvattax(totalTaxVat);
+settotal(totalamount)
 
 }
 
@@ -701,7 +725,7 @@ setvattax(totalTaxVat);
                                           "/logo.png"
                                         }
                                         alt="Company Logo"
-                                        className="w-30 mt-5 h-10"
+                                        className="w-30 mt-5 h-20"
                                       />
 
                                       <p className="mt-2 font-semibold text-base quotes">
@@ -769,9 +793,9 @@ setvattax(totalTaxVat);
                                         </div>
                                       </div>
 
-                                      {(view_data.service_details[0].service_type == 3 ) && <SalesPropertyDetails quote={quote}/>}   
+                                      {(view_data.service_details[0].service_type == 1 ) && <SalesPropertyDetails quote={quote}/>}   
                                    {(view_data.service_details[0].service_type == 2 ) && <PurchasePropertyDetails quote={quote} />}   
-                                   {(view_data.service_details[0].service_type == 1 ) && <SalesPurchasePropertyDetails quote={quote} />}   
+                                   {(view_data.service_details[0].service_type == 3 ) && <SalesPurchasePropertyDetails quote={quote} />}   
                                    {(view_data.service_details[0].service_type == 4 ) && <RemortagePropertyDetails quote={quote} />}  
                                     </div>
 
@@ -819,7 +843,7 @@ setvattax(totalTaxVat);
                   </td>
                 </tr>
 
-                {items?.map((fee, i) => (
+                {items?.items.map((fee, i) =>  Number(fee.fee_amount) > 0 ? (
                   <tr key={i} className="border-b border-gray-200 text-start">
                     <td className="p-2 break-words text-sm "> <div className="ml-4"> {/* margin-left works here */}
         {fee.fee_type}
@@ -827,9 +851,19 @@ setvattax(totalTaxVat);
                     <td className="p-2 text-right text-sm">
                       {formatGBP(fee.fee_amount)}
                     </td>
-                    <td className="p-2 text-right text-sm">{formatGBP(fee.vat)}</td>
+                    <td className="p-2 text-right text-sm">{(fee.vat==1?formatGBP(fee.fee_amount*0.2):"No Vat")}</td>
                   </tr>
-                ))}
+                ):"")}
+                <tr  className="border-b border-gray-200 text-start">
+                    <td className="p-2 break-words text-sm "> <div className="ml-4"> {/* margin-left works here */}
+        Total
+      </div></td>
+                    <td className="p-2 text-right text-sm">
+                      {formatGBP(items.total)}
+                    </td>
+                  </tr>
+               
+                
               </React.Fragment>
             ))}
                           
@@ -839,11 +873,11 @@ setvattax(totalTaxVat);
                                       {/* TOTAL */}
                                       <tr className="bg-gray-100 font-semibold text-gray-800">
                                         <td className="p-2 text-start">Total </td>
-                                        <td className="p-2 text-right text-indigo-600">
-                                          {formatGBP(item.total)}
+                                        <td className="p-2 text-right text-emerald-600">
+                                          {formatGBP(total+Number(item.legal_fees))}
                                          
                                         </td>
-                                        <td className="p-2 text-right text-indigo-600" > {formatGBP(vattax)}</td>
+                                        <td className="p-2 text-right text-emerald-600" > {formatGBP(vattax)}</td>
                                       </tr>
                                       {item.service_type == 2 && (
                                         <>

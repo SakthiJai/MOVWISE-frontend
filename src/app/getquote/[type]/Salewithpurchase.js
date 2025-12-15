@@ -227,7 +227,7 @@ useEffect(() => {
   
     if (validate()) {
       console.log("✅ Valid form data:", formData);
-                  localStorage.setItem("service", JSON.stringify(1));
+                  localStorage.setItem("service", JSON.stringify(3));
 
       localStorage.setItem("getquote", JSON.stringify(formData));
       if(localStorage.getItem("user")){

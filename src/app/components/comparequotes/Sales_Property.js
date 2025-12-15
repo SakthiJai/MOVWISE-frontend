@@ -1,7 +1,31 @@
+import { useEffect, useState } from "react";
 
 // PropertyDetails.js
 export default function SalesPropertyDetails({ quote, page }) {
+    const [language,setlanguage]=useState([])
 console.log("PAGE VALUE = ", page);
+console.log("sales")
+
+  async function fetchapi(){
+    try{
+  const res = await getData(API_ENDPOINTS.languages);
+  const language = res.users
+  console.log(language);
+  setlanguage(language)
+  
+
+    }
+    catch(e){
+      console.log(e);
+    }
+
+  }
+
+  useEffect(()=>{
+    fetchapi()
+
+    
+  },[])
 
   return (
     <div className="py-1 px-5 text-sm">
@@ -98,15 +122,17 @@ console.log("PAGE VALUE = ", page);
                                       </div> */}
 
 
-
-                                       <div className="flex">
+<div className="flex">
                                         <span className="font-semibold w-40 text-left">
                                           Languages
                                         </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.languages || "--"}
-                                        </span>
+                                        <span>
+  {
+    language.find(
+      (l) => l.id == quote?.service_details?.[0]?.languages
+    )?.language_name || "--"
+  }
+</span>
                                       </div>
 
 

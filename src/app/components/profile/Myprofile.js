@@ -38,7 +38,8 @@ const Myprofile = () => {
 
 useEffect(() => {
   if (localStorage.getItem("logintype")) {
-    setlogintype(localStorage.getItem("logintype"));
+    let user_type = localStorage.getItem("logintype")
+    setlogintype(user_type);
 
     fetchapi();
   }
@@ -308,7 +309,7 @@ const getServiceTypeLabel = (type) => {
         <th className="p-3 border font-semibold">Service</th>
         <th className="p-3 border font-semibold">Property Location</th>
         <th className="p-3 border font-semibold">Property Price</th>
-        <th className="p-3 border font-semibold"> {loginType !== "user" ? "Customer Name" : "Conveyancer Name"}</th>
+        <th className="p-3 border font-semibold"> {localStorage.getItem("logintype") == "user" ? "Conveyancer Name" : "Customer Name"}</th>
         <th className="p-3 border font-semibold">Status</th>
         <th className="p-3 border font-semibold">View</th>
       </tr>

@@ -131,7 +131,7 @@ const [loginformdata, setloginformdata] = useState({
   label: "Sales",
   icon: <Tag className="w-10 h-10 text-[#256041]" />,
   desc: "Quick and easy property sales.",
-  "service_id":3,
+  "service_id":1,
   page:"Sales"
 },
     {
@@ -146,7 +146,7 @@ const [loginformdata, setloginformdata] = useState({
       label: "Sales & Purchase",
       icon: <Repeat className="w-10 h-10 text-[#256041]" />,
       desc: "Buy and sell in one smooth move",
-      "service_id":1,
+      "service_id":3,
       page:"saleswithpurchase"
     },
     {

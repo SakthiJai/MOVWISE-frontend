@@ -455,8 +455,8 @@ useEffect(() => {
 
   const serviceoptions = [
     { value: "Purchase", label: "Purchase", id: 2 },
-    { value: "Sales", label: "Sales", id: 3 },
-    { value: "Purchase and Sales", label: "Purchase and Sales", id: 1 },
+    { value: "Sales", label: "Sales", id: 1 },
+    { value: "Purchase and Sales", label: "Purchase and Sales", id: 3 },
     { value: "Remortgage", label: "Remortgage", id: 4 },
   ];
 

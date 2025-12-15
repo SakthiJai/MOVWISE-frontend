@@ -176,7 +176,7 @@ export default function Quotationdetails() {
         console.log(key, value);
         const data = key; // <-- key itself (1,2,3,...)
         tempPrice.push({
-          [data]: pricingList[value],
+          [data]: [pricingList[value]],
         });
         console.log(tempPrice);
       });
@@ -575,19 +575,22 @@ setremainingleashold(remainingadditionalleahold);
          
         }
         }
+
        for (let i = 0; i < list.length; i++) {
   const seen = new Set();
 if(terror.length==0){
   for (let k = 0; k < list[i].price_list.length; k++) {
     const item = list[i].price_list[k];
-
-    if (seen.has(item.type_id)) {
+    if(seen.length>0){
+  if (seen.has(item.type_id)) {
       console.log("Duplicate found:", item.type_id, item);
       terror.push(`Row ${i + 1}: Duplicate  found`);
      
     } else {
       seen.add(item.type_id);
     }
+    }
+  
   }
 }}
 

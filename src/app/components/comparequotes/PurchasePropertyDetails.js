@@ -1,6 +1,28 @@
+import { useEffect, useState } from "react";
+import { API_ENDPOINTS, getData } from "../../auth/API/api";
 
 // PropertyDetails.js
-export default function PurchasePropertyDetails({ quote, dropdownOpenId }) {
+  export default function PurchasePropertyDetails({ quote, dropdownOpenId }) {
+    const [language,setlanguage]=useState([])
+  async function fetchapi(){
+    try{
+  const res = await getData(API_ENDPOINTS.languages);
+  const language = res.users
+  console.log(language);
+  setlanguage(language)
+
+    }
+    catch(e){
+      console.log(e);
+    }
+
+  }
+
+  useEffect(()=>{
+    fetchapi()
+
+    
+  },[])
 
   return (
     <div className=" text-sm">
@@ -102,10 +124,13 @@ export default function PurchasePropertyDetails({ quote, dropdownOpenId }) {
                                         <span className="font-semibold w-40 text-left">
                                           Languages
                                         </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.languages || "--"}
-                                        </span>
+                                        <span>
+  {
+    language.find(
+      (l) => l.id == quote?.service_details?.[0]?.languages
+    )?.language_name || "--"
+  }
+</span>
                                       </div>
                                        <div className="flex">
                                         <span className="font-semibold w-40 text-left">
@@ -161,7 +186,7 @@ export default function PurchasePropertyDetails({ quote, dropdownOpenId }) {
                                         </span>
                                         <span className="">
                                           {quote?.service_details[0]
-                                            ?.obtaining_mortgage || "--"}
+                                            ?.obtaining_mortgage==0?"No":"Yes"}
                                         </span>
                                       </div>
                                        {/* <div className="flex">
@@ -247,11 +272,29 @@ export default function PurchasePropertyDetails({ quote, dropdownOpenId }) {
                                       </div> */}
                                         <div className="flex">
                                         <span className="font-semibold w-40 text-left">
-                                        Purchase Stages
+                                        High Raise Support
                                         </span>
                                         <span className="">
                                           {quote?.service_details[0]
-                                            ?.purchase_stages || "--"}
+                                            ?.purchase_high_raise_support==0?"No":"Yes" }
+                                        </span>
+                                      </div>
+                                       <div className="flex">
+                                        <span className="font-semibold w-40 text-left">
+                                        Life Time Support
+                                        </span>
+                                        <span className="">
+                                          {quote?.service_details[0]
+                                            ?.purchase_lifetime_isa==0?"No":"Yes" }
+                                        </span>
+                                      </div>
+                                       <div className="flex">
+                                        <span className="font-semibold w-40 text-left">
+                                        HMO Support
+                                        </span>
+                                        <span className="">
+                                          {quote?.service_details[0]
+                                            ?.purchase_need_hmo==0?"No":"Yes" }
                                         </span>
                                       </div>
 

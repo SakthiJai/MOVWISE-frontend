@@ -15,6 +15,7 @@ const PriceBreakdownCard = forwardRef(({ companydetails, quoteId,quoteUser }, re
   const [logintype,setlogintype]=useState()
   const [feeCategory, setfeeCategory] = useState({});
   const [taxDetails, settaxDetails] = useState();
+  const [vattax,setvattax]=useState();
 const router = useRouter();
 
   
@@ -23,18 +24,32 @@ const timers = useRef({});
  
 
    useEffect(() => {
+
+    
      if(localStorage.getItem("logintype")){
      setlogintype(localStorage.getItem("logintype"));
      console.log(companydetails)
      const grouped = companydetails[0].taxDetails.reduce((acc, item) => {
-  if (!acc[item.fee_category]) {
-    acc[item.fee_category] = [];
+  if (!acc[item.fees_category]) {
+    acc[item.fees_category] = [];
   }
-  acc[item.fee_category].push(item);
+  acc[item.fees_category].push(item);
   return acc;
 }, {});
 settaxDetails(grouped);
 console.log("Grouped Tax Details:", grouped);
+let selectedquote=companydetails.filter((item)=>item.quote_id==quoteId);
+console.log("seleceted:",selectedquote);
+
+ const totalTaxVat = companydetails[0].taxDetails.reduce((sum, item) => {
+    if(item.vat==1){
+      sum+=Number(item.fee_amount*0.2)
+    }
+   return sum;
+}, 0);
+
+console.log("Total VAT:", totalTaxVat);
+setvattax(totalTaxVat);
  
      }
     
@@ -167,7 +182,7 @@ console.log("Grouped Tax Details:", grouped);
               <td className="p-2 break-words font-semibold ">{`Legal Fees`}</td>
               <td className="p-2 text-right ">{formatGBP(item.legal_fees)}</td>
               <td className="p-2 text-right">
-                {formatGBP(item.legal_fees_vat) || ""}
+                -
               </td>
             </tr>
 
@@ -181,7 +196,7 @@ console.log("Grouped Tax Details:", grouped);
                   </td>
                 </tr>
 
-                {items?.map((fee, i) => (
+                {items?.map((fee, i) =>  Number(fee.fee_amount) > 0 ? (
                   <tr key={i} className="border-b border-gray-200 ">
                     <td className="p-2 break-words "> <div className="ml-4"> {/* margin-left works here */}
         {fee.fee_type}
@@ -189,9 +204,9 @@ console.log("Grouped Tax Details:", grouped);
                     <td className="p-2 text-right">
                       {formatGBP(fee.fee_amount)}
                     </td>
-                    <td className="p-2 text-right">{formatGBP(fee.vat)}</td>
+                    <td className="p-2 text-right text-sm">{(fee.vat==1?formatGBP(fee.fee_amount*0.2):"No Vat")}</td>
                   </tr>
-                ))}
+                ):"")}
               </React.Fragment>
             ))}
 
@@ -205,7 +220,7 @@ console.log("Grouped Tax Details:", grouped);
                 {formatGBP(item.total)}
                
               </td>
-              <td></td>
+                                        <td className="p-2 text-right text-indigo-600" > {formatGBP(vattax)}</td>
             </tr>
             {item.service_type == 2 && (
               <>

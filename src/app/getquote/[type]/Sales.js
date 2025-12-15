@@ -195,7 +195,7 @@ const handleSubmit = (e) => {
       console.log(formData)
        localStorage.setItem("getquote", JSON.stringify(formData));
       console.log("✅ Form submitted:", formData);
-            localStorage.setItem("service", JSON.stringify(3));
+            localStorage.setItem("service", JSON.stringify(1));
 
       //alert("Form submitted successfully!");
       

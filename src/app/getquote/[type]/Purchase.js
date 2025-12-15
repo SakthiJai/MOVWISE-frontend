@@ -33,6 +33,8 @@ export default function Purchase() {
   { label: "Commercial / Non-Residential", value: "commercial" }
 ];
 
+console.log(stampDutyOptions)
+
 
 
 

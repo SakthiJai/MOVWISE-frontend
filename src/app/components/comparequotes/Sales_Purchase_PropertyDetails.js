@@ -1,6 +1,28 @@
+import { useEffect, useState } from "react";
 
 // PropertyDetails.js
 export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) {
+
+    const [language,setlanguage]=useState([])
+    async function fetchapi(){
+      try{
+    const res = await getData(API_ENDPOINTS.languages);
+    const language = res.users
+    console.log(language);
+    setlanguage(language)
+  
+      }
+      catch(e){
+        console.log(e);
+      }
+  
+    }
+  
+    useEffect(()=>{
+      fetchapi()
+  
+      
+    },[])
 
   return (
     <div className=" text-sm">
@@ -90,14 +112,17 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                             ?.guest_user || "--"}
                                         </span>
                                       </div>
-                                       <div className="flex">
+                                      <div className="flex">
                                         <span className="font-semibold w-40 text-left">
                                           Languages
                                         </span>
-                                        <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.languages || "--"}
-                                        </span>
+                                        <span>
+  {
+    language.find(
+      (l) => l.id == quote?.service_details?.[0]?.languages
+    )?.language_name || "--"
+  }
+</span>
                                       </div>
                                        <div className="flex">
                                         <span className="font-semibold w-40 text-left">
