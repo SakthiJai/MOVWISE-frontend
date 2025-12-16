@@ -27,6 +27,7 @@ export default function Purchase() {
     
 
     const stampDutyOptions = [
+  { label: "Plese Select", value: "" },
   { label: "First-Time Buyer ", value: "firstTime" },
   { label: "Additional Property (Second Home)", value: "additional" },
   { label: "Additional Property (Buy to let)", value: "Buy to let" },

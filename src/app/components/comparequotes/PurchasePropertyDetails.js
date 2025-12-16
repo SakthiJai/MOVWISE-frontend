@@ -31,33 +31,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                           Property Details 
                                         </h3>
                                       </div>
-                                      {/* <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                          Address
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.address || "--"}
-                                        </span>
-                                      </div>
-                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                          Address Line 1
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.address_line1 || "--"}
-                                        </span>
-                                      </div>
-                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                          Address Line 2
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.address_line2 || "--"}
-                                        </span>
-                                      </div> */}
+                             
 
 
                                       <div className="flex mt-3">
@@ -79,15 +53,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                         </span>
                                       </div>
 
-                                      {/* <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                          Existing Mortgage
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.existing_mortgage || "--"}
-                                        </span>
-                                      </div> */}
+                                    
 
 
                                       <div className="flex">
@@ -99,25 +65,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                             ?.gift_deposit? "yes":"no" || "--"}
                                         </span> 
                                       </div>
-                                      {/* <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                          Govt By Scheme
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.govt_by_scheme || "--"}
-                                        </span>
-                                      </div> */}
-
-                                      {/* <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                          Guest User
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.guest_user || "--"}
-                                        </span>
-                                      </div> */}
+                                    
 
 
                                        <div className="flex">
@@ -143,25 +91,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                       </div>
 
 
-                                       {/* <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                          Lenders
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.lenders || "--"}
-                                        </span>
-                                      </div>
-                                        <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                          New Build
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.new_build || "--"}
-                                        </span>
-                                      </div> */}
-
+                                      
                                         <div className="flex">
                                         <span className="font-semibold w-40 text-left">
                                           No Of Bedrooms
@@ -171,15 +101,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                             ?.no_of_bedrooms || "--"}
                                         </span>
                                       </div>
-                                       {/* <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         No Of Peoples
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.no_of_peoples || "--"}
-                                        </span>
-                                      </div> */}
+                                     
                                        <div className="flex">
                                         <span className="font-semibold w-40 text-left">
                                          Obtaining Mortgage
@@ -189,15 +111,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                             ?.obtaining_mortgage==0?"No":"Yes"}
                                         </span>
                                       </div>
-                                       {/* <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                          Ownership Housing Asso
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.ownership_housing_asso || "--"}
-                                        </span>
-                                      </div> */}
+                                       
                                       <div className="flex">
                                         <span className="font-semibold w-40 text-left">
                                           Property Type
@@ -207,33 +121,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                             ?.property_type || "--"}
                                         </span>
                                       </div>
-                                      {/* <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                           Property Values
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.property_values || "--"}
-                                        </span>
-                                      </div>
-                                      <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                          Purchase Address
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.purchase_address || "--"}
-                                        </span>
-                                      </div>
-                                      <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                          Purchase Leasehold Or Free
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.purchase_leasehold_or_free || "--"}
-                                        </span>
-                                      </div> */}
+                                     
                                       <div className="flex">
                                         <span className="font-semibold w-40 text-left">
                                          Purchase Mode
@@ -243,15 +131,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                             ?.purchase_mode || "--"}
                                         </span>
                                       </div>
-                                      {/* <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                          Purchase No Of Bedrooms
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.purchase_no_of_bedrooms || "--"}
-                                        </span>
-                                      </div> */}
+                                  
                                       <div className="flex">
                                         <span className="font-semibold w-40 text-left">
                                          Purchase Price
@@ -261,15 +141,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                             ?.purchase_price || "--"}
                                         </span>
                                       </div>
-                                        {/* <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Purchase Property Type
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.purchase_property_type || "--"}
-                                        </span>
-                                      </div> */}
+                                      
                                         <div className="flex">
                                         <span className="font-semibold w-40 text-left">
                                         High Raise Support
@@ -299,108 +171,6 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                       </div>
 
 
-                                        {/* <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Sales Address
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.sales_address || "--"}
-                                        </span>
-                                      </div>
-                                        <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Sales Address Line1
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.sales_address_line1 || "--"}
-                                        </span>
-                                      </div>
-                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Sales Address Line2
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.sales_address_line2 || "--"}
-                                        </span>
-                                      </div>
-                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Sales Country
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.sales_country || "--"}
-                                        </span>
-                                      </div>
-                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Sales Leasehold Or Free
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.sales_leasehold_or_free || "--"}
-                                        </span>
-                                      </div>
-                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Sales No Of Bedrooms
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.sales_no_of_bedrooms || "--"}
-                                        </span>
-                                      </div>
-                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Sales Price
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.sales_price || "--"}
-                                        </span>
-                                      </div>
-                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Sales Property Type
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.sales_property_type || "--"}
-                                        </span>
-                                      </div>
-                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Sales Stages
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.sales_stages || "--"}
-                                        </span>
-                                      </div>
-                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Sales Town City
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.sales_town_city || "--"}
-                                        </span>
-                                      </div> */}
-
-
-                                     
-                                       {/* <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Shared Ownership
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.shared_ownership || "--"}
-                                        </span>
-                                      </div> */}
                                       
                                        <div className="flex">
                                         <span className="font-semibold w-40 text-left">
@@ -411,34 +181,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                             ?.stages || "--"}
                                         </span>
                                       </div>
-                                        
-                                        {/* <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Stamp Duty
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.stamp_duty || "--"}
-                                        </span>
-                                      </div>
-                                        <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Total
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.total || "--"}
-                                        </span>
-                                      </div>
-                                        <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Vat
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.vat || "--"}
-                                        </span>
-                                      </div> */}
+                                 
 
                                       
 

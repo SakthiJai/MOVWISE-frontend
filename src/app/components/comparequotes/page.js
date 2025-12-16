@@ -441,8 +441,24 @@ settotal(totalamount)
                 </h1>
                 <p className="mt-1 text-[14px] leading-5 text-[#6B7280] font-outfit">
                   By completing this form your details are shared with up to 5
-                  firms providing the quotes, but absolutely no one else.
+                  firms providing the quotes excluding vat and any other tax, but absolutely no one else.
                 </p>
+
+            <div className="flex flex-row font text-black items-center mt-2">
+  <span className="mr-4">Filter By</span>
+
+  <label className="flex items-center gap-2">
+    <input type="radio" name="filterBy" defaultChecked />
+    Language
+  </label>
+
+  <label className="flex items-center gap-2 ml-4">
+    <input type="radio" name="filterBy" />
+    Price
+  </label>
+</div>
+
+
 
                 <div className="mt-8 space-y-6">
                   {loading && (
@@ -492,8 +508,11 @@ settotal(totalamount)
                         <div className="flex items-center gap-4">
                           <div className="text-right">
                             <p className="text-xl font-bold text-gray-900">
-                              {formatGBP(quote.total)}
-                            </p>
+{formatGBP(
+  Number(quote.supplements || 0) +
+  Number(quote.disbursements || 0) +
+  Number(quote.legal_fees || 0)
+)}                            </p>
                             <button
                               className="text-green-700 text-sm font-medium hover:underline"
                               onClick={() => toggleDropdown(quote.quote_id)}
@@ -565,14 +584,14 @@ settotal(totalamount)
 
                           {/* Middle: Features - Static placeholder */}
                           <ul className="text-xs text-gray-700 space-y-2 font-normal text-[12px] list-none pl-4">
-                            <li className="relative before:content-['•'] before:absolute before:left-0 before:text-[#4A7C59] before:text-base pl-3">
+                            {/* <li className="relative before:content-['•'] before:absolute before:left-0 before:text-[#4A7C59] before:text-base pl-3">
                               {quote?.conveying_details.short_notes?.length > 60
                                 ? `${quote.conveying_details.short_notes.slice(
                                     0,
                                     100
                                   )}...`
                                 : quote?.short_notes}
-                            </li>
+                            </li> */}
                           </ul>
 
                           {/* Right: Buttons */}
@@ -627,9 +646,15 @@ settotal(totalamount)
 
   {/* Legal Fees */}
   <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
-    <td className="text-sm ">Legal Fees</td>
-    <td className="text-sm ">{formatGBP(quote.legal_fees)}</td>
+    <td className="text-sm font-bold">Legal Fees</td>
+    <td className="text-sm font-semibold text-emerald-600">{formatGBP(quote.legal_fees)}</td>
     <td className="text-sm ">-</td>
+  </tr>
+    <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
+    <td className="text-sm ">Supplements</td>
+    <td className="text-sm ">{formatGBP(quote.supplements)}</td>
+    <td className="text-sm ">      {formatGBP(quote.supplements * 0.2)}
+</td>
   </tr>
 
   {/* Disbursements */}
@@ -642,12 +667,26 @@ settotal(totalamount)
   </tr>
 
   {/* Country-Based Taxes (Optional Rows) */}
-  {quote.service_details[0].service_type == 2 && (
+ 
+
+  {/* TOTAL — Border ONLY ABOVE */}
+  <tr className="grid grid-cols-3 w-full gap-5 border-t border-gray-300 bg-gray-50">
+    <td className="text-sm font-semibold">Total</td>
+    <td className="text-sm font-semibold text-emerald-600">
+{formatGBP(
+  Number(quote.supplements || 0) +
+  Number(quote.disbursements || 0) +
+  Number(quote.legal_fees || 0)
+)}
+    </td>
+    <td className="text-sm font-semibold text-emerald-600">{formatGBP((quote.disbursements * 0.2)+(quote.supplements*0.2))}</td>
+  </tr>
+ {quote.service_details[0].service_type == 2 && (
     <>
       {(quote.service_details[0].country === "England" ||
         quote.service_details[0].country === "Northern Ireland") && (
         <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
-          <td className="text-sm ">Stamp Duty</td>
+          <td className="text-sm font-semibold ">Stamp Duty</td>
           <td className="text-sm ">{formatGBP(quote.stamp_duty)}</td>
           <td className="text-sm">-</td>
         </tr>
@@ -655,7 +694,7 @@ settotal(totalamount)
 
       {quote.service_details[0].country === "Scotland" && (
         <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
-          <td className="text-sm ">LLT</td>
+          <td className="text-sm font-semibold ">LLT</td>
           <td className="text-sm ">{formatGBP(quote.llt)}</td>
           <td className="text-sm ">-</td>
         </tr>
@@ -663,30 +702,20 @@ settotal(totalamount)
 
       {quote.service_details[0].country === "Wales" && (
         <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
-          <td className="text-sm ">LBTT</td>
+          <td className="text-sm font-semibold">LBTT</td>
           <td className="text-sm ">{formatGBP(quote.lbtt)}</td>
           <td className="text-sm ">-</td>
         </tr>
       )}
     </>
   )}
-
-  {/* TOTAL — Border ONLY ABOVE */}
-  <tr className="grid grid-cols-3 w-full gap-5 border-t border-gray-300 bg-gray-50">
-    <td className="text-sm font-semibold">Total</td>
-    <td className="text-sm font-semibold text-indigo-600">
-      {formatGBP(quote.total)}
-    </td>
-    <td className="text-sm font-semibold text-indigo-600">{formatGBP(vattax)}</td>
-  </tr>
-
 </tbody>
 
                             </table>
                           </div>
                         )}
                        
-                       
+                      
                         {cardid === quote.quote_id && viewquotes && (
                           <div className="fixed inset-0  z-50 flex items-center justify-center  top-10  animate-fadeIn">
                             <div className="bg-white h-[200px] rounded-2xl  w-[90%] min-h-screen overflow-y-auto text-center shadow-2xl border border-green-200 animate-popIn">
@@ -795,7 +824,7 @@ settotal(totalamount)
 
                                       {(view_data.service_details[0].service_type == 1 ) && <SalesPropertyDetails quote={quote}/>}   
                                    {(view_data.service_details[0].service_type == 2 ) && <PurchasePropertyDetails quote={quote} />}   
-                                   {(view_data.service_details[0].service_type == 3 ) && <SalesPurchasePropertyDetails quote={quote} />}   
+                                   {(view_data.service_details[0].service_type == 3 ) &&( <><SalesPropertyDetails quote={quote}/> <PurchasePropertyDetails quote={quote} /></>)}   
                                    {(view_data.service_details[0].service_type == 4 ) && <RemortagePropertyDetails quote={quote} />}  
                                     </div>
 
@@ -856,16 +885,22 @@ settotal(totalamount)
                 ):"")}
                 <tr  className="border-b border-gray-200 text-start">
                     <td className="p-2 break-words text-sm "> <div className="ml-4"> {/* margin-left works here */}
-        Total
+        Total 
       </div></td>
+    
                     <td className="p-2 text-right text-sm">
                       {formatGBP(items.total)}
                     </td>
                   </tr>
+
+              
+      
                
                 
               </React.Fragment>
             ))}
+
+            
                           
                                       {/* Country-specific taxes */}
                                       
@@ -874,16 +909,21 @@ settotal(totalamount)
                                       <tr className="bg-gray-100 font-semibold text-gray-800">
                                         <td className="p-2 text-start">Total </td>
                                         <td className="p-2 text-right text-emerald-600">
-                                          {formatGBP(total+Number(item.legal_fees))}
+                                         {formatGBP(
+  Number(quote.supplements || 0) +
+  Number(quote.disbursements || 0) +
+  Number(quote.legal_fees || 0)
+)}
                                          
                                         </td>
                                         <td className="p-2 text-right text-emerald-600" > {formatGBP(vattax)}</td>
                                       </tr>
-                                      {item.service_type == 2 && (
+                                     
+                                       {item.service_details[0].service_type == 2 && (
                                         <>
-                                          {item.purchase_country == "England" && (
+                                          {item.service_details[0].country == "England" && (
                                             <tr className="border-b border-gray-200">
-                                              <td className="p-2">Stamp Duty</td>
+                                              <td className="p-2 text-start">Stamp Duty</td>
                                               <td className="p-2 text-right">
                                                 {formatGBP(item.stamp_duty)}
                                               </td>
@@ -891,7 +931,7 @@ settotal(totalamount)
                                             </tr>
                                           )}
                           
-                                          {item.purchase_country == "Scotland" && (
+                                          {item.service_details[0].country == "Scotland" && (
                                             <tr className="border-b border-gray-200">
                                               <td className="p-2">LLT</td>
                                               <td className="p-2 text-right">{formatGBP(item.llt)}</td>
@@ -899,7 +939,7 @@ settotal(totalamount)
                                             </tr>
                                           )}
                           
-                                          {item.purchase_country == "Wales" && (
+                                          {item.service_details[0].country == "Wales" && (
                                             <tr className="border-b border-gray-200">
                                               <td className="p-2">LBTT</td>
                                               <td className="p-2 text-right">{formatGBP(item.lbtt)}</td>
@@ -908,6 +948,8 @@ settotal(totalamount)
                                           )}
                                         </>
                                       )}
+                               
+                                     
                                     </React.Fragment>
                                   ))}
                               </tbody>
@@ -993,15 +1035,26 @@ settotal(totalamount)
                             </div>
                           </div>
                         )}
+                        
                       </div>
+                      
                     </div>
+                    
                   ))}
+                   <p></p>
                 </div>
+
+
+
+                
               </div>
             </div>
 
             {/* Bottom actions */}
           </section>
+
+
+         
 
           {/* Popup Modal for Instruct */}
          

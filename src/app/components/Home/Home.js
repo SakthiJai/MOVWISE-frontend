@@ -180,7 +180,7 @@ const [loginformdata, setloginformdata] = useState({
     setTimeout(() => {
       setLoading(false);
       router.push(`/getquote/${type.replace(/\s+/g, "").toLowerCase()}`);
-    }, 3000);
+    }, 2000);
   };
   const closeModal = () => {
     console.log("closing...");

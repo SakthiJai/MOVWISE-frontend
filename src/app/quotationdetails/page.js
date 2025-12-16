@@ -268,6 +268,7 @@ setremainingleashold(remainingadditionalleahold);
   ]);
 
   const handle_addrow = (index) => {
+    console.log("add row :",index)
     setpricingList((prev) =>
       prev.map((item) =>
         item.fees_category_id === index
@@ -294,18 +295,22 @@ setremainingleashold(remainingadditionalleahold);
     );
   };
   const handleDeleteRow = (feesCategoryId, rowIndex) =>{ 
+    console.log("delet:",rowIndex,feesCategoryId)
+    console.log(pricingList)
   setpricingList(prev =>
     prev.map(item =>
       item.fees_category_id === feesCategoryId
         ? {
             ...item,
             price_list: item.price_list.map((row, i) =>
-              i === rowIndex ? { ...row, is_delete: 1 } : row
+              i == rowIndex ? { ...row, is_delete: 1 }  : row
             )
           }
         : item
     )
   );
+      console.log(pricingList)
+
 }
   const handle_transaction_sales = (index) => {
     setpricingList((prev) =>
@@ -494,11 +499,7 @@ setremainingleashold(remainingadditionalleahold);
 };
 
 
-  const handleChange = (index, field, value) => {
-    const updated = [...legalcostrows];
-    updated[index][field] = value;
-    setLegalcostrows(updated);
-  };
+
 
   const validatePriceList = (list) => {
     let errors = [];
@@ -567,11 +568,7 @@ setremainingleashold(remainingadditionalleahold);
             //return false;
             break;
           }
-          else if(type_id ==""){
-            console.log('fee_amount',fee_amount,type_id,"+",j)
-            terror.push(` Fee  missing`);
-            break
-          }
+        
          
         }
         }
@@ -1850,7 +1847,7 @@ if(terror.length==0){
                                 <th className="px-3 py-2 text-center">Max £</th>
 
                                 {(formData["service_id"]?.includes(1) ||
-                                  formData["service_id"]?.includes(3)) && (
+                                  formData["service_id"]?.includes(2)) && (
                                   <>
                                     <th className="px-3 py-2 text-center">
                                       Purchase Leasehold £
@@ -1861,7 +1858,7 @@ if(terror.length==0){
                                   </>
                                 )}
 
-                                {(formData["service_id"]?.includes(2) ||
+                                {(formData["service_id"]?.includes(1) ||
                                   formData["service_id"]?.includes(3)) && (
                                   <>
                                     <th className="px-3 py-2 text-center">
@@ -2377,7 +2374,7 @@ if(terror.length==0){
                                   
                                                           leaseholdDisbursementList.map((opt, index) => (
   opt.id == row.type_id && (
-    <span key={index} className="text-red-900 font-extrabold px-3 py-2 bg- text-sm">{opt.fee_type}</span>
+    <span key={index} className="text-black font-extrabold px-3 py-2 bg- text-sm">{opt.fee_type}</span>
   ) 
 ))
 

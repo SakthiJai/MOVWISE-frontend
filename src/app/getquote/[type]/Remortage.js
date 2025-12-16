@@ -52,7 +52,6 @@ const handleUnknownPostcode = () => {
  
 const [lender, setLender] = useState([
   { value: "Not Known", label: "Not Known", id: 0 },
-  {value:"Not Known", label:"Not Known", id:1},
 ]);
 const [lang, setLang] = useState ([
   { value: "Not Required", label: "Not Required", id: 0 },
@@ -128,7 +127,6 @@ const handleChange_l = (selectedOptions = []) => {
   "languages": [],
   "specal_instruction": "",
  "service_type":4, 
-  "lender":[],
    
   
   });
@@ -325,7 +323,7 @@ const getIconForType = (type) => {
       }));
          console.log(lenderOptions)
 
-           setLender([{ value: "Not Known", id: 0,label: "Not Known" },{value:"Not Known",id:1,label:"Not Known"} ,...lenderOptions]);
+           setLender([{ value: "Not Known", id: 0,label: "Not Known" } ,...lenderOptions]);
                console.log(lender)
 
         
@@ -442,7 +440,6 @@ const getIconForType = (type) => {
                             // Update formData with selected suggestion
                             setFormData((prev) => ({
                               ...prev,
-                              selectedId: selected.id,
                               address: selected.suggestion,
                             }));
                             // Fetch full address details
