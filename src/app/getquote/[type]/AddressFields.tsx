@@ -103,11 +103,16 @@ console.log("showAddressLines:" , showAddressLines);
         {/* <p className="text-[12px] text-red-500 min-h-[16px]">
           {errors[country]}
         </p> */}
-        <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
-  errors["country"] ? "text-red-500 opacity-100" : "opacity-0"
-}`}>
-  {errors["country"] || "placeholder"}
+        <p
+  className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+    errors[country] && !formData[country]
+      ? "text-red-500 opacity-100"
+      : "opacity-0"
+  }`}
+>
+  {errors[country] || "placeholder"}
 </p>
+
 
       </div>
 

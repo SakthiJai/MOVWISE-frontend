@@ -40,7 +40,7 @@ const handleUnknownPostcode = () => {
     [`address_line1`]: "",
     [`address_line2`]: "",
     [`town`]: "",
-    [`country`]: "",
+    [`sales_country`]: "",
   }));
 };
  const closeModal = () => {
@@ -60,31 +60,35 @@ const handleUnknownPostcode_purchase = () => {
     [`address_line1_purchase`]: "",
     [`address_line2_purchase`]: "",
     [`town_purchase`]: "",
-    [`country_purchase`]: "",
+    [`purchase_country`]: "",
   }));
 };
-
+const options = ["1", "2", "3", "4","5", "5+"];
+const options_purchase = ["1", "2", "3", "4","5", "5+"];
 const [rawValue, setRawValue] = useState("");
 const [rawValuePurchase, setRawValuePurchase] = useState("");
 useEffect(() => {
-  const storedData = localStorage.getItem("getquote");
+  if (typeof window === "undefined") return; 
 
+  const storedData = localStorage.getItem("getquote");
   if (storedData) {
     setFormData(JSON.parse(storedData));
   }
-  fetchdata()
+
+  fetchdata();
 }, []);
+
    const [formData, setFormData] = useState({
+    sales_stages: "", 
     sales_address: "",
     sales_address_line1: "",    
     sales_address_line2: "",
     sales_country: "",
     sales_city: "",
     price: "",
-    bedrooms: "",
-    tenure: "", 
-    propertyType: "",
-    sharedOwnership: "",
+    sales_no_of_bedrooms: options[0],
+    tenure: "Freehold", 
+    sales_property_type: "Flat",
     sales_shared_ownership:"",
     purchase_address: "",
     purchase_address_line1: "",
@@ -93,13 +97,16 @@ useEffect(() => {
     purchase_town: "",
     purchase_price: "",
     purchase_mode:"",
-    bedrooms_purchase: "",
-    tenure_purchase: "", 
-    propertyType_purchase: "",
-    sharedOwnership_purchase: "",
+    no_of_bedrooms: options_purchase[0],
+    purchase_property_type: "Flat",
+    leasehold_or_free: "Freehold", 
+    sharedOwnership_purchase: 0,
     buy_to_let:"",
+    need_hmo : 0,
     languages:[],
-    service_type:1
+    service_type:1,
+    high_raise_support:0,
+    mortgage_purchase:0
   });
   const [postData, setPostData] = useState({user_id: null, guest_user: null, service_type: null,
   // SALES FIELDS
@@ -136,9 +143,9 @@ useEffect(() => {
   lenders: null
 });
 
-     const stampDutyOptions = [
-  { label: "Standard Residential", value: "standard" },
-  { label: "First-Time Buyer Relief", value: "firstTime" },
+    const stampDutyOptions = [
+  { label: "Please select", value: "" },
+  { label: "First-Time Buyer ", value: "firstTime" },
   { label: "Additional Property (Second Home)", value: "additional" },
   { label: "Additional Property (Buy to let)", value: "Buy to let" },
   { label: "Commercial / Non-Residential", value: "commercial" }
@@ -157,6 +164,10 @@ useEffect(() => {
 
 
 const handleChange = (name,value) => {
+
+  if (name === "purchase_property_type" && value !== "Flat") {
+    setFormData((prev) => ({ ...prev, high_raise_support: 0 }));
+  }
   if(name=="purchase_mode" && (value=="firstTime"|| value=="standard"||value=="additional") ){
     console.log("check")
     setbuytolet_readonlyfield(true);
@@ -187,7 +198,12 @@ const handleChange = (name,value) => {
     setFormData((prev) => ({ ...prev, [name]: value }));
   }
   //console.log(formData);
-  setErrors((prev) => ({ ...prev, [name]: "" }));
+  setErrors((prev) => {
+  const copy = { ...prev };
+  delete copy[name];
+  return copy;
+});
+
 };
 
 
@@ -214,12 +230,96 @@ useEffect(() => {
 
 
 
-  const validate = () => {
-    const newErrors = {};
-  
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+const validate = () => {
+  const errors = {};
+
+if (!formData.sales_stages) {
+  errors.sales_stages = "Please select a stage";
 }
+if (!formData.sales_country) {
+ errors.sales_country = "Please select a country";
+}
+if (!formData.purchase_country) {
+ errors.purchase_country = "Please select a country";
+}
+  if (!formData.sales_price || Number(formData.sales_price) <= 0) {
+    errors.sales_price = "Enter a valid sales price";
+  }
+
+  if (!formData.sales_no_of_bedrooms) {
+    errors.sales_no_of_bedrooms = "Select bedrooms";
+  }
+
+  if (!formData.tenure) {
+    errors.tenure = "Select leasehold or freehold";
+  }
+
+  if (!formData.sales_property_type) {
+    errors.sales_property_type = "Select property type";
+  }
+
+  if (!formData.sales_shared_ownership) {
+    errors.sales_shared_ownership = "Select shared ownership";
+  }
+
+  if (!formData.purchase_price || Number(formData.purchase_price) <= 0) {
+    errors.purchase_price = "Enter a valid purchase price";
+  }
+
+  if (!formData.no_of_bedrooms) {
+    errors.no_of_bedrooms = "Select bedrooms";
+  }
+
+  if (!formData.leasehold_or_free) {
+    errors.leasehold_or_free = "Select leasehold or freehold";
+  }
+
+  if (!formData.purchase_property_type) {
+    errors.purchase_property_type = "Select property type";
+  }
+
+  if (!formData.purchase_mode) {
+    errors.purchase_mode = "Select purchase mode";
+  }
+
+  if (!formData.buy_to_let) {
+    errors.buy_to_let = "Select Buy to Let option";
+  }
+
+  /* ---------- CONDITIONAL ⭐ ---------- */
+  if (
+    formData.mortgage_purchase === 1 &&
+    (!formData.lender || formData.lender.length === 0)
+  ) {
+    errors.lenders = "Select at least one lender";
+  }
+
+  if (
+    formData.buy_to_let === "Yes - Personal name" &&
+    formData.need_hmo === null
+  ) {
+    errors.need_hmo = "Select HMO option";
+  }
+
+  if (
+    formData.purchase_property_type === "Flat" &&
+    formData.high_raise_support === null
+  ) {
+    errors.high_raise_support = "Select high-rise support";
+  }
+  if(!formData.languages){
+               newErrors.languages="please select a language"
+        }
+
+        if (!selectedLanguage || selectedLanguage.length === 0) {
+    errors.preferLanguage = "Please select a language";
+  }
+
+  setErrors(errors);
+  return Object.keys(errors).length === 0;
+};
+
+
   
   
   const handleContinue = (e) => {
@@ -243,6 +343,7 @@ useEffect(() => {
       console.log("❌ Validation failed:", errors);
     }
   };
+
   useEffect(() => {
       if (rawValue === "") return;
   
@@ -325,8 +426,7 @@ useEffect(() => {
      const [bedrooms, setBedrooms] = useState("");
         const [loginformshow,setloginformshow]=useState(false)
 
-     const options = ["1", "2", "3", "4","5", "5+"];
-
+     
      const [propertyType, setPropertyType] = useState("");
         const propertyTypeOptions = [
           { label: "Flat", icon: <FaBuilding size={22} color="#007BFF" /> },
@@ -339,10 +439,9 @@ useEffect(() => {
         const router = useRouter();
 
         // Initial state for the toggle buttons
-        const [scheme, setScheme] = useState("yes");
-        const [mortgage, setMortgage] = useState("yes");
-        const [newBuild, setNewBuild] = useState("yes");
-        const [sharedOwnership, setSharedOwnership] = useState("yes");
+        const [scheme, setScheme] = useState("no");
+        const [mortgage, setMortgage] = useState("no");
+        const [newBuild, setNewBuild] = useState("no");
 
 
         //purchase
@@ -352,7 +451,7 @@ useEffect(() => {
 
      const [bedrooms_purchase, setBedrooms_purchase] = useState("");
 
-     const options_purchase = ["1", "2", "3", "4","5", "5+"];
+    
 
      const [propertyType_purchase, setPropertyType_purchase] = useState("");
         const propertyTypeOptions_purchase = [
@@ -364,7 +463,7 @@ useEffect(() => {
         
 
             const [formData_purchase, setFormData_purchase] = useState({
-            sharedOwnership: "",
+            sales_shared_ownership: "",
             existingMortgage: "",
         });
 
@@ -376,10 +475,10 @@ useEffect(() => {
         const router_purchase = useRouter();
 
         // Initial state for the toggle buttons
-        const [scheme_purchase, setScheme_purchase] = useState("yes");
+        const [scheme_purchase, setScheme_purchase] = useState("no");
         const [mortgage_purchase, setMortgage_purchase] = useState("yes");
-        const [newBuild_purchase, setNewBuild_purchase] = useState("yes");
-        const [sharedOwnership_purchase, setSharedOwnership_purchase] = useState("yes");
+        const [newBuild_purchase, setNewBuild_purchase] = useState("no");
+        const [sharedOwnership_purchase, setSharedOwnership_purchase] = useState("no");
 
           function   handlelanguagechange(e){
       console.log(e.target.value);
@@ -633,15 +732,31 @@ console.log(e);
                         <Home  className="w-7 h-7 text-[#1E5C3B]" />SALES DETAILS
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="">
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    What stage are you at?
-                                </label>
-                                <select value={formData.sales_stages}  onChange={(e)=>{handleChange("sales_stages",e.target.value)}} id="stage" name="stage" className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10">
-                                    {[ "Please select", "Just researching / budgeting", "Have received an offer", "Sale agreed",].map((opt) => (
-                                    <option key={opt} value={opt === "Please select" ? "" : opt}> {opt} </option>))}
-                                </select>
-                                </div>
+                           <div className="">
+                                                           <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                               What stages are you at? <span className="text-red-500">*</span>
+                                                           </label>
+                                                           <select id="stages" name="sales_stages"
+                                                            value={formData.sales_stages ?? ""}
+                                                            onChange={(e)=>{handleChange("sales_stages",e.target.value)}}
+                           
+                           
+                                                             className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10">
+                                                               {[ "Please select", "Just researching / budgeting", "Have received an offer", "Sale agreed",].map((opt) => (
+                                                               <option key={opt} value={opt === "Please select" ? "" : opt}> {opt} </option>))}
+                                                           </select>
+                                           {/* Dropdown icon */}
+                                                         <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+                                           errors.sales_stages ? "text-red-500 opacity-100" : "opacity-0"
+                                         }`}>
+                                           {errors.sales_stages || "placeholder"}
+                                         </p>
+                           
+                                   <ChevronDown
+                                     size={18}
+                                     className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+                                   />
+                                                           </div>
 
 
                         {/* 1. Property Address (Inline Input) */}
@@ -686,7 +801,7 @@ console.log(e);
                             <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
                             Agreed Sales price:<span className="text-red-500">*</span>
                             </label>
-                            <div className="relative mt-auto">
+                            <div className="relative">
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold text-lg">
                                 £
                             </span>
@@ -703,7 +818,7 @@ console.log(e);
                             
                              </div>
                            
-                            {errors.sales_address && (
+                            {errors.sales_price && (
                                 <span className="text-red-500 text-xs mt-1">{errors.sales_price}</span>
                               )}
                        </div>
@@ -714,17 +829,15 @@ console.log(e);
     Number of Bedrooms:<span className="text-red-500">*</span>
   </label>
 
-  <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 mt-auto">
+  <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
     {options.map((opt) => (
       <button
         key={opt}
         type="button"
         onClick={() => {
-          // ✅ update formData
-          setFormData((prev) => ({ ...prev, sales_no_of_bedrooms: opt }));
-          // ✅ clear error for this field
-          setErrors((prev) => ({ ...prev, sales_no_of_bedrooms: "" }));
-        }}
+  setFormData((prev) => ({ ...prev, sales_no_of_bedrooms: opt }));
+  setErrors((prev) => ({ ...prev, sales_no_of_bedrooms: "" }));
+}}
         className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm
           ${
             formData.sales_no_of_bedrooms === opt
@@ -824,14 +937,14 @@ console.log(e);
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <label
-                          htmlFor="sharedOwnership"
+                          htmlFor="sales_shared_ownership"
                           className="block text-[14px] text-[#6A7682] font-medium mb-2"
                         >
                           Shared Ownership<span className="text-red-500">*</span>
                         </label>
                         <select
-                          id="sharedOwnership"
-                          name="sharedOwnership"
+                          id="sales_shared_ownership"
+                          name="sales_shared_ownership"
                           value={formData.sales_shared_ownership}
                           onChange={(e)=>{handleChange("sales_shared_ownership",e.target.value)}} 
                           className={"block w-full h-[44px] rounded-xl border px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"}
@@ -842,8 +955,8 @@ console.log(e);
                             </option>
                           ))}
                         </select>
-                        {errors.sharedOwnership && (
-                          <p className="text-red-500 text-[12px] mt-1">{errors.sharedOwnership}</p>
+                        {errors.sales_shared_ownership && (
+                          <p className="text-red-500 text-[12px] mt-1">{errors.sales_shared_ownership}</p>
                         )}
                       </div>
 
@@ -878,21 +991,14 @@ console.log(e);
                             </div>
                         </div>
                         </div>
+                        </div>
  {/* 🏡 PURCHASE DETAILS */}
                     <div className="space-y-6">
                       <h2 className="text-xl font-bold text-gray-900 border-b-2 border-[#1E5C3B] pb-2 flex items-center gap-2">
                         <HomeIcon  className="w-7 h-7 text-[#1E5C3B]" /> PURCHASE DETAILS
                           </h2>
                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                               <div className="">
-                               <label className="block text-sm font-medium text-gray-700 mb-1">
-                                 What stage are you at?
-                                </label>
-                                 <select  value={formData.stages}  onChange={(e)=>{handleChange("stages",e.target.value)}}  id="stage" name="stage" className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10">
-                                {[ "Please select", "Just researching / budgeting", "Have received an offer", "Sale agreed",].map((opt) => (
-                                <option key={opt} value={opt === "Please select" ? "" : opt}> {opt} </option>))}
-                                </select>
-                                </div>               
+                                           
                                   {/* 1. Property Address (Inline Input) */}
                 <div className="flex flex-col h-full">
                         <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
@@ -942,7 +1048,7 @@ console.log(e);
     Agreed purchase price:<span className="text-red-500">*</span>
   </label>
 
-  <div className="relative mt-auto">
+  <div className="relative ">
     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold text-lg">
       £
     </span>
@@ -1070,37 +1176,89 @@ console.log(e);
       </div>
       </div>
       </div>
-    
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Property Type:<span className="text-red-500">*</span>
-                </label>
-               <div className="flex flex-wrap gap-9">
-             {propertyTypeOptions_purchase.map((opt) => (
-                <button
-                    key={opt.label}
-                    type="button"
-                    onClick={() => setPropertyType_purchase(opt.label)}
-                    className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 transition-all duration-200 shadow-sm  w-[170.76px]
-                    ${
-                        propertyType_purchase === opt.label
-                       ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
-                       : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                    }`}
-                >
-              <span
-                className={`${
-                propertyType_purchase === opt.label ? "text-[#1E5C3B]" : "text-gray-700"
-                } text-[18px]`}
-              >
-              {opt.icon}
-               </span>
-           <span className="text-sm font-semibold">{opt.label}</span>
+     <div>
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-1">
+    Property Type:<span className="text-red-500">*</span>
+  </label>
+
+  <div className="flex flex-wrap gap-9">
+    {propertyTypeOptions_purchase.map((opt) => (
+      <button
+        key={opt.label}
+        type="button"
+        onClick={() => {
+          // Update the property type
+          handleChange("purchase_property_type", opt.label);
+
+          // Reset high_raise_support if not Flat
+          if (opt.label !== "Flat") {
+            handleChange("high_raise_support", 0);
+          }
+        }}
+        className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 transition-all duration-200 shadow-sm w-[170.76px]
+          ${
+            formData.purchase_property_type === opt.label
+              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          }`}
+      >
+        <span
+          className={`${
+            formData.purchase_property_type === opt.label ? "text-[#1E5C3B]" : "text-gray-700"
+          } text-[18px]`}
+        >
+          {opt.icon}
+        </span>
+        <span className="text-sm font-semibold">{opt.label}</span>
+      </button>
+    ))}
+  </div>
+
+  {errors.purchase_property_type && (
+    <p className="text-red-500 text-[12px] mt-1">{errors.purchase_property_type}</p>
+  )}
+
+  {formData.purchase_property_type === "Flat" && (
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
+      <div className="flex flex-col">
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          High Raise Support:
+        </label>
+
+        <div className="grid grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() =>
+              handleChange("high_raise_support", 1) // store numeric 1
+            }
+            className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+              formData.high_raise_support === 1
+                ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+                : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+            }`}
+          >
+            <span>Yes</span>
           </button>
-        ))}
-         </div>
-         {errors.propertyType_purchase && (
-          <p className="text-red-500 text-[12px] mt-1">{errors.propertyType_purchase}</p>
-           )}
+
+          <button
+            type="button"
+            onClick={() => handleChange("high_raise_support", 0)} // store numeric 0
+            className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+              formData.high_raise_support === 0
+                ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+                : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+            }`}
+          >
+            <span>No</span>
+          </button>
+        </div>
+        <p className="text-[12px] mt-1 min-h-[16px] transition-all duration-200"></p>
+      </div>
+    </div>
+  )}
+</div>
+
          </div></div>
                 
                     {/* 💰 PURCHASE FINANCE */}
@@ -1110,6 +1268,37 @@ console.log(e);
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
 
+                  {/* purchase mode */}
+                    <div className="flex flex-col h-full">
+                                                   <label htmlFor="b2l" className="block text-sm font-medium text-gray-700 mb-1">
+                                                    Purchase mode<span className="text-red-500">*</span>
+                                                   </label>
+                                               <div className="relative mt-auto">
+                                 <select
+                                   name="purchase_mode"
+                                   id="b2l"
+                                   value={formData.purchase_mode || ""}  // ✅ controlled value
+                                   onChange={(e) => handleChange("purchase_mode", e.target.value)}  // ✅ update formData
+                                   className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"
+                                 >
+                                   {stampDutyOptions.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                                 </select>
+                               
+                                 <ChevronDown
+                                   size={16}
+                                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+                                 />
+                               </div>
+                       <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+                         errors.purchase_mode ? "text-red-500 opacity-100" : "opacity-0"
+                      }`}>
+                        {errors.purchase_mode || "placeholder"} {/* placeholder keeps same height */}
+                      </p>
+                                                 </div>
                   {/* 6. Buy to Let? (Inline Select) */}
                   <div className="flex flex-col h-full">
   <label
@@ -1151,72 +1340,75 @@ console.log(e);
     <p className="text-red-500 text-[12px] mt-1">{errors.buy_to_let}</p>
   )}
 </div>
-
-                  {/* 7. Government Right to Buy scheme? (Inline ButtonGroup) */}
-                   <div className="flex flex-col h-full">
-                                                   <label htmlFor="b2l" className="block text-sm font-medium text-gray-700 mb-1">
-                                                    Purchase mode<span className="text-red-500">*</span>
-                                                   </label>
-                                               <div className="relative mt-auto">
-                                 <select
-                                   name="purchase_mode"
-                                   id="b2l"
-                                   value={formData.purchase_mode || ""}  // ✅ controlled value
-                                   onChange={(e) => handleChange("purchase_mode", e.target.value)}  // ✅ update formData
-                                   className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"
-                                 >
-                                   {stampDutyOptions.map((opt) => (
-                      <option key={opt.value} value={opt.value}>
-                        {opt.label}
-                      </option>
-                    ))}
-                                 </select>
-                               
-                                 <ChevronDown
-                                   size={16}
-                                   className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
-                                 />
-                               </div>
-                       <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
-                         errors.purchase_mode ? "text-red-500 opacity-100" : "opacity-0"
-                      }`}>
-                        {errors.purchase_mode || "placeholder"} {/* placeholder keeps same height */}
-                      </p>
-                                                 </div>
+                   
 
                   {/* 8. Obtaining a mortgage? (Inline ButtonGroup) */}
                   <div className="flex flex-col h-full">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Obtaining a mortgage?
                     </label>
-                    <div className="grid grid-cols-2 gap-3 mt-auto">
-                      <button
-                        type="button"
-                        onClick={() => setMortgage_purchase("yes")}
-                        className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-                          mortgage_purchase === "yes"
-                            ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
-                            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                        }`}
-                      >
-                        <span>Yes</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setMortgage_purchase("no")}
-                        className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-                          mortgage_purchase === "no"
-                            ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
-                            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                        }`}
-                      >
-                        <span>No</span>
-                      </button>
-                    </div>
+                    <div className="grid grid-cols-2 gap-3 ">
+        <button
+          type="button"
+          onClick={() => {
+            setFormData({ ...formData, mortgage_purchase: 1 }); // ✅ store 1 for yes
+            if (errors.mortgage_purchase) {
+              setErrors({ ...errors, mortgage_purchase: "" }); // clear error on change
+            }
+          }}
+          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+            formData.mortgage_purchase === 1
+              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          <span>Yes</span>
+        </button>
+    
+        <button
+          type="button"
+           onClick={() => {
+    setFormData({ ...formData, mortgage_purchase: 0 }); // 0 = No
+    setSelectedLenders([]); // Clear selected lenders
+    if (errors.mortgage_purchase || errors.lenders) {
+      setErrors({ ...errors, mortgage_purchase: "", lenders: "" });
+    }
+  }}
+          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+            formData.mortgage_purchase === 0
+              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          <span>No</span>
+        </button>
+      </div>
                   </div>
 
-                  {/* 9. Mortgage Lender (Inline Select) */}
-                
+ <div className="flex flex-col h-full">
+          <label className="block text-sm font-semibold text-gray-800 mb-2">
+            Select Lenders <span className="text-red-500">*</span>
+          </label>
+           <Select
+            options={lender}
+            isDisabled={formData.mortgage_purchase==0}
+              instanceId="lenders-select"
+            isMulti
+            value={selectedLenders}
+            onChange={handleChange_l}
+            placeholder="Choose lenders..."
+            className="text-black"
+    
+              /> 
+        {formData.mortgage_purchase==1&&(
+ <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+  errors.lenders ? "text-red-500 opacity-100" : "opacity-0"
+}`}>
+  {errors.lenders || "placeholder"}
+</p>
+        )}     
+          <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
+        </div>
 
                   {/* 10. Receiving a gifted deposit? (Inline Select) */}
                   <div className="flex flex-col h-full">
@@ -1225,7 +1417,7 @@ console.log(e);
                     </label>
                     <div className="relative mt-auto">
                         <select id="gifted_deposit" defaultValue="None" className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10">
-                            {["None", "1 Gifted deposit", "2 Gifted deposit", "3 Gifted deposit"].map((opt) => (
+                            {["0", "1", "2", "3"].map((opt) => (
                                 <option key={opt} value={opt}>{opt}</option>
                             ))}
                         </select>
@@ -1268,7 +1460,7 @@ console.log(e);
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Using Government Right to Buy scheme?
                     </label>
-                    <div className="grid grid-cols-2 gap-3 mt-auto">
+                    <div className="grid grid-cols-2 gap-3 ">
                       <button
                         type="button"
                         onClick={() => setScheme_purchase("yes")}
@@ -1293,17 +1485,9 @@ console.log(e);
                       </button>
                     </div>
                   </div>
-                </div>
-              </div> {/* End PURCHASE FINANCE */}
-
-                    {/* 🌐 SPECIAL INSTRUCTIONS */}
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">        
-  {/* Prefer solicitor in your first language */}
-<div className="space-y-4">
-  {/* Label + Main dropdown */}
-     <div>
+                    <div>
         <label className="block text-sm font-semibold text-gray-800 mb-1">
-          Prefer solicitor in your first language?
+          Prefer solicitor in your first language? <span className="text-red-500">*</span>
         </label>
         <div className="mt-2">
       
@@ -1314,38 +1498,72 @@ console.log(e);
     
                   instanceId="language-select"
         value={selectedLanguage || formData.languages}
-        onChange={handleChangeLang}
+         onChange={(selectedOption) => {
+    handleChangeLang(selectedOption); 
+
+  
+    if (errors.preferLanguage) {
+      setErrors((prev) => ({ ...prev, preferLanguage: "" }));
+    }
+  }}
         placeholder="Choose languages..."
         className="text-black mt-2"
       />
      
-    </div>
-        <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
+              </div>
+               <p className="text-[12px] mt-1 min-h-[16px] text-red-500">
+  {errors.preferLanguage}
+</p>
       </div>
+                   <div> 
+    {formData.buy_to_let === "Yes - Personal name" && (
+  <div >
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      Need HMO Support
+    </label>
 
-  {/* Show only when needed */}
-
-</div>
-<div className="flex flex-col h-full">
-          <label className="block text-sm font-semibold text-gray-800 mb-2">
-            Select Lenders
-          </label>
-           <Select
-            options={lender}
-              instanceId="lenders-select"
-            isMulti
-            value={selectedLenders}
-            onChange={handleChange_l}
-            placeholder="Choose lenders..."
-            className="text-black"
+  <div className="grid grid-cols-2 gap-3 ">
+        <button
+          type="button"
+          onClick={() => {
+            setFormData({ ...formData, need_hmo: 1 }); // ✅ store 1 for yes
+            if (errors.need_hmo) {
+              setErrors({ ...errors, need_hmo: "" }); // clear error on change
+            }
+          }}
+          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+            formData.need_hmo === 1
+              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          <span>Yes</span>
+        </button>
     
-          /> 
-          <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
-        </div>
-    </div>     
-
-
-
+        <button
+          type="button"
+          onClick={() => {
+            setFormData({ ...formData, need_hmo: 0 });
+            console.log(formData)
+            setSelectedLenders("") // ✅ store 0 for no
+            if (errors.need_hmo) {
+              setErrors({ ...errors, need_hmo: "",lenders:"" });
+            }
+          }}
+          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+            formData.need_hmo === 0
+              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          <span>No</span>
+        </button>
+      </div>
+  </div>
+)}
+</div>
+                </div>
+              </div> {/* End PURCHASE FINANCE */}
 
 {/* Special instructions */}
 <div>
