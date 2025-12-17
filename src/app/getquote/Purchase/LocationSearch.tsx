@@ -54,14 +54,33 @@ export default function SearchBox({ onSelectAddress, readOnly = false }: SearchB
     }
   };
 
-  const handleSelect = (item: PostcodeResult) => {
-    setQuery(item.suggestion);
-    setResults([]);
-    setSelectedIndex(-1);
-    justSelectedRef.current = true;
+const handleSelect = async (item: PostcodeResult) => {
+  setResults([]);
+  setSelectedIndex(-1);
+  justSelectedRef.current = true;
 
-    if (onSelectAddress) onSelectAddress(item);
-  };
+  // 👉 CALL UDPRN DETAILS API HERE
+  const details = await fetchAddressDetails(item.udprn);
+
+  // 👉 USE THIS BLOCK HERE
+  if (details) {
+    const fullAddress = [
+      details.line_1,
+      details.line_2,
+      details.post_town,
+      details.postcode,
+    ]
+      .filter(Boolean)
+      .join(", ");
+
+    setQuery(fullAddress); // ✅ FULL ADDRESS + FULL POSTCODE
+  } else {
+    setQuery(item.suggestion);
+  }
+
+  if (onSelectAddress) onSelectAddress(item);
+};
+
 
 useEffect(() => {
     if (justSelectedRef.current) {
