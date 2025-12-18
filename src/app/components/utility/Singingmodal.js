@@ -19,10 +19,52 @@ export default function Signinmodal({ closeModal,page }) {
   const [guestformsdata, setguestformsdata] = useState({
     guest_email: "",
     guest_name: "",
-    guest_phonenumber: [],
+    guest_phonenumber: "",
   });
 
   const [loginError, setLoginError] = useState("");
+const [formErrors, setFormErrors] = useState({});
+
+const validateLoginForm = () => {
+  const errors = {};
+
+  if (!loginformdata.email) {
+    errors.email = "Email is required";
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginformdata.email)) {
+    errors.email = "Invalid email address";
+  }
+
+  // if (!loginformdata.password) {
+  //   errors.password = "Password is required";
+  // } else if (loginformdata.password.length < 6) {
+  //   errors.password = "Password must be at least 6 characters";
+  // }
+
+  setFormErrors(errors);
+  return Object.keys(errors).length === 0;
+};
+const validateGuestForm = () => {
+  const errors = {};
+
+  if (!guestformsdata.guest_name?.trim()) {
+    errors.guest_name = "Full name is required";
+  }
+
+  if (!guestformsdata.guest_email) {
+    errors.guest_email = "Email is required";
+  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestformsdata.guest_email)) {
+    errors.guest_email = "Invalid email address";
+  }
+
+  if (!guestformsdata.guest_phonenumber) {
+    errors.guest_phonenumber = "Phone number is required";
+  } else if (!/^\d{10}$/.test(guestformsdata.guest_phonenumber)) {
+    errors.guest_phonenumber = "Phone number must be 10 digits";
+  }
+
+  setFormErrors(errors);
+  return Object.keys(errors).length === 0;
+};
 
 
   const [modalopen, setModalopen] = useState(false);
@@ -38,7 +80,7 @@ export default function Signinmodal({ closeModal,page }) {
     leasehold_or_free: "",
     property_type: "",
     shared_ownership: "",
-    existing_mortgage: "yes",
+    existing_mortgage: 0,
     languages: "",
     specal_instruction: "",
     lender: "",
@@ -50,12 +92,14 @@ export default function Signinmodal({ closeModal,page }) {
       ...prev,
       [name]: value,
     }));
+    setFormErrors(prev => ({ ...prev, [name]: "" }));
   }
   function handleguestformchange(name, value) {
     setguestformsdata((prev) => ({
       ...prev,
       [name]: value,
     }));
+    setFormErrors(prev => ({ ...prev, [name]: "" }));
   }
    async function logindata() {
 
@@ -123,31 +167,63 @@ export default function Signinmodal({ closeModal,page }) {
       console.error("Error logging in:", error);
     }
   }
-  async function createguestuser() {
-    console.log("1");
-    try {
-      console.log("1");
+async function createguestuser() {
+  try {
+    // 1️⃣ Validate guest form
+    if (!validateGuestForm()) return;
 
-      const guest_id = uuidv4();
-      console.log(guest_id);
+    // 2️⃣ Read existing quote
+    let quoteData = JSON.parse(localStorage.getItem("getquote") || "{}");
 
-      const updatedForm = {
-        ...formData,
-        guest_user: guest_id,
-        guest_name: guestformsdata.guest_name,
-        guest_email: guestformsdata.guest_email,
-        guest_phonenumber: guestformsdata.guest_phonenumber,
-        service_type: 2,
-        user_id: null,
-      };
+    // 3️⃣ Create guest in backend
+    const payload = {
+      name: guestformsdata.guest_name,
+      email: guestformsdata.guest_email,
+      phone_number: guestformsdata.guest_phonenumber,
+    };
 
-      setFormData(updatedForm);
-      localStorage.setItem("getquote", JSON.stringify(updatedForm));
-      router.push("/components/comparequotes");
-    } catch (error) {
-      console.error("Error logging in:", error);
+    const response = await fetch("http://localhost:5000/api/addguest", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await response.json();
+
+    if (result.code !== 200) {
+      setLoginError(result.message || "Failed to create guest user");
+      return;
     }
+
+    // 4️⃣ Generate UUID (FRONTEND ONLY)
+    const guest_uuid = uuidv4();
+
+    // 5️⃣ Build quote object (LOGIN-LIKE)
+    const updatedQuote = {
+      ...quoteData,
+      guest_user: guest_uuid, // ✅ numeric DB ID
+      guest_name: result.data.name,
+      guest_email: result.data.email,
+      guest_phonenumber: result.data.phone_number,
+      user_id: null,
+      service_type: 2,
+    };
+
+    // 6️⃣ Store everything safely
+    localStorage.setItem("getquote", JSON.stringify(updatedQuote));
+    localStorage.setItem("guest_uuid", guest_uuid); // ✅ UUID stored safely
+    localStorage.setItem("logintype", "guest");
+
+    // 7️⃣ Redirect
+    router.push("/components/comparequotes");
+
+  } catch (error) {
+    console.error("Guest login failed:", error);
+    setLoginError("Something went wrong. Please try again.");
   }
+}
+
+
 
   const quoteData = localStorage.getItem("service");
   const isEmptyQuote = quoteData?true:false;
@@ -246,9 +322,13 @@ export default function Signinmodal({ closeModal,page }) {
         {loginformshow && (
           <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-6">
             <form
+            noValidate
               onSubmit={(e) => {
                 e.preventDefault();
-                logindata();
+                setLoginError("");
+                if (validateLoginForm()) {
+                  logindata();
+                }
               }}
               className="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg border border-gray-200"
             >
@@ -257,12 +337,10 @@ export default function Signinmodal({ closeModal,page }) {
               </h2>
 
               {loginError && (
-    <p className="text-red-600 text-sm font-medium text-center mb-4">
-        {loginError}
-    </p>
-)}
-
-
+                  <p className="text-red-600 text-sm font-medium text-center mb-4">
+                      {loginError}
+                  </p>
+              )}
               {/* Email */}
               <div className="mb-5">
                 <label
@@ -275,7 +353,7 @@ export default function Signinmodal({ closeModal,page }) {
                   id="email"
                   name="email"
                   type="email"
-                  required
+                  
                   placeholder="Enter your email"
                   value={loginformdata.email || ""}
                   onChange={(e) =>
@@ -283,6 +361,9 @@ export default function Signinmodal({ closeModal,page }) {
                   }
                   className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
                 />
+                {formErrors.email && (
+                  <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>
+                )}
               </div>
 
               {/* Password */}
@@ -297,7 +378,7 @@ export default function Signinmodal({ closeModal,page }) {
                   id="password"
                   name="password"
                   type="password"
-                  required
+                  
                   placeholder="Enter your password"
                   value={loginformdata.password || ""}
                   onChange={(e) =>
@@ -306,6 +387,9 @@ export default function Signinmodal({ closeModal,page }) {
                   autoComplete="current-password"
                   className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
                 />
+                {formErrors.password && (
+                  <p className="text-red-500 text-xs mt-1">{formErrors.password}</p>
+                )}
               </div>
 
               {/* Submit Button */}
@@ -321,6 +405,15 @@ export default function Signinmodal({ closeModal,page }) {
                   setloginformshow(false);
                   setguestformshow(false);
                   setLoginError(false);
+
+                  setloginformdata({
+                    email: "",
+                    password: "",
+                    type: "",
+                  });
+
+                  setFormErrors({});
+                  setLoginError("");
                 }}
                 className="mt-1 w-full bg-[#ffd954] text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md transform hover:scale-105"
               >
@@ -333,9 +426,13 @@ export default function Signinmodal({ closeModal,page }) {
         {guestformshow && (
           <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-6">
             <form
+            noValidate
               onSubmit={(e) => {
                 e.preventDefault();
-                createguestuser();
+                setLoginError("");
+                if (validateGuestForm()) {
+                  createguestuser();
+                }
               }}
               className="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg border border-gray-200"
             >
@@ -344,12 +441,10 @@ export default function Signinmodal({ closeModal,page }) {
               </h2>
 
               {loginError && (
-    <p className="text-red-600 text-sm font-medium text-center mb-4">
-        {loginError}
-    </p>
-)}
-
-
+                  <p className="text-red-600 text-sm font-medium text-center mb-4">
+                      {loginError}
+                  </p>
+              )}
               {/* Email */}
               <div className="mb-6">
                 <label
@@ -362,7 +457,7 @@ export default function Signinmodal({ closeModal,page }) {
                   id="Name"
                   name="guest_name"
                   type="text"
-                  required
+                  
                   placeholder="Enter your Name"
                   value={guestformsdata.guest_name || ""}
                   onChange={(e) =>
@@ -371,6 +466,9 @@ export default function Signinmodal({ closeModal,page }) {
                   autoComplete="current-password"
                   className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
                 />
+                {formErrors.guest_name && (
+                  <p className="text-red-500 text-xs mt-1">{formErrors.guest_name}</p>
+                )}
               </div>
               <div className="mb-5">
                 <label
@@ -383,7 +481,7 @@ export default function Signinmodal({ closeModal,page }) {
                   id="email"
                   name="guest_email"
                   type="email"
-                  required
+                  
                   placeholder="Enter your email"
                   value={guestformsdata.guest_email || ""}
                   onChange={(e) =>
@@ -391,34 +489,40 @@ export default function Signinmodal({ closeModal,page }) {
                   }
                   className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
                 />
+                {formErrors.guest_email && (
+                  <p className="text-red-500 text-xs mt-1">{formErrors.guest_email}</p>
+                )}
               </div>
                 <div className="mb-5">
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
                     Phone Number
                   </label>
                 <input
-  type="text"
-  name="guest_phonenumber"
-  maxLength={10}
-  inputMode="numeric"
-  required
-  placeholder="Enter your phone number"
-  value={guestformsdata.guest_phonenumber || ""}
-  onChange={(e) => {
-    const value = e.target.value;
+                  type="text"
+                  name="guest_phonenumber"
+                  maxLength={10}
+                  inputMode="numeric"
+                  
+                  placeholder="Enter your phone number"
+                  value={guestformsdata.guest_phonenumber || ""}
+                  onChange={(e) => {
+                    const value = e.target.value;
 
-    // Allow only numbers
-    if (/^\d*$/.test(value)) {
-      handleguestformchange("guest_phonenumber", value);
-    }
-  }}
-  className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 
-    text-[14px] text-gray-800 placeholder-gray-400 
-    focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] 
-    outline-none transition-all"
-/>
-
-
+                    // Allow only numbers
+                    if (/^\d*$/.test(value)) {
+                      handleguestformchange("guest_phonenumber", value);
+                    }
+                  }}
+                  className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 
+                    text-[14px] text-gray-800 placeholder-gray-400 
+                    focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] 
+                    outline-none transition-all"
+                />
+                {formErrors.guest_phonenumber && (
+                  <p className="text-red-500 text-xs mt-1">
+                    {formErrors.guest_phonenumber}
+                  </p>
+                )}
                 </div>
 
               {/* Password */}
@@ -435,7 +539,16 @@ export default function Signinmodal({ closeModal,page }) {
                 onClick={() => {
                   setloginformshow(false);
                   setguestformshow(false);
-                }}
+
+                  setguestformsdata({
+                    guest_email: "",
+                    guest_name: "",
+                    guest_phonenumber: "",
+                  });
+
+                  setFormErrors({});
+                  setLoginError("");
+                              }}
                 className="mt-1 w-full bg-[#ffd954] text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md transform hover:scale-105"
               >
                 Back
