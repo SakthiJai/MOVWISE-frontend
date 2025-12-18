@@ -855,7 +855,7 @@ settotal(totalamount)
                                     
                                       <tr className="border-b border-gray-200" >
                                         <td className="p-2 text-sm font-semibold text-start ">{`Legal Fees`}</td>
-                                        <td className="p-2 text-sm text-right ">{formatGBP(item.legal_fees)}</td>
+                                        <td className="p-2 text-sm text-right font-bold ">{formatGBP(item.legal_fees)}</td>
                                         <td className="p-2 text-sm text-right">
                                           {"-"}
                                         </td>

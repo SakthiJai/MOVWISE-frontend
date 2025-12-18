@@ -3,6 +3,8 @@ import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
+import { v4 as uuidv4 } from "uuid";
+
 import {
   Check,
   ListPlus,
@@ -101,7 +103,6 @@ export default function Quotationdetails() {
     // Define async function inside useEffect
 
     const fetchData = async () => {
-      
       //console.loglog("121212");
       try {
         // setLoading(true);
@@ -121,8 +122,7 @@ export default function Quotationdetails() {
           response1.data[2][0]["sub_categories"].push({
             sub_category: " Sales Transaction Supplements",
           });
-                  setpurchaseFeeTypeList(response2.supplement_fees ?? []);
-
+          setpurchaseFeeTypeList(response2.supplement_fees ?? []);
         } else if (
           storedData["service_id"]?.indexOf(2) !== -1 ||
           storedData["service_id"]?.indexOf(3) !== -1
@@ -130,15 +130,51 @@ export default function Quotationdetails() {
           response1.data[2][0]["sub_categories"].push({
             sub_category: "Purchase Transaction Supplements",
           });
-             setpurchaseFeeTypeList(response2.supplement_fees ?? []);
+          setpurchaseFeeTypeList(response2.supplement_fees ?? []);
         }
         //console.loglog(response1.data[2][0]['sub_categories'])
         setfeeCategory(response1.data);
         setstandardDisbursementList(response2.standard_disbursement ?? []);
         setleaseholdDisbursementList(response2.leasehold_disbursement ?? []);
-        
+
         setadditionalServiceList(response2.additional_service ?? []);
-        setpricingList(response3.pricing ?? []);
+        setpricingList(response3.pricing);
+        const updatedPricing = response3.pricing.map((item) => {
+          if (item.fees_category_id === 2) {
+            return {
+              ...item,
+              price_list: [
+                ...response2.supplement_fees.map((category) => ({
+                  type_id: category.id,
+                  fee_amount: "",
+                  paid_to: "",
+                  description: "",
+                  is_delete: "",
+                  status: "",
+                })),
+              ],
+            };
+          } else if (item.fees_category_id === 3) {
+            return {
+              ...item,
+              price_list: [
+                ...response2.standard_disbursement.map((category) => ({
+                  type_id: category.id,
+                  fee_amount: "",
+                  paid_to: "",
+                  description: "",
+                  is_delete: "",
+                  status: "",
+                })),
+              ],
+            };
+          }
+          return item;
+        });
+
+        console.log(updatedPricing);
+
+        setpricingList(updatedPricing);
       } catch (err) {
         //console.logerror(err);
         setErrors("Failed to fetch data");
@@ -149,11 +185,6 @@ export default function Quotationdetails() {
 
     fetchData();
   }, []);
-
-
-  
-
-  
 
   const handleSubmit = async () => {
     console.log(pricingList, Object.keys(feeCategory));
@@ -189,32 +220,33 @@ export default function Quotationdetails() {
         notes: notesData,
       };
       setFinalPayload(payload);
-    
 
-const pricingTypeIds = pricingList[1].price_list.map(item => Number(item.type_id));
-const disbursementTypeIds = pricingList[2].price_list.map(item => Number(item.type_id));
-const addittionalleashhold = pricingList[3].price_list.map(item => Number(item.type_id));
+      const pricingTypeIds = pricingList[1].price_list.map((item) =>
+        Number(item.type_id)
+      );
+      const disbursementTypeIds = pricingList[2].price_list.map((item) =>
+        Number(item.type_id)
+      );
+      const addittionalleashhold = pricingList[3].price_list.map((item) =>
+        Number(item.type_id)
+      );
 
-const remainingPurchaseItems = purchaseFeeTypeList.filter(
-  item => !pricingTypeIds.includes(item.id)
-);
+      const remainingPurchaseItems = purchaseFeeTypeList.filter(
+        (item) => !pricingTypeIds.includes(item.id)
+      );
 
-const remainingDisbursementItems = standardDisbursementList.filter(
-  item => !disbursementTypeIds.includes(item.id)
-);
+      const remainingDisbursementItems = standardDisbursementList.filter(
+        (item) => !disbursementTypeIds.includes(item.id)
+      );
 
-const remainingadditionalleahold = leaseholdDisbursementList.filter(
-  item => !addittionalleashhold.includes(item.id
-)
-  )
+      const remainingadditionalleahold = leaseholdDisbursementList.filter(
+        (item) => !addittionalleashhold.includes(item.id)
+      );
 
+      setremainingsupplement(remainingPurchaseItems);
+      setremainingdisbursement(remainingDisbursementItems);
+      setremainingleashold(remainingadditionalleahold);
 
-
-setremainingsupplement(remainingPurchaseItems);
-setremainingdisbursement(remainingDisbursementItems);
-setremainingleashold(remainingadditionalleahold);
-
-      
       setShowConfirm(true);
     } catch (error) {
       console.log("Error building payload:", error);
@@ -268,7 +300,7 @@ setremainingleashold(remainingadditionalleahold);
   ]);
 
   const handle_addrow = (index) => {
-    console.log("add row :",index)
+    console.log("add row :", index);
     setpricingList((prev) =>
       prev.map((item) =>
         item.fees_category_id === index
@@ -294,24 +326,23 @@ setremainingleashold(remainingadditionalleahold);
       )
     );
   };
-  const handleDeleteRow = (feesCategoryId, rowIndex) =>{ 
-    console.log("delet:",rowIndex,feesCategoryId)
-    console.log(pricingList)
-  setpricingList(prev =>
-    prev.map(item =>
-      item.fees_category_id === feesCategoryId
-        ? {
-            ...item,
-            price_list: item.price_list.map((row, i) =>
-              i == rowIndex ? { ...row, is_delete: 1 }  : row
-            )
-          }
-        : item
-    )
-  );
-      console.log(pricingList)
-
-}
+  const handleDeleteRow = (feesCategoryId, rowIndex,others_id) => {
+    console.log("delete:", rowIndex, feesCategoryId);
+ 
+    setpricingList((prev) =>
+      prev.map((item) =>
+        item.fees_category_id === feesCategoryId
+          ? {
+              ...item,
+              price_list: item.price_list.map((row, i) =>
+                others_id == row.others_id  ? { ...row, is_delete: 1 } : row
+              ),
+            }
+          : item
+      )
+    );
+       console.log(pricingList);
+  };
   const handle_transaction_sales = (index) => {
     setpricingList((prev) =>
       prev.map((item) =>
@@ -349,12 +380,27 @@ setremainingleashold(remainingadditionalleahold);
                   description: "",
                   is_delete: "",
                   status: "",
+                  others: "",
+                  others_id: uuidv4(),
                 },
               ],
             }
           : item
       )
     );
+       console.log(purchaseFeeTypeList);
+
+//    setpurchaseFeeTypeList(prev => [
+//   ...prev,
+//   {
+//     id: "",
+//     category_id: "",
+//     fee_type: "",
+//     status: ""
+//   }
+// ]);
+
+    
   };
   const handle_standard_disbursement = (index) => {
     setpricingList((prev) =>
@@ -371,6 +417,7 @@ setremainingleashold(remainingadditionalleahold);
                   description: "",
                   is_delete: "",
                   status: "",
+                   others: "",
                 },
               ],
             }
@@ -447,237 +494,221 @@ setremainingleashold(remainingadditionalleahold);
       maximumFractionDigits: 2,
     }).format(num);
   const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
-  const rawValue = value.replace(/[^\d.]/g, "");
-    console.log(rowIndex)
+    const rawValue = value.replace(/[^\d.]/g, "");
+    console.log(feesCategoryId, rowIndex, field, value);
 
+    setpricingList((prev) =>
+      prev.map((item) =>
+        item.fees_category_id === feesCategoryId
+          ? {
+              ...item,
+              price_list: item.price_list.map((row, i) =>
+                i === rowIndex
+                  ? {
+                      ...row,
+                      [field]: value,
+                    }
+                  : row
+              ),
+            }
+          : item
+      )
+    );
 
-  setpricingList((prev) =>
-    prev.map((item) =>
-      item.fees_category_id === feesCategoryId
-        ? {
-            ...item,
-            price_list: item.price_list.map((row, i) =>
-              i === rowIndex
-                ? {
-                    ...row,
-                    [field]: field === "description" ? value : rawValue,
-                  }
-                : row
-            ),
-          }
-        : item
-    )
-  );
+    console.log(pricingList);
 
-  if (timers.current[feesCategoryId])
-    clearTimeout(timers.current[feesCategoryId]);
+    if (timers.current[feesCategoryId])
+      clearTimeout(timers.current[feesCategoryId]);
 
-  timers.current[feesCategoryId] = setTimeout(() => {
-    // 🚫 Skip formatting for type_id
-    if (field === "type_id" || field === "description") return;
+    timers.current[feesCategoryId] = setTimeout(() => {
+      // 🚫 Skip formatting for type_id
+      if (field === "type_id" || field === "description") return;
 
-    const num = Number(rawValue);
-    if (!isNaN(num)) {
-      const formatted = formatNumber(num);
+      const num = Number(rawValue);
+      if (!isNaN(num)) {
+        const formatted = formatNumber(num);
 
-      setpricingList((prev) =>
-        prev.map((item) =>
-          item.fees_category_id === feesCategoryId
-            ? {
-                ...item,
-                price_list: item.price_list.map((row, i) =>
-                  i === rowIndex
-                    ? { ...row, [field]: formatted }
-                    : row
-                ),
-              }
-            : item
-        )
-      );
-    }
-  }, 2000);
-};
-
-
-
+        setpricingList((prev) =>
+          prev.map((item) =>
+            item.fees_category_id === feesCategoryId
+              ? {
+                  ...item,
+                  price_list: item.price_list.map((row, i) =>
+                    i === rowIndex ? { ...row, [field]: formatted } : row
+                  ),
+                }
+              : item
+          )
+        );
+      }
+    }, 2000);
+  };
 
   const validatePriceList = (list) => {
     let errors = [];
     for (let i = 0; i < list.length; i++) {
       if (list[i]["fees_category_id"] == 1) {
         for (let j = 0; j < list[i]["price_list"].length; j++) {
-          if(list[i]["is_delete"]!=1)
-          {
-          const { min, max } = list[i].price_list[j];
+          if (list[i]["is_delete"] != 1) {
+            const { min, max } = list[i].price_list[j];
 
-          if (min == null || min == "") {
-            errors.push(
-              `Row ${i + 1}: min  and max value is required`
-            );
-            break;
-          }
+            if (min == null || min == "") {
+              errors.push(`Row ${i + 1}: min  and max value is required`);
+              break;
+            }
 
-          if (min !== null && min !== "" && (max === null || max === "")) {
-            errors.push(
-              `Row ${i + 1}: max value is required when min is present`
-            );
-            break;
-          }
-          // Skip rows if min or max is missing (both empty)
-          if ((min === null || min === "") && (max === null || max === ""))
-            continue;
-
-          // 2️⃣ Current row min < max
-          if (Number(min) >= Number(max)) {
-            errors.push(
-              `Row ${i + 1}: min (${min}) should be less than max (${max})`
-            );
-            break;
-          }
-          // 3️⃣ Min should be >= previous row's max (if not first row)
-          if (i > 0) {
-            const prevMax = list[i - 1].max;
-            if (
-              prevMax !== null &&
-              prevMax !== "" &&
-              Number(min) < Number(prevMax)
-            ) {
+            if (min !== null && min !== "" && (max === null || max === "")) {
               errors.push(
-                `Row ${
-                  i + 1
-                }: min (${min}) should be greater than or equal to previous row's max (${prevMax})`
+                `Row ${i + 1}: max value is required when min is present`
               );
               break;
             }
+            // Skip rows if min or max is missing (both empty)
+            if ((min === null || min === "") && (max === null || max === ""))
+              continue;
+
+            // 2️⃣ Current row min < max
+            if (Number(min) >= Number(max)) {
+              errors.push(
+                `Row ${i + 1}: min (${min}) should be less than max (${max})`
+              );
+              break;
+            }
+            // 3️⃣ Min should be >= previous row's max (if not first row)
+            if (i > 0) {
+              const prevMax = list[i - 1].max;
+              if (
+                prevMax !== null &&
+                prevMax !== "" &&
+                Number(min) < Number(prevMax)
+              ) {
+                errors.push(
+                  `Row ${
+                    i + 1
+                  }: min (${min}) should be greater than or equal to previous row's max (${prevMax})`
+                );
+                break;
+              }
+            }
           }
         }
-      }
         if (errors.length > 0) {
           setlegalFeesError(errors);
           return false;
         }
-      } 
-      else if (list[i]["fees_category_id"] == 2) {
+      } else if (list[i]["fees_category_id"] == 2) {
         let terror = [];
         for (let j = 0; j < list[i]["price_list"].length; j++) {
-          if(list[i]["is_delete"]!=1){
-          const { type_id, fee_amount } = list[i].price_list[j];
-         
-          if (type_id != "" && Number(fee_amount) <= 0) {
-            terror.push(`Row ${i + 1}: Fee amount is missing`);
-            //return false;
-            break;
+          if (list[i]["is_delete"] != 1) {
+            const { type_id, fee_amount } = list[i].price_list[j];
+
+            if (type_id != "" && Number(fee_amount) <= 0) {
+              // terror.push(`Row ${i + 1}: Fee amount is missing`);
+              //return false;
+              break;
+            }
           }
-        
-         
-        }
         }
 
-       for (let i = 0; i < list.length; i++) {
-  const seen = new Set();
-if(terror.length==0){
-  for (let k = 0; k < list[i].price_list.length; k++) {
-    const item = list[i].price_list[k];
-    if(seen.length>0){
-  if (seen.has(item.type_id)) {
-      console.log("Duplicate found:", item.type_id, item);
-      terror.push(`Row ${i + 1}: Duplicate  found`);
-     
-    } else {
-      seen.add(item.type_id);
-    }
-    }
-  
-  }
-}}
+        for (let i = 0; i < list.length; i++) {
+          const seen = new Set();
+          if (terror.length == 0) {
+            for (let k = 0; k < list[i].price_list.length; k++) {
+              const item = list[i].price_list[k];
+              if (seen.length > 0) {
+                if (seen.has(item.type_id)) {
+                  console.log("Duplicate found:", item.type_id, item);
+                  terror.push(`Row ${i + 1}: Duplicate  found`);
+                } else {
+                  seen.add(item.type_id);
+                }
+              }
+            }
+          }
+        }
 
         if (terror.length > 0) {
           settransactionFeesError(terror);
-          terror=[];
+          terror = [];
           return false;
         }
       } else if (list[i]["fees_category_id"] == 3) {
         let terror3 = [];
         for (let j = 0; j < list[i]["price_list"].length; j++) {
-          if(list[i]["is_delete"]!=1){
-          const { type_id, fee_amount } = list[i].price_list[j];
-          if (type_id != "" && Number(fee_amount) <= 0) {
-            terror3.push(`Row ${i + 1}: Fee amount is missing`);
-            //return false;
-            break;
+          if (list[i]["is_delete"] != 1) {
+            const { type_id, fee_amount } = list[i].price_list[j];
+            if (type_id != "" && Number(fee_amount) <= 0) {
+              // terror3.push(`Row ${i + 1}: Fee amount is missing`);
+              //return false;
+              break;
+            } else if (type_id == "") {
+              console.log("fee_amount", fee_amount, type_id, "+", j);
+              // terror3.push(` Fee  missing`);
+              break;
+            }
           }
-           else if(type_id ==""){
-            console.log('fee_amount',fee_amount,type_id,"+",j)
-            terror3.push(` Fee  missing`);
-            break
-          }
-        }
         }
         for (let k = 0; k < list[i].price_list.length; k++) {
-    const item = list[i].price_list[k];
-  const seen = new Set();
-    if (seen.has(item.type_id)) {
-      console.log("Duplicate found:", item.type_id, item);
-      terror3.push(`Row ${i + 1}: Duplicate  found`);
-     
-    } else {
-      seen.add(item.type_id);
-    }
-  }
+          const item = list[i].price_list[k];
+          const seen = new Set();
+          if (seen.has(item.type_id)) {
+            console.log("Duplicate found:", item.type_id, item);
+            terror3.push(`Row ${i + 1}: Duplicate  found`);
+          } else {
+            seen.add(item.type_id);
+          }
+        }
         if (terror3.length > 0) {
           setdisbursementFeesError(terror3);
-          terror3=[];
+          terror3 = [];
           return false;
         }
       } else if (list[i]["fees_category_id"] == 4) {
         let terror4 = [];
         for (let j = 0; j < list[i]["price_list"].length; j++) {
-          if(list[i]["is_delete"]!=1){
-          const { type_id, fee_amount } = list[i].price_list[j];
-          if (type_id != "" && Number(fee_amount) <= 0) {
-            terror4.push(`Row ${i + 1}: Fee amount is missing`);
-            //return false;
-            break;
+          if (list[i]["is_delete"] != 1) {
+            const { type_id, fee_amount } = list[i].price_list[j];
+            if (type_id != "" && Number(fee_amount) <= 0) {
+              terror4.push(`Row ${i + 1}: Fee amount is missing`);
+              //return false;
+              break;
+            } else if (type_id == "") {
+              console.log("fee_amount", fee_amount, type_id, "+", j);
+              terror4.push(` Fee category missing`);
+              break;
+            }
           }
-           else if(type_id ==""){
-            console.log('fee_amount',fee_amount,type_id,"+",j)
-            terror4.push(` Fee  missing`);
-            break
-          }
-        }
         }
         if (terror4.length > 0) {
-          console.log("terror4",terror4)
+          console.log("terror4", terror4);
           setleasedisbursementFeesError(terror4);
           return false;
         }
       } else if (list[i]["fees_category_id"] == 5) {
         let terror5 = [];
         for (let j = 0; j < list[i]["price_list"].length; j++) {
-          if(list[i]["is_delete"]!=1){
-          const { type_id, fee_amount } = list[i].price_list[j];
-          if (type_id != "" && Number(fee_amount) <= 0) {
-            terror5.push(`Row ${i + 1}: Fee amount is missing`);
-            //return false;
-            break;
+          if (list[i]["is_delete"] != 1) {
+            const { type_id, fee_amount } = list[i].price_list[j];
+            if (type_id != "" && Number(fee_amount) <= 0) {
+              // terror5.push(`Row ${i + 1}: Fee amount is missing`);
+              //return false;
+              break;
+            } else if (type_id == "") {
+              console.log("fee_amount", fee_amount, type_id, "+", j);
+              // terror5.push(` Fee  missing`);
+            }
           }
-           else if(type_id ==""){
-            console.log('fee_amount',fee_amount,type_id,"+",j)
-            terror5.push(` Fee  missing`);
-          }
-        } 
         }
         for (let k = 0; k < list[i].price_list.length; k++) {
-    const item = list[i].price_list[k];
-  const seen = new Set();
-    if (seen.has(item.type_id)) {
-      console.log("Duplicate found:", item.type_id, item);
-      terror5.push(`Row ${i + 1}: Duplicate  found`);
-     
-    } else {
-      seen.add(item.type_id);
-    }
-  }
+          const item = list[i].price_list[k];
+          const seen = new Set();
+          if (seen.has(item.type_id)) {
+            console.log("Duplicate found:", item.type_id, item);
+            terror5.push(`Row ${i + 1}: Duplicate  found`);
+          } else {
+            seen.add(item.type_id);
+          }
+        }
         if (terror5.length > 0) {
           setadditionalServiceError(terror5);
           // return false;
@@ -829,7 +860,6 @@ if(terror.length==0){
       </div>
 
       <main className="pt-10  w-auto  grid grid-cols-12 m-3 ">
-        
         <div className=" bg-white shadow-md rounded-2xl p-8 border col-span-12  border-gray-100  ">
           <div className=" w-[1000px]">
             <nav
@@ -886,10 +916,10 @@ if(terror.length==0){
                                 formData["service_id"]?.includes(2)) && (
                                 <>
                                   <th className="px-3 py-2 text-center">
-                                    Purchase Leasehold £
+                                    Purchase Freehold £
                                   </th>
                                   <th className="px-3 py-2 text-center">
-                                    Purchase Freehold £
+                                    Purchase Leasehold £
                                   </th>
                                 </>
                               )}
@@ -898,10 +928,10 @@ if(terror.length==0){
                                 formData["service_id"]?.includes(3)) && (
                                 <>
                                   <th className="px-3 py-2 text-center">
-                                    Sales Leasehold £
+                                    Sales Freehold £
                                   </th>
                                   <th className="px-3 py-2 text-center">
-                                    Sales Freehold £
+                                    Sales Leasehold £
                                   </th>
                                 </>
                               )}
@@ -921,7 +951,8 @@ if(terror.length==0){
                               .find(
                                 (item) => item.fees_category_id === numIndex
                               )
-                              .price_list.filter(row => row.is_delete !== 1).map((row, i) => (
+                              .price_list.filter((row) => row.is_delete !== 1)
+                              .map((row, i) => (
                                 <tr key={i} className="border-b">
                                   <td className="px-3 py-2 text-center">
                                     {i + 1}.
@@ -1003,34 +1034,6 @@ if(terror.length==0){
                                     </div>
                                   </td>
 
-                                  {(formData["service_id"]?.includes(1) ||
-                                    formData["service_id"]?.includes(2)) && (
-                                    <td className="px-3 py-2">
-                                      <div className="flex flex-col">
-                                        <input
-                                          type="text"
-                                          value={row.purchase_leasehold}
-                                          placeholder="Purchase Leasehold"
-                                          className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
-                                          onChange={(e) =>
-                                            handlePriceChange(
-                                              numIndex,
-                                              i,
-                                              "purchase_leasehold",
-                                              e.target.value
-                                            )
-                                          }
-                                        />
-
-                                        {rowErrors[i]?.PurchaseLeasehold && (
-                                          <span className="text-red-500 text-xs">
-                                            {rowErrors[i].PurchaseLeasehold}
-                                          </span>
-                                        )}
-                                      </div>
-                                    </td>
-                                  )}
-
                                   {/* PURCHASE FREEHOLD */}
                                   {(formData["service_id"]?.includes(1) ||
                                     formData["service_id"]?.includes(2)) && (
@@ -1060,29 +1063,28 @@ if(terror.length==0){
                                     </td>
                                   )}
 
-                                  {/* SALES LEASEHOLD */}
                                   {(formData["service_id"]?.includes(1) ||
-                                    formData["service_id"]?.includes(3)) && (
+                                    formData["service_id"]?.includes(2)) && (
                                     <td className="px-3 py-2">
                                       <div className="flex flex-col">
                                         <input
                                           type="text"
-                                          value={row.sales_leasehold}
-                                          placeholder="Sales Leasehold"
+                                          value={row.purchase_leasehold}
+                                          placeholder="Purchase Leasehold"
                                           className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
                                           onChange={(e) =>
                                             handlePriceChange(
                                               numIndex,
                                               i,
-                                              "sales_leasehold",
+                                              "purchase_leasehold",
                                               e.target.value
                                             )
                                           }
                                         />
 
-                                        {rowErrors[i]?.salesLeasehold && (
+                                        {rowErrors[i]?.PurchaseLeasehold && (
                                           <span className="text-red-500 text-xs">
-                                            {rowErrors[i].salesLeasehold}
+                                            {rowErrors[i].PurchaseLeasehold}
                                           </span>
                                         )}
                                       </div>
@@ -1112,6 +1114,35 @@ if(terror.length==0){
                                         {rowErrors[i]?.salesFreehold && (
                                           <span className="text-red-500 text-xs">
                                             {rowErrors[i].salesFreehold}
+                                          </span>
+                                        )}
+                                      </div>
+                                    </td>
+                                  )}
+
+                                  {/* SALES LEASEHOLD */}
+                                  {(formData["service_id"]?.includes(1) ||
+                                    formData["service_id"]?.includes(3)) && (
+                                    <td className="px-3 py-2">
+                                      <div className="flex flex-col">
+                                        <input
+                                          type="text"
+                                          value={row.sales_leasehold}
+                                          placeholder="Sales Leasehold"
+                                          className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
+                                          onChange={(e) =>
+                                            handlePriceChange(
+                                              numIndex,
+                                              i,
+                                              "sales_leasehold",
+                                              e.target.value
+                                            )
+                                          }
+                                        />
+
+                                        {rowErrors[i]?.salesLeasehold && (
+                                          <span className="text-red-500 text-xs">
+                                            {rowErrors[i].salesLeasehold}
                                           </span>
                                         )}
                                       </div>
@@ -1148,24 +1179,29 @@ if(terror.length==0){
 
                                   {/* ADD ROW BUTTON */}
                                   <td className="px-3 py-2 text-center">
-                                    
-                                  {i === 0 && (
+                                    {i === 0 && (
+                                      <button
+                                        className="text-green-600 tooltip  items-center justify-center "
+                                        onClick={() => handle_addrow(numIndex)}
+                                      >
+                                        <FaPlus size={16} />
+                                        <span className="tooltiptext font">
+                                          Add new row
+                                        </span>
+                                      </button>
+                                    )}{" "}
+                                    &nbsp;&nbsp;&nbsp;
                                     <button
-                                      className="text-green-600 tooltip  items-center justify-center "
-                                      onClick={() => handle_addrow(numIndex)}
+                                      className="text-red-600 tooltip"
+                                      onClick={() =>
+                                        handleDeleteRow(numIndex, i)
+                                      }
                                     >
-                                      <FaPlus size={16} />
-                                      <span className="tooltiptext font">
-                                        Add new row
-                                      </span> 
+                                      <FaTrash size={16} />
+                                      <span className="tooltiptext">
+                                        Delete current row
+                                      </span>
                                     </button>
-                                  )} &nbsp;&nbsp;&nbsp;
-                                  
-                                  <button className="text-red-600 tooltip" onClick={() => handleDeleteRow(numIndex, i)}>
-                                    <FaTrash size={16} />
-                                    <span className="tooltiptext">Delete current row</span>
-                                  </button>
-                                 
                                   </td>
                                 </tr>
                               ))}
@@ -1178,7 +1214,7 @@ if(terror.length==0){
                   {numIndex === 2 && (
                     <div className="transactionblock mb-5">
                       <div className="bg-gray-50  px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
-                        {item.fees_category }
+                        {item.fees_category}
                       </div>
                       {item.sub_categories.map((sub, i) => (
                         <div key={i}>
@@ -1191,39 +1227,21 @@ if(terror.length==0){
                             </p>
                           )}
                           <div className="grid  grid-cols-3 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
-                            <div className="text-center">Supplement check Type </div>
+                            <div className="text-center">
+                              Supplement check Type{" "}
+                            </div>
                             <div className="text-center">Fee Cost £</div>
                             <div className="text-end me-14">Action</div>
                           </div>
                           {pricingList
                             .find((item) => item.fees_category_id === numIndex)
-                            .price_list.filter(row => row.is_delete !== 1).map((row, i) => (
+                            .price_list.filter((row) => row.is_delete != 1)
+                            .map((row, i) => (
                               <div
                                 key={i}
-                                className="grid grid-cols-3 gap-3 px-3 py-2"
+                                className=" gap-3 px-3 py-1 grid grid-cols-3 "
                               >
-                                {!row.isOthers ? (
-                                  <select
-                                    className="border poundtransform border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
-                                   onChange={(e) => {
-  settransactionFeesError("");
-  handlePriceChange(numIndex, i, "type_id", e.target.value);
-}}
-
-                                    value={row.type}
-                                  >
-                                    <option value="">
-                                      Select Supplement Type
-                                    </option>
-
-                                    {purchaseFeeTypeList.map((opt, index) => (
-                                      <option key={opt.id} value={opt.id}>
-                                        {opt.fee_type}
-                                      </option>
-                                    ))}
-                                  </select>
-                                
-                                ) : (
+                                {"others" in row ? (
                                   <div>
                                     <input
                                       id="Supplement_type"
@@ -1234,56 +1252,114 @@ if(terror.length==0){
                                         handlePriceChange(
                                           numIndex,
                                           i,
-                                          "type_id",
+                                          "others",
                                           e.target.value
                                         )
                                       }
                                       className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
                                     />
                                   </div>
+                                ) : (
+                                  <div>
+                                    <div className="font text-black ">
+                                      <label
+                                        key={purchaseFeeTypeList?.[i]?.id}
+                                        value={purchaseFeeTypeList?.[i]?.id}
+                                        className="text-sm"
+                                      >
+                                        {purchaseFeeTypeList[i]?.fee_type} 
+                                      </label>
+                                    </div>
+                                  </div>
                                 )}
 
                                 {/* FEE AMOUNT */}
-                                <input
+
+                                 {"others" in row ?( <> <input
                                   placeholder="Fee Amount"
-                                  value={row.fee_amount}
-                                  onChange={(e) =>{
-                                      settransactionFeesError("");
+                                  onChange={(e) => {
+                                    settransactionFeesError("");
 
                                     handlePriceChange(
                                       numIndex,
                                       i,
                                       "fee_amount",
                                       e.target.value
-                                    )
+                                    );
                                   }}
                                   className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
                                 />
+                               <div className="text-right">
+                                    <button
+                                      className="text-green-600 tooltip mr-4 flex items-center justify-center "
+                                      onClick={() =>
+                                        handle_transaction_purchase(numIndex)
+                                      }
+                                    >
+                                      <FaPlus size={16} />
+                                      <span className="tooltiptext font">
+                                        Add new row
+                                      </span>
+                                    </button>
+                                    <button
+                                      className="text-red-600 tooltip"
+                                      onClick={() =>
+                                        handleDeleteRow(numIndex, i,row.others_id)
+                                      }
+                                    >
+                                      <FaTrash size={16} />
+                                      <span className="tooltiptext">
+                                        Delete current row
+                                      </span>
+                                    </button>
+                                  </div>
+                                  </>):(
+                                  <input
+                                  placeholder="Fee Amount"
+                                  onChange={(e) => {
+                                    settransactionFeesError("");
 
-                                <div className="flex justify-end me-6 gap-4">
-                                   {i === 0 && (
-                                  <button
-                                    className="text-green-600 tooltip items-center justify-end "
-                                    onClick={() =>
-                                      handle_transaction_sales(numIndex)
-                                    }
-                                  >
-                                    <FaPlus size={16} />
-                                    <span className="tooltiptext font">
-                                      Add new row
-                                    </span>
-                                  </button>
-
-                                   )}
-                                  &nbsp;&nbsp;
-                                  <button className="text-red-600 tooltip" onClick={() => handleDeleteRow(numIndex, i)}>
-                                    <FaTrash size={16} />
-                                    <span className="tooltiptext">Delete  row</span>
-                                  </button>
-                                    
-                                </div>
+                                    handlePriceChange(
+                                      numIndex,
+                                      i,
+                                      "fee_amount",
+                                      e.target.value
+                                    );
+                                  }}
+                                  className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
+                                />
+                                ) }
+                                
+                                 
+                                {purchaseFeeTypeList.length -1 == i && (
+                                  <div className="text-right">
+                                    <button
+                                      className="text-green-600 tooltip mr-4 flex items-center justify-center "
+                                      onClick={() =>
+                                        handle_transaction_purchase(numIndex)
+                                      }
+                                    >
+                                      <FaPlus size={16} />
+                                      <span className="tooltiptext font">
+                                        Add new row
+                                      </span>
+                                    </button>
+                                    <button
+                                      className="text-red-600 tooltip"
+                                      onClick={() =>
+                                        handleDeleteRow(numIndex, i,row.others_id)
+                                      }
+                                    >
+                                      <FaTrash size={16} />
+                                      <span className="tooltiptext">
+                                        Delete current row
+                                      </span>
+                                    </button>
+                                  </div>
+                                )}
                               </div>
                             ))}
+                         
                         </div>
                       ))}
                     </div>
@@ -1312,104 +1388,133 @@ if(terror.length==0){
                             <div className="text-end pr-14">Action</div>
                           </div>
                           {pricingList
-                            .find((item) => item.fees_category_id === numIndex)
-                            .price_list.map((row, i) => (
+                            .find((item) => item.fees_category_id === numIndex).price_list.filter((row) => row.is_delete != 1)
+                            .map((row, i) => (
                               <div
                                 key={i}
-                                className="grid grid-cols-3 gap-3 px-3 py-2"
+                                className="gap-3 px-3 py-1 grid grid-cols-3"
                               >
-                                {!row.isOthers ? (
-                                  <select
-                                    className="poundtransform border border-gray-400 rounded py-0.5 w-auto  text-sm text-left text-black pl-2"
-                                    onChange={(e) =>{
-                                      setdisbursementFeesError("");
-                                      handlePriceChange(
-                                        numIndex,
-                                        i,
-                                        "type_id",
-                                        e.target.value
-                                      )
-                                    }}
-                                    value={row.type}
-                                  >
-                                    <option value="">
-                                      Select Disbursement
-                                    </option>
-                                    {( standardDisbursementList || []).map(
-                                      (opt, index) => (
-                                        <option key={opt.id} value={opt.id}>
-                                          {opt.fee_type}
-                                        </option>
-                                      )
-                                    )}
-                                  </select>
-                                ) : (
-                                  <div>
+                                {"others" in row  ? (
+                                
+                                   <div>
                                     <input
                                       type="text"
-                                      placeholder="Enter other supplement"
+                                      placeholder="Enter other supplement type"
                                       value={row.type}
                                       onChange={(e) =>
                                         handlePriceChange(
                                           numIndex,
                                           i,
-                                          "type_id",
+                                          "others",
                                           e.target.value
                                         )
                                       }
                                       className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-gray-900 pl-2"
                                     />
                                   </div>
+                                ) : (
+                                   <div className="font text-black ">
+                                    <label
+                                      key={standardDisbursementList?.[i]?.id}
+                                      value={standardDisbursementList?.[i]?.id}
+                                      className="cols-span-1 text-sm"
+                                    >
+                                      {standardDisbursementList[i]?.fee_type}
+                                    </label>
+                                  </div>
                                 )}
 
-                                {/* COST */}
-                                <input
-                                  type="text"
-                                  placeholder="Fee Cost"
-                                  value={row.fee_amount}
-                                   onChange={(e) =>{
-                                      setdisbursementFeesError("");
+                                  {"others" in row ?( <> <input
+                                  placeholder="Fee others"
+                                  onChange={(e) => {
+                                    setdisbursementFeesError("");
 
                                     handlePriceChange(
                                       numIndex,
                                       i,
                                       "fee_amount",
                                       e.target.value
-                                    )
+                                    );
                                   }}
                                   className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
                                 />
+                              <div className=" gap-3  py-1 ">
+                           
 
-                                
+                            {/* ADD ROW – only last row */}
 
-                               
-                                <div className="flex justify-end me-6 gap-4">
-                                  {/* ADD ROW – only last row */}
-                                   {i === 0 && (
-                                   
+                            <div className="text-right">
+                              <button
+                                className="text-green-600 tooltip mr-4 flex items-center justify-center "
+                                onClick={() =>
+                                  handle_standard_disbursement(numIndex)
+                                }
+                              >
+                                <FaPlus size={16} />
+                                <span className="tooltiptext font">
+                                  Add new row
+                                </span>
+                              </button>
+                              <button
+                                className="text-red-600 tooltip"
+                                onClick={() => handleDeleteRow(numIndex, i,row.others_id)}
+                              >
+                                <FaTrash size={16} />
+                                <span className="tooltiptext">
+                                  Delete current row
+                                </span>
+                              </button>
+                            </div>
+                          </div>
+                                  </>):(<>
+                                  <input
+                                  placeholder="Fee Amount"
+                                  onChange={(e) => {
+                                    settransactionFeesError("");
 
+                                    handlePriceChange(
+                                      numIndex,
+                                      i,
+                                      "fee_amount",
+                                      e.target.value
+                                    );
+                                  }}
+                                  className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
+                                />
+                                 {standardDisbursementList.length -1 == i && (
+                                  <div className="text-right">
                                     <button
-                                    className="text-green-600 tooltip w-8 h-8 flex items-center justify-center "
-                                     onClick={() =>
-                                        handle_standard_disbursement(numIndex)
+                                      className="text-green-600 tooltip mr-4 flex items-center justify-center "
+                                      onClick={() =>
+                                        handle_transaction_purchase(numIndex)
                                       }
-                                  >
-                                    <FaPlus size={16} />
-                                    <span className="tooltiptext font">
-                                      Add new row
-                                    </span>
-                                  </button>
-
-                                    
-                                  )}
-
-                                  <button className="text-red-600 tooltip" onClick={() => handleDeleteRow(numIndex, i)}>
-                                    <FaTrash size={16} />
-                                    <span className="tooltiptext">Delete current row</span>
-                                  </button>
-                                </div>
+                                    >
+                                      <FaPlus size={16} />
+                                      <span className="tooltiptext font">
+                                        Add new row
+                                      </span>
+                                    </button>
+                                    <button
+                                      className="text-red-600 tooltip"
+                                      onClick={() =>
+                                        handleDeleteRow(numIndex, i,row.others_id)
+                                      }
+                                    >
+                                      <FaTrash size={16} />
+                                      <span className="tooltiptext">
+                                        Delete current row
+                                      </span>
+                                    </button>
+                                  </div>
+                                )}
+                                </>
+                                )
+                                  
+                                }
                               </div>
                             ))}
+
+                          
                         </div>
                       ))}
                     </div>
@@ -1445,7 +1550,7 @@ if(terror.length==0){
                                   <th className="px-2 py-2 text-center w-1/4">
                                     Fee Type
                                   </th>
-                                  
+
                                   {/* <th className="px-3 py-2 text-center w-1/4">Paid To</th> */}
                                   <th className="px-2 py-2 text-end pr-16 w-1/4">
                                     Action
@@ -1462,16 +1567,16 @@ if(terror.length==0){
                                       <td className="pl-2 py-2 text-center">
                                         {!row.isOthers ? (
                                           <select
-                                            className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
+                                            className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full "
                                             value={row.type}
-                                            onChange={(e) =>{
-                                              setleasedisbursementFeesError("")
+                                            onChange={(e) => {
+                                              setleasedisbursementFeesError("");
                                               handlePriceChange(
                                                 numIndex,
                                                 i,
                                                 "type_id",
                                                 e.target.value
-                                              )
+                                              );
                                             }}
                                           >
                                             <option value="">
@@ -1512,49 +1617,52 @@ if(terror.length==0){
                                           type="text"
                                           placeholder="Fee Cost"
                                           value={row.fee_amount}
-                                             onChange={(e) =>{
-                                              setleasedisbursementFeesError("")
+                                          onChange={(e) => {
+                                            setleasedisbursementFeesError("");
 
-                                    handlePriceChange(
-                                      numIndex,
-                                      i,
-                                      "fee_amount",
-                                      e.target.value
-                                    )
-                                  }}
-                                          className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
+                                            handlePriceChange(
+                                              numIndex,
+                                              i,
+                                              "fee_amount",
+                                              e.target.value
+                                            );
+                                          }}
+                                          className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full "
                                         />
                                       </td>
 
                                       {/* PAID TO */}
-                                      
-
-                                     
 
                                       {/* ACTION BUTTONS */}
                                       <td className="px-3 py-2 text-center">
                                         <div className="flex justify-end me-6 gap-4">
                                           {/* ADD ROW - LAST ROW ONLY */}
-                                           {i === 0 && (
-                                            
-                                             <button
-                                    className="text-green-600 tooltip w-8 h-8 flex items-center justify-center "
-                                      onClick={() =>
+                                          {i === 0 && (
+                                            <button
+                                              className="text-green-600 tooltip w-8 h-8 flex items-center justify-center "
+                                              onClick={() =>
                                                 handle_leasehold_disbursement(
                                                   numIndex
                                                 )
                                               }
-                                  >
-                                    <FaPlus size={16} />
-                                    <span className="tooltiptext font">
-                                      Add new row
-                                    </span>
-                                  </button>
+                                            >
+                                              <FaPlus size={16} />
+                                              <span className="tooltiptext font">
+                                                Add new row
+                                              </span>
+                                            </button>
                                           )}
-                                          <button className="text-red-600 tooltip" onClick={() => handleDeleteRow(numIndex, i)}>
-                                    <FaTrash size={16} />
-                                    <span className="tooltiptext">Delete current row</span>
-                                  </button>
+                                          <button
+                                            className="text-red-600 tooltip"
+                                            onClick={() =>
+                                              handleDeleteRow(numIndex, i)
+                                            }
+                                          >
+                                            <FaTrash size={16} />
+                                            <span className="tooltiptext">
+                                              Delete current row
+                                            </span>
+                                          </button>
                                         </div>
                                       </td>
                                     </tr>
@@ -1650,37 +1758,34 @@ if(terror.length==0){
                                     <div className="flex justify-end me-6 gap-3">
                                       {/* ADD ROW - only last row */}
                                       {i === 0 && (
-                                        
-                                         <button
-                                    className="text-green-600 tooltip w-8 h-8 flex items-center justify-center "
-                                        onClick={() =>
+                                        <button
+                                          className="text-green-600 tooltip w-8 h-8 flex items-center justify-center "
+                                          onClick={() =>
                                             handle_additional_service(numIndex)
                                           }
-                                  >
-                                    <FaPlus size={16} />
-                                    <span className="tooltiptext font">
-                                      Add new row
-                                    </span>
-                                  </button>
+                                        >
+                                          <FaPlus size={16} />
+                                          <span className="tooltiptext font">
+                                            Add new row
+                                          </span>
+                                        </button>
                                       )}
 
-                                    
-
                                       <button
-                                    className="text-red-600 tooltip w-8 h-8 flex items-center justify-center"
-                                    onClick={() => {
+                                        className="text-red-600 tooltip w-8 h-8 flex items-center justify-center"
+                                        onClick={() => {
                                           const updated =
                                             disbursementRows.filter(
                                               (_, idx) => idx !== i
                                             );
                                           setDisbursementRows(updated);
                                         }}
-                                  >
-                                    <FaTrash size={16} />
-                                    <span className="tooltiptext">
-                                      Delete current row
-                                    </span>
-                                  </button>
+                                      >
+                                        <FaTrash size={16} />
+                                        <span className="tooltiptext">
+                                          Delete current row
+                                        </span>
+                                      </button>
                                     </div>
                                   </td>
                                 </tr>
@@ -1785,17 +1890,6 @@ if(terror.length==0){
           </div>
         </div>
       )}
-
-
-
-
-
-
-
-
-
-
-
 
       {showConfirm && (
         <div className="fixed inset-0 mt-20 bg-black/40 backdrop-blur-sm flex  items-center justify-center z-50 animate-fadeIn reviewpopup">
@@ -2134,14 +2228,14 @@ if(terror.length==0){
                             <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
                               {sub.sub_category}
                             </div>
-                          
+
                             <div className="grid  grid-cols-2 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
                               <div className="text-center">
                                 Supplement Type check
                               </div>
                               <div className="text-center">Fee Cost £</div>
                             </div>
-                            
+
                             {pricingList
                               .find(
                                 (item) => item.fees_category_id === numIndex
@@ -2152,15 +2246,19 @@ if(terror.length==0){
                                   className="grid grid-cols-2 gap-3 px-3 py-2"
                                 >
                                   {!row.isOthers ? (
-                                  
-                                      <div>
-                           {purchaseFeeTypeList.map((opt, index) => (
-  opt.id == row.type_id && (
-    <span key={index} className="text-black">{opt.fee_type} </span>
-  ) 
-))}
-
-                                  </div>
+                                    <div>
+                                      {purchaseFeeTypeList.map(
+                                        (opt, index) =>
+                                          opt.id == row.type_id && (
+                                            <span
+                                              key={index}
+                                              className="text-black"
+                                            >
+                                              {opt.fee_type}{" "}
+                                            </span>
+                                          )
+                                      )}
+                                    </div>
                                   ) : (
                                     <div>
                                       <input
@@ -2198,30 +2296,30 @@ if(terror.length==0){
                                     className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
                                   />
 
-                                
-
                                   {/* REMOVE BUTTON */}
                                 </div>
                               ))}
-                              {remainingsupplement.map((item,i)=>(
-                                <div key={i} className="text-black grid grid-cols-2 gap-3 px-3 py-2">
-                                      <span key={index} className="text-black">{item.fee_type} </span>
-                                         <input
-                                    readOnly
-                                    value={0}
-                                    placeholder="Fee Amount"
-                                   
-                                    className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
-                                  />
-
-                                </div>
-                              ))}
+                            {remainingsupplement.map((item, i) => (
+                              <div
+                                key={i}
+                                className="text-black grid grid-cols-2 gap-3 px-3 py-2"
+                              >
+                                <span key={index} className="text-black">
+                                  {item.fee_type}{" "}
+                                </span>
+                                <input
+                                  readOnly
+                                  value={0}
+                                  placeholder="Fee Amount"
+                                  className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
+                                />
+                              </div>
+                            ))}
                           </div>
                         ))}
                       </div>
                     )}
 
-                    
                     {numIndex === 3 && (
                       <div className="standarddisblock mb-5">
                         <div className="bg-gray-50 px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
@@ -2239,14 +2337,14 @@ if(terror.length==0){
                             )}
                             <div className="grid grid-cols-2 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
                               <div className="text-center">
-                                Disbursement Type 
+                                Disbursement Type
                               </div>
                               <div className="text-center">Fee Cost £</div>
-                             
                             </div>
                             {pricingList
                               .find(
-                                (item,index) => item.fees_category_id === numIndex
+                                (item, index) =>
+                                  item.fees_category_id === numIndex
                               )
                               .price_list.map((row, i) => (
                                 <div
@@ -2254,19 +2352,20 @@ if(terror.length==0){
                                   className=" grid grid-cols-2 gap-3 px-3 py-2"
                                 >
                                   {!row.isOthers ? (
-                                    <div className="col-span-1">{
-                     standardDisbursementList.map((opt, index) => (
-  opt.id == row.type_id && (
-    <span key={index} className="text-black">{opt.fee_type} </span>
-    
-  ) 
-))
-}</div>
-                                  
-   
-
-
-                                                                        ) : (
+                                    <div className="col-span-1">
+                                      {standardDisbursementList.map(
+                                        (opt, index) =>
+                                          opt.id == row.type_id && (
+                                            <span
+                                              key={index}
+                                              className="text-black"
+                                            >
+                                              {opt.fee_type}{" "}
+                                            </span>
+                                          )
+                                      )}
+                                    </div>
+                                  ) : (
                                     <div className="grid grid-cols-1">
                                       <input
                                         readOnly
@@ -2287,7 +2386,7 @@ if(terror.length==0){
                                   )}
 
                                   {/* COST */}
-                                 <input
+                                  <input
                                     readOnly
                                     type="text"
                                     placeholder="Fee Cost"
@@ -2302,28 +2401,28 @@ if(terror.length==0){
                                     }
                                     className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black col-span-1"
                                   />
-
-                              
-                                 
                                 </div>
                               ))}
-                                 {remainingdisbursement.map((item,i)=>(
-                                <div key={i} className="text-black grid grid-cols-2 gap-3 px-3 py-2">
-                                      <span key={index} className="text-black">{item.fee_type} </span>
-                                          <input
-                                    readOnly
-                                    value={0}
-                                    placeholder="Fee Amount"
-                                    className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
-                                  />
-                          </div>
-                          
-                        ))}
+                            {remainingdisbursement.map((item, i) => (
+                              <div
+                                key={i}
+                                className="text-black grid grid-cols-2 gap-3 px-3 py-2"
+                              >
+                                <span key={index} className="text-black">
+                                  {item.fee_type}{" "}
+                                </span>
+                                <input
+                                  readOnly
+                                  value={0}
+                                  placeholder="Fee Amount"
+                                  className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
+                                />
+                              </div>
+                            ))}
                           </div>
                         ))}
                       </div>
                     )}
-
 
                     {numIndex === 4 && (
                       <div className="standarddisblock mb-5">
@@ -2353,11 +2452,10 @@ if(terror.length==0){
                                     <th className="px-3 py-2 text-center">
                                       Leasehold Service
                                     </th>
-                                  
+
                                     <th className="px-3 py-2 text-center">
                                       Cost £
                                     </th>
-                                 
                                   </tr>
                                 </thead>
 
@@ -2367,37 +2465,41 @@ if(terror.length==0){
                                       (x) => x.fees_category_id === numIndex
                                     )
                                     .price_list.map((row, i) => (
+                                      
                                       <tr key={i} className="">
                                         {/* LEASEHOLD SERVICE SELECT */}
                                         <td className="px-3 py-2 text-center">
                                           {!row.isOthers ? (
-                                  
-                                                          leaseholdDisbursementList.map((opt, index) => (
-  opt.id == row.type_id && (
-    <span key={index} className="text-black font-extrabold px-3 py-2 bg- text-sm">{opt.fee_type}</span>
-  ) 
-))
-
-
-                                                                        ) : (
-                                    <div>
-                                      <input
-                                        readOnly
-                                        type="text"
-                                        placeholder="Enter other Supplement"
-                                        value={row.type}
-                                        onChange={(e) =>
-                                          handlePriceChange(
-                                            numIndex,
-                                            i,
-                                            "type_id",
-                                            e.target.value
-                                          )
-                                        }
-                                        className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-gray-900"
-                                      />
-                                    </div>
-                                  )}
+                                            leaseholdDisbursementList.map(
+                                              (opt, index) =>
+                                                opt.id == row.type_id && (
+                                                  <span
+                                                    key={index}
+                                                    className="text-black font-extrabold px-3 py-2 bg- text-sm"
+                                                  >
+                                                    {opt.fee_type}
+                                                  </span>
+                                                )
+                                            )
+                                          ) : (
+                                            <div>
+                                              <input
+                                                readOnly
+                                                type="text"
+                                                placeholder="Enter other Supplement"
+                                                value={row.type}
+                                                onChange={(e) =>
+                                                  handlePriceChange(
+                                                    numIndex,
+                                                    i,
+                                                    "type_id",
+                                                    e.target.value
+                                                  )
+                                                }
+                                                className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-gray-900"
+                                              />
+                                            </div>
+                                          )}
                                         </td>
 
                                         {/* COST */}
@@ -2420,10 +2522,8 @@ if(terror.length==0){
                                         </td>
 
                                         {/* PAID TO */}
-                                      
 
                                         {/* TRANSACTION TYPE */}
-                                       
                                       </tr>
                                     ))}
                                 </tbody>
@@ -2431,18 +2531,22 @@ if(terror.length==0){
                             </div>
                           </div>
                         ))}
-                          
-                     {remainingleashold.map((item,i)=>(
-                                <div key={i} className="text-black grid grid-cols-2 gap-3 px-3 py-2">
-                                      <span key={index} className="text-black">{item.fee_type} </span>
-                                          <input
-                                    readOnly
-                                    value={0}
-                                    placeholder="Fee Amount"
-                                    className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
-                                  />
+
+                        {remainingleashold.map((item, i) => (
+                          <div
+                            key={i}
+                            className="text-black grid grid-cols-2 gap-3 px-3 py-2"
+                          >
+                            <span key={index} className="text-black">
+                              {item.fee_type}{" "}
+                            </span>
+                            <input
+                              readOnly
+                              value={0}
+                              placeholder="Fee Amount"
+                              className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
+                            />
                           </div>
-                          
                         ))}
                       </div>
                     )}

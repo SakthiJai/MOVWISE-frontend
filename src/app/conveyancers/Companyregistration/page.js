@@ -371,7 +371,7 @@ useEffect(() => {
         // ✅ also set inside form data
         setFormData((prev) => ({
           ...prev,
-          logo: base64String + "deva", // <-- your required key
+          logo: base64String  // <-- your required key
         }));
       };
 

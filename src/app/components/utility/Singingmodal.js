@@ -80,7 +80,7 @@ const validateGuestForm = () => {
     leasehold_or_free: "",
     property_type: "",
     shared_ownership: "",
-    existing_mortgage: 0,
+    existing_mortgage: "1",
     languages: "",
     specal_instruction: "",
     lender: "",

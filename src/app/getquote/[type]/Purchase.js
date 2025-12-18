@@ -1201,7 +1201,7 @@ value={formData.buy_to_let || "NO"}
     <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
     </div>
     <div> 
-    {formData.buy_to_let === "Yes - Personal name" && (
+    {formData.buy_to_let === "personal" && (
   <div className="mt-4">
     <label className="block text-sm font-medium text-gray-700 mb-1">
       Need HMO Support
