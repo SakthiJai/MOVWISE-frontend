@@ -16,6 +16,8 @@ import SalesPropertyDetails from "./Sales_Property";
 import PurchasePropertyDetails from "./PurchasePropertyDetails";
 import SalesPurchasePropertyDetails from "./Sales_Purchase_PropertyDetails";
 import RemortagePropertyDetails from "./RemortagePropertyDetails"
+import Select from 'react-select';
+
 
 export default function Comparequotes() {
   // State to hold companies data (initialized with static data)
@@ -34,8 +36,22 @@ export default function Comparequotes() {
   const [vattax,setvattax]=useState(0);
   const [dropdownshow,setdropdownshow]=useState(false);
   const [loading, setLoading] = useState(false);
-  const[total,settotal]=useState(0)
-
+  const [total, settotal] = useState(0);
+  const [filteroption, setfilteroption] = useState( [
+    {
+      value: "Rating",
+      label: "Rating",
+    },
+    {
+      value: "Language",
+      label: "Language",
+    },
+    {
+      value: "Price",
+      label: "Price",
+    },
+  ])
+const[filterselected,setfilterselected]=useState([])
 
   // Track which card dropdown is open (by quote_id)
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
@@ -112,6 +128,7 @@ router.push(`/Instruct?id=${quote_id}`);
   const router = useRouter();
 
   useEffect(() => {
+    
     if (localStorage.getItem("getquote")) {
       console.log("check1");
       const data = localStorage.getItem("getquote");
@@ -121,6 +138,7 @@ router.push(`/Instruct?id=${quote_id}`);
         if (data) {
           const parsedData = JSON.parse(data);
           parsedData.service_type = localStorage.getItem("service");
+          parsedData.user_id=Number(localStorage.getItem("user"));
 
           qutesdata(parsedData);
           console.log(parsedData);
@@ -232,28 +250,32 @@ let selectedquote=companydata.filter((item)=>item.quote_id==id);
 console.log(selectedquote)
 console.log(selectedquote[0].conveying_details.taxDetails);
 let sum=0
+const grouped = selectedquote[0].conveying_details.taxDetails.reduce(
+  (acc, item) => {
+    const key = item.fees_category;
 
-     const grouped = selectedquote[0].conveying_details.taxDetails.reduce((acc, item) => {
-    
-  if (!acc[item.fees_category]) {
-    acc[item.fees_category] = {
-           items: [],
+    if (!acc[key]) {
+      acc[key] = {
+        items: [],
         total: 0,
-    };
-     acc[item.fees_category].items.push(item);
-
-     if (Number(item.fee_amount) > 0) {
-      acc[item.fees_category].total += Number(item.fee_amount);
+      };
     }
-  }
- 
 
-  
+    // ✅ push every item
+    acc[key].items.push(item);
 
- 
-  return acc;
- 
-}, {})
+    // ✅ calculate total
+    if (Number(item.fee_amount) > 0) {
+      acc[key].total += Number(item.fee_amount);
+    }
+
+    return acc;
+  },
+  {}
+);
+
+console.log(grouped);
+
 
   console.log(grouped);
   settaxDetails(grouped);
@@ -273,9 +295,16 @@ const totalamount = selectedquote[0].conveying_details.taxDetails.reduce((sum, i
 }, 0);
 
 console.log("Total VAT:", totalamount);
+
+console.log("Total VAT:", totalTaxVat);
 setvattax(totalTaxVat);
 settotal(totalamount)
 
+}
+
+function handlefilterchange(selectedoption=[]){
+console.log(selectedoption)
+setfilterselected(selectedoption)
 }
 
   return (
@@ -391,8 +420,8 @@ settotal(totalamount)
                   <div className="font-outfit text-[20px] font-semibold text-gray-900">
                     Compare Quotes
                   </div>
-                  <div className="text-[12px] mt-1 font-semibold font-gilroy text-[#A38320]">
-                    In Progress
+                   <div className="text-[12px] font-medium text-[#2D7C57] mt-1">
+                    Completed
                   </div>
                 </div>
               </div>
@@ -441,22 +470,22 @@ settotal(totalamount)
                 </h1>
                 <p className="mt-1 text-[14px] leading-5 text-[#6B7280] font-outfit">
                   By completing this form your details are shared with up to 5
-                  firms providing the quotes excluding vat and any other tax, but absolutely no one else.
+                  firms providing the quotes but absolutely no one else.
                 </p>
 
-            <div className="flex flex-row font text-black items-center mt-2">
-  <span className="mr-4">Filter By</span>
+       
 
-  <label className="flex items-center gap-2">
-    <input type="radio" name="filterBy" defaultChecked />
-    Language
-  </label>
-
-  <label className="flex items-center gap-2 ml-4">
-    <input type="radio" name="filterBy" />
-    Price
-  </label>
-</div>
+<div className="">
+  <Select
+            options={filteroption}
+              instanceId="filter-select"
+            isMulti
+            value={filterselected}
+            onChange={handlefilterchange}
+            placeholder="Choose Filter..."
+            className="text-black  w-85  ml-auto "
+    
+              /> </div>
 
 
 
@@ -464,6 +493,7 @@ settotal(totalamount)
                   {loading && (
                 <div className="flex justify-center items-center py-6">
                   <div className="h-8 w-8 border-2 border-[#4A7C59] border-t-transparent rounded-full animate-spin"></div>
+                  
                 </div>
               )}
                    {/* SHOW MESSAGE HERE */}
@@ -648,7 +678,7 @@ settotal(totalamount)
   <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
     <td className="text-sm font-bold">Legal Fees</td>
     <td className="text-sm font-semibold text-emerald-600">{formatGBP(quote.legal_fees)}</td>
-    <td className="text-sm ">-</td>
+    <td className="text-sm ">{formatGBP(quote.vat)}</td>
   </tr>
     <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
     <td className="text-sm ">Supplements</td>
@@ -857,7 +887,7 @@ settotal(totalamount)
                                         <td className="p-2 text-sm font-semibold text-start ">{`Legal Fees`}</td>
                                         <td className="p-2 text-sm text-right font-bold ">{formatGBP(item.legal_fees)}</td>
                                         <td className="p-2 text-sm text-right">
-                                          {"-"}
+                                          {formatGBP(item.legal_fees)}
                                         </td>
                                       </tr>
                           
