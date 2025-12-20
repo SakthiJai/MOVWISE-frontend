@@ -36,6 +36,7 @@ export const API_ENDPOINTS = {
     getCompanyInformation:`${BASE_URL}/companyInformation`,
     getCompanyFee:`${BASE_URL}/feeDetails`,
     intstructquote_list:`${BASE_URL}/get-user-quotes`,
+    addguest:`${BASE_URL}/addguest`,
 
 
 }

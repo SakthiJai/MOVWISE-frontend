@@ -34,7 +34,7 @@ setlogintype(localStorage.getItem("logintype"));
   return (
     <header
       className={`w-full bg-white z-100   ${
-        originalstyle ? "" : "pt-3"
+        originalstyle ? "" : "pt-1"
       }  flex items-center px-5`} 
     >
       {/* Logo */}

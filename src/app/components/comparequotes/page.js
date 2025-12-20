@@ -302,9 +302,68 @@ settotal(totalamount)
 
 }
 
-function handlefilterchange(selectedoption=[]){
-console.log(selectedoption)
-setfilterselected(selectedoption)
+function handlefilterchange(selectedoption = []) {
+  setfilterselected(selectedoption);
+
+  if (!companydata || !Array.isArray(companydata)) return;
+
+  let sorted = [...companydata];
+
+  // If more than 2 options, sort by first and second as a combination
+  if (selectedoption.length > 1) {
+    const first = selectedoption[0]?.value;
+    const second = selectedoption[1]?.value;
+    sorted.sort((a, b) => {
+      let result = 0;
+      // First sort
+      if (first === "Rating") {
+        result = (b.conveying_details?.rating ?? 0) - (a.conveying_details?.rating ?? 0);
+      } else if (first === "Price") {
+        const aPrice = Number(a.supplements || 0) + Number(a.disbursements || 0) + Number(a.legal_fees || 0);
+        const bPrice = Number(b.supplements || 0) + Number(b.disbursements || 0) + Number(b.legal_fees || 0);
+        result = aPrice - bPrice;
+      } else if (first === "Language") {
+        const aLang = a.conveying_details?.language || "";
+        const bLang = b.conveying_details?.language || "";
+        result = aLang.localeCompare(bLang);
+      }
+      // If equal, use second sort
+      if (result === 0 && second) {
+        if (second === "Rating") {
+          result = (b.conveying_details?.rating ?? 0) - (a.conveying_details?.rating ?? 0);
+        } else if (second === "Price") {
+          const aPrice = Number(a.supplements || 0) + Number(a.disbursements || 0) + Number(a.legal_fees || 0);
+          const bPrice = Number(b.supplements || 0) + Number(b.disbursements || 0) + Number(b.legal_fees || 0);
+          result = aPrice - bPrice;
+        } else if (second === "Language") {
+          const aLang = a.conveying_details?.language || "";
+          const bLang = b.conveying_details?.language || "";
+          result = aLang.localeCompare(bLang);
+        }
+      }
+      return result;
+    });
+  } else if (selectedoption.length === 1) {
+    // Only one sort
+    const first = selectedoption[0]?.value;
+    if (first === "Rating") {
+      sorted.sort((a, b) => (b.conveying_details?.rating ?? 0) - (a.conveying_details?.rating ?? 0));
+    } else if (first === "Price") {
+      sorted.sort((a, b) => {
+        const aPrice = Number(a.supplements || 0) + Number(a.disbursements || 0) + Number(a.legal_fees || 0);
+        const bPrice = Number(b.supplements || 0) + Number(b.disbursements || 0) + Number(b.legal_fees || 0);
+        return aPrice - bPrice;
+      });
+    } else if (first === "Language") {
+      sorted.sort((a, b) => {
+        const aLang = a.conveying_details?.languages || "";
+        const bLang = b.conveying_details?.languages || "";
+        return aLang.localeCompare(bLang);
+      });
+    }
+  }
+
+  setcompanydata(sorted);
 }
 
   return (
@@ -394,22 +453,20 @@ setfilterselected(selectedoption)
               {/* Step 3 - In progress (keep as current) */}
               <div className="flex items-start mt-8">
                 <div className="mr-4">
-                  <div className="w-11 h-11 rounded-full border-[2px] border-[#1E5C3B] bg-white text-[#1E5C3B] flex items-center justify-center">
+                  <div className="w-11 h-11 rounded-full border-[2px] border-[#1E5C3B] bg-[#1E5C3B] flex items-center justify-center text-white">
                     <svg
-                      width="20"
-                      height="20"
-                      viewBox="0 0 20 20"
-                      aria-hidden="true"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth="2"
+                      stroke="currentColor"
+                      className="w-5 h-5"
                     >
-                      <circle
-                        cx="10"
-                        cy="10"
-                        r="8"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M5 13l4 4L19 7"
                       />
-                      <circle cx="10" cy="10" r="3" fill="currentColor" />
                     </svg>
                   </div>
                 </div>
@@ -465,9 +522,6 @@ setfilterselected(selectedoption)
                   </span>
                 </nav>
 
-                <h1 className="text-[20px] sm:text-[24px] font-semibold font-Outfit text-[#1B1D21]">
-                  Compare Quotes
-                </h1>
                 <p className="mt-1 text-[14px] leading-5 text-[#6B7280] font-outfit">
                   By completing this form your details are shared with up to 5
                   firms providing the quotes but absolutely no one else.
@@ -476,16 +530,76 @@ setfilterselected(selectedoption)
        
 
 <div className="">
+
   <Select
-            options={filteroption}
-              instanceId="filter-select"
-            isMulti
-            value={filterselected}
-            onChange={handlefilterchange}
-            placeholder="Choose Filter..."
-            className="text-black  w-85  ml-auto "
-    
-              /> </div>
+    options={filteroption}
+    instanceId="filter-select"
+    isMulti
+    value={filterselected}
+    onChange={handlefilterchange}
+    placeholder="Sort by..."
+    className="text-black w-85 ml-auto"
+    styles={{
+      control: (base, state) => ({
+        ...base,
+        minHeight: 44,
+        height: 44,
+        fontSize: 16,
+        fontFamily: 'Outfit, Arial, sans-serif',
+        borderColor: state.isFocused ? '#1E5C3B' : base.borderColor,
+        boxShadow: state.isFocused ? '0 0 0 1.5px #1E5C3B' : base.boxShadow,
+        '&:hover': {
+          borderColor: '#1E5C3B',
+        },
+      }),
+      valueContainer: (base) => ({
+        ...base,
+        height: 44,
+        padding: '0 8px',
+        fontSize: 16,
+        fontFamily: 'Outfit, Arial, sans-serif',
+      }),
+      input: (base) => ({
+        ...base,
+        margin: 0,
+        fontSize: 16,
+        fontFamily: 'Outfit, Arial, sans-serif',
+      }),
+      option: (base, state) => ({
+        ...base,
+        fontSize: 16,
+        fontFamily: 'Outfit, Arial, sans-serif',
+        backgroundColor: state.isSelected || state.isFocused ? '#F6CE53' : base.backgroundColor,
+        color: state.isSelected || state.isFocused ? '#111' : base.color,
+        '&:hover': {
+          backgroundColor: '#F6CE53',
+          color: '#111',
+        },
+      }),
+      multiValue: (base) => ({
+        ...base,
+        fontSize: 16,
+        fontFamily: 'Outfit, Arial, sans-serif',
+        backgroundColor: '#1E5C3B',
+        color: '#fff',
+      }),
+      multiValueLabel: (base) => ({
+        ...base,
+        color: '#fff',
+        fontFamily: 'Outfit, Arial, sans-serif',
+        fontWeight: 700,
+      }),
+      multiValueRemove: (base) => ({
+        ...base,
+        color: '#fff',
+        ':hover': {
+          backgroundColor: '#16472F',
+          color: '#fff',
+        },
+      }),
+    }}
+  />
+</div>
 
 
 
@@ -910,7 +1024,7 @@ setfilterselected(selectedoption)
                     <td className="p-2 text-right text-sm">
                       {formatGBP(fee.fee_amount)}
                     </td>
-                    <td className="p-2 text-right text-sm">{(fee.vat==1?formatGBP(fee.fee_amount*0.2):"No Vat")}</td>
+                    <td className="p-2 text-right text-sm">{(fee.vat==1?formatGBP(fee.fee_amount*0.2):"")}</td>
                   </tr>
                 ):"")}
                 <tr  className="border-b border-gray-200 text-start">

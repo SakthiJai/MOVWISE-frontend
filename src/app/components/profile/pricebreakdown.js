@@ -204,7 +204,7 @@ setvattax(totalTaxVat);
                     <td className="p-2 text-right">
                       {formatGBP(fee.fee_amount)}
                     </td>
-                    <td className="p-2 text-right text-sm">{(fee.vat==1?formatGBP(fee.fee_amount*0.2):"No Vat")}</td>
+                    <td className="p-2 text-right text-sm">{(fee.vat==1?formatGBP(fee.fee_amount*0.2):"")}</td>
                   </tr>
                 ):"")}
               </React.Fragment>

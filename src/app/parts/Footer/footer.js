@@ -1,5 +1,8 @@
+"use client"
 import { Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
 import Link from "next/link";
+import React, { useEffect, useState, useRef, useCallback } from "react";
+import { useRouter } from "next/navigation";
 
 
 export const metadata = {
@@ -22,9 +25,45 @@ export const metadata = {
 
 
 export default function Footer(){
+  const router = useRouter();
+
+  // ...existing code...
+  const [filterselected,setfilterselected]=useState([])
+
+  // Idle logout: clear localStorage after 2 minutes of no activity and redirect to home
+  const idleLimitMs = 30 * 60 * 1000; // 2 minutes
+  const idleTimerRef = useRef(null);
+
+  const resetIdleTimer = useCallback(() => {
+    if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+    idleTimerRef.current = setTimeout(() => {
+      console.log("[IdleTimer] 30 minutes passed: clearing localStorage and redirecting to home page");
+      try {
+        localStorage.clear();
+      } catch (e) {
+        console.error("Failed to clear localStorage", e);
+      }
+      router.push("/");
+    }, idleLimitMs);
+  }, [router]);
+
+  useEffect(() => {
+    // start timer on mount
+    resetIdleTimer();
+
+    const events = ["mousemove", "mousedown", "keydown", "touchstart", "scroll"];
+    events.forEach((ev) => window.addEventListener(ev, resetIdleTimer, { passive: true }));
+
+    return () => {
+      // cleanup
+      events.forEach((ev) => window.removeEventListener(ev, resetIdleTimer));
+      if (idleTimerRef.current) clearTimeout(idleTimerRef.current);
+    };
+  }, [resetIdleTimer]);
+// ...existing code...
     
     return(
-            <footer className="bg-gray-800 text-gray-400 py-12 font">
+            <footer className="bg-gray-800 text-gray-400 py-12 font relative-z-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Grid Section */}

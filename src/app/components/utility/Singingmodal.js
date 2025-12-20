@@ -176,19 +176,20 @@ async function createguestuser() {
     let quoteData = JSON.parse(localStorage.getItem("getquote") || "{}");
 
     // 3️⃣ Create guest in backend
+    const guest_uuid = uuidv4();
     const payload = {
       name: guestformsdata.guest_name,
       email: guestformsdata.guest_email,
       phone_number: guestformsdata.guest_phonenumber,
+      guest_uuid: guest_uuid,
     };
+    const response =  await postData(
+            `${API_ENDPOINTS.addguest}`,
+            payload
+          );
+   
 
-    const response = await fetch("http://localhost:5000/api/addguest", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-    });
-
-    const result = await response.json();
+    const result = await response;
 
     if (result.code !== 200) {
       setLoginError(result.message || "Failed to create guest user");
@@ -196,7 +197,7 @@ async function createguestuser() {
     }
 
     // 4️⃣ Generate UUID (FRONTEND ONLY)
-    const guest_uuid = uuidv4();
+   
 
     // 5️⃣ Build quote object (LOGIN-LIKE)
     const updatedQuote = {

@@ -1,3 +1,17 @@
+/* Native <select> option background yellow on hover and selection */
+select option:checked,
+select option:hover,
+select optgroup option:checked,
+select optgroup option:hover {
+  background-color: #F6CE53 !important;
+  color: #111 !important;
+}
+/* React-Select option hover and selected background color (yellow) */
+.react-select__option--is-focused,
+.react-select__option--is-selected {
+  background-color: #F6CE53 !important; /* yellow */
+  color: #111 !important;
+}
 @import "tailwindcss";
 
 
@@ -281,3 +295,7 @@ font-size: small;
  .reviewpopup{
   height: 80%;
  }
+ .relative-z-10 {
+  position: relative;
+  z-index: 10;
+}

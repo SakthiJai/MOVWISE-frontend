@@ -1,128 +1,15 @@
 
-// import { FaArrowRight } from "react-icons/fa";
 
-// export default function Footer() {
-//   return (
-//     <footer className="bg-[#1B1C1E] text-white px-6 md:px-45 py-12">
-//       <div className="flex flex-col lg:flex-row justify-between gap-12">
-//         {/* Left Column */}
-//         <div className="flex-1">
-//           {/* Logo */}
-//           <h2 className="text-3xl font-bold text-green-600 flex items-center space-x-1">
-//             <span>Mov</span>
-//             <span className="text-white relative">
-//               <span className="absolute -top-3 left-1 text-yellow-400 font-bold text-sm">^</span>
-//               wise
-//             </span>
-//           </h2>
-
-//           {/* Description */}
-//           <p className="mt-4 text-sm text-gray-300 max-w-sm">
-//             Licensed for all Conveyancing matters within New South Wales, with focus on Newcastle, Hunter Valley, Lake Macquarie, Central Coast and Sydney.
-//           </p>
-
-//           {/* Contact Info */}
-//           <p className="mt-4 text-sm text-gray-300 mb-4">loramipsum@movewise.uk</p>
-//           <p className="text-sm text-gray-300">+91 78 987 123</p>
-
-//           {/* Button */}
-//           <button className="mt-6 bg-yellow-400 hover:bg-yellow-500 text-black font-medium px-5 py-2 rounded-full flex items-center space-x-2">
-//             <span>Learn More</span>
-//             <FaArrowRight />
-//           </button>
-//         </div>
-
-//         {/* Right Columns */}
-// <div className="flex space-x-10 gap-15 right-[3px] text-sm">
-//   <div className="flex-1 p-1 m-1">
-//   <h3 className="font-bold m-0 mb-5">Nav</h3> {/* Add margin-bottom here */}
-//   <ul className="space-y-2 text-gray-300 p-0 m-0">
-//     <li>About</li>
-//     <li>Resources</li>
-//     <li>Contact</li>
-//   </ul>
-// </div>
-
-
-//   <div className="flex-1 p-1 m-1">
-//   <h3 className="font-bold m-0 mb-5">Services</h3> {/* Added mb-2 */}
-//   <ul className="space-y-2 text-gray-300 p-0 m-0">
-//     <li>Buying</li>
-//     <li>Selling</li>
-//     <li>Advice / Blog</li>
-//   </ul>
-// </div>
-
-// <div className="flex-1 p-1 m-1">
-//   <h3 className="font-bold m-0 mb-5 text-white">Contact</h3> {/* Added mb-2 */}
-//   <ul className="space-y-2 text-gray-300 p-0 m-0">
-//     <li>movise.com Ltd</li>
-//     <li>Eclipse Court</li>
-//     <li className="whitespace-nowrap">14B Chequer Street</li> {/* Prevent line break */}
-//     <li>St Albans</li>
-//     <li>AL1 3YD</li>
-//   </ul>
-// </div>
-
-// </div>
-
-
-
-
-
-
-
-//       </div>
-
-//       {/* Bottom Row: Socials */}
-      
-// <div className="mt-6 text-gray-400 text-sm space-x-4 flex ml-190 ">
-//   <a href="#" className="hover:text-white">Facebook</a>
-//   <span>|</span>
-//   <a href="#" className="hover:text-white">Instagram</a>
-//   <span>|</span>
-//   <a href="#" className="hover:text-white">LinkedIn</a>
-// </div>
-
-
-
-
-
-
-//     </footer>
-//   );
-// }
 
 
 import { FaArrowRight } from "react-icons/fa";
 
 export default function Footer() {
+  
   return (
     <div className="flex flex-col">
       {/* ---------------- HEADER ---------------- */}
-     {/* <header className="flex items-center justify-between px-10 py-6 bg-white">
-  <div className="flex items-center space-x-1">
-    <h1 className="text-2xl font-bold">Mover</h1>
-    <span className="text-yellow-400 text-lg">^</span>
-  </div>
-
-  <div className="flex items-center space-x-8">
-    <nav className="hidden md:flex space-x-8 text-sm font-medium text-gray-700">
-      <a href="#" className="text-green-700 border-b-2 border-green-700 pb-1">
-        Home
-      </a>
-      <a href="#">About</a>
-      <a href="#">Services</a>
-      <a href="#">Advice / Blog</a>
-      <a href="#">Resources</a>
-    </nav>
-
-    <button className="bg-yellow-400 hover:bg-yellow-500 text-black font-medium px-6 py-2 rounded-full flex items-center space-x-2">
-      <span>Register</span>
-      <FaArrowRight />
-    </button>
-  </div>
-</header> */}
+     {}
 
 
       {/* ---------------- MAIN CONTENT (empty, can add later) ---------------- */}
