@@ -17,7 +17,11 @@ import Quotepricebreakdown from "./Quotepricebreakdown"
 const Partnersprofile = () => {
   const [show, setshow] = useState(1);
   const [logintype, setlogintype] = useState();
+    const [selectedlender, setselectedLender] = useState([]);
+  
   const [showpricebreakdown, setshowpricebreakdown] = useState();
+    const [lender, setLender] = useState([]);
+  
   const[company,setcompany]=useState([]);
    const [user,setuser]=useState({
       first_name:"",
@@ -29,9 +33,33 @@ const Partnersprofile = () => {
     if (localStorage.getItem("logintype")) {
       setlogintype(localStorage.getItem("logintype"));
     }
-  });
+      const fetchLenders = async () => {
+        try {
+          const res = await getData(API_ENDPOINTS.lenders);
+    
+          // Example: API returns { users: [...] }
+          if (Array.isArray(res.users)) {
+            const lenderOptions = res.users.map((l) => ({
+              value: l.lenders_name,
+              label: l.lenders_name,
+              id: l.id,
+            }));
+    
+            setLender([
+              { value: "Not Known", id: 0, label: "Not Known" },
+              ...lenderOptions,
+            ]);
+          }
+        } catch (err) {
+          console.error("Error fetching lenders:", err);
+        }
+      };
+    
+      fetchLenders();
+      
+  },[]);
 
-  useEffect(() => {
+  useEffect(() => { 
     const storedData = localStorage.getItem("companyData");
 
     if (storedData) {
@@ -67,6 +95,7 @@ const Partnersprofile = () => {
     email: "",
     websiter: "",
     languages: [],
+    sra_clc_number:""
   });
   const [languagepreference, setlanguagepreference] = useState(" ");
 
@@ -159,6 +188,27 @@ const Partnersprofile = () => {
       console.error("Error fetching languages:", error);
     }
   };
+
+  const toggleLender = (lenderItem) => {
+  setselectedLender((prev) => {
+    const exists = prev.includes(lenderItem.id);
+
+    const updated = exists
+      ? prev.filter((id) => id !== lenderItem.id)
+      : [...prev, lenderItem.id];
+
+    // Update form data
+    setFormData((f) => ({
+      ...f,
+      lender: updated,
+    }));
+
+    // Clear error
+    setErrors((e) => ({ ...e, lender: "" }));
+
+    return updated;
+  });
+};
   const fetchCompanyInforamtion = async () => {
     const user = localStorage.getItem("user");
     const details = await getData(
@@ -166,20 +216,46 @@ const Partnersprofile = () => {
     );
 
     if (details && details.data) {
+
       setFormData({
         company_name: details.data.company_name || "",
         phone_number: details.data.phone_number || "",
         email: details.data.email || "",
         websiter: details.data.website || "",
-        SRA_CLC_number: details.data.SRA_CLC_number || "",
+        SRA_CLC_number: details.data.sra_clc_number || "",
         additional_info: details.data.additional_info || "",
         languages: details.data.languages || [],
-      });
+      
 
+      });
       if (details.data.logo) {
         setImage(details.data.logo);
       }
     }
+
+    if(details.data?.service_id?.length){
+      const selected = serviceoptions.filter((opt)=>(details.data.service_id.includes(opt.id)))
+      setSelectedServices(selected)
+    }
+
+    if(details.data?.regions?.length){
+      if(jurisdictions.length>0){
+         const selected = jurisdictions.filter((opt) =>
+    details.data.regions.includes(
+      Number(opt.value) 
+    )
+  );
+  setSelectedJurisdictions(selected);
+      }
+     
+console.log("API service_id:", details.data?.service_id);
+console.log("jurisdictions:", jurisdictions);
+
+  
+    }
+
+
+
   };
   useEffect(() => {
     fetchlanguages();
@@ -396,7 +472,7 @@ const Partnersprofile = () => {
       newErrors.SRA_CLC_number = "Enter a valid SRA / CLC Number";
     }
 
-    // Logo validation
+  
 
     setErrors(newErrors);
     console.log(errors);
@@ -412,7 +488,7 @@ const Partnersprofile = () => {
   };
 
   const serviceoptions = [
-    { value: "Purchase", label: "Purchase", id: 1 },
+    { value: "Purchase", label: "Purchase", id: 1, },
     { value: "Sales", label: "Sales", id: 2 },
     { value: "Purchase and Sales", label: "Purchase and Sales", id: 3 },
     { value: "Remortgage", label: "Remortgage", id: 4 },
@@ -437,6 +513,7 @@ const Partnersprofile = () => {
     });
   };
 
+  
   const [selectedServices, setSelectedServices] = useState([]);
 
   const togglesercice = (opt) => {
@@ -906,6 +983,40 @@ const Partnersprofile = () => {
                       )}
                   </div>
                 </div>
+                <div className="flex flex-col gap-2 w-full">
+    <label className="block text-sm font-medium text-[#6A7682]">
+      Select Lenders <span className="text-red-500">*</span>
+    </label>
+
+    {/* Checkbox Grid */}
+    <div
+      className={"grid grid-cols-4 gap-3 mt-3 border p-2 w-full font "}
+    >
+      {lender.map((l, index) => (
+  <label key={index} className="flex items-center gap-2">
+    <input
+      type="checkbox"
+      checked={selectedlender.includes(l.id)}
+      onChange={() => toggleLender(l)}
+      disabled={formData.obtaining_mortgage == 0}
+    />
+    <span className="font text-[#6A7682]">
+      {l.label}
+    </span>
+  </label>
+))}
+
+    </div>
+
+    {/* Error placeholder (always visible) */}
+    <p
+      className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+        errors.lender ? "text-red-500 opacity-100" : "opacity-0"
+      }`}
+    >
+      {errors.lender || "placeholder"}
+    </p>
+  </div>
                 <div className="mt-5 grid grid-cols-1 gap-4"></div>
                 <div className="mt-10">
                   <label className="block text-sm font-semibold text-gray-800 mb-2">
@@ -994,7 +1105,7 @@ const Partnersprofile = () => {
                 {show == 1 && <Partnerquotescontent />}
 
                 <div className="mt-5">
-                  {show == 2 && <PriceBreakdownCard />}
+                  {show == 2 && <PriceBreakdownCard service_id={selectedServices}  />}
                 </div>
                 <div className="mt-5">
                   {show == 3 && (<div>

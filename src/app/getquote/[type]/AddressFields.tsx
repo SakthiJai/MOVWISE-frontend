@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Select from "react-select";
 
 interface AddressFieldsProps {
   formData: any;
@@ -22,6 +23,36 @@ const AddressFields: React.FC<AddressFieldsProps> = ({
   const line2 = `${prefix}address_line2`;
 const town_city = prefix ? `${prefix}city` : "town_city";
 const country = prefix ? `${prefix}country` : "country";
+const countryOptions = [
+  { value: "", label: "Select country", isDisabled: true },
+  { value: "England", label: "England" },
+  { value: "Scotland", label: "Scotland" },
+  { value: "Wales", label: "Wales" },
+  { value: "Northern Ireland", label: "Northern Ireland" },
+];
+
+const countrySelectStyles = {
+  control: (base, state) => ({
+    ...base,
+    minHeight: "44px",
+    borderRadius: "12px",
+    borderColor: state.isFocused ? "#1E5C3B" : "#D1D5DB",
+    boxShadow: state.isFocused ? "0 0 0 1px #1E5C3B" : "none",
+    "&:hover": {
+      borderColor: "#1E5C3B",
+    },
+  }),
+  option: (base, state) => ({
+    ...base,
+    backgroundColor: state.isFocused || state.isSelected
+      ? "#F6CE53"
+      : "white",
+    color: "#111",
+    cursor: "pointer",
+  }),
+};
+
+
 
 console.log("location:" , town_city);
 console.log("country:" , country);
@@ -89,17 +120,19 @@ console.log("showAddressLines:" , showAddressLines);
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Country <span className="text-red-500">*</span>
         </label>
-        <select
-          value={formData[country] || ""}
-          onChange={(e) => onChange(country, e.target.value)}
-          className="block w-full h-[44px] rounded-xl border border-gray-300 text-gray-900 px-4 "
-        >
-          <option value="">Select country</option>
-          <option value="England">England</option>
-          <option value="Scotland">Scotland</option>
-          <option value="Wales">Wales</option>
-          <option value="Northern Ireland">Northern Ireland</option>
-        </select>
+    <Select
+  options={countryOptions}
+  styles={countrySelectStyles}
+  value={countryOptions.find(
+    (opt) => opt.value === formData[country]
+  )}
+  onChange={(selected) =>
+    onChange(country, selected?.value || "")
+  }
+  isSearchable={false}
+  placeholder="Select country"
+/>
+
         {/* <p className="text-[12px] text-red-500 min-h-[16px]">
           {errors[country]}
         </p> */}

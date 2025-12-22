@@ -12,7 +12,7 @@ const Myprofile = () => {
   const childRef = useRef();
 
   const [show, setshow] = useState(true);
-  const [logintype,setlogintype]=useState("");
+  const [logintype,setlogintype]=useState();
   const [showPopup, setShowPopup] = useState(false);
 
   const [user,setuser]=useState({
@@ -20,144 +20,37 @@ const Myprofile = () => {
     last_name:"",
     phone_number:"",
     email:"",
-    password : "",
+
   }
   )
-  const [saving, setSaving] = useState(false);
-
   const[company,setcompany]=useState([]);
   const[quoteUser,setquoteUser]=useState({});
   const[servicedetails,setservicedetails]=useState([]);
   const [selectedQuoteId, setSelectedQuoteId] = useState(null);
-  const [formdata,setformdata]=useState({
-    first_name:"",
-    last_name:"",
-    phone_number:"",
-    email:"",
-    password : "",
-  })
  ;
 
- 
 
-  const [preview, setPreview] = useState(null);
+  const [preview, setPreview] = useState("true");
   const loginType = typeof window !== "undefined" 
   ? localStorage.getItem("logintype") 
   : null;
 
 
 useEffect(() => {
-  const type = localStorage.getItem("logintype");
-  if (type) {
-    setlogintype(type);
+  if (localStorage.getItem("logintype")) {
+    let user_type = localStorage.getItem("logintype")
+    setlogintype(user_type);
+
     fetchapi();
   }
-}, []);
+}, []);  
 
-
-// useEffect(() => {
-//   if (logintype) {
-//     fetchapi();
-//   }
-// }, [logintype]);
-
-
-// async function fetchapi() {
-//   try {
-//     if (localStorage.getItem("user")) {
-//       const payload = {
-//         user_id: Number(localStorage.getItem("user")),
-//         type: localStorage.getItem("logintype"),
-//       };
-      
-//       let profiledetails = await postData(API_ENDPOINTS.intstructquote_list, payload);
-//       let userprofile = profiledetails.data[0].user_details;
-
-//       setuser({
-//         first_name: userprofile[0].first_name,
-//         last_name: userprofile[0].last_name,
-//         phone_number: userprofile[0].phone_number,
-//         email: userprofile[0].email,
-//         password: "",
-//       });
-
-//     }
-//   } catch (e) {
-//     console.log(e);
-//   }
-// }
-
-
-//   useEffect(() => {
-//   if (selectedQuoteId && childRef.current) {
-//     childRef.current.refreshCard();
-//   }
-// }, [selectedQuoteId]);
-
-const handleChange = (e) => {
-  const { name, value } = e.target;
-
-  setformdata((prev) => ({
-    ...prev,
-    [name]: value,
-  }));
-};
-
-const handleSaveProfile = async (e) => {
-  
-  e.preventDefault(); 
- const formData = new FormData(e.target);
-console.log(Object.fromEntries(formData));
-
- try {
-    const loginType = localStorage.getItem("logintype");
-
-    // ✅ USER PROFILE UPDATE
-    if (loginType === "user") {
-      const userId = Number(localStorage.getItem("user"));
-
-      const payload = {
-        first_name: formData.get("first_name"),
-        last_name: formData.get("last_name"),
-        phone_number: formData.get("phone_number"),
-        email: formData.get("email"),
-        password : formData.get("password"),
-      };
-
-      await postData(
-        `${API_ENDPOINTS.update_user_profile}/${userId}`,
-        payload
-      );
-    }
-
-    // ✅ PARTNER (COMPANY) PROFILE UPDATE
-    if (loginType === "partner") {
-      const companyId = Number(localStorage.getItem("user")); 
-      // 👆 assuming company id is stored here
-
-      const payload = {
-        company_name: formData.get("company_name"),
-        phone_number: formData.get("phone_number"),
-        email: formData.get("email"),
-        website: formData.get("website"),
-        password: formData.get("password"),
-      };
-
-      await postData(
-        `${API_ENDPOINTS.update_partner_profile}/${companyId}`,
-        payload
-      );
-    }
-
-   
-    // window.location.reload();
-  } catch (error) {
-    console.error(error);
-    alert("Failed to update profile");
-  } finally {
-    setSaving(false);
+  useEffect(() => {
+  if (selectedQuoteId && childRef.current) {
+    childRef.current.refreshCard();
   }
-};
+}, [selectedQuoteId]);
+
 
 
   async function fetchapi() {
@@ -183,7 +76,6 @@ console.log(payload)
     last_name:userprofile[0].last_name,
     phone_number:userprofile[0].phone_number,
 email:userprofile[0].email,
-password: "",
    })
 
    setcompany(companydetails)
@@ -290,53 +182,31 @@ const getServiceTypeLabel = (type) => {
                
               
 
-                 {logintype === "partner" && company.length > 0 ? (
-      <CompanyProfileForm
-        company={company[0]}
-        saving={saving}
-        onSubmit={handleSaveProfile}
-      />
-    ) : (
-      <UserProfileForm
-        user={user}
-        saving={saving}
-        onSubmit={handleSaveProfile}
-      />
-    )}
-
-
-              </div>
-            </div>
-    </div>
-  );
- 
-const UserProfileForm = ({ user, saving, onSubmit }) => (
-  <form className="mt-2" onSubmit={handleSaveProfile} >
+                <form className="mt-2">
                   {/* Row 1 */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="firstName" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">First Name</label>
                       <input
-  id="firstName"
-  name="first_name"
-  type='text'
-  defaultValue={user.first_name}
-  placeholder="Enter your Firstname"
-  className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
-/>
-
+                      value={user.first_name}
+                      readOnly
+                        id="firstName"
+                        name="firstName"
+                        placeholder="Enter your Firstname"
+                        className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
+                      />
                     </div>
                     <div>
                       <label htmlFor="lastName" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">Last Name</label>
                       <input
-  id="lastName"
-  name="last_name"
-  type='text'
-  defaultValue={user.last_name}
-  placeholder="Enter your Lastname"
-  className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
-/>
+                      value={user.last_name}
+                      readOnly
+                        id="lastName"
+                        name="lastName"
+                        placeholder="Enter your Lastname"
 
+                        className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
+                      />
                     </div>
                   </div>
 
@@ -345,30 +215,28 @@ const UserProfileForm = ({ user, saving, onSubmit }) => (
                     <div>
                       <label htmlFor="email" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">Email</label>
                       <input
-  id="email"
-  name="email"
-  type="email"
-  defaultValue={user.email}
-  placeholder="Enter your Email"
-  className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
-/>
+                      value={user.email}
+                      readOnly
+                        id="email"
+                        name="email"
+                        type="email"
+                        placeholder="Enter your Email"
 
+                        className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
+                      />
                     </div>
                     <div>
                       <label htmlFor="phone" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">Phone No.</label>
                       <div className="relative">
                         <input
-  id="phone"
-  name="phone_number"
-  defaultValue={user.phone_number}
-  maxLength={11}
-  onInput={(e) => {
-    e.target.value = e.target.value.replace(/\D/g, "");
-  }}
-  placeholder="Enter your Number"
-  className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
-/>
+                        value={user.phone_number}
+                        readOnly
+                          id="phone"
+                          name="phone"
+                        placeholder="Enter your Number"
 
+                          className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
+                        />
                         {/* optional divider mimic for country code */}
                         <div className="pointer-events-none absolute left-[108px] top-1/2 -translate-y-1/2 h-[28px] w-px bg-[#E5E7EB]" />
                       </div>
@@ -379,14 +247,13 @@ const UserProfileForm = ({ user, saving, onSubmit }) => (
                       <div>
                       <label htmlFor="password" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">Password</label>
                       <input
-  id="password"
-  name="password"
-  type="password"
-  defaultValue={user.password}
-  placeholder="Enter your Password"
-  className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
-/>
-
+                        id="password"
+                        name="password"
+                        type="password"
+                        placeholder="Enter your Password"
+                        autoComplete="current-password"
+                        className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
+                      />
                     </div>
                         <div>
       <label
@@ -417,161 +284,18 @@ const UserProfileForm = ({ user, saving, onSubmit }) => (
 
       )}
     </div>
-    <div className="flex justify-end mt-6 gap-3">
-  <button
-    type="submit"
-   
-    disabled={saving}
-    className={`px-6 py-2 rounded-lg font-semibold text-white transition-all duration-200
-      ${saving
-        ? "bg-gray-400 cursor-not-allowed"
-        : "bg-green-600 hover:bg-green-700 active:scale-95"
-      }`}
-  >
-    {saving ? "Saving..." : "Save Changes"}
-  </button>
-</div>
-
                   </div>
                   
 
                   {/* Checkbox */}
                  
                 </form>
-);
-
-const CompanyProfileForm = ({ company, saving, onSubmit }) => (
-  <form className="mt-2" onSubmit={handleSaveProfile} >
-                  {/* Row 1 */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="company_name" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">First Name</label>
-                      <input
-  id="company_name"
-  name="company_name"
-  type='text'
-  defaultValue={company.company_name}
-  placeholder="Enter your company_name"
-  className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
-/>
-
-                    </div>
-
-                     <div>
-                      <label htmlFor="email" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">Email</label>
-                      <input
-  id="email"
-  name="email"
-  type="email"
-  defaultValue={company.email}
-  placeholder="Enter your Email"
-  className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
-/>
-
-                    </div>
-                  </div>
-
-                  {/* Row 2 */}
-                  <div className="grid grid-cols-2 gap-4 mt-4">
-                   
-                    <div>
-                      <label htmlFor="phone" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">Phone No.</label>
-                      <div className="relative">
-                        <input
-  id="phone"
-  name="phone_number"
-  defaultValue={company.phone_number}
-  maxLength={11}
-  onInput={(e) => {
-    e.target.value = e.target.value.replace(/\D/g, "");
-  }}
-  placeholder="Enter your Number"
-  className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
-/>
-
-                        {/* optional divider mimic for country code */}
-                        <div className="pointer-events-none absolute left-[108px] top-1/2 -translate-y-1/2 h-[28px] w-px bg-[#E5E7EB]" />
-                      </div>
-                    </div>
-                    <div>
-                      <label htmlFor="website" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">Website</label>
-                      <input
-  id="website"
-  name="website"
-  type="website"
-  defaultValue={company.website}
-  placeholder="Enter your website"
-  className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
-/>
-
-                    </div>
-                    
-                  </div>
-                  {/* ROW 3 */}
-                  <div className="grid grid-cols-2 gap-4 mt-4">
-                      <div>
-                      <label htmlFor="password" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">Password</label>
-                      <input
-  id="password"
-  name="password"
-  type="password"
-  defaultValue={company.password}
-  placeholder="Enter your Password"
-  className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
-/>
-
-                    </div>
-                        <div>
-      <label
-        htmlFor="image"
-        className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1"
-      >
-        Upload Image
-      </label>
-
-      <input
-        id="image"
-        name="image"
-        type="file"
-        accept="image/*"
-        onChange={handleImageChange}
-        className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
-      />
-
-      {/* Image Preview */}
-      {preview && (
-       <div className="mt-3">
-  <img
-    src={preview}
- 
-    className="w-32 h-32 object-cover rounded-full border text-center text-gray-400"
-  />
-</div>
-
-      )}
+              </div>
+            </div>
     </div>
-    <div className="flex justify-end mt-6 gap-3">
-  <button
-    type="submit"
-   
-    disabled={saving}
-    className={`px-6 py-2 rounded-lg font-semibold text-white transition-all duration-200
-      ${saving
-        ? "bg-gray-400 cursor-not-allowed"
-        : "bg-green-600 hover:bg-green-700 active:scale-95"
-      }`}
-  >
-    {saving ? "Saving..." : "Save Changes"}
-  </button>
-</div>
+  );
+ 
 
-                  </div>
-                  
-
-                  {/* Checkbox */}
-                 
-                </form>
-                );
   // Content for the 'MY Quotes' section (Unchanged)
   const QuotesContent = () => (
     

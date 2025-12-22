@@ -114,7 +114,7 @@ setlogintype(localStorage.getItem("logintype"));
           )}
           {logintype=="partner"&&(
             <li className="hover:bg-yellow-400 hover:rounded-sm text-black ">
-              <Link className="block w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded"  href="/components/profile">
+              <Link className="block w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded"  href="/components/account/">
             My Account
               </Link>
             </li>

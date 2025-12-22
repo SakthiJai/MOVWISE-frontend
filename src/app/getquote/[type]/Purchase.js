@@ -33,11 +33,49 @@ export default function Purchase() {
   { label: "Additional Property (Buy to let)", value: "Buy to let" },
   { label: "Home Moving", value: "commercial" }
 ];
+const buyToLetOptions = [
+  { value: "", label: "Please select", isDisabled: true },
+  { value: "No", label: "No" },
+  { value: "personal", label: "Yes - Personal name" },
+  { value: "company", label: "Yes - Company name" },
+];
+const giftDepositOptions = [
+  { value: "", label: "Select...", isDisabled: true },
+  { value: 0, label: "0" },
+  { value: 1, label: "1" },
+  { value: 2, label: "2" },
+  { value: 3, label: "3" },
+];
+
 
 console.log(stampDutyOptions)
 
 
 
+const selectStyles = {
+  control: (base, state) => ({
+    ...base,
+    minHeight: "44px",
+    borderRadius: "12px",
+    borderColor: state.isFocused ? "#1E5C3B" : "#D1D5DB",
+    boxShadow: state.isFocused ? "0 0 0 1px #1E5C3B" : "none",
+    "&:hover": {
+      borderColor: "#1E5C3B",
+    },
+    fontSize: "14px",
+    fontWeight: 500,
+  }),
+  option: (base, state) => ({
+    ...base,
+    backgroundColor: state.isFocused
+      ? "#F6CE53"
+      : state.isSelected
+      ? "#F6CE53"
+      : "white",
+    color: "#111",
+    cursor: "pointer",
+  }),
+};
 
 
     const [selectedLanguage, setSelectedLanguage] = useState([]);
@@ -67,25 +105,32 @@ console.log(stampDutyOptions)
     
   }
     
-    const handleChange_l = (selectedOptions = []) => {
-      const hasNotRequired = selectedOptions.some(
-        (option) => option.value === "Not Known"
-      );
-    
-      if (hasNotRequired) {
-        // Keep only "Not Required" selected
-        const notRequiredOption = lender.find(opt => opt.value === "Not Known");
-        setSelectedLenders([notRequiredOption]);
-        console.log("Selected lenders: [0]");
-        handleChange("lenders", [0]);
-      } else {
-        // Normal behavior for other lenders
-        setSelectedLenders(selectedOptions);
-        const ids = selectedOptions.map(item => item.id);
-        console.log("Selected lenders:", ids);
-        handleChange("lenders", ids);
-      }
-  };
+const handleChange_l = (selectedOption) => {
+  if (!selectedOption) {
+    setSelectedLenders(null);
+    handleChange("lenders", null);
+    return;
+  }
+
+  const hasNotRequired = selectedOption.value === "Not Known";
+
+  if (hasNotRequired) {
+    const notRequiredOption = lender.find(
+      (opt) => opt.value === "Not Known"
+    );
+
+    setSelectedLenders(notRequiredOption);
+    console.log("Selected lender: Not Known");
+
+    handleChange("lenders", 0);
+  } else {
+    setSelectedLenders(selectedOption);
+
+    console.log("Selected lender:", selectedOption.id);
+    handleChange("lenders", [selectedOption.id]);
+  }
+};
+
   
   const options = ["1", "2", "3", "4", "5", "5+"];
 
@@ -156,7 +201,7 @@ console.log(stampDutyOptions)
     
     const [errors, setErrors] = useState({});
     
-        const [selectedLenders, setSelectedLenders] = useState([]);
+        const [selectedLenders, setSelectedLenders] = useState();
    
 
 
@@ -254,7 +299,7 @@ const [highRaiseSupport, setHighRaiseSupport] = useState("");
               setPropertyTypeOptions(mappedOptions);
             }
             if(data.purchaseStages && Array.isArray(data.purchaseStages)){
-              setStageOptions(data.purchaseStages);
+              setStageOptions(data.purchaseStages.map((item,index)=>({label:item.purchase_stage,value:item.purchase_stage})));
             }
     
           } catch (error) {
@@ -331,7 +376,7 @@ const [highRaiseSupport, setHighRaiseSupport] = useState("");
 
           console.log("✅ Form submitted:", formData);
           localStorage.setItem("getquote", JSON.stringify(formData));
-          //localStorage.setItem("service",JSON.stringify(2))
+          localStorage.setItem("service",JSON.stringify(2))
           if(localStorage.getItem("user")){
             formData.user_id=localStorage.getItem("user");
             localStorage.setItem("getquote", JSON.stringify(formData));
@@ -483,31 +528,23 @@ return (
               htmlFor="stages"
               className="block text-sm font-medium text-gray-700 mb-1"
             >
-              Select Stage:<span className="text-red-500">*</span>
+             What stages are you at?<span className="text-red-500">*</span>
             </label>
     
-            <select
-              id="stages"
-              value={formData.stages}
-              onChange={(e) => handleChange("stages", e.target.value)}
-              className={`block w-full h-[44px] rounded-xl border px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10 ${
-                errors.stages ? "border-red-500" : "border-gray-300"
-              }`}
-            >
-                 {stageOptions.map((stage) => (
-                  <option key={stage.id} value={stage.purchase_stage} >{stage.purchase_stage}</option>
-                 ))} 
-    {/* 
-              <option value="">Please select</option>
-              <option value="Initial Stage">Initial Stage</option>
-              <option value="Just researching / budgeting">
-                Just researching / budgeting
-              </option>
-              <option value="Have received an offer">
-                Have received an offer
-              </option>
-              <option value="Sale agreed">Sale agreed</option> */}
-            </select>
+                           <Select
+  options={stageOptions}
+  styles={selectStyles}
+  value={stageOptions.find(
+    (opt) => opt.value === formData.stages
+  )}
+  onChange={(selected) =>
+    handleChange("stages", selected?.value || "")
+  }
+  isSearchable={false}
+  placeholder="Please select"
+/>
+
+               
     
      <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
        errors.stages ? "text-red-500 opacity-100" : "opacity-0"
@@ -849,19 +886,20 @@ return (
                                   Purchase mode<span className="text-red-500">*</span>
                                  </label>
                              <div className="relative mt-auto">
-               <select
-                 name="purchase_mode"
-                 id="b2l"
-                 value={formData.purchase_mode || ""}  // ✅ controlled value
-                 onChange={(e) => handleChange("purchase_mode", e.target.value)}  // ✅ update formData
-                 className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"
-               >
-                 {stampDutyOptions.map((opt) => (
-    <option key={opt.value} value={opt.value}>
-      {opt.label}
-    </option>
-  ))}
-               </select>
+               <Select
+  inputId="b2l"
+  name="purchase_mode"
+  options={stampDutyOptions}
+  styles={selectStyles}
+  value={stampDutyOptions.find(
+    (opt) => opt.value === formData.purchase_mode
+  )}
+  onChange={(selected) =>
+    handleChange("purchase_mode", selected?.value || "")
+  }
+  placeholder="Please select"
+  isSearchable={false}
+/>
              
                <ChevronDown
                  size={16}
@@ -883,22 +921,21 @@ return (
                                    Buy to Let?<span className="text-red-500">*</span>
                                  </label>
                              <div className="relative mt-auto">
-               <select
-                 name="buy_to_let"
-                 id="b2l"
-value={formData.buy_to_let || "NO"}  
-                 onChange={(e) => handleChange("buy_to_let", e.target.value)}
-                 disabled={buytolet_readonlyfield}  
-                 className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"
-               >
-                 {[{key:"Please select",value: "", },{key:"No",value: "No", },{key:"Yes - Personal name",value:"personal"},{key: "Yes - Company name",value:"company"}].map(
-                   (opt) => (
-                     <option key={opt.key} value={opt.value}>
-                       {opt.key}
-                     </option>
-                   )
-                 )}
-               </select>
+         <Select
+  inputId="b2l"
+  name="buy_to_let"
+  options={buyToLetOptions}
+  styles={selectStyles}
+  value={buyToLetOptions.find(
+    (opt) => opt.value === (formData.buy_to_let ?? "No")
+  )}
+  onChange={(selected) =>
+    handleChange("buy_to_let", selected?.value || "")
+  }
+  isDisabled={buytolet_readonlyfield}
+  placeholder="Please select"
+  isSearchable={false}
+/>
              
                <ChevronDown
                  size={16}
@@ -965,7 +1002,8 @@ value={formData.buy_to_let || "NO"}
             options={lender}
             isDisabled={formData.obtaining_mortgage==0}
               instanceId="lenders-select"
-            isMulti
+              styles={selectStyles}
+          
             value={selectedLenders}
             onChange={handleChange_l}
             placeholder="Choose lenders..."
@@ -992,25 +1030,27 @@ value={formData.buy_to_let || "NO"}
       </label>
     
       <div className="relative mt-auto">
-        <select
-          id="gift_deposit"
-          name="gift_deposit"
-          value={formData.gift_deposit || ""}
-          onChange={(e) => {
-            setFormData({ ...formData, gift_deposit: e.target.value });
-            if (errors.gift_deposit) {
-              setErrors({ ...errors, gift_deposit: "" });
-            }
-          }}
-          className={`block w-full h-[44px] rounded-xl border px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10 ${
-            errors.gift_deposit ? "border-red-500" : "border-gray-300"
-          }`}
-        >
-          <option value="" disabled>Select...</option>
-          {[0, 1, 2, 3].map((opt) => (
-            <option key={opt} value={opt}>{opt}</option>
-          ))}
-        </select>
+       <Select
+  inputId="gift_deposit"
+  name="gift_deposit"
+  options={giftDepositOptions}
+  styles={selectStyles}
+  value={giftDepositOptions.find(
+    (opt) => opt.value === formData.gift_deposit
+  )}
+  onChange={(selected) => {
+    setFormData({
+      ...formData,
+      gift_deposit: selected?.value ?? "",
+    });
+
+    if (errors.gift_deposit) {
+      setErrors({ ...errors, gift_deposit: "" });
+    }
+  }}
+  placeholder="Select..."
+  isSearchable={false}
+/>
     
         <ChevronDown
           size={16}
@@ -1086,6 +1126,7 @@ value={formData.buy_to_let || "NO"}
     
                   instanceId="language-select"
         value={selectedLanguage || formData.languages}
+        styles={selectStyles}
          onChange={(selectedOption) => {
     handleChangeLang(selectedOption); // existing handler to update formData / state
 

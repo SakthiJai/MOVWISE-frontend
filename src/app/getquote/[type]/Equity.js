@@ -22,6 +22,42 @@ import Signinmodal from "../../components/utility/Singingmodal";
 
 
 export default function Equity() {
+  const closeModal = () => {
+    console.log("closing...");
+    setModalopen(false);
+  };
+  const selectStyles = {
+  control: (base, state) => ({
+    ...base,
+    minHeight: "44px",
+    borderRadius: "12px",
+    borderColor: state.isFocused ? "#1E5C3B" : "#D1D5DB",
+    boxShadow: state.isFocused ? "0 0 0 1px #1E5C3B" : "none",
+    "&:hover": {
+      borderColor: "#1E5C3B",
+    },
+    fontSize: "14px",
+    fontWeight: 500,
+  }),
+  option: (base, state) => ({
+    ...base,
+    backgroundColor: state.isFocused
+      ? "#F6CE53"
+      : state.isSelected
+      ? "#F6CE53"
+      : "white",
+    color: "#111",
+    cursor: "pointer",
+  }),
+};
+
+  const buyToLetOptions = [
+  { value: "", label: "Please select", isDisabled: true },
+  { value: "No", label: "No" },
+  { value: "personal", label: "Yes - Personal name" },
+  { value: "company", label: "Yes - Company name" },
+];
+
     const [selectedLenders, setSelectedLenders] = useState([]);
         const [loginformshow,setloginformshow]=useState(false)
         const [lender, setLender] = useState([
@@ -37,25 +73,31 @@ export default function Equity() {
         label: lender.lenders_name,
       }));
     
-       const handleChange_l = (selectedOptions = []) => {
-      const hasNotRequired = selectedOptions.some(
-        (option) => option.value === "Not Known"
-      );
-    
-      if (hasNotRequired) {
-        // Keep only "Not Known" selected
-        const notRequiredOption = lender.find(opt => opt.value === "Not Known");
-        setSelectedLenders([notRequiredOption]);
-        console.log("Selected lenders: [0]");
-        handleChange("lenders", [0]);
-      } else {
-        // Normal behavior for other lenders
-        setSelectedLenders(selectedOptions);
-        const ids = selectedOptions.map(item => item.id);
-        console.log("Selected lenders:", ids);
-        handleChange("lenders", ids);
-      }
-    };
+     const handleChange_l = (selectedOption) => {
+  if (!selectedOption) {
+    setSelectedLenders(null);
+    handleChange("lenders", null);
+    return;
+  }
+
+  const hasNotRequired = selectedOption.value === "Not Known";
+
+  if (hasNotRequired) {
+    const notRequiredOption = lender.find(
+      (opt) => opt.value === "Not Known"
+    );
+
+    setSelectedLenders(notRequiredOption);
+    console.log("Selected lender: Not Known");
+
+    handleChange("lenders", 0);
+  } else {
+    setSelectedLenders(selectedOption);
+
+    console.log("Selected lender:", selectedOption.id);
+    handleChange("lenders", [selectedOption.id]);
+  }
+};
     
     
     async function fetchdata(){
@@ -105,7 +147,7 @@ export default function Equity() {
       "town_city" : "",
       "country" : "",
       "property_values": 0,
-      "number_of_peoples": "",
+      "no_of_peoples": "",
       "property_type": "",
       "leasehold_or_free": "",
       "buy_to_let": "",
@@ -171,11 +213,7 @@ export default function Equity() {
       }
     
          
-          if (!formData.address.trim()) {
-            newErrors.address = "Property address is required";
-          } else if (formData.address.trim().length < 5) {
-            newErrors.address = "Address must be at least 5 characters";
-          }
+        
         
           
           if (!formData.property_values) {
@@ -184,8 +222,8 @@ export default function Equity() {
             newErrors.property_value = "property_value must be a positive number";
           }
     
-     if(!formData.number_of_peoples){
-      newErrors.number_of_peoples="please select a no. of bedrooms"
+     if(!formData.no_of_peoples){
+      newErrors.no_of_peoples="please select a no. of bedrooms"
      }
       if(!formData.property_type){
       newErrors.property_type="please select a property_type"
@@ -484,10 +522,10 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                                 <button
                                     key={opt}
                                     type="button"
-                                    onClick={() => handleChange("number_of_peoples", opt)}                 
+                                    onClick={() => handleChange("no_of_peoples", opt)}                 
                                     className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm
                                     ${
-                                    formData.number_of_peoples === opt  ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+                                    formData.no_of_peoples === opt  ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
                                         : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                                     }`}
                                 >
@@ -588,26 +626,21 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                       Buy to Let?
                     </label>
                 <div className="relative mt-auto">
-              <select
-                name="buy_to_let"
-                id="b2l"
-                value={formData.buy_to_let || ""}  // ✅ controlled value
-                onChange={(e) => handleChange("buy_to_let", e.target.value)}  // ✅ update formData
-                className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"
-              >
-                {["Please select", "No", "Yes - Personal name", "Yes - Company name"].map(
-                  (opt) => (
-                    <option key={opt} value={opt}>
-                      {opt}
-                    </option>
-                  )
-                )}
-              </select>
+                <Select
+  inputId="b2l"
+  name="buy_to_let"
+  options={buyToLetOptions}
+  styles={selectStyles}
+  value={buyToLetOptions.find(
+    (opt) => opt.value === (formData.buy_to_let ?? "No")
+  )}
+  onChange={(selected) =>
+    handleChange("buy_to_let", selected?.value || "")
+  }
+  placeholder="Please select"
+  isSearchable={false}
+/>
 
-              <ChevronDown
-                size={16}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
-              />
             </div>
               <p
 className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
@@ -666,6 +699,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
       
       <Select
         options={lang}
+        styles={selectStyles}
                   instanceId="language-select"
         value={selectedLanguage || formData.languages}
         onChange={handleChangeLang}
@@ -687,8 +721,9 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
       <Select
         options={lender}
           instanceId="lenders-select"
-        isMulti
-        value={selectedLenders} 
+          styles={selectStyles}
+
+          value={selectedLenders} 
         onChange={handleChange_l}
         placeholder="Choose lenders..."
         className="text-black"
@@ -749,8 +784,8 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
 
   
                     </form>
- {modalopen && (
-<Signinmodal></Signinmodal>
+ {modalopen &&  (
+<Signinmodal closeModal={closeModal}></Signinmodal>
 )}
                     <div className="mt-12 flex justify-end gap-4">
                     <button

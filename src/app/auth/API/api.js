@@ -28,14 +28,15 @@ export const API_ENDPOINTS = {
     insertcompanydetail:`${BASE_URL}/partners`,
     region:`${BASE_URL}/regions`,
     services:`${BASE_URL}/services`,
-    
-   // insertcompanydetail:`${BASE_URL}/insertcompanydetail`,
+    addguestuser:`${BASE_URL}/addguest`,
     quotesfilter:`${BASE_URL}/quotes`,
     instruct:`${BASE_URL}/quote-mail`,
     servicelist:`${BASE_URL}/service`,
     getCompanyInformation:`${BASE_URL}/companyInformation`,
     getCompanyFee:`${BASE_URL}/feeDetails`,
     intstructquote_list:`${BASE_URL}/get-user-quotes`,
+    update_user_profile : `${BASE_URL}/editpersonal_details`,
+update_partner_profile : `${BASE_URL}/editcompanydetials`,
     addguest:`${BASE_URL}/addguest`,
 
 

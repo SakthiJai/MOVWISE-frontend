@@ -58,9 +58,10 @@ const validateGuestForm = () => {
 
   if (!guestformsdata.guest_phonenumber) {
     errors.guest_phonenumber = "Phone number is required";
-  } else if (!/^\d{10}$/.test(guestformsdata.guest_phonenumber)) {
-    errors.guest_phonenumber = "Phone number must be 10 digits";
-  }
+  } 
+  // else if (!/^\d{10}$/.test(guestformsdata.guest_phonenumber)) {
+  //   errors.guest_phonenumber = "Phone number must be 10 digits";
+  // }
 
   setFormErrors(errors);
   return Object.keys(errors).length === 0;
@@ -95,12 +96,24 @@ const validateGuestForm = () => {
     setFormErrors(prev => ({ ...prev, [name]: "" }));
   }
   function handleguestformchange(name, value) {
+    console.log(value,name);
+    if(name=="guest_phonenumber"){
+      console.log("guestcheck");
+      setguestformsdata((prev)=>(
+        {
+          ...prev,
+          [name]:Number(value)
+        }
+      ))
+    }
+    else{
+      console.log("other guest check")
     setguestformsdata((prev) => ({
       ...prev,
       [name]: value,
     }));
     setFormErrors(prev => ({ ...prev, [name]: "" }));
-  }
+  }}
    async function logindata() {
 
 
@@ -130,6 +143,8 @@ const validateGuestForm = () => {
       if (loginResponse.code === 200) {
         const userId = loginResponse.user?.id; // <-- get it from API response
         console.log(userId);
+        console.log("userId type:", typeof userId);
+        
         localStorage.setItem("user", userId);
         console.log(Number(localStorage.getItem("service")));
 
@@ -507,7 +522,7 @@ async function createguestuser() {
                   placeholder="Enter your phone number"
                   value={guestformsdata.guest_phonenumber || ""}
                   onChange={(e) => {
-                    const value = e.target.value;
+                    const value = Number( e.target.value);
 
                     // Allow only numbers
                     if (/^\d*$/.test(value)) {

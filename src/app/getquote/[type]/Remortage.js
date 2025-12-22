@@ -27,6 +27,36 @@ import Signinmodal from "../../components/utility/Singingmodal";
 
 
 export default function Remortage() {
+  const selectStyles = {
+  control: (base, state) => ({
+    ...base,
+    minHeight: "44px",
+    borderRadius: "12px",
+    borderColor: state.isFocused ? "#1E5C3B" : "#D1D5DB",
+    boxShadow: state.isFocused ? "0 0 0 1px #1E5C3B" : "none",
+    "&:hover": {
+      borderColor: "#1E5C3B",
+    },
+    fontSize: "14px",
+    fontWeight: 500,
+  }),
+  option: (base, state) => ({
+    ...base,
+    backgroundColor: state.isFocused
+      ? "#F6CE53"
+      : state.isSelected
+      ? "#F6CE53"
+      : "white",
+    color: "#111",
+    cursor: "pointer",
+  }),
+};
+  const buyToLetOptions = [
+  { value: "", label: "Please select", isDisabled: true },
+  { value: "No", label: "No" },
+  { value: "personal", label: "Yes - Personal name" },
+  { value: "company", label: "Yes - Company name" },
+]
   useEffect(() => {
  
  
@@ -89,23 +119,29 @@ const handleChangeLang = (selectedOptions) => {
       }
     
   }
-const handleChange_l = (selectedOptions = []) => {
-  const hasNotRequired = selectedOptions.some(
-    (option) => option.value === "Not Known"
-  );
+const handleChange_l = (selectedOption) => {
+  if (!selectedOption) {
+    setSelectedLenders(null);
+    handleChange("lenders", null);
+    return;
+  }
+
+  const hasNotRequired = selectedOption.value === "Not Known";
 
   if (hasNotRequired) {
-    // Keep only "Not Required" selected
-    const notRequiredOption = lender.find(opt => opt.value === "Not Known");
-    setSelectedLenders([notRequiredOption]);
-    console.log("Selected lenders: [0]");
-    handleChange("lenders", [0]);
+    const notRequiredOption = lender.find(
+      (opt) => opt.value === "Not Known"
+    );
+
+    setSelectedLenders(notRequiredOption);
+    console.log("Selected lender: Not Known");
+
+    handleChange("lenders", 0);
   } else {
-    // Normal behavior for other lenders
-    setSelectedLenders(selectedOptions);
-    const ids = selectedOptions.map(item => item.id);
-    console.log("Selected lenders:", ids);
-    handleChange("lenders", ids);
+    setSelectedLenders(selectedOption);
+
+    console.log("Selected lender:", selectedOption.id);
+    handleChange("lenders", [selectedOption.id]);
   }
 };
 
@@ -122,7 +158,6 @@ const handleChange_l = (selectedOptions = []) => {
   "property_type": "",
   "leasehold_or_free": "",
   "buy_to_let": "",
-  "mortgage_lender": "not required",
   "ownership_housing_asso": 1,
   "languages": [],
   "specal_instruction": "",
@@ -642,21 +677,21 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                       Buy to Let?<span className="text-red-500">*</span>
                     </label>
                 <div className="relative mt-auto">
-  <select
-    name="buy_to_let"
-    id="b2l"
-    value={formData.buy_to_let || ""}  // ✅ controlled value
-    onChange={(e) => handleChange("buy_to_let", e.target.value)}  // ✅ update formData
-    className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"
-  >
-    {["Please select", "No", "Yes - Personal name", "Yes - Company name"].map(
-      (opt) => (
-        <option key={opt} value={opt}>
-          {opt}
-        </option>
-      )
-    )}
-  </select>
+  <Select
+  inputId="b2l"
+  name="buy_to_let"
+  options={buyToLetOptions}
+  styles={selectStyles}
+  value={buyToLetOptions.find(
+    (opt) => opt.value === (formData.buy_to_let ?? "No")
+  )}
+  onChange={(selected) =>
+    handleChange("buy_to_let", selected?.value || "")
+  }
+  // isDisabled={buytolet_readonlyfield}
+  placeholder="Please select"
+  isSearchable={false}
+/>
 
   <ChevronDown
     size={16}
@@ -720,7 +755,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
 
    <Select
         options={lang}
-    
+    styles={selectStyles}
                   instanceId="language-select"
         value={selectedLanguage || formData.languages}
         onChange={handleChangeLang}
@@ -740,12 +775,14 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
 
  <div className="flex flex-col h-full">
       <label className="block text-sm font-medium text-gray-700 mb-2">
-     Mortgage Lender
+     Select Lender
       </label>
        <Select
         options={lender}
           instanceId="lenders-select"
-        isMulti
+              styles={selectStyles}
+
+
         value={selectedLenders}
         onChange={handleChange_l}
         placeholder="Choose lenders..."

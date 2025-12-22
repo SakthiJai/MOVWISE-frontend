@@ -338,6 +338,7 @@ export default function Quotationdetails() {
                 others_id == row.others_id  ? { ...row, is_delete: 1 } : row
               ),
             }
+            
           : item
       )
     );
@@ -1221,11 +1222,7 @@ export default function Quotationdetails() {
                           <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
                             {sub.sub_category}
                           </div>
-                          {transactionFeesError && (
-                            <p style={{ color: "red" }}>
-                              {transactionFeesError}
-                            </p>
-                          )}
+                         
                           <div className="grid  grid-cols-3 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
                             <div className="text-center">
                               Supplement check Type{" "}
@@ -1241,7 +1238,8 @@ export default function Quotationdetails() {
                                 key={i}
                                 className=" gap-3 px-3 py-1 grid grid-cols-3 "
                               >
-                                {"others" in row ? (
+                                {"others" in row ? 
+                                (
                                   <div>
                                     <input
                                       id="Supplement_type"
@@ -1267,7 +1265,7 @@ export default function Quotationdetails() {
                                         value={purchaseFeeTypeList?.[i]?.id}
                                         className="text-sm"
                                       >
-                                        {purchaseFeeTypeList[i]?.fee_type} 
+                                        {purchaseFeeTypeList[i]?.fee_type}
                                       </label>
                                     </div>
                                   </div>

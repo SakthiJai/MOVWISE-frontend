@@ -6,6 +6,16 @@ select optgroup option:hover {
   background-color: #F6CE53 !important;
   color: #111 !important;
 }
+.option-highlight:hover{
+color:red
+}
+
+option:hover{
+  background-color: #F6CE53 !important;
+}
+
+
+
 /* React-Select option hover and selected background color (yellow) */
 .react-select__option--is-focused,
 .react-select__option--is-selected {

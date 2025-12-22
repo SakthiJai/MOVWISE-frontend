@@ -13,6 +13,92 @@ import Signinmodal from "../../components/utility/Singingmodal";
 // src/components/Sales.js
 
 export default function Sales() {
+  const stageOptions = [
+  { value: "", label: "Please select", isDisabled: true },
+  { value: "Just researching / budgeting", label: "Just researching / budgeting" },
+  { value: "Have received an offer", label: "Have received an offer" },
+  { value: "Sale agreed", label: "Sale agreed" },
+];
+const sharedOwnershipOptions = [
+  { value: "", label: "Please select", isDisabled: true },
+  { value: "Yes (housing association)", label: "Yes (housing association)" },
+  { value: "Yes (Help To Buy)", label: "Yes (Help To Buy)" },
+  { value: "No", label: "No" },
+];
+
+const selectStyles = {
+  control: (base, state) => ({
+    ...base,
+    minHeight: "44px",
+    borderRadius: "12px",
+    borderColor: state.isFocused ? "#1E5C3B" : "#D1D5DB",
+    boxShadow: state.isFocused ? "0 0 0 1px #1E5C3B" : "none",
+    "&:hover": {
+      borderColor: "#1E5C3B",
+    },
+    fontSize: "14px",
+    fontWeight: 500,
+  }),
+  option: (base, state) => ({
+    ...base,
+    backgroundColor: state.isFocused
+      ? "#F6CE53"
+      : state.isSelected
+      ? "#F6CE53"
+      : "white",
+    color: "#111",
+    cursor: "pointer",
+  }),
+};
+
+const sharedOwnershipStyles = {
+  control: (base, state) => ({
+    ...base,
+    minHeight: "44px",
+    borderRadius: "12px",
+    borderColor: state.isFocused ? "#1E5C3B" : "#D1D5DB",
+    boxShadow: state.isFocused ? "0 0 0 1px #1E5C3B" : "none",
+    "&:hover": {
+      borderColor: "#1E5C3B",
+    },
+    fontSize: "14px",
+    fontWeight: 500,
+  }),
+  option: (base, state) => ({
+    ...base,
+    backgroundColor:
+      state.isFocused || state.isSelected ? "#F6CE53" : "white",
+    color: "#111",
+    cursor: "pointer",
+  }),
+  singleValue: (base) => ({
+    ...base,
+    color: "#111827",
+  }),
+};
+
+const lender_languagestyles = {
+  option: (base, state) => ({
+    ...base,
+    backgroundColor: state.isSelected
+      ? "#F6CE53"
+      : state.isFocused
+      ? "#F6CE53"
+      : "white",
+    color: "#111",
+    cursor: "pointer",
+    ":active": {
+      backgroundColor: "#F6CE53",
+    },
+  }),
+
+  singleValue: (base) => ({
+    ...base,
+    color: "#111827",
+  }),
+};
+
+
   const [showAddressLines, setShowAddressLines] = useState(false);
       const [selectedLanguage, setSelectedLanguage] = useState([]);
     const [lender, setLender] = useState([
@@ -95,6 +181,9 @@ const handleUnknownPostcode = () => {
   }
 
 const [errors, setErrors] = useState({});
+
+
+
 useEffect(() => {
     if (rawValue === "") return;
 
@@ -235,25 +324,30 @@ console.log(formData)
     ];
   
     // ✅ Handle change
-    const handleChange_l = (selectedOptions = []) => {
-      const hasNotRequired = selectedOptions.some(
-        (option) => option.value === "Not Known"
-      );
+    const handleChange_l = (selectedOptions ) => {
+       if (!selectedOptions) {
+    setSelectedLenders(null);
+    handleChange("lenders", null);
+    return;
+  }
+       const hasNotRequired = selectedOptions.value === "Not Known";
+
     
-      if (hasNotRequired) {
-        // Keep only "Not Required" selected
-        const notRequiredOption = lender.find(opt => opt.value === "Not Known");
-        setSelectedLenders([notRequiredOption]);
-        console.log("Selected lenders: [0]");
-        handleChange("lenders", [0]);
-      } else {
-        // Normal behavior for other lenders
-        setSelectedLenders(selectedOptions);
-        const ids = selectedOptions.map(item => item.id);
-        console.log("Selected lenders:", ids);
-        handleChange("lenders", ids);
-      }
-    };
+    if (hasNotRequired) {
+    const notRequiredOption = lender.find(
+      (opt) => opt.value === "Not Known"
+    );
+
+    setSelectedLenders(notRequiredOption);
+    console.log("Selected lender: Not Known");
+
+    handleChange("lenders", [0]);
+  } else {
+    setSelectedLenders(selectedOptions);
+
+    console.log("Selected lender:", selectedOptions.id);
+    handleChange("lenders", [selectedOptions.id]);
+  }}
 
     // Convert to react-select options
   
@@ -441,16 +535,20 @@ useEffect(() => {
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     What stages are you at? <span className="text-red-500">*</span>
                                 </label>
-                                <select id="stages" name="sales_stages"
-                                 value={formData.sales_stages} // ✅ controlled value
-                                 onChange={(e)=>{handleChange("sales_stages",e.target.value)}}
+                                <Select
+  options={stageOptions}
+  styles={selectStyles}
+  value={stageOptions.find(
+    (opt) => opt.value === formData.sales_stages
+  )}
+  onChange={(selected) =>
+    handleChange("sales_stages", selected?.value || "")
+  }
+  isSearchable={false}
+  placeholder="Please select"
+/>
 
-
-                                  className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10">
-                                    {[ "Please select", "Just researching / budgeting", "Have received an offer", "Sale agreed",].map((opt) => (
-                                    <option key={opt} value={opt === "Please select" ? "" : opt}> {opt} </option>))}
-                                </select>
-                {/* Dropdown icon */}
+           
                               <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                 errors.sales_stages ? "text-red-500 opacity-100" : "opacity-0"
               }`}>
@@ -701,19 +799,20 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                         >
                           Shared Ownership<span className="text-red-500">*</span>
                         </label>
-                        <select
-                          id="shared_ownership"
-                          name="shared_ownership"
-                          value={formData.shared_ownership}
-                          onChange={(e)=>{handleChange("shared_ownership",e.target.value)}}
-                          className={"block w-full h-[44px] rounded-xl border px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10"}
-                        >
-                          {["Please select","Yes (housing association)","Yes (Help To Buy)","No"].map((option) => (
-                            <option key={option} value={option}>
-                              {option}
-                            </option>
-                          ))}
-                        </select>
+                       <Select
+  inputId="shared_ownership"
+  options={sharedOwnershipOptions}
+  styles={sharedOwnershipStyles}
+  value={sharedOwnershipOptions.find(
+    (opt) => opt.value === formData.shared_ownership
+  )}
+  onChange={(selected) =>
+    handleChange("shared_ownership", selected?.value || "")
+  }
+  placeholder="Please select"
+  isSearchable={false}
+/>
+
                          <p
 className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
    errors.shared_ownership ? "text-red-500 opacity-100" : "opacity-0"
@@ -798,6 +897,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
   options={lang}
   instanceId="language-select"
   value={selectedLanguage || formData.languages}
+  styles={lender_languagestyles}
   onChange={(selectedOption) => {
     handleChangeLang(selectedOption); // existing handler to update formData / state
 
@@ -837,8 +937,9 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
             options={lender}
               instanceId="lenders-select"
                           isDisabled={formData.existing_mortgage==0}
+            styles={lender_languagestyles}
 
-            isMulti
+            
             value={selectedLenders}
             onChange={handleChange_l}
             placeholder="Choose lenders..."
