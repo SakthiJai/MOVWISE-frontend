@@ -169,6 +169,21 @@ export default function Quotationdetails() {
               ],
             };
           }
+          else if (item.fees_category_id === 4) {
+            return {
+              ...item,
+              price_list: [
+                ...response2.leasehold_disbursement.map((category) => ({
+                  type_id: category.id,
+                  fee_amount: "",
+                  paid_to: "",
+                  description: "",
+                  is_delete: "",
+                  status: "",
+                })),
+              ],
+            };
+          }
           return item;
         });
 
@@ -1560,37 +1575,21 @@ export default function Quotationdetails() {
                                 {pricingList
                                   .find((x) => x.fees_category_id === numIndex)
                                   .price_list.map((row, i) => (
-                                    <tr key={i} className="border-b">
+                                    <tr key={i} className="">
                                       {/* LEASEHOLD SERVICE SELECT */}
                                       <td className="pl-2 py-2 text-center">
                                         {!row.isOthers ? (
-                                          <select
-                                            className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full "
-                                            value={row.type}
-                                            onChange={(e) => {
-                                              setleasedisbursementFeesError("");
-                                              handlePriceChange(
-                                                numIndex,
-                                                i,
-                                                "type_id",
-                                                e.target.value
-                                              );
-                                            }}
-                                          >
-                                            <option value="">
-                                              Select Disbursement for leasehold
-                                            </option>
-                                            {(
-                                              leaseholdDisbursementList || []
-                                            ).map((opt) => (
-                                              <option
-                                                key={opt.id}
-                                                value={opt.id}
-                                              >
-                                                {opt.fee_type}
-                                              </option>
-                                            ))}
-                                          </select>
+                                       
+                                           <div>
+                                    <div className="font text-black ">
+                                      <label
+                                      
+                                        className="text-sm"
+                                      >
+                                        {leaseholdDisbursementList[i]?.fee_type}
+                                      </label>
+                                    </div>
+                                  </div>
                                         ) : (
                                           <input
                                             type="text"
@@ -1632,37 +1631,7 @@ export default function Quotationdetails() {
                                       {/* PAID TO */}
 
                                       {/* ACTION BUTTONS */}
-                                      <td className="px-3 py-2 text-center">
-                                        <div className="flex justify-end me-6 gap-4">
-                                          {/* ADD ROW - LAST ROW ONLY */}
-                                          {i === 0 && (
-                                            <button
-                                              className="text-green-600 tooltip w-8 h-8 flex items-center justify-center "
-                                              onClick={() =>
-                                                handle_leasehold_disbursement(
-                                                  numIndex
-                                                )
-                                              }
-                                            >
-                                              <FaPlus size={16} />
-                                              <span className="tooltiptext font">
-                                                Add new row
-                                              </span>
-                                            </button>
-                                          )}
-                                          <button
-                                            className="text-red-600 tooltip"
-                                            onClick={() =>
-                                              handleDeleteRow(numIndex, i)
-                                            }
-                                          >
-                                            <FaTrash size={16} />
-                                            <span className="tooltiptext">
-                                              Delete current row
-                                            </span>
-                                          </button>
-                                        </div>
-                                      </td>
+                                     
                                     </tr>
                                   ))}
                               </tbody>

@@ -182,6 +182,7 @@ const [loginformdata, setloginformdata] = useState({
       router.push(`/getquote/${type.replace(/\s+/g, "").toLowerCase()}`);
     }, 2000);
   };
+  
   const closeModal = () => {
     console.log("closing...");
     setModalopen(false);

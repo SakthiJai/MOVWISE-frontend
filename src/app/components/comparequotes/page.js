@@ -369,7 +369,10 @@ function handlefilterchange(selectedoption = []) {
   return (
     <div className="min-h-screen bg-white antialiased">
       {/* Top bar */}
-      <Navbar />
+       <div className='bg-white shadow-md p-1 pb-1'>
+         <Navbar />
+       </div>
+     
 
       {/* Body */}
       <main className="mx-auto max-w-[1200px] pt-10 px-4 lg:px-0 mb-10">
@@ -838,16 +841,16 @@ function handlefilterchange(selectedoption = []) {
 
       {quote.service_details[0].country === "Scotland" && (
         <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
-          <td className="text-sm font-semibold ">LLT</td>
-          <td className="text-sm ">{formatGBP(quote.llt)}</td>
+          <td className="text-sm font-semibold "> LBTT</td>
+          <td className="text-sm ">{formatGBP(quote.lbtt)}</td>
           <td className="text-sm ">-</td>
         </tr>
       )}
 
       {quote.service_details[0].country === "Wales" && (
         <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
-          <td className="text-sm font-semibold">LBTT</td>
-          <td className="text-sm ">{formatGBP(quote.lbtt)}</td>
+          <td className="text-sm font-semibold">LLT</td>
+          <td className="text-sm ">{formatGBP(quote.llt)}</td>
           <td className="text-sm ">-</td>
         </tr>
       )}
@@ -1077,16 +1080,16 @@ function handlefilterchange(selectedoption = []) {
                           
                                           {item.service_details[0].country == "Scotland" && (
                                             <tr className="border-b border-gray-200">
-                                              <td className="p-2">LLT</td>
-                                              <td className="p-2 text-right">{formatGBP(item.llt)}</td>
+                                              <td className="p-2">LBTT</td>
+                                              <td className="p-2 text-right">{formatGBP(item.lbtt)}</td>
                                               <td></td>
                                             </tr>
                                           )}
                           
                                           {item.service_details[0].country == "Wales" && (
                                             <tr className="border-b border-gray-200">
-                                              <td className="p-2">LBTT</td>
-                                              <td className="p-2 text-right">{formatGBP(item.lbtt)}</td>
+                                              <td className="p-2">LLT</td>
+                                              <td className="p-2 text-right">{formatGBP(item.llt)}</td>
                                               <td></td>
                                             </tr>
                                           )}
