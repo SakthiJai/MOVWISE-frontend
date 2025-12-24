@@ -13,14 +13,54 @@ import { API_ENDPOINTS, getData, postData } from "../../auth/API/api";
 import { set } from "react-hook-form";
 import Myprofile from "../profile/Myprofile"
 import Quotepricebreakdown from "./Quotepricebreakdown"
+import { API_BASE_URL } from "../../constants/config";
 
 const Partnersprofile = () => {
+   
+ const getStatusLabel = (status) => {
+  switch (status) {
+    case 2:
+      return "Customer Requested";
+    case 3:
+      return "Admin Approved";
+    case 4:
+      return "You have accepted";
+    case 5:
+      return "Quote is under progress";
+    case 6:
+      return "Rejected by you";
+    case 7:
+      return "Quote is about to completed";
+    default:
+      return "Unknown";
+  }
+};
+const getServiceTypeLabel = (type) => {
+  switch (type) {
+    case 1:
+      return "Sale&Purchase";
+    case 2:
+      return "Purchase";
+    case 3:
+      return "Sales";
+    case 4:
+      return "Remortage";
+    default:
+      return "Transfer of Equity";
+  }
+};
+ const loginType = typeof window !== "undefined" 
+  ? localStorage.getItem("logintype") 
+  : null;
   const [show, setshow] = useState(1);
   const [logintype, setlogintype] = useState();
     const [selectedlender, setselectedLender] = useState([]);
   
   const [showpricebreakdown, setshowpricebreakdown] = useState();
     const [lender, setLender] = useState([]);
+      const[quoteUser,setquoteUser]=useState({});
+      const[companyitems,setcompanyitems]=useState()
+    
   
   const[company,setcompany]=useState([]);
    const [user,setuser]=useState({
@@ -93,9 +133,11 @@ const Partnersprofile = () => {
     company_name: "",
     phone_number: "",
     email: "",
-    websiter: "",
+    website: "",
     languages: [],
-    sra_clc_number:""
+    sra_clc_number:"",
+    service_id:[],
+    notes:""
   });
   const [languagepreference, setlanguagepreference] = useState(" ");
 
@@ -174,7 +216,7 @@ const Partnersprofile = () => {
         serviceoptions.forEach((element) => {
           // console.log(element.id,JSON.parse(localStorage.getItem("companyData")).regions,JSON.parse(localStorage.getItem("companyData")).regions.indexOf(element.id))
           if (
-            JSON.parse(localStorage.getItem("companyData")).service_id.indexOf(
+            JSON.parse(localStorage.getItem("companyData")).service_id?.indexOf(
               element.id
             ) >= 0
           ) {
@@ -202,7 +244,7 @@ const Partnersprofile = () => {
       ...f,
       lender: updated,
     }));
-
+console.log(formData)
     // Clear error
     setErrors((e) => ({ ...e, lender: "" }));
 
@@ -221,11 +263,12 @@ const Partnersprofile = () => {
         company_name: details.data.company_name || "",
         phone_number: details.data.phone_number || "",
         email: details.data.email || "",
-        websiter: details.data.website || "",
-        SRA_CLC_number: details.data.sra_clc_number || "",
-        additional_info: details.data.additional_info || "",
+        website: details.data.website || "",
+        sra_clc_number: String(details.data.sra_clc_number) || "",
+       
         languages: details.data.languages || [],
-      
+        company_id:Number(user),
+      logo:null
 
       });
       if (details.data.logo) {
@@ -257,29 +300,38 @@ console.log("jurisdictions:", jurisdictions);
 
 
   };
+
   useEffect(() => {
     fetchlanguages();
     fetchCompanyInforamtion();
     fetchapi()
+    
   }, []);
 
-  const handleChangeLang = (lang = []) => {
-    setSelectedLanguage((prev) => {
-      const exists = prev.some((item) => item.value === lang.value);
+const handleChangeLang = (lang) => {
+  setSelectedLanguage((prev) => {
+    const exists = prev.some((item) => item.value === lang.value);
 
-      let updated;
+    let updated;
+
+    if (exists) {
+      // ❌ unselect → remove
+      updated = prev.filter((item) => item.value !== lang.value);
+    } else {
+      // ✅ select → add
       updated = [...prev, lang];
+    }
 
-      console.log("updataed", updated);
-      // update form data also
-      setFormData((f) => ({
-        ...f,
-        languages: updated.map((x) => x.id), // or array
-      }));
+    // update form data
+    setFormData((f) => ({
+      ...f,
+      languages: updated.map((x) => x.id),
+    }));
+console.log(formData)
+    return updated;
+  });
+};
 
-      return updated;
-    });
-  };
 
   // Error & Image states
   const [errors, setErrors] = useState({});
@@ -290,12 +342,16 @@ console.log("jurisdictions:", jurisdictions);
     // If called from input event
 
     if (e.target && e.target != undefined) {
-      console.log(e.target);
+      console.log(e.target.value,e.target.name);
       let { name, value } = e.target;
       setErrors((prev) => ({
         ...prev,
         [name]: "",
       })); // For phone number: allow only digits and limit to 12
+      if(name === 'notes'){
+        setFormData((prev)=>({...prev,"notes":value}))
+      }
+      
       if (name === "phone_number") {
         const numericValue = value.replace(/\D/g, "").slice(0, 12);
         setFormData((prev) => ({ ...prev, [name]: numericValue }));
@@ -318,6 +374,7 @@ console.log("jurisdictions:", jurisdictions);
         ...prev,
         [name]: value,
       }));
+      console.log(formData)
     } else {
       let { name, value } = e;
       console.log(name, value);
@@ -369,6 +426,7 @@ console.log("jurisdictions:", jurisdictions);
         ...prev,
         [name]: value,
       }));
+
       console.log(formData);
     }
   };
@@ -466,10 +524,10 @@ console.log("jurisdictions:", jurisdictions);
     }
 
     // SRA / CLC Number validation
-    if (!formData.SRA_CLC_number?.trim()) {
-      newErrors.SRA_CLC_number = "SRA / CLC Number is required";
-    } else if (formData.SRA_CLC_number.trim().length < 3) {
-      newErrors.SRA_CLC_number = "Enter a valid SRA / CLC Number";
+    if (!formData.sra_clc_number?.trim()) {
+      newErrors.sra_clc_number = "SRA / CLC Number is required";
+    } else if (formData.sra_clc_number.trim().length < 3) {
+      newErrors.sra_clc_number = "Enter a valid SRA / CLC Number";
     }
 
   
@@ -482,7 +540,8 @@ console.log("jurisdictions:", jurisdictions);
       localStorage.removeItem("companyData");
       localStorage.setItem("companyData", JSON.stringify({ ...formData }));
       console.log("inside navigation");
-      router.push(`${API_BASE_URL}/quotationdetails`);
+    console.log(formData)
+    handlechangepage(2)
     }
     console.log(errors);
   };
@@ -572,59 +631,117 @@ console.log("jurisdictions:", jurisdictions);
       </span>
     );
   };
- const QuotesContent = () => (
-    <div className="p-6 bg-white shadow-lg rounded-xl min-h-[300px] font h-[500px] overflow-auto" >
-      <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Progress Quote List </h2>
-      <div className="space-y-4">
-        {company.map((quote,index) => (
-          <div
-            key={index}
-            className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition duration-150"
-          >
-            <p className="text-gray-700 italic font-medium mb-2 sm:mb-0 max-w-2xl">
-               {`"${quote.company_name}"`}
-            </p>
-            <div className="flex items-center space-x-3 flex-shrink-0">
-              <span onClick={()=>{handlecom_detailsopen(quote.property_id)}}>
-   <StatusButton
-  status={
-    (() => {
-      if (quote.status === 1) {
-        return "Active";
-      } else if (quote.status === 0) {
-        return "Inactive";
-      } else {
-        return "Unknown";
-      }
-    })()
-  }
-/>
-              </span>
+  const QuotesContent = () => (
+     
+     <div className="p-6 bg-white shadow-lg rounded-xl min-h-[300px] font h-[500px] overflow-auto" >
+       <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Requested Quote List </h2>
+      <div className="overflow-x-auto">
+   <table className="min-w-full  table-auto">
+     <thead>
+       <tr className="bg-gray-100 text-left text-black">
+         <th className="p-3 border font-semibold">S.No</th>
+         <th className="p-3 border font-semibold">Service</th>
+         <th className="p-3 border font-semibold">Property Location</th>
+         <th className="p-3 border font-semibold">Property Price</th>
+         <th className="p-3 border font-semibold"> {localStorage.getItem("logintype") == "user" ? "Conveyancer Name" : "Customer Name"}</th>
+         <th className="p-3 border font-semibold">Status</th>
+         <th className="p-3 border font-semibold">View</th>
+       </tr>
+     </thead>
+ 
+     
+ 
+     <tbody>
+       {companyitems.map((quote, index) => (
         
-          
-            </div>
-          </div>
-        ))}
-
-          <div
-  className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition duration-150"
->
-  <p className="text-gray-700 italic font-medium mb-2 sm:mb-0 max-w-2xl">
-    {"\"MovWise Conveyancing Ltd\""}
-  </p>
-
-  <div className="flex items-center space-x-3 flex-shrink-0">
-    <span onClick={() => { handlecom_detailsopen(101); }}>
-      <StatusButton status="Active" />
-    </span>
-  </div>
-</div>
-
-        
-
-      </div>
-    </div>
-  );
+     <React.Fragment key={index}> 
+            {((quote.status>1) && (localStorage.getItem("logintype")=="partner")) &&(
+ <tr
+           key={index}
+           className="hover:bg-gray-50 transition duration-150 text-black"
+         >
+           <td className="p-3 ">{index + 1}</td>
+           <td className="p-3 ">{getServiceTypeLabel(quote.service_type)}</td>
+ 
+           <td className="p-3 ">
+             {quote.service_type == 2
+               ? quote.purchase_country
+               : quote.sales_country}
+           </td>
+             
+           <td className="p-3 ">£ {quote.purchase_price}</td>
+           <td className="p-3 "> {loginType === "user" ? quote.company_name : quoteUser[0].first_name + quoteUser[0].last_name} {}</td>
+ 
+           <td className="p-3 ">
+             <StatusButton
+             status={ getStatusLabel(quote.status)}
+             />
+           </td>
+ 
+           <td className="p-3  text-center ">
+                           <button onClick={()=>{handlecom_detailsopen(quote.property_id)}} className='bg-blue-100 text-blue-800 px-3  py-1 text-xs font-semibold rounded-full'>
+ 
+            
+             
+               View
+             </button>
+           </td>
+         </tr>
+         )}
+         </React.Fragment>
+ 
+ 
+ 
+         
+         
+         
+       ))}
+      {company.map((quote, index) => (
+     <React.Fragment key={index}> 
+            {((quote.status>0) && (localStorage.getItem("logintype")=="user")) &&(
+ <tr
+           key={index}
+           className="hover:bg-gray-50 transition duration-150 text-black"
+         >
+           <td className="p-3 ">{index + 1}</td>
+           <td className="p-3 ">{getServiceTypeLabel(quote.service_type)}</td>
+ 
+           <td className="p-3 ">
+             {quote.service_type == 2
+               ? quote.purchase_country
+               : quote.sales_country}
+           </td>
+             
+           <td className="p-3 ">£ {quote.purchase_price}</td>
+           <td className="p-3 "> {loginType === "user" ? quote.company_name : quoteUser[0].first_name + quoteUser[0].last_name} {}</td>
+ 
+           <td className="p-3 ">
+             <StatusButton
+             status={ getStatusLabel(quote.status)}
+             />
+           </td>
+ 
+           <td className="p-3  text-center ">
+                           <button onClick={()=>{handlecom_detailsopen(quote.property_id)}} className='bg-blue-100 text-blue-800 px-3  py-1 text-xs font-semibold rounded-full'>
+ 
+            
+             
+               View
+             </button>
+           </td>
+         </tr>
+         )}
+         </React.Fragment>
+         
+         
+         
+       ))}
+     </tbody>
+   </table>
+ </div>
+ 
+     </div>
+   );
   // Content for the 'MY Profile' section (Unchanged)
   const ProfileContent = () => (
     <div className="p-6 bg-white shadow-lg rounded-xl min-h-[300px] font">
@@ -667,7 +784,10 @@ console.log("jurisdictions:", jurisdictions);
         
      let profiledetails = await postData(API_ENDPOINTS.intstructquote_list,payload);
      let userprofile=profiledetails.data[0].user_details
-     let companydetails = profiledetails.data[0].company_details
+      let companydetailsitem = profiledetails.data.map((item,index) => item.company_details)
+      let items_c=companydetailsitem.flat();
+    let companydetails = profiledetails.data[0].company_details
+
      console.log(userprofile)
      console.log(companydetails)
    
@@ -679,7 +799,10 @@ console.log("jurisdictions:", jurisdictions);
      })
      
      setcompany(companydetails)
-  
+     setcompanyitems(items_c)
+        setquoteUser(profiledetails.data[0].user_details)
+      console.log("companydetails",profiledetails.data[0].company_details)
+     console.log(items_c)
          }
     }
        catch(e){
@@ -766,9 +889,9 @@ console.log("jurisdictions:", jurisdictions);
                         </label>
                         <input
                           id="c_website"
-                          name="websiter"
+                          name="website"
                           type="text"
-                          value={formData.websiter}
+                          value={formData.website}
                           onChange={handleChange}
                           placeholder="Enter Website Url"
                           className="block w-full h-[44px] text-[#1B1D21] placeholder-[#1B1D21] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] focus:outline-none"
@@ -857,8 +980,9 @@ console.log("jurisdictions:", jurisdictions);
                     </label>
                     <input
                       id="Name"
-                      name="SRA_CLC_number"
-                      value={formData.SRA_CLC_number || ""}
+                      name="sra_clc_number"
+                      
+                      value={formData.sra_clc_number || ""}
                       onChange={handleChange}
                       placeholder="Enter Company name"
                       className={`block w-full h-[44px] rounded-[10px] border ${
@@ -867,9 +991,9 @@ console.log("jurisdictions:", jurisdictions);
                           : "border-[#D1D5DB]"
                       }  text-[#1B1D21] placeholder-[#1B1D21] px-3 text-[14px] focus:outline-none`}
                     />
-                    {errors.SRA_CLC_number && (
+                    {errors.sra_clc_number && (
                           <p className="text-red-500 text-[12px] mt-1">
-                            {errors.SRA_CLC_number}
+                            {errors.sra_clc_number}
                           </p>
                         )}
                   </div>
@@ -1025,7 +1149,7 @@ console.log("jurisdictions:", jurisdictions);
 
                   <div className="bg-white border border-gray-300 rounded-md">
                     <textarea
-                      name="additional_info"
+                      name="notes"
                       onChange={handleChange}
                       placeholder="Type your message here..."
                       className="min-h-[150px] w-full text-black p-2 outline-none rounded-md"
@@ -1105,13 +1229,15 @@ console.log("jurisdictions:", jurisdictions);
                 {show == 1 && <Partnerquotescontent />}
 
                 <div className="mt-5">
-                  {show == 2 && <PriceBreakdownCard service_id={selectedServices}  />}
+                  {show == 2 && <PriceBreakdownCard service_id={selectedServices} companydata={formData} />}
                 </div>
                 <div className="mt-5">
                   {show == 3 && (<div>
                  <QuotesContent/>
                  <div className="mt-5">
-                  <Quotepricebreakdown/>
+                  <Quotepricebreakdown companydetails={companyitems}
+          quoteId={selectedQuoteId}
+          />
                   </div>
                     </div>)}
                 </div>

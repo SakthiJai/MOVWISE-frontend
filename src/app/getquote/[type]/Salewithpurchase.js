@@ -247,7 +247,7 @@ const handleChange = (name,value) => {
   else {
     setFormData((prev) => ({ ...prev, [name]: value }));
   }
-  //console.log(formData);
+  console.log(formData);
   setErrors((prev) => {
   const copy = { ...prev };
   delete copy[name];
@@ -339,8 +339,9 @@ if (!formData.purchase_country) {
   /* ---------- CONDITIONAL ⭐ ---------- */
   if (
     formData.mortgage_purchase === 1 &&
-    (!formData.lender || formData.lender.length === 0)
+    (!formData.lenders || formData.lenders.length === 0)
   ) {
+    console.log(formData.lenders)
     errors.lenders = "Select at least one lender";
   }
 

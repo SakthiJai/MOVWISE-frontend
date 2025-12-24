@@ -281,9 +281,9 @@ console.log(grouped);
   settaxDetails(grouped);
 
   const totalTaxVat = selectedquote[0].conveying_details.taxDetails.reduce((sum, item) => {
-    if(item.vat==1){
-      sum+=Number(item.fee_amount*0.2)
-    }
+    
+      sum+=Number(item.vat)
+    
    return sum;
 }, 0);
 
@@ -1004,7 +1004,7 @@ function handlefilterchange(selectedoption = []) {
                                         <td className="p-2 text-sm font-semibold text-start ">{`Legal Fees`}</td>
                                         <td className="p-2 text-sm text-right font-bold ">{formatGBP(item.legal_fees)}</td>
                                         <td className="p-2 text-sm text-right">
-                                          {formatGBP(item.legal_fees)}
+                                          {formatGBP(item.legal_fees*0.2)}
                                         </td>
                                       </tr>
                           
@@ -1027,7 +1027,7 @@ function handlefilterchange(selectedoption = []) {
                     <td className="p-2 text-right text-sm">
                       {formatGBP(fee.fee_amount)}
                     </td>
-                    <td className="p-2 text-right text-sm">{(fee.vat==1?formatGBP(fee.fee_amount*0.2):"")}</td>
+                    <td className="p-2 text-right text-sm">{formatGBP(fee.vat)}</td>
                   </tr>
                 ):"")}
                 <tr  className="border-b border-gray-200 text-start">
@@ -1063,12 +1063,13 @@ function handlefilterchange(selectedoption = []) {
 )}
                                          
                                         </td>
-                                        <td className="p-2 text-right text-emerald-600" > {formatGBP(vattax)}</td>
+                                        <td className="p-2 text-right text-emerald-600" > {formatGBP(vattax+(item.legal_fees*0.2))}</td>
                                       </tr>
                                      
                                        {item.service_details[0].service_type == 2 && (
                                         <>
-                                          {item.service_details[0].country == "England" && (
+                                          {(quote.service_details[0].country === "England" ||
+        quote.service_details[0].country === "Northern Ireland") && (
                                             <tr className="border-b border-gray-200">
                                               <td className="p-2 text-start">Stamp Duty</td>
                                               <td className="p-2 text-right">

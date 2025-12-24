@@ -81,7 +81,7 @@ email:userprofile[0].email,
    setcompany(companydetails)
    setquoteUser(profiledetails.data[0].user_details)
    console.log("companydetails",profiledetails.data[0].user_details)
-   setservicedetails()
+      console.log("companydetails",profiledetails.data[0].company_details)
 
        }
   }
@@ -344,10 +344,7 @@ const getServiceTypeLabel = (type) => {
           </td>
 
           <td className="p-3  text-center ">
-                          <button onClick={()=>{handlecom_detailsopen(quote.property_id)}} className='bg-blue-100 text-blue-800 px-3  py-1 text-xs font-semibold rounded-full'>
-
-           
-            
+       <button onClick={()=>{handlecom_detailsopen(quote.property_id)}} className='bg-blue-100 text-blue-800 px-3  py-1 text-xs font-semibold rounded-full'>
               View
             </button>
           </td>

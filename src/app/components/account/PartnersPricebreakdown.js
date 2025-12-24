@@ -23,9 +23,9 @@ import { FaTrash, FaPlus } from "react-icons/fa";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
-export default function Quotationdetails({service_id}) {
+export default function Quotationdetails({service_id,companydata}) {
   console.log(service_id)
-
+  console.log(companydata)
   const router = useRouter();
   const [data, setData] = useState({});
   const [formValues, setFormValues] = useState({});
@@ -530,7 +530,6 @@ export default function Quotationdetails({service_id}) {
       clearTimeout(timers.current[feesCategoryId]);
 
     timers.current[feesCategoryId] = setTimeout(() => {
-      // 🚫 Skip formatting for type_id
       if (field === "type_id" || field === "description") return;
 
       const num = Number(rawValue);
@@ -1151,7 +1150,7 @@ export default function Quotationdetails({service_id}) {
                                   )}
 
                                   {/* REMORTGAGE */}
-                                  {/* {formData["service_id"]?.includes(4) && (
+                                  {(service_id?.some(s => s.id === 4))&& (
                                     <td className="px-3 py-2">
                                       <div className="flex flex-col">
                                         <input
@@ -1176,7 +1175,7 @@ export default function Quotationdetails({service_id}) {
                                         )}
                                       </div>
                                     </td>
-                                  )} */}
+                                  )}
 
                                   {/* ADD ROW BUTTON */}
                                   <td className="px-3 py-2 text-center">
@@ -1282,7 +1281,7 @@ export default function Quotationdetails({service_id}) {
 
                                  {row.type_id==0 ?( 
                                   <> <input
-                                  placeholder="Fee Amount check"
+                                  placeholder="Fee Amount "
                                   value={row.fee_amount}
                                   onChange={(e) => {
                                     settransactionFeesError("");
@@ -1325,10 +1324,10 @@ export default function Quotationdetails({service_id}) {
                                       </span>
                                     </button>
                                   </div>
-                                  </>):(
+                                  </>):(<>
                                  
                                   <input
-                                  placeholder="Fee Amount daf"
+                                  placeholder="Fee Amount "
                                   defaultValue={row.fee_amount}
                                   onChange={(e) => {
                                     settransactionFeesError("");
@@ -1342,6 +1341,25 @@ export default function Quotationdetails({service_id}) {
                                   }}
                                   className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
                                 />
+                                <div className="text-right">
+                                {arr.length-1 == i && (
+                                 
+                                    <button
+                                      className="text-green-600 tooltip mr-4  flex items-center justify-center "
+                                      onClick={() =>
+                                        handle_transaction_purchase(numIndex)
+                                      }
+                                    >
+                                      <FaPlus size={16} />
+                                      <span className="tooltiptext font">
+                                        Add new row
+                                      </span>
+                                    </button>
+                                 
+                                  
+                                )}
+                                </div>
+                                </>
                                 ) }
                                 
                                  
@@ -1490,17 +1508,7 @@ export default function Quotationdetails({service_id}) {
                                         Add new row
                                       </span>
                                     </button>
-                                    <button
-                                      className="text-red-600 tooltip"
-                                      onClick={() =>
-                                        handleDeleteRow(numIndex, i,row.others_id)
-                                      }
-                                    >
-                                      <FaTrash size={16} />
-                                      <span className="tooltiptext">
-                                        Delete current row
-                                      </span>
-                                    </button>
+                                   
                                   </div>
                                 )}
                                 </>
@@ -1515,6 +1523,7 @@ export default function Quotationdetails({service_id}) {
                       ))}
                     </div>
                   )}
+
                   {numIndex === 4 && (
                     <div className="standarddisblock mb-5">
                       {/* MAIN CATEGORY HEADER */}
