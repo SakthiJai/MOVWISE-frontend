@@ -1,5 +1,5 @@
 "use client";
-import React, { use, useEffect, useMemo, useState } from "react";
+import React, { use, useEffect, useMemo, useState,useRef } from "react";
 import Navbar from "../../parts/navbar/page";
 import { Check, MapPin, ChevronDown, Home, Coin, CoinsIcon } from "lucide-react";
 import { FaBuilding, FaHome, FaWarehouse } from "react-icons/fa";
@@ -8,7 +8,7 @@ import Select from 'react-select';
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
-import LocationSearch, { fetchAddressDetails } from '../Purchase/LocationSearch';
+import LocationSearch, { onSelectAddressFullDetails } from '../Purchase/LocationSearch';
 import AddressFields from './AddressFields';
 import Signinmodal from "../../components/utility/Singingmodal";
 
@@ -24,7 +24,7 @@ export default function Purchase() {
       { value: "Not Required", label: "Not Required", id: 0 },
     ]);
     const [buytolet_readonlyfield,setbuytolet_readonlyfield]=useState(false);
-    
+    const [addresskey,setaddresskey]=useState("");
 
     const stampDutyOptions = [
   { label: "Plese Select", value: "" },
@@ -46,12 +46,14 @@ const giftDepositOptions = [
   { value: 2, label: "2" },
   { value: 3, label: "3" },
 ];
-
+ const purchaseRef = useRef(null);
 
 console.log(stampDutyOptions)
 
 
-
+useEffect(() => {
+  console.log(purchaseRef.current); // now defined
+}, []);
 const selectStyles = {
   control: (base, state) => ({
     ...base,
@@ -268,6 +270,11 @@ const [highRaiseSupport, setHighRaiseSupport] = useState("");
             const data = await getData(API_ENDPOINTS.compareQuotes);
            const lenderData = await getData(API_ENDPOINTS.lenders);
            const languages = await getData(API_ENDPOINTS.languages);
+           const addresskey = await getData(API_ENDPOINTS.api_key).then((value)=>value.data.postal_code);
+           console.log(addresskey);
+           setaddresskey(addresskey)
+           console.log("dchedk")
+
               if(Array.isArray(languages.users)){
           const languageOptions = languages.users.map((l) => ({
             value: l.language_name,
@@ -560,13 +567,14 @@ return (
                          Property address:<span className="text-red-500">*</span>
                          </label>
                         <LocationSearch
+                        ref={purchaseRef} 
                         readOnly={showAddressLines}
                         onSelectAddress={async (selected) => {
                           if (!selected) return;
                           // Clear address error immediately when selecting
-                           if (errors.address) {
-                            setErrors((prev) => ({ ...prev, address: "" }));
-                            }
+                          //  if (errors.address) {
+                          //   setErrors((prev) => ({ ...prev, address: "" }));
+                          //   }
                             // Update formData with selected suggestion
                             setFormData((prev) => ({
                               ...prev,
@@ -574,7 +582,8 @@ return (
                               address: selected.suggestion,
                             }));
                             // Fetch full address details
-                            const details = await fetchAddressDetails(selected.udprn);
+                            console.log(purchaseRef);
+                            const details = purchaseRef.current.onSelectAddressFullDetails();
                               if (details) {
                                 setFormData((prev) => ({
                                   ...prev,

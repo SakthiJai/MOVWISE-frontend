@@ -1,11 +1,11 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
+import { API_ENDPOINTS, getData } from '../../auth/API/api';
 
 interface SearchBoxProps {
   onSelectAddress?: (selected: PostcodeResult) => void;
   readOnly?: boolean;
 }
-
 
 export interface PostcodeResult {
   id: string;
@@ -13,17 +13,35 @@ export interface PostcodeResult {
   udprn: number;
 }
 
-const API_KEY = "ak_mjjjygruEMBGAcBHIxzTqTJzkR405"; 
 
-export async function fetchAddressDetails(udprn: number) {
-  const url = `https://api.ideal-postcodes.co.uk/v1/udprn/${udprn}?api_key=${API_KEY}`;
+
+
+export async function fetchAddressDetails1(
+  udprn: number,
+  apiKey?: string
+) {
+  console.log(apiKey)
+  if (!apiKey) {
+    
+    return null;
+  }
+
+  
+
+  const url = `https://api.ideal-postcodes.co.uk/v1/udprn/${udprn}?api_key=${apiKey}`;
+
   try {
     const res = await fetch(url);
     const data = await res.json();
-    if (data.code !== 2000) throw new Error("API error");
+
+   
+
+    if (data.code !== 2000) {
+      return null;
+    }
+
     return data.result;
   } catch (error) {
-    console.error("Failed to fetch address details:", error);
     return null;
   }
 }
@@ -38,6 +56,9 @@ export default function SearchBox({ onSelectAddress, readOnly = false }: SearchB
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [error, setError] = useState<string | null>(null);
   const justSelectedRef = useRef(false);
+  const [apiKey, setApiKey] = useState<string | null>(null);
+  const [details,setDetails] = useState({});
+
 
   
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -54,14 +75,42 @@ export default function SearchBox({ onSelectAddress, readOnly = false }: SearchB
     }
   };
 
-const handleSelect = async (item: PostcodeResult) => {
+const   fetchAddressDetailsByKey = async(udprn)=>{
+  console.log("inside comp function");
+
+  const url = `https://api.ideal-postcodes.co.uk/v1/udprn/${udprn}?api_key=${apiKey}`;
+
+  try {
+    const res = await fetch(url);
+    const data = await res.json();
+
+   
+
+    if (data.code !== 2000) {
+      return null;
+    }
+
+    return data.result;
+  } catch (error) {
+    return null;
+  }
+}
+
+const onSelectAddressFullDetails = () =>
+{
+  console.log(details);
+  return details;
+}
+const handleSelect = async (item: PostcodeResult) => { console.log("selected item",item);
+   if (!apiKey) return; 
   setResults([]);
   setSelectedIndex(-1);
   justSelectedRef.current = true;
 
   // 👉 CALL UDPRN DETAILS API HERE
-  const details = await fetchAddressDetails(item.udprn);
-
+  const details = await fetchAddressDetailsByKey(item.udprn);
+ // console.log(details)
+  setDetails(details);
   // 👉 USE THIS BLOCK HERE
   if (details) {
     const fullAddress = [
@@ -72,7 +121,7 @@ const handleSelect = async (item: PostcodeResult) => {
     ]
       .filter(Boolean)
       .join(", ");
-
+    console.log("fullAddress",fullAddress)
     setQuery(fullAddress); // ✅ FULL ADDRESS + FULL POSTCODE
   } else {
     setQuery(item.suggestion);
@@ -81,8 +130,14 @@ const handleSelect = async (item: PostcodeResult) => {
   if (onSelectAddress) onSelectAddress(item);
 };
 
+useEffect(() => {
+  if (apiKey) {
+    console.log("Ideal Postcodes API Key being used:", apiKey);
+  }
+}, [apiKey]);
 
 useEffect(() => {
+  if (!apiKey) return;
     if (justSelectedRef.current) {
       justSelectedRef.current = false;
       return;
@@ -99,7 +154,8 @@ useEffect(() => {
       setError(null);
 
       try {
-        const url = `https://api.ideal-postcodes.co.uk/v1/autocomplete/addresses?query=${encodeURIComponent(trimmed)}&api_key=${API_KEY}`;
+        const url = `https://api.ideal-postcodes.co.uk/v1/autocomplete/addresses?query=${encodeURIComponent( trimmed)}&api_key=${apiKey}`;
+
         const res = await fetch(url);
         const data = await res.json();
 
@@ -123,9 +179,29 @@ useEffect(() => {
         setLoading(false);
       }
     }, 300);
-
     return () => clearTimeout(timeout);
-  }, [query]);
+  }, [query, apiKey]);
+
+
+useEffect(() => {
+  async function fetchApiKey() {
+    try {
+      const res = await getData(API_ENDPOINTS.api_key);
+      const key = res?.data?.postal_code;
+
+      if (key) {
+        setApiKey(key);
+      } else {
+        console.error("Postal code API key missing");
+      }
+    } catch (err) {
+      console.error("Failed to fetch API key", err);
+    }
+  }
+
+  fetchApiKey();
+}, []);
+
 
   return (
     <div className="w-full max-w-md mx-auto">

@@ -1,6 +1,6 @@
 // ✅ Base URL for your backend
-const BASE_URL = "https://movwiseadmin.digitalcloudies.co.in/api";
-
+// const BASE_URL = "https://movwiseadmin.digitalcloudies.co.in/api";
+const BASE_URL = "http://localhost:5000/api";
 export const config = {
   api: {
     bodyParser: {
@@ -38,6 +38,7 @@ export const API_ENDPOINTS = {
     update_user_profile : `${BASE_URL}/editpersonal_details`,
 update_partner_profile : `${BASE_URL}/editcompanydetials`,
     addguest:`${BASE_URL}/addguest`,
+    api_key:`${BASE_URL}/app-setting`
 
 
 }
