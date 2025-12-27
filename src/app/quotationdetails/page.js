@@ -296,6 +296,7 @@ export default function Quotationdetails() {
 
     ///router.push("/conveyancers/Notes/");
   };
+  
   const regipage = () => {
     router.push("/conveyancers/Companyregistration/");
   };

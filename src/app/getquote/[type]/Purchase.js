@@ -583,7 +583,7 @@ return (
                             }));
                             // Fetch full address details
                             console.log(purchaseRef);
-                            const details = purchaseRef.current.onSelectAddressFullDetails();
+                            const details = purchaseRef.current?.onSelectAddressFullDetails?.();
                               if (details) {
                                 setFormData((prev) => ({
                                   ...prev,

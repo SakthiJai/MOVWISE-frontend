@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
 import { API_ENDPOINTS, getData } from '../../auth/API/api';
 
 interface SearchBoxProps {
@@ -49,7 +49,7 @@ export async function fetchAddressDetails1(
 
 
 
-export default function SearchBox({ onSelectAddress, readOnly = false }: SearchBoxProps) {
+const SearchBox = forwardRef(function SearchBox({ onSelectAddress, readOnly = false }: SearchBoxProps, ref) {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<PostcodeResult[]>([]);
   const [loading, setLoading] = useState(false);
@@ -58,6 +58,7 @@ export default function SearchBox({ onSelectAddress, readOnly = false }: SearchB
   const justSelectedRef = useRef(false);
   const [apiKey, setApiKey] = useState<string | null>(null);
   const [details,setDetails] = useState({});
+  const lastDetailsRef = useRef<any>(null);
 
 
   
@@ -96,10 +97,8 @@ const   fetchAddressDetailsByKey = async(udprn)=>{
   }
 }
 
-const onSelectAddressFullDetails = () =>
-{
-  console.log(details);
-  return details;
+const onSelectAddressFullDetails = () => {
+  return lastDetailsRef.current ?? details ?? null;
 }
 const handleSelect = async (item: PostcodeResult) => { console.log("selected item",item);
    if (!apiKey) return; 
@@ -110,6 +109,7 @@ const handleSelect = async (item: PostcodeResult) => { console.log("selected ite
   // 👉 CALL UDPRN DETAILS API HERE
   const details = await fetchAddressDetailsByKey(item.udprn);
  // console.log(details)
+  lastDetailsRef.current = details;
   setDetails(details);
   // 👉 USE THIS BLOCK HERE
   if (details) {
@@ -129,6 +129,11 @@ const handleSelect = async (item: PostcodeResult) => { console.log("selected ite
 
   if (onSelectAddress) onSelectAddress(item);
 };
+
+  useImperativeHandle(ref, () => ({
+    onSelectAddressFullDetails,
+    fetchAddressDetailsByKey,
+  }), [onSelectAddressFullDetails, fetchAddressDetailsByKey]);
 
 useEffect(() => {
   if (apiKey) {
@@ -238,4 +243,6 @@ useEffect(() => {
       )}
     </div>
   );
-}
+});
+
+export default SearchBox;
