@@ -1,12 +1,12 @@
 "use client";  // 
-import React, { useState , useEffect } from 'react'
+import React, { useState , useEffect,useRef  } from 'react'
 import { Check, MapPin, ChevronDown , Home, DollarSign, Coins } from "lucide-react";  
 import Link from "next/link";
 import { FaBuilding, FaHome, FaWarehouse } from "react-icons/fa";
 import { MdHolidayVillage } from "react-icons/md"; // Material icon
 import { useRouter } from 'next/navigation';
 import Select from 'react-select';
-import LocationSearch, { fetchAddressDetails } from '../Purchase/LocationSearch';
+import LocationSearch, { onSelectAddressFullDetails  } from '../Purchase/LocationSearch';
 import AddressFields from './AddressFields';
 import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
 import Signinmodal from "../../components/utility/Singingmodal";
@@ -25,7 +25,6 @@ const sharedOwnershipOptions = [
   { value: "Yes (Help To Buy)", label: "Yes (Help To Buy)" },
   { value: "No", label: "No" },
 ];
-
 const selectStyles = {
   control: (base, state) => ({
     ...base,
@@ -98,7 +97,7 @@ const lender_languagestyles = {
   }),
 };
 
-
+   const [addresskey,setaddresskey]=useState("");
   const [showAddressLines, setShowAddressLines] = useState(false);
       const [selectedLanguage, setSelectedLanguage] = useState([]);
     const [lender, setLender] = useState([
@@ -181,8 +180,10 @@ const handleUnknownPostcode = () => {
   }
 
 const [errors, setErrors] = useState({});
-
-
+ const purchaseRef = useRef(null);
+useEffect(() => {
+  console.log(purchaseRef.current); // now defined
+}, []);
 
 useEffect(() => {
     if (rawValue === "") return;
@@ -384,6 +385,9 @@ function handleloginformchange(name, value) {
 
 async function fetchdata(){
   try{
+     const addresskey = await getData(API_ENDPOINTS.api_key).then((value)=>value.data.postal_code);
+           console.log(addresskey);
+           setaddresskey(addresskey)
  const languages = await getData(API_ENDPOINTS.languages);
             const lenderData = await getData(API_ENDPOINTS.lenders);
  
@@ -566,13 +570,14 @@ useEffect(() => {
                          Property address:<span className="text-red-500">*</span>
                          </label>
                         <LocationSearch
+                         ref={purchaseRef}
                         readOnly={showAddressLines}
                         onSelectAddress={async (selected) => {
                           if (!selected) return;
                           // Clear address error immediately when selecting
-                           if (errors.address) {
-                            setErrors((prev) => ({ ...prev, address: "" }));
-                            }
+                          //  if (errors.address) {
+                          //   setErrors((prev) => ({ ...prev, address: "" }));
+                          //   }
                             // Update formData with selected suggestion
                             setFormData((prev) => ({
                               ...prev,
@@ -580,7 +585,7 @@ useEffect(() => {
                               sales_address: selected.suggestion,
                             }));
                             // Fetch full address details
-                            const details = await fetchAddressDetails(selected.udprn);
+                             const details = purchaseRef.current?.onSelectAddressFullDetails?.();
                               if (details) {
                                 setFormData((prev) => ({
                                   ...prev,
