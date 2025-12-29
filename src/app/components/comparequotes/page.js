@@ -795,7 +795,7 @@ function handlefilterchange(selectedoption = []) {
   <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
     <td className="text-sm font-bold">Legal Fees</td>
     <td className="text-sm font-semibold text-emerald-600">{formatGBP(quote.legal_fees)}</td>
-    <td className="text-sm ">{formatGBP(quote.vat)}</td>
+    <td className="text-sm ">{formatGBP(quote.legal_fees*0.2)}</td>
   </tr>
     <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
     <td className="text-sm ">Supplements</td>
@@ -826,7 +826,7 @@ function handlefilterchange(selectedoption = []) {
   Number(quote.legal_fees || 0)
 )}
     </td>
-    <td className="text-sm font-semibold text-emerald-600">{formatGBP((quote.disbursements * 0.2)+(quote.supplements*0.2))}</td>
+    <td className="text-sm font-semibold text-emerald-600">{formatGBP((quote.disbursements * 0.2)+(quote.supplements*0.2)+(quote.legal_fees*0.2))}</td>
   </tr>
  {quote.service_details[0].service_type == 2 && (
     <>
@@ -895,14 +895,12 @@ function handlefilterchange(selectedoption = []) {
                                   {/* ---------- COMPANY LOGO + RATING ---------- */}
                                   <div className="flex justify-between items-start">
                                     <div className="ml-6">
-                                      <img
-                                        src={
-                                          view_data?.appsetting_details?.logo ||
-                                          "/logo.png"
-                                        }
-                                        alt="Company Logo"
-                                        className="w-30 mt-5 h-20"
-                                      />
+                                     
+                                        <span className="text-[34px] leading-none font-extrabold text-[#1E5C3B] tracking-tight">
+          {view_data?.appsetting_details
+                                      ?.company_name || "MovWise"}
+        </span>
+                                        
 
                                       <p className="mt-2 font-semibold text-base quotes">
                                         Contact Details
