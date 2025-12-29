@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState ,useRef } from "react";
 import Navbar from "../../parts/navbar/page";
 import { Check, MapPin,ChevronDown, Home, CoinsIcon } from "lucide-react";
 import { FaBuilding, FaHome, FaWarehouse } from "react-icons/fa";
@@ -50,7 +50,11 @@ export default function Equity() {
     cursor: "pointer",
   }),
 };
-
+const [addresskey,setaddresskey]=useState("");
+ const purchaseRef = useRef(null);
+useEffect(() => {
+  console.log(purchaseRef.current); 
+  }, []);
   const buyToLetOptions = [
   { value: "", label: "Please select", isDisabled: true },
   { value: "No", label: "No" },
@@ -103,6 +107,9 @@ export default function Equity() {
     async function fetchdata(){
       try{
      const languages = await getData(API_ENDPOINTS.languages);
+     const addresskey = await getData(API_ENDPOINTS.api_key).then((value)=>value.data.postal_code);
+                console.log(addresskey);
+                setaddresskey(addresskey)
                 const lenderData = await getData(API_ENDPOINTS.lenders);
      
                   if(Array.isArray(languages.users)){
@@ -413,14 +420,15 @@ export default function Equity() {
                         <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
                          Property address:<span className="text-red-500">*</span>
                          </label>
-                        <LocationSearch
+                         <LocationSearch
+                        ref={purchaseRef} 
                         readOnly={showAddressLines}
                         onSelectAddress={async (selected) => {
                           if (!selected) return;
                           // Clear address error immediately when selecting
-                           if (errors.address) {
-                            setErrors((prev) => ({ ...prev, address: "" }));
-                            }
+                          //  if (errors.address) {
+                          //   setErrors((prev) => ({ ...prev, address: "" }));
+                          //   }
                             // Update formData with selected suggestion
                             setFormData((prev) => ({
                               ...prev,
@@ -428,7 +436,8 @@ export default function Equity() {
                               address: selected.suggestion,
                             }));
                             // Fetch full address details
-                            const details = await fetchAddressDetails(selected.udprn);
+                            console.log(purchaseRef);
+                            const details = purchaseRef.current?.onSelectAddressFullDetails?.();
                               if (details) {
                                 setFormData((prev) => ({
                                   ...prev,

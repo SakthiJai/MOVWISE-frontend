@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState ,useRef} from "react";
 import Navbar from "../../parts/navbar/page";
 import { Check, MapPin,ChevronDown, CoinsIcon, Home } from "lucide-react";
 import { FaBuilding, FaHome, FaWarehouse } from "react-icons/fa";
@@ -14,7 +14,7 @@ import Footer from "../../parts/Footer/footer";
 import { v4 as uuidv4 } from 'uuid';
 import Image from "next/image";
 import Swal  from "sweetalert2";
-import LocationSearch, { fetchAddressDetails } from '../Purchase/LocationSearch';
+import LocationSearch, { onSelectAddressFullDetails } from '../Purchase/LocationSearch';
 import AddressFields from './AddressFields';
 import Signinmodal from "../../components/utility/Singingmodal";
 
@@ -144,7 +144,7 @@ const handleChange_l = (selectedOption) => {
     handleChange("lenders", [selectedOption.id]);
   }
 };
-
+ const [addresskey,setaddresskey]=useState("");
   const [showAddressLines, setShowAddressLines] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -269,7 +269,10 @@ else{
 
   };
 
-   
+    const purchaseRef = useRef(null);
+   useEffect(() => {
+     console.log(purchaseRef.current); // now defined
+   }, []);
 
     const [modalopen, setModalopen] = useState(false);
       const [languagepreference, setlanguagepreference] = useState(" ");
@@ -337,7 +340,9 @@ const getIconForType = (type) => {
          console.log(lender)
       try {
         const data = await getData(API_ENDPOINTS.compareQuotes);
-      
+      const addresskey = await getData(API_ENDPOINTS.api_key).then((value)=>value.data.postal_code);
+                 console.log(addresskey);
+                 setaddresskey(addresskey)
        const lenderData = await getData(API_ENDPOINTS.lenders);
        const languages = await getData(API_ENDPOINTS.languages);
         setLang( languages.users)
@@ -465,20 +470,23 @@ const getIconForType = (type) => {
                          Property address:<span className="text-red-500">*</span>
                          </label>
                         <LocationSearch
+                        ref={purchaseRef} 
                         readOnly={showAddressLines}
                         onSelectAddress={async (selected) => {
                           if (!selected) return;
                           // Clear address error immediately when selecting
-                           if (errors.address) {
-                            setErrors((prev) => ({ ...prev, address: "" }));
-                            }
+                          //  if (errors.address) {
+                          //   setErrors((prev) => ({ ...prev, address: "" }));
+                          //   }
                             // Update formData with selected suggestion
                             setFormData((prev) => ({
                               ...prev,
+                              selectedId: selected.id,
                               address: selected.suggestion,
                             }));
                             // Fetch full address details
-                            const details = await fetchAddressDetails(selected.udprn);
+                            console.log(purchaseRef);
+                            const details = purchaseRef.current?.onSelectAddressFullDetails?.();
                               if (details) {
                                 setFormData((prev) => ({
                                   ...prev,

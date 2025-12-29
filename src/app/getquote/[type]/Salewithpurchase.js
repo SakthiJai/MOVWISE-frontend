@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState ,useRef } from "react";
 import Navbar from "../../parts/navbar/page";
 import { Check, MapPin,ChevronDown, CoinsIcon, Home, HomeIcon } from "lucide-react";
 import { FaBuilding, FaHome, FaWarehouse } from "react-icons/fa";
@@ -83,7 +83,14 @@ const buyToLetOptions = [
 
   const [showAddressLines_purchase, setShowAddressLines_purchase] = useState(false);
     const [showAddressLines, setShowAddressLines] = useState(false);
+const [addresskey,setaddresskey]=useState("");
+ const purchaseRef = useRef(null);
+ const salesRef = useRef(null);
 
+
+useEffect(() => {
+  console.log(purchaseRef.current); 
+  }, []);
 const handleUnknownPostcode = () => {
   // 1️⃣ Condition: user clicked "I don’t know the postcode yet"
   setShowAddressLines(true); // show address fields
@@ -561,70 +568,90 @@ console.log(language);
       }
     
   }
-  const onSelectAddress = (type) => async (selected) => {
+const onSelectAddress = (type) => async (selected) => {
   if (!selected) return;
 
-  // Clear purchase error if there was one
-  clearAddressError();
+  clearAddressError(type);
+  saveSelectedAddress(selected, type);
 
-  // Save the selected address
-  saveSelectedAddress(selected);
-
-  // Fetch full details based on selected address
-  await fetchAddressDetailsAndUpdate(selected.udprn,type);
+  await fetchAddressDetailsAndUpdate(selected.udprn, type);
 };
 
-// Function to clear the address error
-const clearAddressError = () => {
-  if (errors.address) {
-    setErrors((prev) => ({ ...prev, address: "" }));
+
+const clearAddressError = (type) => {
+  const errorKey =
+    type === "sales" ? "sales_address" : "purchase_address";
+
+  if (errors[errorKey]) {
+    setErrors((prev) => ({ ...prev, [errorKey]: "" }));
   }
 };
 
 // Function to save selected address and update formData
-const saveSelectedAddress = (selected) => {
-  setFormData((prev) => ({
-    ...prev,
-    selectedId_purchase: selected.id,
-    address: selected.suggestion,
-  }));
-};
-
-// Function to fetch full address details based on UDPRN
-const fetchAddressDetailsAndUpdate = async (udprn,type) => {
-  const details = await fetchAddressDetails(udprn);
-
-  if (details) {
-    updateFormDataWithAddressDetails(details,type);
-  } else {
-    setErrors((prev) => ({
+const saveSelectedAddress = (selected, type) => {
+  if (type === "sales") {
+    setFormData((prev) => ({
       ...prev,
-      address: "Failed to fetch full address details.",
+      selectedId: selected.id,
+      sales_address: selected.suggestion,
+    }));
+  } else if(type === "purchase") {
+    setFormData((prev) => ({
+      ...prev,
+      selectedId_purchase: selected.id,
+      purchase_address: selected.suggestion,
     }));
   }
 };
 
-// Function to update formData with address details
-const updateFormDataWithAddressDetails = (details,type) => { console.log(details,type)
-  if(type=="sales"){
-     setFormData((prev) => ({
-    ...prev,
-    sales_city: details.post_town || details.admin_district || "",
-    sales_country: details.country || "",
-  }));
+
+const fetchAddressDetailsAndUpdate = async (udprn, type) => {
+  const ref =
+    type === "sales" ? salesRef : purchaseRef;
+
+  const details = ref.current?.onSelectAddressFullDetails?.();
+
+  if (!details) {
+    const errorKey =
+      type === "sales" ? "sales_address" : "purchase_address";
+
+    setErrors((prev) => ({
+      ...prev,
+      [errorKey]: "Failed to fetch full address details.",
+    }));
+    return;
   }
-  else{
-  setFormData((prev) => ({
-    ...prev,
-    purchase_city: details.post_town || details.admin_district || "",
-    purchase_country: details.country || "",
-  }));
-}
+
+  updateFormDataWithAddressDetails(details, type);
 };
+
+
+const updateFormDataWithAddressDetails = (details, type) => {
+  if (type === "sales") {
+    setFormData((prev) => ({
+      ...prev,
+      sales_city:
+        details.post_town || details.admin_district || "",
+      sales_country: details.country || "",
+    }));
+  } else {
+    setFormData((prev) => ({
+      ...prev,
+      purchase_city:
+        details.post_town || details.admin_district || "",
+      purchase_country: details.country || "",
+    }));
+  }
+};
+
 
 
   async function fetchdata() {
     try{
+           const addresskey = await getData(API_ENDPOINTS.api_key).then((value)=>value.data.postal_code);
+                      console.log(addresskey);
+                      setaddresskey(addresskey)
+                      
            const languages = await getData(API_ENDPOINTS.languages);
                       const lenderData = await getData(API_ENDPOINTS.lenders);
            
@@ -801,7 +828,8 @@ console.log(e);
                         <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
                          Property address:<span className="text-red-500">*</span>
                          </label>
-                        <LocationSearch readOnly={showAddressLines}   onSelectAddress={onSelectAddress("sales")}  />
+                       <LocationSearch ref={salesRef} readOnly={showAddressLines} onSelectAddress={onSelectAddress("sales")}/>
+
 
                            <div className="flex justify-between items-center mt-1">
                               <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
@@ -1041,7 +1069,8 @@ console.log(e);
                         <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
                          Property address:<span className="text-red-500">*</span>
                          </label>
-                        <LocationSearch readOnly={showAddressLines}   onSelectAddress={onSelectAddress("purchase")}  />
+                       <LocationSearch ref={purchaseRef}  readOnly={showAddressLines_purchase}  onSelectAddress={onSelectAddress("purchase")}/>
+
 
                                           <div className="flex justify-between items-center mt-1">
                                             {/* Left: Error message */}
