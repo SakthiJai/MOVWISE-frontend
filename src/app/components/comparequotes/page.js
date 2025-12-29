@@ -795,12 +795,12 @@ function handlefilterchange(selectedoption = []) {
   <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
     <td className="text-sm font-bold">Legal Fees</td>
     <td className="text-sm font-semibold text-emerald-600">{formatGBP(quote.legal_fees)}</td>
-    <td className="text-sm ">{formatGBP(quote.legal_fees*0.2)}</td>
+    <td className="text-sm ">{formatGBP(quote.vat)}</td>
   </tr>
     <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
     <td className="text-sm ">Supplements</td>
     <td className="text-sm ">{formatGBP(quote.supplements)}</td>
-    <td className="text-sm ">      {formatGBP(quote.supplements * 0.2)}
+    <td className="text-sm ">      {formatGBP(quote.supplementsvat)}
 </td>
   </tr>
 
@@ -809,7 +809,7 @@ function handlefilterchange(selectedoption = []) {
     <td className="text-sm ">Disbursements</td>
     <td className="text-sm ">{formatGBP(quote.disbursements)}</td>
     <td className="text-sm ">
-      {formatGBP(quote.disbursements * 0.2)}
+      {formatGBP(quote.disbursementsvat)}
     </td>
   </tr>
 
@@ -826,7 +826,7 @@ function handlefilterchange(selectedoption = []) {
   Number(quote.legal_fees || 0)
 )}
     </td>
-    <td className="text-sm font-semibold text-emerald-600">{formatGBP((quote.disbursements * 0.2)+(quote.supplements*0.2)+(quote.legal_fees*0.2))}</td>
+    <td className="text-sm font-semibold text-emerald-600">{formatGBP(Number(quote.disbursementsvat)+Number(quote.supplementsvat)+Number(quote.vat))}</td>
   </tr>
  {quote.service_details[0].service_type == 2 && (
     <>
@@ -1002,7 +1002,7 @@ function handlefilterchange(selectedoption = []) {
                                         <td className="p-2 text-sm font-semibold text-start ">{`Legal Fees`}</td>
                                         <td className="p-2 text-sm text-right font-bold ">{formatGBP(item.legal_fees)}</td>
                                         <td className="p-2 text-sm text-right">
-                                          {formatGBP(item.legal_fees*0.2)}
+                                          {formatGBP(item.vat)}
                                         </td>
                                       </tr>
                           
@@ -1025,7 +1025,7 @@ function handlefilterchange(selectedoption = []) {
                     <td className="p-2 text-right text-sm">
                       {formatGBP(fee.fee_amount)}
                     </td>
-                    <td className="p-2 text-right text-sm">{formatGBP(fee.vat)}</td>
+                    <td className="p-2 text-right text-sm">{formatGBP(Number(fee.vat))}</td>
                   </tr>
                 ):"")}
                 <tr  className="border-b border-gray-200 text-start">
@@ -1061,7 +1061,7 @@ function handlefilterchange(selectedoption = []) {
 )}
                                          
                                         </td>
-                                        <td className="p-2 text-right text-emerald-600" > {formatGBP(vattax+(item.legal_fees*0.2))}</td>
+                                        <td className="p-2 text-right text-emerald-600" > {formatGBP(vattax+Number(item.vat))}</td>
                                       </tr>
                                      
                                        {item.service_details[0].service_type == 2 && (
