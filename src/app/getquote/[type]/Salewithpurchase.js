@@ -86,7 +86,22 @@ const buyToLetOptions = [
 const [addresskey,setaddresskey]=useState("");
  const purchaseRef = useRef(null);
  const salesRef = useRef(null);
+const [rawSalesPrice, setRawSalesPrice] = useState("");
+const [rawPurchasePrice, setRawPurchasePrice] = useState("");
 
+useEffect(() => {
+  const stored = localStorage.getItem("getquote");
+  if (stored) {
+    const parsed = JSON.parse(stored);
+
+    setFormData(prev => ({
+      ...prev,
+      ...parsed,
+      sales_price: parsed.sales_price ?? "",
+      purchase_price: parsed.purchase_price ?? "",
+    }));
+  }
+}, []);
 
 useEffect(() => {
   console.log(purchaseRef.current); 
@@ -135,7 +150,13 @@ useEffect(() => {
 
   const storedData = localStorage.getItem("getquote");
   if (storedData) {
-    setFormData(JSON.parse(storedData));
+    setFormData(prev => ({
+  ...prev,
+  ...JSON.parse(storedData),
+  purchase_price: JSON.parse(storedData).purchase_price ?? "",
+  sales_price: JSON.parse(storedData).sales_price ?? "",
+}));
+
   }
 
   fetchdata();
@@ -148,20 +169,27 @@ useEffect(() => {
     sales_address_line2: "",
     sales_country: "",
     sales_city: "",
-    price: "",
+    sales_price: "",
     sales_no_of_bedrooms: options[0],
     tenure: "Freehold", 
     sales_property_type: "Flat",
     sales_shared_ownership:"",
-    purchase_address: "",
+    address: "",
     purchase_address_line1: "",
     purchase_address_line2: "",
-    purchase_country: "",
-    purchase_town: "",
+    country: "",
+    town: "",
+    purchase_city :"",
+    purchase_country : "",
+    new_build:0,
+    govt_by_scheme: 0,
+    obtaining_mortgage: 0,
+    ownership_housing_asso: 0,
+    gift_deposit: "",
     purchase_price: "",
     purchase_mode:"",
     no_of_bedrooms: options_purchase[0],
-    purchase_property_type: "Flat",
+    property_type: "Flat",
     leasehold_or_free: "Freehold", 
     sharedOwnership_purchase: 0,
     buy_to_let:"",
@@ -169,7 +197,9 @@ useEffect(() => {
     languages:[],
     service_type:1,
     high_raise_support:0,
-    mortgage_purchase:0
+    mortgage_purchase:0,
+    specal_instruction :"",
+    lenders: []
   });
   const [postData, setPostData] = useState({user_id: null, guest_user: null, service_type: null,
   // SALES FIELDS
@@ -207,6 +237,22 @@ useEffect(() => {
 });
 
   
+const handleBuyToLetChange = (option) => {
+  setFormData(prev => ({
+    ...prev,
+    buy_to_let: option.value,
+    need_hmo: option.value === "personal" ? null : null, // reset always
+  }));
+
+  // clear dependent state
+  setSelectedLenders(null);
+
+  setErrors(prev => ({
+    ...prev,
+    need_hmo: "",
+    lenders: "",
+  }));
+};
 
 
   const [errors, setErrors] = useState({});
@@ -222,7 +268,7 @@ useEffect(() => {
 
 const handleChange = (name,value) => {
 
-  if (name === "purchase_property_type" && value !== "Flat") {
+  if (name === "property_type" && value !== "Flat") {
     setFormData((prev) => ({ ...prev, high_raise_support: 0 }));
   }
   if(name=="purchase_mode" && (value=="firstTime"|| value=="standard"||value=="additional") ){
@@ -240,13 +286,18 @@ const handleChange = (name,value) => {
     setRawValue(cleaned); 
     setFormData((prev) => ({ ...prev, price: cleaned })); 
   }
-  else if (name === "sales_price" || name === "purchase_price") {
+if (name === "sales_price") {
   const cleaned = value.replace(/[^0-9.]/g, "");
+  setRawSalesPrice(cleaned);
+  setFormData(prev => ({ ...prev, sales_price: cleaned }));
+}
 
-    const numericValue = Number(value);
-    setRawValue(cleaned);
-    setFormData((prev) => ({ ...prev, [name]: cleaned}));
-  }
+else if (name === "purchase_price") {
+  const cleaned = value.replace(/[^0-9.]/g, "");
+  setRawPurchasePrice(cleaned);
+  setFormData(prev => ({ ...prev, purchase_price: cleaned }));
+}
+
   else if (name === "phone") {
     const numericValue = value.replace(/\D/g, "").slice(0, 12);
     setFormData((prev) => ({ ...prev, [name]: numericValue }));
@@ -265,25 +316,23 @@ const handleChange = (name,value) => {
 
 
 useEffect(() => {
-    if (rawValuePurchase === "") return;
+  if (!rawSalesPrice) return;
 
-    const timer = setTimeout(() => {
-      const num = Number(rawValuePurchase.replace(/,/g, ""));
-
-      if (!isNaN(num)) {
-        // Format as UK number WITHOUT pound symbol
-        const formatted = new Intl.NumberFormat("en-GB", {
+  const t = setTimeout(() => {
+    const num = Number(rawSalesPrice);
+    if (!isNaN(num)) {
+      setFormData(prev => ({
+        ...prev,
+        sales_price: new Intl.NumberFormat("en-GB", {
           minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        }).format(num);
+          maximumFractionDigits: 2,
+        }).format(num),
+      }));
+    }
+  }, 800);
 
-       // setValue(formatted);
-         setFormData((prev) => ({ ...prev, purchase_price: formatted }))
-      }
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, [rawValuePurchase])
+  return () => clearTimeout(t);
+}, [rawSalesPrice]);
 
 
 
@@ -331,8 +380,8 @@ if (!formData.purchase_country) {
     errors.leasehold_or_free = "Select leasehold or freehold";
   }
 
-  if (!formData.purchase_property_type) {
-    errors.purchase_property_type = "Select property type";
+  if (!formData.property_type) {
+    errors.property_type = "Select property type";
   }
 
   if (!formData.purchase_mode) {
@@ -353,20 +402,20 @@ if (!formData.purchase_country) {
   }
 
   if (
-    formData.buy_to_let === "Yes - Personal name" &&
+    formData.buy_to_let === "personal" &&
     formData.need_hmo === null
   ) {
     errors.need_hmo = "Select HMO option";
   }
 
   if (
-    formData.purchase_property_type === "Flat" &&
+    formData.property_type === "Flat" &&
     formData.high_raise_support === null
   ) {
     errors.high_raise_support = "Select high-rise support";
   }
   if(!formData.languages){
-               newErrors.languages="please select a language"
+               errors.languages="please select a language"
         }
 
         if (!selectedLanguage || selectedLanguage.length === 0) {
@@ -402,26 +451,25 @@ if (!formData.purchase_country) {
     }
   };
 
-  useEffect(() => {
-      if (rawValue === "") return;
-  
-      const timer = setTimeout(() => {
-        const num = Number(rawValue.replace(/,/g, ""));
-  
-        if (!isNaN(num)) {
-          // Format as UK number WITHOUT pound symbol
-          const formatted = new Intl.NumberFormat("en-GB", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-          }).format(num);
-  
-         // setValue(formatted);
-           setFormData((prev) => ({ ...prev, sales_price: formatted }))
-        }
-      }, 2000);
-  
-      return () => clearTimeout(timer);
-    }, [rawValue]);
+useEffect(() => {
+  if (!rawPurchasePrice) return;
+
+  const t = setTimeout(() => {
+    const num = Number(rawPurchasePrice);
+    if (!isNaN(num)) {
+      setFormData(prev => ({
+        ...prev,
+        purchase_price: new Intl.NumberFormat("en-GB", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(num),
+      }));
+    }
+  }, 800);
+
+  return () => clearTimeout(t);
+}, [rawPurchasePrice]);
+
   
 
     const [selectedLenders, setSelectedLenders] = useState([]);
@@ -580,7 +628,7 @@ const onSelectAddress = (type) => async (selected) => {
 
 const clearAddressError = (type) => {
   const errorKey =
-    type === "sales" ? "sales_address" : "purchase_address";
+    type === "sales" ? "sales_address" : "address";
 
   if (errors[errorKey]) {
     setErrors((prev) => ({ ...prev, [errorKey]: "" }));
@@ -599,7 +647,7 @@ const saveSelectedAddress = (selected, type) => {
     setFormData((prev) => ({
       ...prev,
       selectedId_purchase: selected.id,
-      purchase_address: selected.suggestion,
+      address: selected.suggestion,
     }));
   }
 };
@@ -613,7 +661,7 @@ const fetchAddressDetailsAndUpdate = async (udprn, type) => {
 
   if (!details) {
     const errorKey =
-      type === "sales" ? "sales_address" : "purchase_address";
+      type === "sales" ? "sales_address" : "address";
 
     setErrors((prev) => ({
       ...prev,
@@ -1120,10 +1168,10 @@ console.log(e);
     </span>
 
     <input
-      id="price_purchase"
-      name="price_purchase"
+     id="purchase_price"
+  name="purchase_price"
       type="text"
-      value={formData.purchase_price}
+      value={formData.purchase_price?? ""}
       onChange={(e)=>{handleChange("purchase_price",e.target.value)}} 
       placeholder="Enter purchase price"
       className={`block w-full h-[44px] rounded-xl border pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors `}
@@ -1207,40 +1255,50 @@ console.log(e);
 </div>
 
 
-                       <div >
-                    <div className="flex flex-col h-full">
+                                <div>
+    
       <label className="block text-sm font-medium text-gray-700 mb-1">
         New build?
       </label>
+    
       <div className="grid grid-cols-2 gap-3 mt-auto">
-        {/* YES button */}
         <button
           type="button"
-          onClick={() => setNewBuild_purchase("yes")}
+          onClick={() => {
+            setFormData({ ...formData, new_build: 1 }); // ✅ store numeric 1
+          
+          }}
           className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-            newBuild_purchase === "yes"
+            formData.new_build === 1
               ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
               : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
           }`}
         >
-          Yes
+          <span>Yes</span>
         </button>
-
-        {/* NO button */}
+    
         <button
           type="button"
-          onClick={() => setNewBuild_purchase("no")}
+          onClick={() => {
+            setFormData({ ...formData, new_build: 0 }); // ✅ store numeric 0
+            if (errors.new_build) {
+              setErrors({ ...errors, new_build: "" }); // clear error
+            }
+          }}
           className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-            newBuild_purchase === "no"
+            formData.new_build === 0
               ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
               : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
           }`}
         >
-          No
+          <span>No</span>
         </button>
+        
       </div>
-      </div>
-      </div>
+      <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
+     
+    
+    </div>
       </div>
      <div>
 <div>
@@ -1255,7 +1313,7 @@ console.log(e);
         type="button"
         onClick={() => {
           // Update the property type
-          handleChange("purchase_property_type", opt.label);
+          handleChange("property_type", opt.label);
 
           // Reset high_raise_support if not Flat
           if (opt.label !== "Flat") {
@@ -1264,14 +1322,14 @@ console.log(e);
         }}
         className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 transition-all duration-200 shadow-sm w-[170.76px]
           ${
-            formData.purchase_property_type === opt.label
+            formData.property_type === opt.label
               ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
               : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
           }`}
       >
         <span
           className={`${
-            formData.purchase_property_type === opt.label ? "text-[#1E5C3B]" : "text-gray-700"
+            formData.property_type === opt.label ? "text-[#1E5C3B]" : "text-gray-700"
           } text-[18px]`}
         >
           {opt.icon}
@@ -1281,11 +1339,11 @@ console.log(e);
     ))}
   </div>
 
-  {errors.purchase_property_type && (
-    <p className="text-red-500 text-[12px] mt-1">{errors.purchase_property_type}</p>
+  {errors.property_type && (
+    <p className="text-red-500 text-[12px] mt-1">{errors.property_type}</p>
   )}
 
-  {formData.purchase_property_type === "Flat" && (
+  {formData.property_type === "Flat" && (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-5">
       <div className="flex flex-col">
         <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -1399,21 +1457,22 @@ console.log(e);
                    
 
                   {/* 8. Obtaining a mortgage? (Inline ButtonGroup) */}
-                  <div className="flex flex-col h-full">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Obtaining a mortgage?
-                    </label>
-                    <div className="grid grid-cols-2 gap-3 ">
+<div className="flex flex-col h-full">
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        Obtaining a mortgage?
+      </label>
+    
+      <div className="grid grid-cols-2 gap-3 ">
         <button
           type="button"
           onClick={() => {
-            setFormData({ ...formData, mortgage_purchase: 1 }); // ✅ store 1 for yes
-            if (errors.mortgage_purchase) {
-              setErrors({ ...errors, mortgage_purchase: "" }); // clear error on change
+            setFormData({ ...formData, obtaining_mortgage: 1 }); // ✅ store 1 for yes
+            if (errors.obtaining_mortgage) {
+              setErrors({ ...errors, obtaining_mortgage: "" }); // clear error on change
             }
           }}
           className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-            formData.mortgage_purchase === 1
+            formData.obtaining_mortgage === 1
               ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
               : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
           }`}
@@ -1423,15 +1482,16 @@ console.log(e);
     
         <button
           type="button"
-           onClick={() => {
-    setFormData({ ...formData, mortgage_purchase: 0 }); // 0 = No
-    setSelectedLenders([]); // Clear selected lenders
-    if (errors.mortgage_purchase || errors.lenders) {
-      setErrors({ ...errors, mortgage_purchase: "", lenders: "" });
-    }
-  }}
+          onClick={() => {
+            setFormData({ ...formData, obtaining_mortgage: 0 });
+            console.log(formData)
+            setSelectedLenders("") // ✅ store 0 for no
+            if (errors.obtaining_mortgage) {
+              setErrors({ ...errors, obtaining_mortgage: "",lenders:"" });
+            }
+          }}
           className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-            formData.mortgage_purchase === 0
+            formData.obtaining_mortgage === 0
               ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
               : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
           }`}
@@ -1439,40 +1499,40 @@ console.log(e);
           <span>No</span>
         </button>
       </div>
-                  </div>
-
- <div className="flex flex-col h-full">
+    <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
+    </div>
+                 
+               <div className="flex flex-col h-full">
           <label className="block text-sm font-semibold text-gray-800 mb-2">
             Select Lenders <span className="text-red-500">*</span>
           </label>
            <Select
             options={lender}
-            isDisabled={formData.mortgage_purchase==0}
+            isDisabled={formData.obtaining_mortgage==0}
               instanceId="lenders-select"
               styles={selectStyles}
-           
+          
             value={selectedLenders}
             onChange={handleChange_l}
             placeholder="Choose lenders..."
             className="text-black"
     
               /> 
-        {formData.mortgage_purchase==1&&(
+        {formData.obtaining_mortgage==1&&(
  <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
   errors.lenders ? "text-red-500 opacity-100" : "opacity-0"
 }`}>
   {errors.lenders || "placeholder"}
 </p>
         )}     
-          <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
-        </div>
+        </div> 
 
                   {/* 10. Receiving a gifted deposit? (Inline Select) */}
                   <div className="flex flex-col h-full">
                     <label htmlFor="gifted_deposit" className="block text-sm font-medium text-gray-700 mb-1">
                       Receiving a gifted deposit?
                     </label>
-                    <div className="relative mt-auto">
+                    <div className="relative ">
                         <Select
   inputId="gift_deposit"
   name="gift_deposit"
@@ -1498,65 +1558,93 @@ console.log(e);
                   </div>
 
                   {/* 11. Shared Ownership? (Inline ButtonGroup) */}
-                  <div className="flex flex-col h-full">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Shared Ownership via housing association?
-                    </label>
-                    <div className="grid grid-cols-2 gap-3 ">
-                      <button
-                        type="button"
-                        onClick={() => setSharedOwnership_purchase("yes")}
-                        className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-                          sharedOwnership_purchase === "yes"
-                            ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
-                            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                        }`}
-                      >
-                        <span>Yes</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setSharedOwnership_purchase("no")}
-                        className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-                          sharedOwnership_purchase === "no"
-                            ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
-                            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                        }`}
-                      >
-                        <span>No</span>
-                      </button>
-                    </div>
-                  </div>
+            <div className="flex flex-col h-full">
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        Shared Ownership via housing association?
+      </label>
+    
+      <div className="grid grid-cols-2 gap-3">
+        <button
+          type="button"
+          onClick={() => {
+            setFormData({ ...formData, ownership_housing_asso: 1 });
+            if (errors.ownership_housing_asso) {
+              setErrors({ ...errors, ownership_housing_asso: "" });
+            }
+          }}
+          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+            formData.ownership_housing_asso === 1
+              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          <span>Yes</span>
+        </button>
+    
+        <button
+          type="button"
+          onClick={() => {
+            setFormData({ ...formData, ownership_housing_asso: 0 });
+            if (errors.ownership_housing_asso) {
+              setErrors({ ...errors, ownership_housing_asso: "" });
+            }
+          }}
+          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+            formData.ownership_housing_asso === 0
+              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          <span>No</span>
+        </button>
+      </div>
+    
+    <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
+    </div>
                  
-                                                   <div className="flex flex-col h-full">
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Using Government Right to Buy scheme?
-                    </label>
-                    <div className="grid grid-cols-2 gap-3 ">
-                      <button
-                        type="button"
-                        onClick={() => setScheme_purchase("yes")}
-                        className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-                          scheme_purchase === "yes"
-                            ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
-                            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                        }`}
-                      >
-                        <span>Yes</span>
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setScheme_purchase("no")}
-                        className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
-                          scheme_purchase === "no"
-                            ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
-                            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                        }`}
-                      >
-                        <span>No</span>
-                      </button>
-                    </div>
-                  </div>
+                   <div className="flex flex-col h-full">
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        Using Government Right to Buy scheme?
+      </label>
+    
+      <div className="grid grid-cols-2 gap-3 mt-auto">
+        <button
+          type="button"
+          onClick={() => {
+            setFormData({ ...formData, govt_by_scheme: 1 }); // ✅ store 1 for yes
+            if (errors.govt_by_scheme) {
+              setErrors({ ...errors, govt_by_scheme: "" }); // clear error
+            }
+          }}
+          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+            formData.govt_by_scheme === 1
+              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          <span>Yes</span>
+        </button>
+    
+        <button
+          type="button"
+          onClick={() => {
+            setFormData({ ...formData, govt_by_scheme: 0 }); // ✅ store 0 for no
+            if (errors.govt_by_scheme) {
+              setErrors({ ...errors, govt_by_scheme: "" }); // clear error
+            }
+          }}
+          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+            formData.govt_by_scheme === 0
+              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          <span>No</span>
+        </button>
+      </div>
+    
+    <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
+    </div>
                     <div>
         <label className="block text-sm font-semibold text-gray-800 mb-1">
           Prefer solicitor in your first language? <span className="text-red-500">*</span>
@@ -1588,8 +1676,8 @@ console.log(e);
   {errors.preferLanguage}
 </p>
       </div>
-                   <div> 
-    {formData.buy_to_let === "Yes - Personal name" && (
+                
+    {formData.buy_to_let === "personal" && (
   <div >
     <label className="block text-sm font-medium text-gray-700 mb-1">
       Need HMO Support
@@ -1636,7 +1724,7 @@ console.log(e);
 )}
 </div>
                 </div>
-              </div> {/* End PURCHASE FINANCE */}
+              {/* End PURCHASE FINANCE */}
 
 {/* Special instructions */}
 <div>

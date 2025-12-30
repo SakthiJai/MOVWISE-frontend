@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,useRef } from "react";
 import Navbar from "../../parts/navbar/page";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import Link from "next/link";
@@ -19,11 +19,13 @@ import RemortagePropertyDetails from "./RemortagePropertyDetails"
 import Select from 'react-select';
 
 
+
+
 export default function Comparequotes() {
   // State to hold companies data (initialized with static data)
 
   const [companydata, setcompanydata] = useState();
-
+  const hasCalledService = useRef(false);
   const [ref, setref] = useState("");
   const [quotefound, setquotefound] = useState(false);
   const [view_data, setview_data] = useState({});
@@ -126,109 +128,71 @@ router.push(`/Instruct?id=${quote_id}`);
   }
 
   const router = useRouter();
+useEffect(() => {
+  if (hasCalledService.current) return;
+  hasCalledService.current = true;
 
-  useEffect(() => {
-    
-    if (localStorage.getItem("getquote")) {
-      console.log("check1");
-      const data = localStorage.getItem("getquote");
-      if (localStorage.getItem("service")) {
-        console.log("check1");
+  async function qutesdata(formData) {
+    try {
+      const response = await postData(API_ENDPOINTS.services, formData);
+      console.log("✅ service API Response:", response?.service?.quote_ref_number);
 
-        if (data) {
-          const parsedData = JSON.parse(data);
-          parsedData.service_type = localStorage.getItem("service");
-          parsedData.user_id=Number(localStorage.getItem("user"));
+      localStorage.setItem("ref_no", response?.service?.quote_ref_number);
 
-          qutesdata(parsedData);
-          console.log(parsedData);
-        }
-
-        async function qutesdata(formData) {
-          
-          try {
-            const response = await postData(API_ENDPOINTS.services, formData);
-            console.log(
-              "✅ service API Response:",
-              response?.service?.quote_ref_number
-            );
-
-            localStorage.setItem("ref_no", response?.service?.quote_ref_number);
-
-            if (response.code == 200) {
-              setref(localStorage.getItem("ref_no"));
-
-              // localStorage.removeItem("getquote");
-              // localStorage.removeItem("service");
-
-              setquotefound(true);
-            } else {
-              setquotefound(false);
-            }
-
-            // const propety_id = response.data;
-            // console.log("property_id",propety_id);//property_id
-
-            const userid = formData.user_id || formData["guest_user "]; // note the space
-            console.log("User ID or Guest ID:", userid); // user_id
-            if (response.code === 200) {
-              try {
-                setLoading(true);
-                const filterPayload = formData.user_id
-                  ? { user_id: formData.user_id } // logged-in user
-                  : { guest_user: "guest_user" }; // guest user
-
-                const quoteResponse = await getData(
-                  `${API_ENDPOINTS.quotesfilter}/${localStorage.getItem(
-                    "ref_no"
-                  )}`
-                );            
-                if ( quoteResponse?.status === false) {
-                  setcompanydata([]); 
-                  console.log("No quotes found for your property details");
-                  setLoading(false);
-                  return;
-                }
-                else{
-                  setview_data(quoteResponse.data[0]);
-                  setquoteData(quoteResponse.data);
-                  console.log("data find");
-                  setLoading(false);
-                }
-                console.log(quoteResponse);
-
-                console.log("Quotes Filter API Response:", quoteResponse);
-
-                // Decode Base64 logo before storing
-                const formatted = quoteResponse?.data?.map((item) => {
-                  return {
-                    ...item,
-                    conveying_details: {
-                      ...item.conveying_details,
-                      logo: item.conveying_details.logo
-                        ? `data:image/png;base64,${item.conveying_details.logo}`
-                        : null,
-                    },
-                  };
-                });
-
-                setcompanydata(formatted);
-                console.log("Formatted Company Data:", formatted);
-                
-          
-
-                
-              } catch (error) {
-                console.error("❌ Failed to post services:", error);
-              }
-            }
-          } catch (error) {
-            console.error("❌ Failed to post remortgage:", error);
-          }
-        }
+      if (response.code === 200) {
+        setref(response?.service?.quote_ref_number);
+        setquotefound(true);
+      } else {
+        setquotefound(false);
+        return;
       }
+
+      setLoading(true);
+
+      const quoteResponse = await getData(
+        `${API_ENDPOINTS.quotesfilter}/${response?.service?.quote_ref_number}`
+      );
+
+      if (quoteResponse?.status === false) {
+        setcompanydata([]);
+        setLoading(false);
+        return;
+      }
+
+      setview_data(quoteResponse.data[0]);
+      setquoteData(quoteResponse.data);
+
+      const formatted = quoteResponse.data.map((item) => ({
+        ...item,
+        conveying_details: {
+          ...item.conveying_details,
+          logo: item.conveying_details.logo
+            ? `data:image/png;base64,${item.conveying_details.logo}`
+            : null,
+        },
+      }));
+
+      setcompanydata(formatted);
+      setLoading(false);
+
+    } catch (error) {
+      console.error("❌ API Error:", error);
+      setLoading(false);
     }
-  }, []);
+  }
+
+  const storedQuote = localStorage.getItem("getquote");
+  const serviceType = localStorage.getItem("service");
+
+  if (storedQuote && serviceType) {
+    const parsedData = JSON.parse(storedQuote);
+    parsedData.service_type = serviceType;
+    parsedData.user_id = Number(localStorage.getItem("user"));
+
+    qutesdata(parsedData);
+  }
+}, []);
+
 
 function toggleDropdowncard(id) {
    if (dropdownOpenId === id) {
@@ -743,12 +707,7 @@ function handlefilterchange(selectedoption = []) {
 
                           {/* Right: Buttons */}
                           <div className="flex flex-row gap-2 justify-start lg:col-start-3 lg:justify-end">
-                            <Link
-                              href={`/viewquote?ref_no=${ref}&id=${quote.quote_id}`}
-                              className="px-4 py-2 border border-gray-300 text-gray-700 text-sm rounded-full hover:bg-gray-100 transition font-medium"
-                            >
-                              View
-                            </Link>
+                           
 
                             <button
                               className="px-3 py-1.5 bg-[#4A7C59] text-white text-sm rounded-full hover:bg-[#3b6248]"
