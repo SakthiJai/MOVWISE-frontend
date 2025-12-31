@@ -33,6 +33,12 @@ export default function Purchase() {
   { label: "Additional Property (Buy to let)", value: "Buy to let" },
   { label: "Home Moving", value: "commercial" }
 ];
+    const addition_applicable = [
+  { label: "Plese Select", value: "" },
+  { label: "Islamic Mortgage", value: "Islamic Mortgage" },
+  { label: "Equity Transfer", value: "Equity Transfer" },
+  { label: "Expats / Overseas Client", value: "Expats / Overseas Client" }
+];
 const buyToLetOptions = [
   { value: "", label: "Please select", isDisabled: true },
   { value: "No", label: "No" },
@@ -177,7 +183,8 @@ const handleChange_l = (selectedOption) => {
   "lenders": "",
   "service_type":null, 
   "purchase_mode":"",
-  "high_raise_support" :0,           
+  "high_raise_support" :0,
+  "addition_applicable" :"",           
       });
 
      
@@ -373,6 +380,9 @@ const [highRaiseSupport, setHighRaiseSupport] = useState("");
     }
     if(!formData.purchase_mode){
       newErrors.purchase_mode="please select purchase_mode"
+    }
+    if(!formData.addition_applicable){
+      newErrors.addition_applicable="please select addition_applicable"
     }
         setErrors(newErrors);
         console.log(errors)
@@ -1250,7 +1260,38 @@ return (
       </div>
     <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
     </div>
-    <div> 
+
+               <div className="flex flex-col h-full">
+                                 <label htmlFor="addition_applicable" className="block text-sm font-medium text-gray-700 mb-1">
+                                 Please Sellect the addition if applicable to your purchase<span className="text-red-500">*</span>
+                                 </label>
+                             <div className="relative mt-auto">
+               <Select
+                      inputId="addition_applicable"
+                      name="addition_applicable"
+                      options={addition_applicable}
+                      styles={selectStyles}
+                      value={addition_applicable.find(
+                        (opt) => opt.value === formData.addition_applicable
+                      )}
+                      onChange={(selected) =>
+                        handleChange("addition_applicable", selected?.value || "")
+                      }
+                      placeholder="Please select"
+                      isSearchable={false}
+                    />     
+               <ChevronDown
+                 size={16}
+                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+               />
+             </div>
+     <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+       errors.addition_applicable ? "text-red-500 opacity-100" : "opacity-0"
+    }`}>
+      {errors.addition_applicable || "placeholder"} {/* placeholder keeps same height */}
+    </p>
+                               </div>
+                                   <div> 
     {formData.buy_to_let === "personal" && (
   <div className="mt-4">
     <label className="block text-sm font-medium text-gray-700 mb-1">

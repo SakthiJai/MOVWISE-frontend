@@ -25,6 +25,12 @@ const sharedOwnershipOptions = [
   { value: "Yes (Help To Buy)", label: "Yes (Help To Buy)" },
   { value: "No", label: "No" },
 ];
+    const addition_applicable = [
+  { label: "Plese Select", value: "" },
+  { label: "Islamic Mortgage", value: "Islamic Mortgage" },
+  { label: "Equity Transfer", value: "Equity Transfer" },
+  { label: "Expats / Overseas Client", value: "Expats / Overseas Client" }
+];
 const selectStyles = {
   control: (base, state) => ({
     ...base,
@@ -130,6 +136,7 @@ const [languagepreference, setlanguagepreference] = useState(" ");
   lenders:"",  
   user_id:null,
   service_type:null,
+  "addition_applicable" :""
 });
  console.log("formdata:" , formData)
 
@@ -245,8 +252,9 @@ const handleSubmit = (e) => {
   if (!selectedLenders || selectedLenders.length === 0 && formData.existing_mortgage==1) {
   newErrors.lenders = "Please select at least one lender";
 }
-
-
+if(!formData.addition_applicable){
+      newErrors.addition_applicable="please select addition_applicable"
+    }
 
  
   /*if (!formData.sales_address.trim()) {
@@ -921,9 +929,6 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
                 <p className="text-[12px] mt-1 min-h-[16px] text-red-500">
   {errors.preferLanguage}
 </p>
-
-     
-        <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
       </div>
 
   {/* Show only when needed */}
@@ -936,7 +941,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
       <label className="block text-sm font-semibold text-gray-800 mb-1 rounded-lg focus:ring-2 focus:ring-[#1E5C3B]">
         Select Lenders <span className="text-red-500">*</span>
       </label>
-
+<div className="mt-1">
       {isClient ? (
     <Select
             options={lender}
@@ -955,7 +960,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
       ) : (
         <div className="h-[44px] bg-gray-100 rounded-lg animate-pulse" />
       )}
-
+</div>
           {formData.existing_mortgage==1&&(
             <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
   errors.lenders ? "text-red-500 opacity-100" : "opacity-0"
@@ -968,7 +973,36 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
 className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
 ></p>
     </div>    
-
+               <div className="flex flex-col h-full">
+                                 <label htmlFor="addition_applicable" className="block text-sm font-medium text-gray-700 mb-1">
+                                 Please Sellect the addition if applicable to your sale<span className="text-red-500">*</span>
+                                 </label>
+                             <div className="relative mt-auto">
+               <Select
+                      inputId="addition_applicable"
+                      name="addition_applicable"
+                      options={addition_applicable}
+                      styles={selectStyles}
+                      value={addition_applicable.find(
+                        (opt) => opt.value === formData.addition_applicable
+                      )}
+                      onChange={(selected) =>
+                        handleChange("addition_applicable", selected?.value || "")
+                      }
+                      placeholder="Please select"
+                      isSearchable={false}
+                    />     
+               <ChevronDown
+                 size={16}
+                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+               />
+             </div>
+     <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+       errors.addition_applicable ? "text-red-500 opacity-100" : "opacity-0"
+    }`}>
+      {errors.addition_applicable || "placeholder"} {/* placeholder keeps same height */}
+    </p>
+                               </div>
 </div>    
 
 

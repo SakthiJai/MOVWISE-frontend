@@ -51,6 +51,15 @@ export default function Remortage() {
     cursor: "pointer",
   }),
 };
+    const addition_applicable = [
+  { label: "Plese Select", value: "" },
+  { label: "Islamic Mortgage", value: "Islamic Mortgage" },
+  { label: "Equity Transfer", value: "Equity Transfer" },
+  { label: "Expats / Overseas Client", value: "Expats / Overseas Client" },
+  { label: "Shared Ownership", value: "Shared Ownership" },
+  { label: "Redeeming Unsecured Debt ", value: "Redeeming Unsecured Debt " },
+   { label: "HMO BTL", value: "HMO BTL" }
+];
   const buyToLetOptions = [
   { value: "", label: "Please select", isDisabled: true },
   { value: "No", label: "No" },
@@ -79,7 +88,7 @@ const handleUnknownPostcode = () => {
     [`country`]: "",
   }));
 };
- 
+ const [rawValue, setRawValue] = useState("");
 const [lender, setLender] = useState([
   { value: "Not Known", label: "Not Known", id: 0 },
 ]);
@@ -153,16 +162,18 @@ const handleChange_l = (selectedOption) => {
   "address_line2": "",
   "town_city" : "",
   "country" : "" ,
-  "property_values": 0,
-  "no_of_bedrooms": "",
-  "property_type": "",
-  "leasehold_or_free": "",
+  "property_values": "",
+  "no_of_bedrooms": "1",
+  "property_type": "Flat",
+  "leasehold_or_free": "Leasehold",
   "buy_to_let": "",
-  "ownership_housing_asso": 1,
+  "obtaining_mortgage": 0,
+  "ownership_housing_asso": 0,
   "languages": [],
   "specal_instruction": "",
- "service_type":4, 
-   
+  "service_type":4,
+  "lenders":[],
+  "addition_applicable" :"",
   
   });
 
@@ -182,14 +193,42 @@ function handleloginformchange(name, value) {
   
   const [errors, setErrors] = useState({});
 
-  const handleChange = (name, value) => {
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+useEffect(() => {
+    if (rawValue === "") return;
 
-    setErrors((prev) => ({ ...prev, [name]: "" }));
-  };
+    const timer = setTimeout(() => {
+      const num = Number(rawValue.replace(/,/g, ""));
+
+      if (!isNaN(num)) {
+        // Format as UK number WITHOUT pound symbol
+        const formatted = new Intl.NumberFormat("en-GB", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2
+        }).format(num);
+
+       // setValue(formatted);
+         setFormData((prev) => ({ ...prev, property_values: formatted }))
+      }
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [rawValue]);
+
+const handleChange = (name, value) => {
+  // Handle phone separately
+  if (name === "property_values") {
+  const cleaned = value.replace(/[^0-9.]/g, "");
+
+    const numericValue = Number(value);
+    setRawValue(cleaned);
+    setFormData((prev) => ({ ...prev, [name]: cleaned}));
+  } else {
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  }
+
+  // ✅ Clear error for this specific field
+  setErrors((prev) => ({ ...prev, [name]: "" }));
+};
 
 
   
@@ -199,12 +238,21 @@ function handleloginformchange(name, value) {
     // simple validation
     let newErrors = {};
 
- 
-  
-  // if(!formData.languages){
-  //   newErrors.languages="please select a language"
-  // }
-
+     if (!selectedLanguage || selectedLanguage.length === 0) {
+    newErrors.preferLanguage = "Please select a language";
+  }
+     if(!formData.languages){
+               newErrors.languages="please select a language"
+        }
+   if(!formData.country){
+  newErrors.country="please select a country"
+ }
+          if ((!selectedLenders || selectedLenders.length === 0) && formData.obtaining_mortgage==1) {
+  newErrors.lenders = "Please select at least one lender";
+}
+if(!formData.addition_applicable){
+      newErrors.addition_applicable="please select addition_applicable"
+    }
      
       // if (!formData?.address?.trim()) {
       //   newErrors.address = "Property address is required";
@@ -213,59 +261,49 @@ function handleloginformchange(name, value) {
       // }
     
       
-//       if (!formData.property_values
-// ) {
-//         newErrors.property_values
-//  = "property_valuesis required";
-//       } else if (Number(formData.property_values
-// ) <= 0) {
-//         newErrors.property_values
-//  = "property_values must be a positive number";
-//       }
+      if (!formData.property_values) {
+        newErrors.property_values = "property_values is required";
+      } else if (Number(formData.property_values) <= 0) {
+        newErrors.property_values = "property_values must be a positive number";
+      }
 
-//  if(!formData.no_of_bedrooms){
-//   newErrors.no_of_bedrooms="please select a no. of bedrooms"
-//  }
-//   if(!formData.property_type){
-//   newErrors.property_type="please select a property_type"
-//  }
-//    if(!formData.leasehold_or_free){
-//   newErrors.leasehold_or_free="please select a leasehold_or_free"
-//  }
+ if(!formData.no_of_bedrooms){
+  newErrors.no_of_bedrooms="please select a no. of bedrooms"
+ }
+  if(!formData.property_type){
+  newErrors.property_type="please select a property_type"
+ }
+   if(!formData.leasehold_or_free){
+  newErrors.leasehold_or_free="please select a leasehold_or_free"
+ }
 
-// if(!formData.buy_to_let){
-//   newErrors.buy_to_let="please select buy_to_let"
-// }
-//     setErrors(newErrors);
-//     console.log(errors)
+if(!formData.buy_to_let){
+  newErrors.buy_to_let="please select buy_to_let"
+}
+    setErrors(newErrors);
+    console.log(errors)
 
+   setFormData((prev) => ({ ...prev, ['service_type']: localStorage.getItem("service")}));
     // if no errors, submit
-  if (Object.keys(newErrors).length === 0) {
-     localStorage.removeItem("getquote");
-
+    if (Object.keys(newErrors).length === 0) {
+           // localStorage.removeItem("getquote");
+      formData.service_type=localStorage.getItem("service");
+      console.log(formData)
+       localStorage.setItem("getquote", JSON.stringify(formData));
       console.log("✅ Form submitted:", formData);
-      console.log("property_values =", formData.property_values);
-console.log("type =", typeof formData.property_values);
-
-formData.property_values=formData.property_values.toString()
-
             localStorage.setItem("service", JSON.stringify(4));
-                  localStorage.setItem("getquote", JSON.stringify(formData));
 
-
-  setModalopen(true); // if you still want to open your modal
-}
-else{
-  Swal.fire({
-    title: "Error!",
-    text: "Fix Validation Errors!",
-    icon: "error",
-    confirmButtonText: "OK",
-    life:1000
-  });
-
-}
-
+      //alert("Form submitted successfully!");
+      
+      if(localStorage.getItem("user")){
+        formData.user_id=localStorage.getItem("user");
+        localStorage.setItem("getquote", JSON.stringify(formData));
+         router.push("/components/comparequotes");
+      }
+      else{
+       setModalopen(true)
+      }
+    }
 
   };
 
@@ -555,7 +593,8 @@ const getIconForType = (type) => {
                                 className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
                             name="property_values
 "
-                            onChange={(e)=>{handleChange("property_values",Number(e.target.value))}}
+                            onChange={(e) => { handleChange("property_values", e.target.value) }}
+
                             />
                             </div>
   <p
@@ -754,52 +793,144 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
               <div className="space-y-4">
   {/* Label + Main dropdown */}
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
-  <div>
-    <label className="block text-sm font-medium text-gray-700 mb-1">
-      Prefer solicitor in your first language?
-    </label>
-   <div className="mt-2">
-  
 
-   <Select
-        options={lang}
-    styles={selectStyles}
-                  instanceId="language-select"
-        value={selectedLanguage || formData.languages}
-        onChange={handleChangeLang}
-        placeholder="Choose languages..."
-        className="text-black mt-2"
-      />
- 
-</div>
-    <p
-className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
-></p>
-  </div>
 
   {/* Show only when needed */}
  
 
 
- <div className="flex flex-col h-full">
-      <label className="block text-sm font-medium text-gray-700 mb-2">
-     Select Lender
+<div className="flex flex-col h-full">
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        Obtaining a mortgage?
       </label>
-       <Select
-        options={lender}
-          instanceId="lenders-select"
-              styles={selectStyles}
-
-
-        value={selectedLenders}
-        onChange={handleChange_l}
-        placeholder="Choose lenders..."
-        className="text-black"
-
-      /> 
-      <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
-    </div>
     
+      <div className="grid grid-cols-2 gap-3 ">
+        <button
+          type="button"
+          onClick={() => {
+            setFormData({ ...formData, obtaining_mortgage: 1 }); // ✅ store 1 for yes
+            if (errors.obtaining_mortgage) {
+              setErrors({ ...errors, obtaining_mortgage: "" }); // clear error on change
+            }
+          }}
+          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+            formData.obtaining_mortgage === 1
+              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          <span>Yes</span>
+        </button>
+    
+        <button
+          type="button"
+          onClick={() => {
+            setFormData({ ...formData, obtaining_mortgage: 0 });
+            console.log(formData)
+            setSelectedLenders("") // ✅ store 0 for no
+            if (errors.obtaining_mortgage) {
+              setErrors({ ...errors, obtaining_mortgage: "",lenders:"" });
+            }
+          }}
+          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+            formData.obtaining_mortgage === 0
+              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          <span>No</span>
+        </button>
+      </div>
+    <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
+    </div>
+                 
+               <div className="flex flex-col h-full">
+          <label className="block text-sm font-semibold text-gray-800 mb-2">
+            Select Lenders <span className="text-red-500">*</span>
+          </label>
+           <Select
+            options={lender}
+            isDisabled={formData.obtaining_mortgage==0}
+              instanceId="lenders-select"
+              styles={selectStyles}
+          
+            value={selectedLenders}
+            onChange={handleChange_l}
+            placeholder="Choose lenders..."
+            className="text-black"
+    
+              /> 
+        {formData.obtaining_mortgage==1&&(
+ <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+  errors.lenders ? "text-red-500 opacity-100" : "opacity-0"
+}`}>
+  {errors.lenders || "placeholder"}
+</p>
+        )}     
+        
+        </div>
+    
+          <div>
+        <label className="block text-sm font-semibold text-gray-800 mb-1">
+          Prefer solicitor in your first language? <span className="text-red-500">*</span>
+        </label>
+        <div className="mt-2">
+      
+    
+      
+      <Select
+        options={lang}
+    
+                  instanceId="language-select"
+        value={selectedLanguage || formData.languages}
+        styles={selectStyles}
+         onChange={(selectedOption) => {
+    handleChangeLang(selectedOption); // existing handler to update formData / state
+
+    // Clear the error immediately
+    if (errors.preferLanguage) {
+      setErrors((prev) => ({ ...prev, preferLanguage: "" }));
+    }
+  }}
+        placeholder="Choose languages..."
+        className="text-black mt-2"
+      />
+     
+              </div>
+               <p className="text-[12px] mt-1 min-h-[16px] text-red-500">
+  {errors.preferLanguage}
+</p>
+      </div>
+       <div className="flex flex-col h-full">
+                                 <label htmlFor="addition_applicable" className="block text-sm font-medium text-gray-700 mb-1">
+                                 Please Sellect the addition if applicable to your remortgage <span className="text-red-500">*</span>
+                                 </label>
+                             <div className="relative mt-auto">
+               <Select
+                      inputId="addition_applicable"
+                      name="addition_applicable"
+                      options={addition_applicable}
+                      styles={selectStyles}
+                      value={addition_applicable.find(
+                        (opt) => opt.value === formData.addition_applicable
+                      )}
+                      onChange={(selected) =>
+                        handleChange("addition_applicable", selected?.value || "")
+                      }
+                      placeholder="Please select"
+                      isSearchable={false}
+                    />     
+               <ChevronDown
+                 size={16}
+                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+               />
+             </div>
+     <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+       errors.addition_applicable ? "text-red-500 opacity-100" : "opacity-0"
+    }`}>
+      {errors.addition_applicable || "placeholder"} {/* placeholder keeps same height */}
+    </p>
+                               </div>
     
     </div></div>
           

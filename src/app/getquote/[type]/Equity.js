@@ -61,7 +61,12 @@ useEffect(() => {
   { value: "personal", label: "Yes - Personal name" },
   { value: "company", label: "Yes - Company name" },
 ];
-
+    const addition_applicable = [
+  { label: "Plese Select", value: "" },
+  { label: "Expats / Overseas Client", value: "Expats / Overseas Client" },
+  { label: "Shared Ownership", value: "Shared Ownership" },
+   { label: "HMO BTL", value: "HMO BTL" }
+];
     const [selectedLenders, setSelectedLenders] = useState([]);
         const [loginformshow,setloginformshow]=useState(false)
         const [lender, setLender] = useState([
@@ -153,20 +158,21 @@ useEffect(() => {
       "address_line2": "",
       "town_city" : "",
       "country" : "",
-      "property_values": 0,
-      "no_of_peoples": "",
-      "property_type": "",
-      "leasehold_or_free": "",
+      "property_values": "",
+      "no_of_bedrooms": "1",
+      "property_type": "Flat",
+      "leasehold_or_free": "Leasehold",
       "buy_to_let": "",
-      "ownership_housing_asso": 1,
+      "ownership_housing_asso": 0,
+      "obtaining_mortgage": 0,
       "languages": [],
       "special_instruction": "",
-      "user_id":[],
       "lenders":[],
-      "type_id":3,
+      "service_type":5,
       
             
       });
+       const [rawValue, setRawValue] = useState("");
     
       const [loginformdata, setloginformdata] = useState({
       email: "",
@@ -198,13 +204,43 @@ useEffect(() => {
 
       const [errors, setErrors] = useState({});
     
-      const handleChange = (name, value) => {
-        setFormData((prev) => ({
-          ...prev,
-          [name]: value,
-        }));
-        setErrors((prev) => ({ ...prev, [name]: "" }));
-      };
+    useEffect(() => {
+        if (rawValue === "") return;
+    
+        const timer = setTimeout(() => {
+          const num = Number(rawValue.replace(/,/g, ""));
+    
+          if (!isNaN(num)) {
+            // Format as UK number WITHOUT pound symbol
+            const formatted = new Intl.NumberFormat("en-GB", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            }).format(num);
+    
+           // setValue(formatted);
+             setFormData((prev) => ({ ...prev, property_values: formatted }))
+          }
+        }, 2000);
+    
+        return () => clearTimeout(timer);
+      }, [rawValue]);
+    
+    const handleChange = (name, value) => {
+      // Handle phone separately
+      if (name === "property_values") {
+      const cleaned = value.replace(/[^0-9.]/g, "");
+    
+        const numericValue = Number(value);
+        setRawValue(cleaned);
+        setFormData((prev) => ({ ...prev, [name]: cleaned}));
+      } else {
+        setFormData((prev) => ({ ...prev, [name]: value }));
+      }
+      
+    
+      // ✅ Clear error for this specific field
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    };
     
     
      const handleSubmit = (e) => {
@@ -213,24 +249,22 @@ useEffect(() => {
         // simple validation
         let newErrors = {};
     
-     
+      if(!formData.country){
+        newErrors.country="please select a language"
+      }
       
       if(!formData.languages){
         newErrors.languages="please select a language"
       }
+          if (!selectedLanguage || selectedLanguage.length === 0) {
+    newErrors.preferLanguage = "Please select a language";
+  }
+           if ((!selectedLenders || selectedLenders.length === 0) && formData.obtaining_mortgage==1) {
+  newErrors.lenders = "Please select at least one lender";
+}
     
-         
-        
-        
-          
-          if (!formData.property_values) {
-            newErrors.property_value = "property_value  is required";
-          } else if (Number(formData.property_values) <= 0) {
-            newErrors.property_value = "property_value must be a positive number";
-          }
-    
-     if(!formData.no_of_peoples){
-      newErrors.no_of_peoples="please select a no. of bedrooms"
+     if(!formData.no_of_bedrooms){
+      newErrors.no_of_bedrooms="please select a no. of bedrooms"
      }
       if(!formData.property_type){
       newErrors.property_type="please select a property_type"
@@ -238,26 +272,40 @@ useEffect(() => {
        if(!formData.leasehold_or_free){
       newErrors.leasehold_or_free="please select a leasehold_or_free"
      }
+      if (!formData.property_values) {
+        newErrors.property_values = "property_values is required";
+      } else if (Number(formData.property_values) <= 0) {
+        newErrors.property_values = "property_values must be a positive number";
+      }
+
+
     
     if(!formData.buy_to_let){
       newErrors.buy_to_let="please select buy_to_let"
     }
         setErrors(newErrors);
         console.log(errors)
-    
-        // if no errors, submit
-        if (Object.keys(newErrors).length === 0) {
-
-           localStorage.removeItem("getquote");
-
+         setFormData((prev) => ({ ...prev, ['service_type']: localStorage.getItem("service")}));
+    // if no errors, submit
+    if (Object.keys(newErrors).length === 0) {
+           // localStorage.removeItem("getquote");
+      formData.service_type=localStorage.getItem("service");
+      console.log(formData)
+       localStorage.setItem("getquote", JSON.stringify(formData));
       console.log("✅ Form submitted:", formData);
             localStorage.setItem("service", JSON.stringify(5));
 
-      localStorage.setItem("getquote", JSON.stringify(formData));
       //alert("Form submitted successfully!");
+      
+      if(localStorage.getItem("user")){
+        formData.user_id=localStorage.getItem("user");
+        localStorage.setItem("getquote", JSON.stringify(formData));
+         router.push("/components/comparequotes");
+      }
+      else{
        setModalopen(true)
-    
-        }
+      }
+    }
     
       };
     
@@ -495,10 +543,9 @@ useEffect(() => {
 
 
                     {/* Property value */}
-
-                        <div className="flex flex-col h-full">
+                                  <div className="flex flex-col h-full">
                             <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
-                            Property value:
+                            Property value:<span className="text-red-500">*</span>
                             </label>
                             <div className="relative mt-auto">
                             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-semibold text-lg">
@@ -506,24 +553,29 @@ useEffect(() => {
                             </span>
                             <input
                                 id="price"
-                                type="number"
+                                type="text"
+                                  value={formData?.property_values ?? ""}
                                 className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
-                            name="property_values"
-                            onChange={(e)=>{handleChange("property_values",Number(e.target.value))}}
+                            name="property_values
+"
+                            onChange={(e) => { handleChange("property_values", e.target.value) }}
+
                             />
                             </div>
-                              <p
+  <p
 className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
-   errors.property_value ? "text-red-500 opacity-100" : "opacity-0"
+   errors.property_values
+ ? "text-red-500 opacity-100" : "opacity-0"
 }`}>
-  {errors.property_value || "placeholder"} {/* placeholder keeps same height */}
+  {errors.property_values
+ || "placeholder"} {/* placeholder keeps same height */}
 </p>
                         </div>
 
                         {/* 3. Number of Bedrooms (Inline Select) */}
                         <div className="flex flex-col h-full">
                             <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Number of Bedrooms:
+                                Number of Bedrooms:<span className="text-red-500">*</span>
                             </label>
 
                             <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 mt-auto">
@@ -531,10 +583,10 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                                 <button
                                     key={opt}
                                     type="button"
-                                    onClick={() => handleChange("no_of_peoples", opt)}                 
+                                    onClick={() => handleChange("no_of_bedrooms", opt)}                 
                                     className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm
                                     ${
-                                    formData.no_of_peoples === opt  ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+                                    formData.no_of_bedrooms === opt  ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
                                         : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                                     }`}
                                 >
@@ -584,7 +636,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                             </div>
                         </div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Property Type:
+                            Property Type:<span className="text-red-500">*</span>
                             </label>
 
                             <div className="flex flex-wrap  gap-9">
@@ -632,7 +684,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                   {/* 6. Buy to Let? (Inline Select) */}
                   <div className="flex flex-col h-full">
                     <label htmlFor="b2l" className="block text-sm font-medium text-gray-700 mb-1">
-                      Buy to Let?
+                      Buy to Let?<span className="text-red-500">*</span>
                     </label>
                 <div className="relative mt-auto">
                 <Select
@@ -698,9 +750,79 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
               <div className="space-y-4">
   {/* Label + Main dropdown */}
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+    <div className="flex flex-col h-full">
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        Obtaining a mortgage?
+      </label>
+    
+      <div className="grid grid-cols-2 gap-3 ">
+        <button
+          type="button"
+          onClick={() => {
+            setFormData({ ...formData, obtaining_mortgage: 1 }); // ✅ store 1 for yes
+            if (errors.obtaining_mortgage) {
+              setErrors({ ...errors, obtaining_mortgage: "" }); // clear error on change
+            }
+          }}
+          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+            formData.obtaining_mortgage === 1
+              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          <span>Yes</span>
+        </button>
+    
+        <button
+          type="button"
+          onClick={() => {
+            setFormData({ ...formData, obtaining_mortgage: 0 });
+            console.log(formData)
+            setSelectedLenders("") // ✅ store 0 for no
+            if (errors.obtaining_mortgage) {
+              setErrors({ ...errors, obtaining_mortgage: "",lenders:"" });
+            }
+          }}
+          className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center relative shadow-sm ${
+            formData.obtaining_mortgage === 0
+              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          }`}
+        >
+          <span>No</span>
+        </button>
+      </div>
+    <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
+    </div>
+                 
+               <div className="flex flex-col h-full">
+          <label className="block text-sm font-semibold text-gray-800 mb-2">
+            Select Lenders <span className="text-red-500">*</span>
+          </label>
+           <Select
+            options={lender}
+            isDisabled={formData.obtaining_mortgage==0}
+              instanceId="lenders-select"
+              styles={selectStyles}
+          
+            value={selectedLenders}
+            onChange={handleChange_l}
+            placeholder="Choose lenders..."
+            className="text-black"
+    
+              /> 
+        {formData.obtaining_mortgage==1&&(
+ <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+  errors.lenders ? "text-red-500 opacity-100" : "opacity-0"
+}`}>
+  {errors.lenders || "placeholder"}
+</p>
+        )}     
+        
+        </div>
 <div>
         <label className="block text-sm font-semibold text-gray-800 mb-1">
-          Prefer solicitor in your first language?
+          Prefer solicitor in your first language? <span className="text-red-500">*</span>
         </label>
         <div className="mt-2">
       
@@ -708,40 +830,28 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
       
       <Select
         options={lang}
-        styles={selectStyles}
+    
                   instanceId="language-select"
         value={selectedLanguage || formData.languages}
-        onChange={handleChangeLang}
+        styles={selectStyles}
+         onChange={(selectedOption) => {
+    handleChangeLang(selectedOption); // existing handler to update formData / state
+
+    // Clear the error immediately
+    if (errors.preferLanguage) {
+      setErrors((prev) => ({ ...prev, preferLanguage: "" }));
+    }
+  }}
         placeholder="Choose languages..."
         className="text-black mt-2"
       />
      
-    </div>
-        <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
+              </div>
+               <p className="text-[12px] mt-1 min-h-[16px] text-red-500">
+  {errors.preferLanguage}
+</p>
       </div>
 
- 
-
-
-  <div className="flex flex-col h-full">
-      <label className="block text-sm font-semibold text-gray-800 mb-2">
-        Select Lenders
-      </label>
-      <Select
-        options={lender}
-          instanceId="lenders-select"
-          styles={selectStyles}
-
-          value={selectedLenders} 
-        onChange={handleChange_l}
-        placeholder="Choose lenders..."
-        className="text-black"
-
-      />
-       <p
-className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
-></p>
-    </div>
      {/* Show only when needed */}
   {(languagepreference === "Yes" || languagepreference === "Maybe") && (
 <div className="mt-2">
@@ -770,11 +880,40 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
  
 </div>
 
-  )}</div>
+  )}
 
+       <div className="flex flex-col h-full">
+                                 <label htmlFor="addition_applicable" className="block text-sm font-medium text-gray-700 mb-1">
+                                 Please Sellect the addition if applicable to your equity <span className="text-red-500">*</span>
+                                 </label>
+                             <div className="relative mt-auto">
+               <Select
+                      inputId="addition_applicable"
+                      name="addition_applicable"
+                      options={addition_applicable}
+                      styles={selectStyles}
+                      value={addition_applicable.find(
+                        (opt) => opt.value === formData.addition_applicable
+                      )}
+                      onChange={(selected) =>
+                        handleChange("addition_applicable", selected?.value || "")
+                      }
+                      placeholder="Please select"
+                      isSearchable={false}
+                    />     
+               <ChevronDown
+                 size={16}
+                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
+               />
+             </div>
+     <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+       errors.addition_applicable ? "text-red-500 opacity-100" : "opacity-0"
+    }`}>
+      {errors.addition_applicable || "placeholder"} {/* placeholder keeps same height */}
+    </p>
+                               </div>
 
-
-    </div>
+    </div></div>
           
                     {/* 🌐 SPECIAL INSTRUCTIONS */}
   
