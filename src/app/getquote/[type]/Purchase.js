@@ -31,7 +31,7 @@ export default function Purchase() {
   { label: "First-Time Buyer ", value: "firstTime" },
   { label: "Additional Property (Second Home)", value: "additional" },
   { label: "Additional Property (Buy to let)", value: "Buy to let" },
-  { label: "Home Moving", value: "commercial" }
+  { label: "Home Moving", value: "Home Moving" }
 ];
     const addition_applicable = [
   { label: "Plese Select", value: "" },
@@ -381,9 +381,9 @@ const [highRaiseSupport, setHighRaiseSupport] = useState("");
     if(!formData.purchase_mode){
       newErrors.purchase_mode="please select purchase_mode"
     }
-    if(!formData.addition_applicable){
+    /*if(!formData.addition_applicable){
       newErrors.addition_applicable="please select addition_applicable"
-    }
+    }*/
         setErrors(newErrors);
         console.log(errors)
  
@@ -1263,7 +1263,7 @@ return (
 
                <div className="flex flex-col h-full">
                                  <label htmlFor="addition_applicable" className="block text-sm font-medium text-gray-700 mb-1">
-                                 Please Sellect the addition if applicable to your purchase<span className="text-red-500">*</span>
+                                 Select the addition if applicable to your purchase<span className="text-red-500">*</span>
                                  </label>
                              <div className="relative mt-auto">
                <Select

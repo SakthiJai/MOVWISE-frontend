@@ -36,8 +36,80 @@ console.log("sales")
                                           Property Details 
                                         </h3>
                                       </div>
+                                      <div className="flex">
+                                        <span className="font-semibold w-40 text-left">
+                                         Stages
+                                        </span>
+                                        <span className=" text-left">
+                                          {quote?.service_details[0]
+                                            ?.sales_stages || "--"}
+                                        </span>
+                                      </div>
+                                      <div className="flex">
+                                        <span className="font-semibold w-40 text-left">
+                                         Town City
+                                        </span>
+                                        <span className="">
+                                          {quote?.service_details[0]
+                                            ?.sales_town_city || "--"}
+                                        </span>
+                                      </div>
                                       
-
+                                      <div className="flex">
+                                        <span className="font-semibold w-40 text-left">
+                                         Country
+                                        </span>
+                                        <span className="">
+                                          {quote?.service_details[0]
+                                            ?.sales_country || "--"}
+                                        </span>
+                                      </div>
+                                   <div className="flex">
+                                        <span className="font-semibold w-40 text-left">
+                                         Price
+                                        </span>
+                                        <span className="">
+                                          £{quote?.service_details[0]
+                                            ?.sales_price || "--"}.00
+                                        </span>
+                                      </div>
+                                      <div className="flex">
+                                        <span className="font-semibold w-40 text-left">
+                                         No Of Bedrooms
+                                        </span>
+                                        <span className="">
+                                          {quote?.service_details[0]
+                                            ?.sales_no_of_bedrooms || "--"}
+                                        </span>
+                                      </div>
+                                        <div className="flex">
+                                        <span className="font-semibold w-40 text-left">
+                                         Leasehold Or Free
+                                        </span>
+                                        <span className="">
+                                          {quote?.service_details[0]
+                                            ?.sales_leasehold_or_free || "--"}
+                                        </span>
+                                      </div>
+                                      <div className="flex">
+                                        <span className="font-semibold w-40 text-left">
+                                         Property Type
+                                        </span>
+                                        <span className="">
+                                          {quote?.service_details[0]
+                                            ?.sales_property_type || "--"}
+                                        </span>
+                                      </div>
+                                      <div className="flex">
+                                        <span className="font-semibold w-40 text-left">
+                                         Shared Ownership
+                                        </span>
+                                        <span className="">
+                                          {quote?.service_details[0]
+                                            ?.shared_ownership || "--"}
+                                        </span>
+                                      </div>
+                                      
 
                                       <div className="flex mt-3">
                                         <span className="font-semibold w-40 text-left">
@@ -76,86 +148,6 @@ console.log("sales")
                                             ?.lenders || "--"}
                                         </span>
                                       </div>
-
-
-                                       
-                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Country
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.sales_country || "--"}
-                                        </span>
-                                      </div>
-                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Leasehold Or Free
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.sales_leasehold_or_free || "--"}
-                                        </span>
-                                      </div>
-                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         No Of Bedrooms
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.sales_no_of_bedrooms || "--"}
-                                        </span>
-                                      </div>
-                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Price
-                                        </span>
-                                        <span className="">
-                                          £{quote?.service_details[0]
-                                            ?.sales_price || "--"}.00
-                                        </span>
-                                      </div>
-                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Property Type
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.sales_property_type || "--"}
-                                        </span>
-                                      </div>
-                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Stages
-                                        </span>
-                                        <span className=" text-left">
-                                          {quote?.service_details[0]
-                                            ?.sales_stages || "--"}
-                                        </span>
-                                      </div>
-                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Town City
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.sales_town_city || "--"}
-                                        </span>
-                                      </div>
-                                      
-                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Shared Ownership
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.shared_ownership || "--"}
-                                        </span>
-                                      </div>
-                                      
-
-
-
 
 
                                     </div>

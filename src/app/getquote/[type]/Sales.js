@@ -252,9 +252,9 @@ const handleSubmit = (e) => {
   if (!selectedLenders || selectedLenders.length === 0 && formData.existing_mortgage==1) {
   newErrors.lenders = "Please select at least one lender";
 }
-if(!formData.addition_applicable){
+/*if(!formData.addition_applicable){
       newErrors.addition_applicable="please select addition_applicable"
-    }
+    }*/
 
  
   /*if (!formData.sales_address.trim()) {
@@ -975,7 +975,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
     </div>    
                <div className="flex flex-col h-full">
                                  <label htmlFor="addition_applicable" className="block text-sm font-medium text-gray-700 mb-1">
-                                 Please Sellect the addition if applicable to your sale<span className="text-red-500">*</span>
+                                 Select the addition if applicable to your sale<span className="text-red-500">*</span>
                                  </label>
                              <div className="relative mt-auto">
                <Select

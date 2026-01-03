@@ -884,7 +884,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
 
        <div className="flex flex-col h-full">
                                  <label htmlFor="addition_applicable" className="block text-sm font-medium text-gray-700 mb-1">
-                                 Please Sellect the addition if applicable to your equity <span className="text-red-500">*</span>
+                                 Select the addition if applicable to your equity <span className="text-red-500">*</span>
                                  </label>
                              <div className="relative mt-auto">
                <Select

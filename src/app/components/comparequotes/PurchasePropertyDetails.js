@@ -31,16 +31,13 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                           Property Details 
                                         </h3>
                                       </div>
-                             
-
-
-                                      <div className="flex mt-3">
+                                <div className="flex">
                                         <span className="font-semibold w-40 text-left">
-                                          Buy To Let
+                                         Stages
                                         </span>
                                         <span className="">
                                           {quote?.service_details[0]
-                                            ?.buy_to_let || "--"}
+                                            ?.stages || "--"}
                                         </span>
                                       </div>
                                       <div className="flex">
@@ -52,9 +49,82 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                             ?.country || "--"}
                                         </span>
                                       </div>
+                                       <div className="flex">
+                                        <span className="font-semibold w-40 text-left">
+                                         Purchase Price
+                                        </span>
+                                        <span className="">
+                                          £{quote?.service_details[0]
+                                            ?.purchase_price || "--"}
+                                        </span>
+                                      </div>
 
+                                        <div className="flex">
+                                        <span className="font-semibold w-40 text-left">
+                                          No Of Bedrooms
+                                        </span>
+                                        <span className="">
+                                          {quote?.service_details[0]
+                                            ?.no_of_bedrooms || "--"}
+                                        </span>
+                                      </div>
+                                     <div className="flex">
+                                        <span className="font-semibold w-40 text-left">
+                                          Leasehold Or Free
+                                        </span>
+                                        <span className="">
+                                          {quote?.service_details[0]
+                                            ?.leasehold_or_free || "--"}
+                                        </span>
+                                      </div>
+                                       <div className="flex">
+                                        <span className="font-semibold w-40 text-left">
+                                          Property Type
+                                        </span>
+                                        <span className="">
+                                          {quote?.service_details[0]
+                                            ?.property_type || "--"}
+                                        </span>
+                                      </div>
+                                      <div className="flex">
+                                        <span className="font-semibold w-40 text-left">
+                                        High Raise Support
+                                        </span>
+                                        <span className="">
+                                          {quote?.service_details[0]
+                                            ?.purchase_high_raise_support==0?"No":"Yes" }
+                                        </span>
+                                      </div>
+                                       <div className="flex">
+                                        <span className="font-semibold w-40 text-left">
+                                         Purchase Mode
+                                        </span>
+                                        <span className="">
+                                          {quote?.service_details[0]
+                                            ?.purchase_mode || "--"}
+                                        </span>
+                                      </div>
+
+                                      <div className="flex mt-3">
+                                        <span className="font-semibold w-40 text-left">
+                                          Buy To Let
+                                        </span>
+                                        <span className="">
+                                          {quote?.service_details[0]
+                                            ?.buy_to_let || "--"}
+                                        </span>
+                                      </div>
+                                      
+ <div className="flex">
+                                        <span className="font-semibold w-40 text-left">
+                                         Obtaining Mortgage
+                                        </span>
+                                        <span className="">
+                                          {quote?.service_details[0]
+                                            ?.obtaining_mortgage==0?"No":"Yes"}
+                                        </span>
+                                      </div>
                                     
-
 
                                       <div className="flex">
                                         <span className="font-semibold w-40 text-left">
@@ -65,6 +135,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                             ?.gift_deposit? "yes":"no" || "--"}
                                         </span> 
                                       </div>
+
                                     
 
 
@@ -80,77 +151,8 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
   }
 </span>
                                       </div>
-                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                          Leasehold Or Free
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.leasehold_or_free || "--"}
-                                        </span>
-                                      </div>
-
-
-                                      
-                                        <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                          No Of Bedrooms
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.no_of_bedrooms || "--"}
-                                        </span>
-                                      </div>
-                                     
-                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Obtaining Mortgage
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.obtaining_mortgage==0?"No":"Yes"}
-                                        </span>
-                                      </div>
                                        
-                                      <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                          Property Type
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.property_type || "--"}
-                                        </span>
-                                      </div>
-                                     
-                                      <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Purchase Mode
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.purchase_mode || "--"}
-                                        </span>
-                                      </div>
-                                  
-                                      <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Purchase Price
-                                        </span>
-                                        <span className="">
-                                          £{quote?.service_details[0]
-                                            ?.purchase_price || "--"}
-                                        </span>
-                                      </div>
-                                      
-                                        <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                        High Raise Support
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.purchase_high_raise_support==0?"No":"Yes" }
-                                        </span>
-                                      </div>
+                                        
                                        <div className="flex">
                                         <span className="font-semibold w-40 text-left">
                                         Life Time Support
@@ -172,15 +174,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
 
 
                                       
-                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
-                                         Stages
-                                        </span>
-                                        <span className="">
-                                          {quote?.service_details[0]
-                                            ?.stages || "--"}
-                                        </span>
-                                      </div>
+                                    
                                  
 
                                       
