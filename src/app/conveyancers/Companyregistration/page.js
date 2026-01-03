@@ -448,9 +448,10 @@ useEffect(() => {
       localStorage.removeItem("companyData");
       localStorage.setItem("companyData", JSON.stringify({ ...formData }));
       console.log("inside navigation");
-      router.push(`${API_BASE_URL}/quotationdetails`);
+      router.push("/quotationdetails");
     }
     console.log(errors);
+    console.log(API_BASE_URL)
   };
 
   const serviceoptions = [

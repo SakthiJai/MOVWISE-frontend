@@ -39,6 +39,7 @@ export default function Comparequotes() {
   const [dropdownshow,setdropdownshow]=useState(false);
   const [loading, setLoading] = useState(false);
   const [total, settotal] = useState(0);
+  const [giftvalue,setgiftvalue]=useState(0);
   const [filteroption, setfilteroption] = useState( [
     {
       value: "Rating",
@@ -213,6 +214,9 @@ function fetchtaxdetails(id){
 let selectedquote=companydata.filter((item)=>item.quote_id==id);
 console.log(selectedquote)
 console.log(selectedquote[0].conveying_details.taxDetails);
+setgiftvalue(selectedquote[0].service_details[0].gift_deposit);
+console.log(giftvalue);
+
 let sum=0
 const grouped = selectedquote[0].conveying_details.taxDetails.reduce(
   (acc, item) => {
@@ -979,7 +983,12 @@ function handlefilterchange(selectedoption = []) {
                 {items?.items.map((fee, i) =>  Number(fee.fee_amount) > 0 ? (
                   <tr key={i} className="border-b border-gray-200 text-start">
                     <td className="p-2 break-words text-sm "> <div className="ml-4"> {/* margin-left works here */}
-        {fee.fee_type}
+       {
+  fee.fee_type === "Gifted Deposit Supplement"
+    ? `${fee.fee_type} ${giftvalue}`
+    : fee.fee_type
+}
+
       </div></td>
                     <td className="p-2 text-right text-sm">
                       {formatGBP(fee.fee_amount)}
