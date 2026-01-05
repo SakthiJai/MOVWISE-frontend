@@ -1493,7 +1493,8 @@ export default function Quotationdetails() {
                                       e.target.value
                                     );
                                   }}
-                                  className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
+                                  className="border h-7
+                                   border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
                                 />
                                  {standardDisbursementList.length -1 == i && (
                                   <div className="text-right">

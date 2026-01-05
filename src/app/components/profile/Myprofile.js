@@ -9,20 +9,38 @@ import { BookCheckIcon, User } from 'lucide-react';
 
 
 const Myprofile = () => {
+  useEffect(() => {
+  console.log("Myprofile rendered");
+});
+
   const childRef = useRef();
 
   const [show, setshow] = useState(true);
   const [logintype,setlogintype]=useState();
   const [showPopup, setShowPopup] = useState(false);
+  const [Image,setImage]=useState("");
 
   const [user,setuser]=useState({
     first_name:"",
     last_name:"",
     phone_number:"",
     email:"",
+    password:"",
+    logo:"",
 
   }
   )
+    const [userpayload,setuserpayload]=useState({
+    first_name:"",
+    last_name:"",
+    phone_number:"",
+    email:"",
+    password:"",
+    logo:"",
+
+  }
+  )
+
   const[company,setcompany]=useState([]);
   const[quoteUser,setquoteUser]=useState({});
   const[servicedetails,setservicedetails]=useState([]);
@@ -108,10 +126,22 @@ email:userprofile[0].email,
     console.log("<>selectedQuoteId",selectedQuoteId);
   }
   const handleImageChange = (e) => {
+    console.log( e.target.files[0]);
     const file = e.target.files[0];
+    
     if (file) {
+
       setPreview(URL.createObjectURL(file)); // Creates preview URL
+
+         const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result;
+        setImage(base64String); // ✅ for previe
+      };
+
+      reader.readAsDataURL(file);
     }
+  
   };
 
   // Helper component to render the status button with dynamic colors (Unchanged)
@@ -170,6 +200,39 @@ const getServiceTypeLabel = (type) => {
       return "Transfer of Equity";
   }
 };
+function handleprofilechange(e) {
+  e.preventDefault();
+console.log(e.target)
+  const formData = new FormData(e.target);
+
+  const values = Object.fromEntries(formData.entries());
+    console.log(values);
+
+
+  // get file explicitly
+
+  values.existing_logo = Image; // File object
+
+  console.log(Image);
+  console.log(values);
+  postprofiledetails(values)
+ 
+}
+
+async function  postprofiledetails(values){
+  let userid = localStorage.getItem('user');
+  console.log(userid)
+ try{
+let response = await postData(
+  `${API_ENDPOINTS.update_user_profile}/${userid}`,
+  values
+);    console.log(response)
+  }
+  catch(e){
+    console.log(e)
+  }
+}
+
   // Content for the 'MY Profile' section (Unchanged)
   const ProfileContent = () => (
     <div className="p-6 bg-white shadow-lg rounded-xl min-h-[300px] font">
@@ -182,16 +245,16 @@ const getServiceTypeLabel = (type) => {
                
               
 
-                <form className="mt-2">
+                <form className="mt-2" onSubmit={handleprofilechange}>
                   {/* Row 1 */}
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label htmlFor="firstName" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">First Name</label>
                       <input
-                      value={user.first_name}
-                      readOnly
+                      defaultValue={user.first_name}
+                
                         id="firstName"
-                        name="firstName"
+                        name="first_name"
                         placeholder="Enter your Firstname"
                         className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
                       />
@@ -199,10 +262,10 @@ const getServiceTypeLabel = (type) => {
                     <div>
                       <label htmlFor="lastName" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">Last Name</label>
                       <input
-                      value={user.last_name}
-                      readOnly
+                      defaultValue={user.last_name}
+                      
                         id="lastName"
-                        name="lastName"
+                        name="last_name"
                         placeholder="Enter your Lastname"
 
                         className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
@@ -215,8 +278,7 @@ const getServiceTypeLabel = (type) => {
                     <div>
                       <label htmlFor="email" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">Email</label>
                       <input
-                      value={user.email}
-                      readOnly
+                      defaultValue={user.email}
                         id="email"
                         name="email"
                         type="email"
@@ -227,18 +289,18 @@ const getServiceTypeLabel = (type) => {
                     </div>
                     <div>
                       <label htmlFor="phone" className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1 font">Phone No.</label>
-                      <div className="relative">
+                      <div className="">
                         <input
-                        value={user.phone_number}
-                        readOnly
+                        defaultValue={user.phone_number}
                           id="phone"
-                          name="phone"
+                          name="phone_number"
                         placeholder="Enter your Number"
 
                           className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
                         />
                         {/* optional divider mimic for country code */}
                         <div className="pointer-events-none absolute left-[108px] top-1/2 -translate-y-1/2 h-[28px] w-px bg-[#E5E7EB]" />
+                        
                       </div>
                     </div>
                   </div>
@@ -250,14 +312,21 @@ const getServiceTypeLabel = (type) => {
                         id="password"
                         name="password"
                         type="password"
+                        defaultValue={user?.password||''}
                         placeholder="Enter your Password"
-                        autoComplete="current-password"
+                    
                         className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
                       />
+                      
+                        <button className='mt-20 ms-5 p-2  bg-green-600 rounded-sm'>
+                  Save Changes
+                 </button>
+
                     </div>
+                    
                         <div>
       <label
-        htmlFor="image"
+        htmlFor="existing_logo"
         className="block text-[14px] text-[#6A7682] font-outfit font-medium mb-1"
       >
         Upload Image
@@ -265,7 +334,7 @@ const getServiceTypeLabel = (type) => {
 
       <input
         id="image"
-        name="image"
+        name="existing_logo"
         type="file"
         accept="image/*"
         onChange={handleImageChange}
@@ -273,10 +342,10 @@ const getServiceTypeLabel = (type) => {
       />
 
       {/* Image Preview */}
-      {preview && (
+      {true && (
        <div className="mt-3">
   <img
-    src={preview}
+    src={user.logo}
  
     className="w-32 h-32 object-cover rounded-full border text-center text-gray-400"
   />
@@ -288,7 +357,7 @@ const getServiceTypeLabel = (type) => {
                   
 
                   {/* Checkbox */}
-                 
+               
                 </form>
               </div>
             </div>

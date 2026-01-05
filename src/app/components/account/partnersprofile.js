@@ -35,6 +35,7 @@ const Partnersprofile = () => {
       return "Unknown";
   }
 };
+
 const getServiceTypeLabel = (type) => {
   switch (type) {
     case 1:
@@ -652,7 +653,7 @@ console.log(formData)
      
  
      <tbody>
-       {companyitems.map((quote, index) => (
+       {companyitems?.map((quote, index) => (
         
      <React.Fragment key={index}> 
             {((quote.status>1) && (localStorage.getItem("logintype")=="partner")) &&(

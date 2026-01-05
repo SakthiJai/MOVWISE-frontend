@@ -18,7 +18,7 @@ export const API_ENDPOINTS = {
     remortages:`${BASE_URL}/remortgages`,
     sales:`${BASE_URL}/sales`,
     createQuote:`${BASE_URL}/create-quote`,
-    quotesfilter:`${BASE_URL}/quotes/filter`,
+    // quotesfilter:`${BASE_URL}/quotes/filter`,
     compareQuotes:`${BASE_URL}/compare-quotes`,
     languages:`${BASE_URL}/languages`,
     partnerfilter:`${BASE_URL}/partnerfilter`,

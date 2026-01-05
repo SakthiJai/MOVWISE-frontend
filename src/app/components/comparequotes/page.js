@@ -168,7 +168,7 @@ useEffect(() => {
         conveying_details: {
           ...item.conveying_details,
           logo: item.conveying_details.logo
-            ? `data:image/png;base64,${item.conveying_details.logo}`
+            ? `${item.conveying_details.logo}`
             : null,
         },
       }));
@@ -221,11 +221,11 @@ let sum=0
 const grouped = selectedquote[0].conveying_details.taxDetails.reduce(
   (acc, item) => {
     const key = item.fees_category;
-
+    let total = 'total'
     if (!acc[key]) {
       acc[key] = {
-        items: [],
-        total: 0,
+    items: [],
+     [`${key}${total}`]:0,
       };
     }
 
@@ -601,8 +601,10 @@ function handlefilterchange(selectedoption = []) {
                         }  mx-2 mt-2 rounded-2xl p-4 sm:px-8 sm:py-5`}
                       >
                         <div className="flex items-center gap-5 mb-3 sm:mb-0">
-                          {quote.logo ? (
-                            <Image
+                          {quote.conveying_details.logo ? (
+                            <img
+                              width={35}
+                              height={35}
                               src={quote.conveying_details.logo}
                               alt={quote.company_name || "company logo"}
                               // <- controls visible size
@@ -996,6 +998,7 @@ function handlefilterchange(selectedoption = []) {
                     <td className="p-2 text-right text-sm">{formatGBP(Number(fee.vat))}</td>
                   </tr>
                 ):"")}
+                  
                 <tr  className="border-b border-gray-200 text-start">
                     <td className="p-2 break-words text-sm "> <div className="ml-4"> {/* margin-left works here */}
         Total 
