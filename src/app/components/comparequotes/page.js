@@ -862,7 +862,7 @@ function handlefilterchange(selectedoption = []) {
                                     <div className="ml-6">
                                      
                                         <span className="text-[34px] leading-none font-extrabold text-[#1E5C3B] tracking-tight">
-          {view_data?.appsetting_details
+          {view_data?.conveying_details
                                       ?.company_name || "MovWise"}
         </span>
                                         
@@ -926,7 +926,7 @@ function handlefilterchange(selectedoption = []) {
                                             Phone
                                           </span>
                                           <span className="">
-                                            {quote?.conveying_details
+                                            {quote?.customer_details
                                               ?.phone_number || "--"}
                                           </span>
                                         </div>
@@ -987,7 +987,7 @@ function handlefilterchange(selectedoption = []) {
                     <td className="p-2 break-words text-sm "> <div className="ml-4"> {/* margin-left works here */}
        {
   fee.fee_type === "Gifted Deposit Supplement"
-    ? `${fee.fee_type} ${giftvalue}`
+    ? `${fee.fee_type} (${giftvalue})`
     : fee.fee_type
 }
 
@@ -1143,7 +1143,7 @@ function handlefilterchange(selectedoption = []) {
                                   <div>
                                     <h4>Notes</h4>
                                     <p className="text-xs mt-4">
-                                      {quote?.conveying_details?.short_notes ||
+                                      {quote?.conveying_details?.notes ||
                                         "No notes provided by the firm."}
                                     </p>
                                   </div>

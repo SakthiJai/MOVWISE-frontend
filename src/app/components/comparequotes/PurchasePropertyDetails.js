@@ -21,14 +21,13 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
   useEffect(()=>{
     fetchapi()
 
-    
   },[])
 
   return (
     <div className=" text-sm">
                                       <div className="text-emerald-600 text-start">
                                         <h3 className="text-lg font-semibold ">
-                                          Property Details 
+                                          Property Details
                                         </h3>
                                       </div>
                                 <div className="flex">
@@ -151,8 +150,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
   }
 </span>
                                       </div>
-                                       
-                                        
+
                                        <div className="flex">
                                         <span className="font-semibold w-40 text-left">
                                         Life Time Support
