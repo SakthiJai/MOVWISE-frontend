@@ -487,29 +487,14 @@ export default function Quotationdetails() {
       )
     );
   };
-  const handlePriceChange1 = (feesCategoryId, rowIndex, field, value) => {
-    const numericValue = value.replace(/[^\d.]/g, "");
-    setpricingList((prev) =>
-      prev.map((item) =>
-        item.fees_category_id === feesCategoryId
-          ? {
-              ...item,
-              price_list: item.price_list.map((row, i) =>
-                i === rowIndex
-                  ? { ...row, [field]: value } // update field dynamically
-                  : row
-              ),
-            }
-          : item
-      )
-    );
-    //console.loglog(pricingList)
-  };
+  
+
   const formatNumber = (num) =>
     new Intl.NumberFormat("en-GB", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(num);
+    //check
   const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
     const rawValue = value.replace(/[^\d.]/g, "");
     console.log(feesCategoryId, rowIndex, field, value);
@@ -533,12 +518,11 @@ export default function Quotationdetails() {
     );
 
     console.log(pricingList);
-
+console.log('debugger')
     if (timers.current[feesCategoryId])
       clearTimeout(timers.current[feesCategoryId]);
 
     timers.current[feesCategoryId] = setTimeout(() => {
-      // 🚫 Skip formatting for type_id
       if (field === "type_id" || field === "description") return;
 
       const num = Number(rawValue);
@@ -980,7 +964,7 @@ export default function Quotationdetails() {
                                         type="text"
                                         placeholder="Min"
                                         value={row?.min}
-                                        className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black bg-white"
+                                        className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black bg-white legalfeesrow_input"
                                         onChange={(e) =>
                                           handlePriceChange(
                                             numIndex,
@@ -1023,7 +1007,7 @@ export default function Quotationdetails() {
                                         type="text"
                                         placeholder="Max"
                                         value={row.max}
-                                        className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
+                                        className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black legalfeesrow_input"
                                         onChange={(e) =>
                                           handlePriceChange(
                                             numIndex,
@@ -1060,7 +1044,7 @@ export default function Quotationdetails() {
                                           type="text"
                                           placeholder="Purchase Freehold"
                                           value={row.purchase_freehold}
-                                          className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
+                                          className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black  pl-2  legalfeesrow_input"
                                           onChange={(e) =>
                                             handlePriceChange(
                                               numIndex,
@@ -1088,7 +1072,7 @@ export default function Quotationdetails() {
                                           type="text"
                                           value={row.purchase_leasehold}
                                           placeholder="Purchase Leasehold"
-                                          className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
+                                          className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black legalfeesrow_input"
                                           onChange={(e) =>
                                             handlePriceChange(
                                               numIndex,
@@ -1117,7 +1101,7 @@ export default function Quotationdetails() {
                                           type="text"
                                           value={row.sales_freehold}
                                           placeholder="Sales Freehold"
-                                          className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
+                                          className="poundtransform border border-gray-400 rounded py-0.5 text-sm legalfeesrow_input"
                                           onChange={(e) =>
                                             handlePriceChange(
                                               numIndex,
@@ -1146,7 +1130,7 @@ export default function Quotationdetails() {
                                           type="text"
                                           value={row.sales_leasehold}
                                           placeholder="Sales Leasehold"
-                                          className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
+                                          className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black legalfeesrow_input"
                                           onChange={(e) =>
                                             handlePriceChange(
                                               numIndex,
@@ -1174,7 +1158,7 @@ export default function Quotationdetails() {
                                           type="text"
                                           placeholder="Remortgage"
                                           value={row.remortgage}
-                                          className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
+                                          className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black legalfeesrow_input"
                                           onChange={(e) =>
                                             handlePriceChange(
                                               numIndex,
@@ -1270,7 +1254,7 @@ export default function Quotationdetails() {
                                           e.target.value
                                         )
                                       }
-                                      className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
+                                      className=" border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
                                     />
                                   </div>
                                 ) : (
@@ -1330,9 +1314,10 @@ export default function Quotationdetails() {
                                   </>):(
                                   <input
                                   placeholder="Fee Amount"
+                                  value={row?.fee_amount}
                                   onChange={(e) => {
                                     settransactionFeesError("");
-
+                                    
                                     handlePriceChange(
                                       numIndex,
                                       i,
@@ -1340,7 +1325,7 @@ export default function Quotationdetails() {
                                       e.target.value
                                     );
                                   }}
-                                  className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
+                                  className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2 poundtransform"
                                 />
                                 ) }
                                 
@@ -1423,7 +1408,7 @@ export default function Quotationdetails() {
                                           e.target.value
                                         )
                                       }
-                                      className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-gray-900 pl-2"
+                                      className=" border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-gray-900 pl-2"
                                     />
                                   </div>
                                 ) : (
@@ -1483,6 +1468,7 @@ export default function Quotationdetails() {
                                   </>):(<>
                                   <input
                                   placeholder="Fee Amount"
+                                       value={row?.fee_amount}
                                   onChange={(e) => {
                                     settransactionFeesError("");
 
@@ -1615,7 +1601,7 @@ export default function Quotationdetails() {
                                         <input
                                           type="text"
                                           placeholder="Fee Cost"
-                                          value={row.fee_amount}
+                                       value={row?.fee_amount}
                                           onChange={(e) => {
                                             setleasedisbursementFeesError("");
 
@@ -1626,7 +1612,7 @@ export default function Quotationdetails() {
                                               e.target.value
                                             );
                                           }}
-                                          className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full "
+                                          className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full legalfeesrow_input"
                                         />
                                       </td>
 
@@ -1709,7 +1695,7 @@ export default function Quotationdetails() {
                                     <input
                                       type="text"
                                       placeholder="Fee Cost"
-                                      value={row.fee_amount}
+                                       value={row?.fee_amount}
                                       onChange={(e) =>
                                         handlePriceChange(
                                           numIndex,
@@ -1718,7 +1704,7 @@ export default function Quotationdetails() {
                                           e.target.value
                                         )
                                       }
-                                      className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-black "
+                                      className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-black legalfeesrow_input"
                                     />
                                   </td>
 
