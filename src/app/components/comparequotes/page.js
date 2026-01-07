@@ -225,6 +225,7 @@ const grouped = selectedquote[0].conveying_details.taxDetails.reduce(
     if (!acc[key]) {
       acc[key] = {
     items: [],
+    total: 0,
      [`${key}${total}`]:0,
       };
     }
@@ -233,9 +234,8 @@ const grouped = selectedquote[0].conveying_details.taxDetails.reduce(
     acc[key].items.push(item);
 
     // ✅ calculate total
-    if (Number(item.fee_amount) > 0) {
-      acc[key].total += Number(item.fee_amount);
-    }
+  acc[key].total += Number(item.fee_amount) || 0;
+
 
     return acc;
   },
