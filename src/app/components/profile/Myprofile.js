@@ -19,6 +19,8 @@ const Myprofile = () => {
   const [logintype,setlogintype]=useState();
   const [showPopup, setShowPopup] = useState(false);
   const [Image,setImage]=useState("");
+    const [imageerror, setimageerror] = useState("");
+  
 
   const [user,setuser]=useState({
     first_name:"",
@@ -48,7 +50,7 @@ const Myprofile = () => {
  ;
 
 
-  const [preview, setPreview] = useState("true");
+  const [preview, setPreview] = useState(false);
   const loginType = typeof window !== "undefined" 
   ? localStorage.getItem("logintype") 
   : null;
@@ -94,6 +96,7 @@ console.log(payload)
     last_name:userprofile[0].last_name,
     phone_number:userprofile[0].phone_number,
 email:userprofile[0].email,
+logo:userprofile[0].logo,
    })
 
    setcompany(companydetails)
@@ -129,6 +132,16 @@ email:userprofile[0].email,
     console.log( e.target.files[0]);
     const file = e.target.files[0];
     
+setimageerror("");
+        const MAX_SIZE = 2 * 1024 * 1024; 
+
+  if (file.size > MAX_SIZE) {
+    setimageerror("File size exceeds 2MB limit");
+    console.log(imageerror)
+    e.target.value = ""; 
+    setPreview(true)
+    return;
+  }
     if (file) {
 
       setPreview(URL.createObjectURL(file)); // Creates preview URL
@@ -201,6 +214,9 @@ const getServiceTypeLabel = (type) => {
   }
 };
 function handleprofilechange(e) {
+  if(imageerror!=""){
+    return;
+  }
   e.preventDefault();
 console.log(e.target)
   const formData = new FormData(e.target);
@@ -340,13 +356,15 @@ let response = await postData(
         onChange={handleImageChange}
         className="block w-full h-[44px] rounded-[10px] border border-[#D1D5DB] px-3 text-[14px] text-[#1B1D21] placeholder-[#1B1D21] focus:outline-none focus:ring-2  font-semibold font"
       />
-
+<span className='text-red-600'>{imageerror}</span>
       {/* Image Preview */}
       {true && (
+      
        <div className="mt-3">
+        
   <img
-    src={user.logo}
- 
+    src={preview || user.logo}
+      
     className="w-32 h-32 object-cover rounded-full border text-center text-gray-400"
   />
 </div>

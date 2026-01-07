@@ -43,8 +43,10 @@ export default function Companyregistration() {
     email: "",
     website: "",
     password: "",
+    logo: "",
   });
   const [languagepreference, setlanguagepreference] = useState(" ");
+  const [imageerror, setimageerror] = useState("");
 
   const [language, setLanguage] = useState([]);
   const [lender, setLender] = useState([]);
@@ -360,24 +362,33 @@ useEffect(() => {
   };
 
   // Handle image upload
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result;
-        setImage(base64String); // ✅ for preview
+    const handleImageChange = (e) => {
+      setimageerror("");
+      const file = e.target.files[0];
+        const MAX_SIZE = 2 * 1024 * 1024; // 2MB
 
-        // ✅ also set inside form data
-        setFormData((prev) => ({
-          ...prev,
-          logo: base64String  // <-- your required key
-        }));
-      };
+  if (file.size > MAX_SIZE) {
+    setimageerror("File size exceeds 2MB limit");
+    console.log(imageerror)
+    e.target.value = ""; // reset input
+    return;
+  }
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const base64String = reader.result;
+          setImage(base64String); // ✅ for preview
 
-      reader.readAsDataURL(file);
-    }
-  };
+          // ✅ also set inside form data
+          setFormData((prev) => ({
+            ...prev,
+            logo: base64String  // <-- your required key
+          }));
+        };
+
+        reader.readAsDataURL(file);
+      }
+    };
 
   // Handle Continue button click
   const handleContinue = () => {
@@ -437,6 +448,11 @@ useEffect(() => {
     } else if (formData.sra_clc_number.trim().length < 3) {
       newErrors.sra_clc_number = "Enter a valid SRA / CLC Number";
     }
+
+   if(!imageerror==""){
+    console.log(imageerror)
+    newErrors.logo = "Enter a valid logo";
+   }
 
     // Logo validation
 
@@ -637,6 +653,7 @@ const togglesercice = (opt) => {
                               onChange={handleImageChange}
                               className="hidden"
                             />
+                            <span className="text-red-600">{imageerror}</span>
                           </div>
                         </div>
                       </div>
