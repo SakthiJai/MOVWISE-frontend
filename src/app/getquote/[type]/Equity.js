@@ -56,13 +56,13 @@ useEffect(() => {
   console.log(purchaseRef.current); 
   }, []);
   const buyToLetOptions = [
-  { value: "", label: "Please select", isDisabled: true },
+  { value: "", label: "Not Applicable", isDisabled: true },
   { value: "No", label: "No" },
   { value: "personal", label: "Yes - Personal name" },
   { value: "company", label: "Yes - Company name" },
 ];
     const addition_applicable = [
-  { label: "Plese Select", value: "" },
+  { label: "Not Applicable", value: "" },
   { label: "Expats / Overseas Client", value: "Expats / Overseas Client" },
   { label: "Shared Ownership", value: "Shared Ownership" },
    { label: "HMO BTL", value: "HMO BTL" }
@@ -698,7 +698,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
   onChange={(selected) =>
     handleChange("buy_to_let", selected?.value || "")
   }
-  placeholder="Please select"
+  placeholder="Not Applicable"
   isSearchable={false}
 />
 
@@ -898,7 +898,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                       onChange={(selected) =>
                         handleChange("addition_applicable", selected?.value || "")
                       }
-                      placeholder="Please select"
+                      placeholder="Not Applicable"
                       isSearchable={false}
                     />     
                <ChevronDown

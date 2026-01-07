@@ -14,19 +14,19 @@ import Signinmodal from "../../components/utility/Singingmodal";
 
 export default function Sales() {
   const stageOptions = [
-  { value: "", label: "Please select", isDisabled: true },
+  { value: "", label: "Not Applicable", isDisabled: true },
   { value: "Just researching / budgeting", label: "Just researching / budgeting" },
   { value: "Have received an offer", label: "Have received an offer" },
   { value: "Sale agreed", label: "Sale agreed" },
 ];
 const sharedOwnershipOptions = [
-  { value: "", label: "Please select", isDisabled: true },
+  { value: "", label: "Not Applicable", isDisabled: true },
   { value: "Yes (housing association)", label: "Yes (housing association)" },
   { value: "Yes (Help To Buy)", label: "Yes (Help To Buy)" },
   { value: "No", label: "No" },
 ];
     const addition_applicable = [
-  { label: "Plese Select", value: "" },
+  { label: "Not Applicable", value: "" },
   { label: "Islamic Mortgage", value: "Islamic Mortgage" },
   { label: "Equity Transfer", value: "Equity Transfer" },
   { label: "Expats / Overseas Client", value: "Expats / Overseas Client" }
@@ -557,7 +557,7 @@ useEffect(() => {
     handleChange("sales_stages", selected?.value || "")
   }
   isSearchable={false}
-  placeholder="Please select"
+  placeholder="Not Applicable"
 />
 
            
@@ -822,7 +822,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
   onChange={(selected) =>
     handleChange("shared_ownership", selected?.value || "")
   }
-  placeholder="Please select"
+  placeholder="Not Applicable"
   isSearchable={false}
 />
 
@@ -989,7 +989,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
                       onChange={(selected) =>
                         handleChange("addition_applicable", selected?.value || "")
                       }
-                      placeholder="Please select"
+                      placeholder="Not Applicable"
                       isSearchable={false}
                     />     
                <ChevronDown

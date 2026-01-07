@@ -27,20 +27,20 @@ export default function Purchase() {
     const [addresskey,setaddresskey]=useState("");
 
     const stampDutyOptions = [
-  { label: "Plese Select", value: "" },
+  { label: "Not Applicable", value: "" },
   { label: "First-Time Buyer ", value: "firstTime" },
   { label: "Additional Property (Second Home)", value: "additional" },
   { label: "Additional Property (Buy to let)", value: "Buy to let" },
   { label: "Home Moving", value: "Home Moving" }
 ];
     const addition_applicable = [
-  { label: "Plese Select", value: "" },
+  { label: "Not Applicable", value: "" },
   { label: "Islamic Mortgage", value: "Islamic Mortgage" },
   { label: "Equity Transfer", value: "Equity Transfer" },
   { label: "Expats / Overseas Client", value: "Expats / Overseas Client" }
 ];
 const buyToLetOptions = [
-  { value: "", label: "Please select", isDisabled: true },
+  { value: "", label: "Not Applicable", isDisabled: true },
   { value: "No", label: "No" },
   { value: "personal", label: "Yes - Personal name" },
   { value: "company", label: "Yes - Company name" },
@@ -558,7 +558,7 @@ return (
     handleChange("stages", selected?.value || "")
   }
   isSearchable={false}
-  placeholder="Please select"
+  placeholder="Not Applicable"
 />
 
                
@@ -916,7 +916,7 @@ return (
   onChange={(selected) =>
     handleChange("purchase_mode", selected?.value || "")
   }
-  placeholder="Please select"
+  placeholder="Not Applicable"
   isSearchable={false}
 />
              
@@ -952,7 +952,7 @@ return (
     handleChange("buy_to_let", selected?.value || "")
   }
   isDisabled={buytolet_readonlyfield}
-  placeholder="Please select"
+  placeholder="Not Applicable"
   isSearchable={false}
 />
              
@@ -1277,7 +1277,7 @@ return (
                       onChange={(selected) =>
                         handleChange("addition_applicable", selected?.value || "")
                       }
-                      placeholder="Please select"
+                      placeholder="Not Applicable"
                       isSearchable={false}
                     />     
                <ChevronDown

@@ -48,13 +48,13 @@ export default function Salewithpurchase() {
   }),
 };
   const stageOptions = [
-  { value: "", label: "Please select", isDisabled: true },
+  { value: "", label: "Not Applicable", isDisabled: true },
   { value: "Just researching / budgeting", label: "Just researching / budgeting" },
   { value: "Have received an offer", label: "Have received an offer" },
   { value: "Sale agreed", label: "Sale agreed" },
 ];
 const sharedOwnershipOptions = [
-  { value: "", label: "Please select", isDisabled: true },
+  { value: "", label: "Not Applicable", isDisabled: true },
   { value: "Yes (housing association)", label: "Yes (housing association)" },
   { value: "Yes (Help To Buy)", label: "Yes (Help To Buy)" },
   { value: "No", label: "No" },
@@ -67,14 +67,14 @@ const giftDepositOptions = [
   { value: 3, label: "3" },
 ];
     const stampDutyOptions = [
-  { label: "Plese Select", value: "" },
+  { label: "Not Applicable", value: "" },
   { label: "First-Time Buyer ", value: "firstTime" },
   { label: "Additional Property (Second Home)", value: "additional" },
   { label: "Additional Property (Buy to let)", value: "Buy to let" },
   { label: "Home Moving", value: "commercial" }
 ];
 const buyToLetOptions = [
-  { value: "", label: "Please select", isDisabled: true },
+  { value: "", label: "Not Applicable", isDisabled: true },
   { value: "No", label: "No" },
   { value: "personal", label: "Yes - Personal name" },
   { value: "company", label: "Yes - Company name" },
@@ -194,7 +194,7 @@ useEffect(() => {
     sharedOwnership_purchase: 0,
     buy_to_let:"",
     need_hmo : 0,
-    languages:[],
+    "languages": [],
     service_type:1,
     high_raise_support:0,
     mortgage_purchase:0,
@@ -858,7 +858,7 @@ console.log(e);
     handleChange("sales_stages", selected?.value || "")
   }
   isSearchable={false}
-  placeholder="Please select"
+  placeholder="Not Applicable"
 />
                                            {/* Dropdown icon */}
                                                          <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
@@ -1065,7 +1065,7 @@ console.log(e);
   onChange={(selected) =>
     handleChange("sales_shared_ownership", selected?.value || "")
   }
-  placeholder="Please select"
+  placeholder="Not Applicable"
   isSearchable={false}
 />
                         {errors.sales_shared_ownership && (
@@ -1409,7 +1409,7 @@ console.log(e);
                                  onChange={(selected) =>
                                    handleChange("purchase_mode", selected?.value || "")
                                  }
-                                 placeholder="Please select"
+                                 placeholder="Not Applicable"
                                  isSearchable={false}
                                />
                                             
@@ -1443,7 +1443,7 @@ console.log(e);
         handleChange("buy_to_let", selected?.value || "")
       }
       isDisabled={buytolet_readonlyfield}
-      placeholder="Please select"
+      placeholder="Not Applicable"
       isSearchable={false}
     />
 
@@ -1645,7 +1645,7 @@ console.log(e);
     
     <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
     </div>
-                    <div>
+<div>
         <label className="block text-sm font-semibold text-gray-800 mb-1">
           Prefer solicitor in your first language? <span className="text-red-500">*</span>
         </label>
@@ -1660,9 +1660,9 @@ console.log(e);
         value={selectedLanguage || formData.languages}
         styles={selectStyles}
          onChange={(selectedOption) => {
-    handleChangeLang(selectedOption); 
+    handleChangeLang(selectedOption); // existing handler to update formData / state
 
-  
+    // Clear the error immediately
     if (errors.preferLanguage) {
       setErrors((prev) => ({ ...prev, preferLanguage: "" }));
     }

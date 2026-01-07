@@ -52,7 +52,7 @@ export default function Remortage() {
   }),
 };
     const addition_applicable = [
-  { label: "Plese Select", value: "" },
+  { label: "Not Applicable", value: "" },
   { label: "Islamic Mortgage", value: "Islamic Mortgage" },
   { label: "Equity Transfer", value: "Equity Transfer" },
   { label: "Expats / Overseas Client", value: "Expats / Overseas Client" },
@@ -61,7 +61,7 @@ export default function Remortage() {
    { label: "HMO BTL", value: "HMO BTL" }
 ];
   const buyToLetOptions = [
-  { value: "", label: "Please select", isDisabled: true },
+  { value: "", label: "Not Applicable", isDisabled: true },
   { value: "No", label: "No" },
   { value: "personal", label: "Yes - Personal name" },
   { value: "company", label: "Yes - Company name" },
@@ -736,7 +736,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
     handleChange("buy_to_let", selected?.value || "")
   }
   // isDisabled={buytolet_readonlyfield}
-  placeholder="Please select"
+  placeholder="Not Applicable"
   isSearchable={false}
 />
 
@@ -917,7 +917,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
                       onChange={(selected) =>
                         handleChange("addition_applicable", selected?.value || "")
                       }
-                      placeholder="Please select"
+                      placeholder="Not Applicable"
                       isSearchable={false}
                     />     
                <ChevronDown

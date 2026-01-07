@@ -858,15 +858,31 @@ function handlefilterchange(selectedoption = []) {
                                 {/* ---------- MAIN CONTAINER ---------- */}
                                 <div className="border  rounded-lg bg-white shadow px-6 py-2 mb-2 space-y-2 quotes">
                                   {/* ---------- COMPANY LOGO + RATING ---------- */}
-                                  <div className="flex justify-between items-start">
-                                    <div className="ml-6">
+                                  <div className=" justify-between items-start">
+                                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                                    <div className="ml-6 text-left">
                                      
                                         <span className="text-[34px] leading-none font-extrabold text-[#1E5C3B] tracking-tight">
-          {view_data?.conveying_details
-                                      ?.company_name || "MovWise"}
-        </span>
-                                        
-
+                                          {quote.conveying_details.logo ? (
+                                        <img
+                                          width={60}
+                                          height={50}
+                                          src={quote.conveying_details.logo}
+                                          alt={quote.company_name || "company logo"}
+                                          // <- controls visible size
+                                        />
+                                      ) : (
+                                        <Image
+                                          width={60}
+                                          height={50}
+                                          src="https://cdn-icons-png.flaticon.com/512/295/295128.png"
+                                          alt={quote.company_name || "company logo"}
+                                          className="object-contain"
+                                        />
+                                      )}
+                                    
+                                      </span>
                                       <p className="mt-2 font-semibold text-base quotes">
                                         Contact Details
                                       </p>
@@ -883,7 +899,29 @@ function handlefilterchange(selectedoption = []) {
                                         {view_data?.appsetting_details?.email}
                                       </a>
                                     </div>
+                                    <div>
+                                      <div className="flex justify-end mr-6">
+                    {view_data?.appsetting_details?.logo ? (
+  <img
+    src={view_data.appsetting_details.logo}
+    width={70}
+    height={60}
+    alt="Logo"
+    className="object-contain"
+  />
+) : (
+  <img
+    src="https://cdn-icons-png.flaticon.com/512/295/295128.png"
+    width={70}
+    height={60}
+    alt="Default Logo"
+    className="object-contain"
+  />
+)}
 
+</div>
+                                    </div>
+                                    </div>
                                    
                                   </div>
 
@@ -930,12 +968,25 @@ function handlefilterchange(selectedoption = []) {
                                               ?.phone_number || "--"}
                                           </span>
                                         </div>
+                                        <div className="flex">
+                                          <span className="font-semibold w-20 text-left">
+                                            Address
+                                          </span>
+                                          <span className="">
+                                            {quote?.service_details[0]
+                                              ?.address || "--"}
+                                          </span>
+                                        </div>
+                                        
                                       </div>
-
-                                      {(view_data.service_details[0].service_type == 1 ) && <SalesPropertyDetails quote={quote}/>}   
+                                      {view_data.service_details[0].service_type.toString().length == 1 && (<>
+                                    {(view_data.service_details[0].service_type == 1 ) && <SalesPropertyDetails quote={quote}/>}   
                                    {(view_data.service_details[0].service_type == 2 ) && <PurchasePropertyDetails quote={quote} />}   
-                                   {(view_data.service_details[0].service_type == 3 ) &&( <><SalesPropertyDetails quote={quote}/> <PurchasePropertyDetails quote={quote} /></>)}   
-                                   {(view_data.service_details[0].service_type == 4 ) && <RemortagePropertyDetails quote={quote} />}  
+                                   {(view_data.service_details[0].service_type == 4 ) && <RemortagePropertyDetails quote={quote} />}  </>
+                                      )} 
+                                      {view_data.service_details[0].service_type.toString().length > 1 && (<>
+                                  <SalesPropertyDetails quote={quote}/> <PurchasePropertyDetails quote={quote} /></>)}   
+                                     
                                     </div>
 
                                     <div className="col-span-2 ">
@@ -1143,7 +1194,7 @@ function handlefilterchange(selectedoption = []) {
                                   <div>
                                     <h4>Notes</h4>
                                     <p className="text-xs mt-4">
-                                      {quote?.conveying_details?.notes ||
+                                      {   `${quote?.conveying_details?.notes}` ||
                                         "No notes provided by the firm."}
                                     </p>
                                   </div>
