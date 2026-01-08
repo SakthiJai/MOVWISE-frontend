@@ -116,6 +116,8 @@ export default function Quotationdetails({service_id,companydata}) {
           getData(API_ENDPOINTS.pricing),
           getData(API_ENDPOINTS.getCompanyFee+"/"+user),
 
+
+          
         ]);
         const storedData = JSON.parse(localStorage.getItem("companyData"));
         response1.data[2][0]["sub_categories"] = [];

@@ -87,7 +87,6 @@ export default function Quotationdetails() {
   ];
   const [showSuccess, setShowSuccess] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
-
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem("companyData"));
 
@@ -96,6 +95,7 @@ export default function Quotationdetails() {
       //console.loglog(formData)
     }
   }, []);
+
 
   const [finalPayload, setFinalPayload] = useState(null);
 
@@ -106,14 +106,18 @@ export default function Quotationdetails() {
       //console.loglog("121212");
       try {
         // setLoading(true);
-
+        const storedData = JSON.parse(localStorage.getItem("companyData"));
+        let serviceId={
+          service_id:""
+        }
+       serviceId.service_id = storedData.service_id;
+console.log(serviceId);
         // Call both APIs in parallel
         const [response1, response2, response3] = await Promise.all([
           getData(API_ENDPOINTS.feecatgory),
-          getData(API_ENDPOINTS.feetype + "/2"),
+          postData(API_ENDPOINTS.feetype ,serviceId),
           getData(API_ENDPOINTS.pricing),
         ]);
-        const storedData = JSON.parse(localStorage.getItem("companyData"));
         response1.data[2][0]["sub_categories"] = [];
         if (
           storedData["service_id"]?.indexOf(1) !== -1 ||
@@ -130,6 +134,29 @@ export default function Quotationdetails() {
           response1.data[2][0]["sub_categories"].push({
             sub_category: "Purchase Transaction Supplements",
           });
+          console.log(response2.supplement_fees)
+          setpurchaseFeeTypeList(response2.supplement_fees ?? []);
+        }
+        else if (
+          storedData["service_id"]?.indexOf(4) !== -1 
+         
+        ) {
+          response1.data[2][0]["sub_categories"].push({
+            sub_category: "Remortgage Supplements",
+          });
+          
+          console.log(response2.supplement_fees)
+          setpurchaseFeeTypeList(response2.supplement_fees ?? []);
+        }
+         else if (
+          storedData["service_id"]?.indexOf(5) !== -1 
+         
+        ) {
+          response1.data[2][0]["sub_categories"].push({
+            sub_category: "Transfer of Equity Supplements",
+          });
+          
+          console.log(response2.supplement_fees)
           setpurchaseFeeTypeList(response2.supplement_fees ?? []);
         }
         //console.loglog(response1.data[2][0]['sub_categories'])
@@ -913,7 +940,7 @@ console.log('debugger')
                               <th className="px-3 py-2 text-center">Min £</th>
                               <th className="px-3 py-2 text-center">Max £</th>
 
-                              {(formData["service_id"]?.includes(1) ||
+                              {(formData["service_id"]?.includes(3) ||
                                 formData["service_id"]?.includes(2)) && (
                                 <>
                                   <th className="px-3 py-2 text-center">
@@ -942,7 +969,7 @@ console.log('debugger')
                                   Remortgage
                                 </th>
                               )}
-
+                            
                               <th className="px-3 py-2 text-center">Action</th>
                             </tr>
                           </thead>
@@ -1036,7 +1063,7 @@ console.log('debugger')
                                   </td>
 
                                   {/* PURCHASE FREEHOLD */}
-                                  {(formData["service_id"]?.includes(1) ||
+                                  {(formData["service_id"]?.includes(3) ||
                                     formData["service_id"]?.includes(2)) && (
                                     <td className="px-3 py-2">
                                       <div className="flex flex-col">
@@ -1064,7 +1091,7 @@ console.log('debugger')
                                     </td>
                                   )}
 
-                                  {(formData["service_id"]?.includes(1) ||
+                                  {(formData["service_id"]?.includes(3) ||
                                     formData["service_id"]?.includes(2)) && (
                                     <td className="px-3 py-2">
                                       <div className="flex flex-col">

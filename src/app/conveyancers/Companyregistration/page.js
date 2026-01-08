@@ -733,11 +733,11 @@ const togglesercice = (opt) => {
                           SRA/CLC Number <span className="text-red-500">*</span>
                         </label>
                         <input
-                          id="Name"
+                          id="sra_clc_number"
                           name="sra_clc_number"
                           value={formData.sra_clc_number || ""}
                           onChange={handleChange}
-                          placeholder="Enter Company name"
+                          placeholder="Enter sra_clc_number "
                           className={`block w-full h-[44px] rounded-[10px] border ${
                             errors.company_name
                               ? "border-red-500"
