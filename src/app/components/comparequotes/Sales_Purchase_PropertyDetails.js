@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 // PropertyDetails.js
-export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) {
+export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId ,servicData }) {
 
     const [language,setlanguage]=useState([])
     async function fetchapi(){
@@ -36,8 +36,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                           Address
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.address || "--"}
+                                          {servicData ?.address || "--"}
                                         </span>
                                       </div>
                                        <div className="flex">
@@ -45,8 +44,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                           Address Line 1
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.address_line1 || "--"}
+                                          {servicData ?.address_line1 || "--"}
                                         </span>
                                       </div>
                                        <div className="flex">
@@ -54,8 +52,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                           Address Line 2
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.address_line2 || "--"}
+                                          {servicData ?.address_line2 || "--"}
                                         </span>
                                       </div>
                                       <div className="flex">
@@ -63,8 +60,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                           Buy To Let
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.buy_to_let || "--"}
+                                          {servicData ?.buy_to_let || "--"}
                                         </span>
                                       </div>
                                       <div className="flex">
@@ -72,8 +68,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                           Country
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.country || "--"}
+                                          {servicData ?.country || "--"}
                                         </span>
                                       </div>
                                       <div className="flex">
@@ -81,8 +76,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                           Existing Mortgage
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.existing_mortgage || "--"}
+                                          {servicData ?.existing_mortgage || "--"}
                                         </span>
                                       </div>
                                       <div className="flex">
@@ -90,8 +84,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                           Gift Deposit
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.gift_deposit || "--"}
+                                          {servicData ?.gift_deposit || "--"}
                                         </span>
                                       </div>
                                       <div className="flex">
@@ -99,8 +92,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                           Govt By Scheme
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.govt_by_scheme || "--"}
+                                          {servicData ?.govt_by_scheme || "--"}
                                         </span>
                                       </div>
                                       <div className="flex">
@@ -108,8 +100,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                           Guest User
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.guest_user || "--"}
+                                          {servicData ?.guest_user || "--"}
                                         </span>
                                       </div>
                                       <div className="flex">
@@ -119,7 +110,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                         <span>
   {
     language.find(
-      (l) => l.id == quote?.service_details?.[0]?.languages
+      (l) => l.id == servicData ?.languages
     )?.language_name || "--"
   }
 </span>
@@ -129,8 +120,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                           Leasehold Or Free
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.leasehold_or_free || "--"}
+                                          {servicData ?.leasehold_or_free || "--"}
                                         </span>
                                       </div>
                                        <div className="flex">
@@ -138,8 +128,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                           Lenders
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.lenders || "--"}
+                                          {servicData ?.lenders || "--"}
                                         </span>
                                       </div>
                                         <div className="flex">
@@ -147,8 +136,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                           New Build
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.new_build || "--"}
+                                          {servicData ?.new_build || "--"}
                                         </span>
                                       </div>
                                         <div className="flex">
@@ -156,8 +144,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                           No Of Bedrooms
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.no_of_bedrooms || "--"}
+                                          {servicData ?.no_of_bedrooms || "--"}
                                         </span>
                                       </div>
                                        <div className="flex">
@@ -165,8 +152,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                          No Of Peoples
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.no_of_peoples || "--"}
+                                          {servicData ?.no_of_peoples || "--"}
                                         </span>
                                       </div>
                                        <div className="flex">
@@ -174,8 +160,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                          Obtaining Mortgage
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.obtaining_mortgage || "--"}
+                                          {servicData ?.obtaining_mortgage || "--"}
                                         </span>
                                       </div>
                                        <div className="flex">
@@ -183,8 +168,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                           Ownership Housing Asso
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.ownership_housing_asso || "--"}
+                                          {servicData ?.ownership_housing_asso || "--"}
                                         </span>
                                       </div>
                                       <div className="flex">
@@ -192,8 +176,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                           Property Type
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.property_type || "--"}
+                                          {servicData ?.property_type || "--"}
                                         </span>
                                       </div>
                                       <div className="flex">
@@ -201,8 +184,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                            Property Values
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.property_values || "--"}
+                                          {servicData ?.property_values || "--"}
                                         </span>
                                       </div>
                                       <div className="flex">
@@ -210,8 +192,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                           Purchase Address
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.purchase_address || "--"}
+                                          {servicData ?.purchase_address || "--"}
                                         </span>
                                       </div>
                                       <div className="flex">
@@ -219,8 +200,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                           Purchase Leasehold Or Free
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.purchase_leasehold_or_free || "--"}
+                                          {servicData ?.purchase_leasehold_or_free || "--"}
                                         </span>
                                       </div>
                                       <div className="flex">
@@ -228,8 +208,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                          Purchase Mode
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.purchase_mode || "--"}
+                                          {servicData ?.purchase_mode || "--"}
                                         </span>
                                       </div>
                                       <div className="flex">
@@ -237,8 +216,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                           Purchase No Of Bedrooms
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.purchase_no_of_bedrooms || "--"}
+                                          {servicData ?.purchase_no_of_bedrooms || "--"}
                                         </span>
                                       </div>
                                       <div className="flex">
@@ -246,8 +224,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                          Purchase Price
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.purchase_price || "--"}
+                                          {servicData ?.purchase_price || "--"}
                                         </span>
                                       </div>
                                         <div className="flex">
@@ -255,8 +232,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                          Purchase Property Type
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.purchase_property_type || "--"}
+                                          {servicData ?.purchase_property_type || "--"}
                                         </span>
                                       </div>
                                         <div className="flex">
@@ -264,8 +240,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                         Purchase Stages
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.purchase_stages || "--"}
+                                          {servicData ?.purchase_stages || "--"}
                                         </span>
                                       </div>
                                         <div className="flex">
@@ -273,8 +248,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                          Sales Address
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.sales_address || "--"}
+                                          {servicData ?.sales_address || "--"}
                                         </span>
                                       </div>
                                         <div className="flex">
@@ -282,8 +256,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                          Sales Address Line1
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.sales_address_line1 || "--"}
+                                          {servicData ?.sales_address_line1 || "--"}
                                         </span>
                                       </div>
                                        <div className="flex">
@@ -291,8 +264,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                          Sales Address Line2
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.sales_address_line2 || "--"}
+                                          {servicData ?.sales_address_line2 || "--"}
                                         </span>
                                       </div>
                                        <div className="flex">
@@ -300,8 +272,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                          Sales Country
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.sales_country || "--"}
+                                          {servicData ?.sales_country || "--"}
                                         </span>
                                       </div>
                                        <div className="flex">
@@ -309,8 +280,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                          Sales Leasehold Or Free
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.sales_leasehold_or_free || "--"}
+                                          {servicData ?.sales_leasehold_or_free || "--"}
                                         </span>
                                       </div>
                                        <div className="flex">
@@ -318,8 +288,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                          Sales No Of Bedrooms
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.sales_no_of_bedrooms || "--"}
+                                          {servicData ?.sales_no_of_bedrooms || "--"}
                                         </span>
                                       </div>
                                        <div className="flex">
@@ -327,8 +296,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                          Sales Price
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.sales_price || "--"}
+                                          {servicData ?.sales_price || "--"}
                                         </span>
                                       </div>
                                        <div className="flex">
@@ -336,8 +304,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                          Sales Property Type
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.sales_property_type || "--"}
+                                          {servicData ?.sales_property_type || "--"}
                                         </span>
                                       </div>
                                        <div className="flex">
@@ -345,8 +312,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                          Sales Stages
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.sales_stages || "--"}
+                                          {servicData ?.sales_stages || "--"}
                                         </span>
                                       </div>
                                        <div className="flex">
@@ -354,8 +320,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                          Sales Town City
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.sales_town_city || "--"}
+                                          {servicData ?.sales_town_city || "--"}
                                         </span>
                                       </div>
                                        <div className="flex">
@@ -363,8 +328,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                          Service Type
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.service_type || "--"}
+                                          {servicData ?.service_type || "--"}
                                         </span>
                                       </div>
                                        <div className="flex">
@@ -372,8 +336,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                          Shared Ownership
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.shared_ownership || "--"}
+                                          {servicData ?.shared_ownership || "--"}
                                         </span>
                                       </div>
                                        <div className="flex">
@@ -381,8 +344,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                          Specal Instruction
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.specal_instruction || "--"}
+                                          {servicData ?.specal_instruction || "--"}
                                         </span>
                                       </div>
                                        <div className="flex">
@@ -390,8 +352,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                          Stages
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.stages || "--"}
+                                          {servicData ?.stages || "--"}
                                         </span>
                                       </div>
                                         <div className="flex">
@@ -399,8 +360,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                          Town City
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.town_city || "--"}
+                                          {servicData ?.town_city || "--"}
                                         </span>
                                       </div>
                                         <div className="flex">
@@ -408,8 +368,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                          Stamp Duty
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.stamp_duty || "--"}
+                                          {servicData ?.stamp_duty || "--"}
                                         </span>
                                       </div>
                                         <div className="flex">
@@ -417,8 +376,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                          Total
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.total || "--"}
+                                          {servicData ?.total || "--"}
                                         </span>
                                       </div>
                                         <div className="flex">
@@ -426,8 +384,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId }) 
                                          Vat
                                         </span>
                                         <span className="ml-10">
-                                          {quote?.service_details[0]
-                                            ?.vat || "--"}
+                                          {servicData?.vat || "--"}
                                         </span>
                                       </div>
 

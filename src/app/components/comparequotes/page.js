@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useState,useRef } from "react";
+import DOMPurify from "dompurify";
 import Navbar from "../../parts/navbar/page";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import Link from "next/link";
@@ -866,16 +867,16 @@ function handlefilterchange(selectedoption = []) {
                                         <span className="text-[34px] leading-none font-extrabold text-[#1E5C3B] tracking-tight">
                                           {quote.conveying_details.logo ? (
                                         <img
-                                          width={60}
-                                          height={50}
+                                          width={70}
+                                          height={60}
                                           src={quote.conveying_details.logo}
                                           alt={quote.company_name || "company logo"}
                                           // <- controls visible size
                                         />
                                       ) : (
                                         <Image
-                                          width={60}
-                                          height={50}
+                                          width={70}
+                                          height={60}
                                           src="https://cdn-icons-png.flaticon.com/512/295/295128.png"
                                           alt={quote.company_name || "company logo"}
                                           className="object-contain"
@@ -904,7 +905,7 @@ function handlefilterchange(selectedoption = []) {
                     {view_data?.appsetting_details?.logo ? (
   <img
     src={view_data.appsetting_details.logo}
-    width={70}
+    width={140}
     height={60}
     alt="Logo"
     className="object-contain"
@@ -912,7 +913,7 @@ function handlefilterchange(selectedoption = []) {
 ) : (
   <img
     src="https://cdn-icons-png.flaticon.com/512/295/295128.png"
-    width={70}
+    width={140}
     height={60}
     alt="Default Logo"
     className="object-contain"
@@ -980,12 +981,12 @@ function handlefilterchange(selectedoption = []) {
                                         
                                       </div>
                                       {view_data.service_details.length == 1 && (<>
-                                    {(view_data.service_details[0].service_type == 1 ) && <SalesPropertyDetails quote={quote}/>}   
-                                   {(view_data.service_details[0].service_type == 2 ) && <PurchasePropertyDetails quote={quote} />}   
-                                   {(view_data.service_details[0].service_type == 4 ) && <RemortagePropertyDetails quote={quote} />}  </>
+                                    {(view_data.service_details[0].service_type == 1 ) && <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]}/>}   
+                                   {(view_data.service_details[0].service_type == 2 ) && <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[0]} />}   
+                                   {(view_data.service_details[0].service_type == 4 ) && <RemortagePropertyDetails quote={quote} servicData={view_data.service_details[0]} />}  </>
                                       )} 
                                       {view_data.service_details.length > 1 && (<>
-                                  <SalesPropertyDetails quote={quote}/> <PurchasePropertyDetails quote={quote} /></>)}   
+                                  <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]}/> <PurchasePropertyDetails quote={quote}  servicData={view_data.service_details[1]}/></>)}   
                                      
                                     </div>
 
@@ -1192,12 +1193,22 @@ function handlefilterchange(selectedoption = []) {
 
                                   {/* ---------- NOTES ---------- */}
                                   <div>
-                                    <h4>Notes</h4>
-                                    <p className="text-xs mt-4">
-                                      {   `${quote?.conveying_details?.notes}` ||
-                                        "No notes provided by the firm."}
-                                    </p>
-                                  </div>
+  <h4>Notes</h4>
+
+  {quote?.conveying_details?.notes ? (
+    <div
+      className="text-xs mt-4"
+      dangerouslySetInnerHTML={{
+        __html: DOMPurify.sanitize(quote.conveying_details.notes),
+      }}
+    />
+  ) : (
+    <p className="text-xs mt-4">
+      No notes provided by the firm.
+    </p>
+  )}
+</div>
+
                                 </div>
                               </div>
                             </div>

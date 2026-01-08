@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { API_ENDPOINTS, getData } from "../../auth/API/api";
 
 // PropertyDetails.js
-  export default function PurchasePropertyDetails({ quote, dropdownOpenId }) {
+  export default function PurchasePropertyDetails({ quote, dropdownOpenId,servicData }) {
     const [language,setlanguage]=useState([])
   async function fetchapi(){
     try{
@@ -27,7 +27,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
     <div className=" text-sm">
                                       <div className="text-emerald-600 text-start">
                                         <h3 className="text-lg font-semibold ">
-                                          Property Details
+                                         Purchase Property Details
                                         </h3>
                                       </div>
                                 <div className="flex">
@@ -35,8 +35,15 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                          Stages
                                         </span>
                                         <span className="">
-                                          {quote?.service_details[0]
-                                            ?.stages || "--"}
+                                          {servicData ?.stages || "--"}
+                                        </span>
+                                      </div>
+                                      <div className="flex">
+                                        <span className="font-semibold w-40 text-left">
+                                          Town_city
+                                        </span>
+                                        <span className="">
+                                          {servicData ?.town_city || "--"}
                                         </span>
                                       </div>
                                       <div className="flex">
@@ -44,8 +51,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                           Country
                                         </span>
                                         <span className="">
-                                          {quote?.service_details[0]
-                                            ?.country || "--"}
+                                          {servicData ?.country || "--"}
                                         </span>
                                       </div>
                                        <div className="flex">
@@ -53,8 +59,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                          Purchase Price
                                         </span>
                                         <span className="">
-                                          £{quote?.service_details[0]
-                                            ?.purchase_price || "--"}
+                                          £{servicData ?.purchase_price || "--"}
                                         </span>
                                       </div>
 
@@ -63,8 +68,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                           No Of Bedrooms
                                         </span>
                                         <span className="">
-                                          {quote?.service_details[0]
-                                            ?.no_of_bedrooms || "--"}
+                                          {servicData ?.no_of_bedrooms || "--"}
                                         </span>
                                       </div>
                                      <div className="flex">
@@ -72,8 +76,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                           Leasehold Or Free
                                         </span>
                                         <span className="">
-                                          {quote?.service_details[0]
-                                            ?.leasehold_or_free || "--"}
+                                          {servicData ?.leasehold_or_free || "--"}
                                         </span>
                                       </div>
                                        <div className="flex">
@@ -81,8 +84,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                           Property Type
                                         </span>
                                         <span className="">
-                                          {quote?.service_details[0]
-                                            ?.property_type || "--"}
+                                          {servicData ?.property_type || "--"}
                                         </span>
                                       </div>
                                       <div className="flex">
@@ -90,8 +92,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                         High Raise Support
                                         </span>
                                         <span className="">
-                                          {quote?.service_details[0]
-                                            ?.purchase_high_raise_support==0?"No":"Yes" }
+                                          {servicData ?.purchase_high_raise_support==0?"No":"Yes" }
                                         </span>
                                       </div>
                                        <div className="flex">
@@ -99,8 +100,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                          Purchase Mode
                                         </span>
                                         <span className="">
-                                          {quote?.service_details[0]
-                                            ?.purchase_mode || "--"}
+                                          {servicData ?.purchase_mode || "--"}
                                         </span>
                                       </div>
 
@@ -109,8 +109,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                           Buy To Let
                                         </span>
                                         <span className="">
-                                          {quote?.service_details[0]
-                                            ?.buy_to_let || "--"}
+                                          {servicData ?.buy_to_let || "--"}
                                         </span>
                                       </div>
                                       
@@ -119,8 +118,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                          Obtaining Mortgage
                                         </span>
                                         <span className="">
-                                          {quote?.service_details[0]
-                                            ?.obtaining_mortgage==0?"No":"Yes"}
+                                          {servicData ?.obtaining_mortgage==0?"No":"Yes"}
                                         </span>
                                       </div>
                                     
@@ -130,8 +128,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                           Gift Deposit
                                         </span>
                                         <span className="">
-                                          {quote?.service_details[0]
-                                            ?.gift_deposit? "yes":"no" || "--"}
+                                          {servicData ?.gift_deposit? "yes":"no" || "--"}
                                         </span> 
                                       </div>
 
@@ -145,7 +142,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                         <span>
   {
     language.find(
-      (l) => l.id == quote?.service_details?.[0]?.languages
+      (l) => l.id == servicData?.languages
     )?.language_name || "--"
   }
 </span>
@@ -156,8 +153,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                         Life Time Support
                                         </span>
                                         <span className="">
-                                          {quote?.service_details[0]
-                                            ?.purchase_lifetime_isa==0?"No":"Yes" }
+                                          {servicData ?.purchase_lifetime_isa==0?"No":"Yes" }
                                         </span>
                                       </div>
                                        <div className="flex">
@@ -165,8 +161,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
                                         HMO Support
                                         </span>
                                         <span className="">
-                                          {quote?.service_details[0]
-                                            ?.purchase_need_hmo==0?"No":"Yes" }
+                                          {servicData ?.purchase_need_hmo==0?"No":"Yes" }
                                         </span>
                                       </div>
 

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
+import { API_ENDPOINTS, getData } from "../../auth/API/api";
 
 // PropertyDetails.js
-export default function SalesPropertyDetails({ quote, page }) {
+export default function SalesPropertyDetails({ quote, page, servicData }) {
     const [language,setlanguage]=useState([])
 console.log("PAGE VALUE = ", page);
 console.log("sales")
@@ -28,12 +29,10 @@ console.log("sales")
   },[])
 
   return (
-    <div className="py-1 px-5 text-sm">
-                                      <div className="">
-                                        <h3 className={`text-lg font-semibold ${
-        page == "profile" ? "text-indigo-800 " : "text-red-600"
-      }`}>
-                                          Property Details 
+    <div className="py-1  text-sm">
+                                      <div className="text-start">
+                                        <h3 className="text-lg font-semibold text-emerald-600">
+                                        Sales Property Details 
                                         </h3>
                                       </div>
                                       <div className="flex">
@@ -41,8 +40,7 @@ console.log("sales")
                                          Stages
                                         </span>
                                         <span className=" text-left">
-                                          {quote?.service_details[0]
-                                            ?.sales_stages || "--"}
+                                          {servicData ?.sales_stages || "--"}
                                         </span>
                                       </div>
                                       <div className="flex">
@@ -50,8 +48,7 @@ console.log("sales")
                                          Town City
                                         </span>
                                         <span className="">
-                                          {quote?.service_details[0]
-                                            ?.sales_town_city || "--"}
+                                          {servicData ?.sales_town_city || "--"}
                                         </span>
                                       </div>
                                       
@@ -60,8 +57,7 @@ console.log("sales")
                                          Country
                                         </span>
                                         <span className="">
-                                          {quote?.service_details[0]
-                                            ?.sales_country || "--"}
+                                          {servicData ?.sales_country || "--"}
                                         </span>
                                       </div>
                                    <div className="flex">
@@ -69,8 +65,7 @@ console.log("sales")
                                          Price
                                         </span>
                                         <span className="">
-                                          £{quote?.service_details[0]
-                                            ?.sales_price || "--"}.00
+                                          £{servicData ?.sales_price || "--"}.00
                                         </span>
                                       </div>
                                       <div className="flex">
@@ -78,8 +73,7 @@ console.log("sales")
                                          No Of Bedrooms
                                         </span>
                                         <span className="">
-                                          {quote?.service_details[0]
-                                            ?.sales_no_of_bedrooms || "--"}
+                                          {servicData ?.sales_no_of_bedrooms || "--"}
                                         </span>
                                       </div>
                                         <div className="flex">
@@ -87,8 +81,7 @@ console.log("sales")
                                          Leasehold Or Free
                                         </span>
                                         <span className="">
-                                          {quote?.service_details[0]
-                                            ?.sales_leasehold_or_free || "--"}
+                                          {servicData ?.sales_leasehold_or_free || "--"}
                                         </span>
                                       </div>
                                       <div className="flex">
@@ -96,8 +89,7 @@ console.log("sales")
                                          Property Type
                                         </span>
                                         <span className="">
-                                          {quote?.service_details[0]
-                                            ?.sales_property_type || "--"}
+                                          {servicData ?.sales_property_type || "--"}
                                         </span>
                                       </div>
                                       <div className="flex">
@@ -105,8 +97,7 @@ console.log("sales")
                                          Shared Ownership
                                         </span>
                                         <span className="">
-                                          {quote?.service_details[0]
-                                            ?.shared_ownership || "--"}
+                                          {servicData ?.shared_ownership || "--"}
                                         </span>
                                       </div>
                                       
@@ -116,7 +107,7 @@ console.log("sales")
                                           Existing Mortgage
                                         </span>
                                         <span className=" ">
-                                          {quote?.service_details[0]?.existing_mortgage === 1 ? "Yes" : "No"}
+                                          {servicData ?.existing_mortgage === 1 ? "Yes" : "No"}
                                         </span>
                                       </div>
 
@@ -130,7 +121,7 @@ console.log("sales")
                                         <span>
   {
     language.find(
-      (l) => l.id == quote?.service_details?.[0]?.languages
+      (l) => l.id == servicData?.languages
     )?.language_name || "--"
   }
 </span>
@@ -144,8 +135,7 @@ console.log("sales")
                                           Lenders
                                         </span>
                                         <span className="">
-                                          {quote?.service_details[0]
-                                            ?.lenders || "--"}
+                                          {servicData ?.lenders || "--"}
                                         </span>
                                       </div>
 
