@@ -17,7 +17,7 @@ export default function EditorPage() {
   const { companyData, quotationData, updateNotesData } = useFormStore();
   console.log(companyData, quotationData,)
 
-  const API_BASE_URL = "https://movwise.digitalcloudies.in/";
+  const API_BASE_URL = "https:// movwise.com/";
 
   const modules = {
     toolbar: [

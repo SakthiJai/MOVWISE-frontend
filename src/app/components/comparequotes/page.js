@@ -979,12 +979,12 @@ function handlefilterchange(selectedoption = []) {
                                         </div>
                                         
                                       </div>
-                                      {view_data.service_details[0].service_type.toString().length == 1 && (<>
+                                      {view_data.service_details.length == 1 && (<>
                                     {(view_data.service_details[0].service_type == 1 ) && <SalesPropertyDetails quote={quote}/>}   
                                    {(view_data.service_details[0].service_type == 2 ) && <PurchasePropertyDetails quote={quote} />}   
                                    {(view_data.service_details[0].service_type == 4 ) && <RemortagePropertyDetails quote={quote} />}  </>
                                       )} 
-                                      {view_data.service_details[0].service_type.toString().length > 1 && (<>
+                                      {view_data.service_details.length > 1 && (<>
                                   <SalesPropertyDetails quote={quote}/> <PurchasePropertyDetails quote={quote} /></>)}   
                                      
                                     </div>
