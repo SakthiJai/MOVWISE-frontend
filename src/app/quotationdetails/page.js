@@ -87,6 +87,21 @@ export default function Quotationdetails() {
   ];
   const [showSuccess, setShowSuccess] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const SEARCH_PACK =
+  "Search Pack (Local Authority Search,Environmental Search,Water and Drainage Search,Coal Mining Search)";
+
+const INDIVIDUAL_SEARCHES = [
+  "Local Authority Search",
+  "Environmental Search",
+  "Water and Drainage Search",
+];
+const isSearchPack = (row) => row.fee_type === SEARCH_PACK;
+
+const isIndividualSearch = (row) =>
+  INDIVIDUAL_SEARCHES.includes(row.fee_type);
+
+
+
   useEffect(() => {
     const storedData = JSON.parse(localStorage.getItem("companyData"));
 
@@ -522,56 +537,100 @@ console.log(serviceId);
       maximumFractionDigits: 2,
     }).format(num);
     //check
-  const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
-    const rawValue = value.replace(/[^\d.]/g, "");
-    console.log(feesCategoryId, rowIndex, field, value);
+const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
+  const rawValue = value.replace(/[^\d.]/g, "");
 
-    setpricingList((prev) =>
-      prev.map((item) =>
-        item.fees_category_id === feesCategoryId
-          ? {
-              ...item,
-              price_list: item.price_list.map((row, i) =>
-                i === rowIndex
-                  ? {
-                      ...row,
-                      [field]: value,
-                    }
-                  : row
-              ),
-            }
-          : item
-      )
-    );
+  // STEP 1: Immediate update (typing)
+  setpricingList((prev) =>
+    prev.map((cat) => {
+      if (cat.fees_category_id !== feesCategoryId) return cat;
 
-    console.log(pricingList);
-console.log('debugger')
-    if (timers.current[feesCategoryId])
-      clearTimeout(timers.current[feesCategoryId]);
+      const updated = cat.price_list.map((row, i) =>
+        i === rowIndex ? { ...row, [field]: value } : row
+      );
 
-    timers.current[feesCategoryId] = setTimeout(() => {
-      if (field === "type_id" || field === "description") return;
-
-      const num = Number(rawValue);
-      if (!isNaN(num)) {
-        const formatted = formatNumber(num);
-
-        setpricingList((prev) =>
-          prev.map((item) =>
-            item.fees_category_id === feesCategoryId
-              ? {
-                  ...item,
-                  price_list: item.price_list.map((row, i) =>
-                    i === rowIndex ? { ...row, [field]: formatted } : row
-                  ),
-                }
-              : item
-          )
-        );
+     
+      if (feesCategoryId !== 3 || field !== "fee_amount") {
+        return { ...cat, price_list: updated };
       }
-    }, 2000);
-  };
 
+      const currentFeeType =
+        standardDisbursementList[rowIndex]?.fee_type;
+
+     
+      if (currentFeeType === SEARCH_PACK && Number(rawValue) > 0) {
+        return {
+          ...cat,
+          price_list: updated.map((row, i) => {
+            const feeType = standardDisbursementList[i]?.fee_type;
+            if (INDIVIDUAL_SEARCHES.includes(feeType)) {
+              return { ...row, fee_amount: "0.00", readonly: true };
+            }
+            return row;
+          }),
+        };
+      }
+
+      // 🔹 CASE 2: Individual search entered
+      if (
+        INDIVIDUAL_SEARCHES.includes(currentFeeType) &&
+        Number(rawValue) > 0
+      ) {
+        return {
+          ...cat,
+          price_list: updated.map((row, i) => {
+            const feeType = standardDisbursementList[i]?.fee_type;
+            if (feeType === SEARCH_PACK) {
+              return { ...row, fee_amount: "0.00", readonly: true };
+            }
+            return row;
+          }),
+        };
+      }
+
+      // 🔹 CASE 3: Value cleared → unlock all
+      if (!rawValue || Number(rawValue) === 0) {
+        return {
+          ...cat,
+          price_list: updated.map((row) => ({
+            ...row,
+            readonly: false,
+          })),
+        };
+      }
+
+      return { ...cat, price_list: updated };
+    })
+  );
+
+  // STEP 2: Debounced formatting (your existing logic)
+  if (timers.current[feesCategoryId])
+    clearTimeout(timers.current[feesCategoryId]);
+
+  timers.current[feesCategoryId] = setTimeout(() => {
+    if (field === "type_id" || field === "description") return;
+
+    const num = Number(rawValue);
+    if (!isNaN(num)) {
+      const formatted = formatNumber(num);
+
+      setpricingList((prev) =>
+        prev.map((item) =>
+          item.fees_category_id === feesCategoryId
+            ? {
+                ...item,
+                price_list: item.price_list.map((row, i) =>
+                  i === rowIndex
+                    ? { ...row, [field]: formatted }
+                    : row
+                ),
+              }
+            : item
+        )
+      );
+    }
+  }, 2000);
+};
   const validatePriceList = (list) => {
     let errors = [];
     for (let i = 0; i < list.length; i++) {
@@ -1423,20 +1482,18 @@ console.log('debugger')
                                 {"others" in row  ? (
                                 
                                    <div>
-                                    <input
-                                      type="text"
-                                      placeholder="Enter other supplement type"
-                                      value={row.type}
-                                      onChange={(e) =>
-                                        handlePriceChange(
-                                          numIndex,
-                                          i,
-                                          "others",
-                                          e.target.value
-                                        )
-                                      }
-                                      className=" border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-gray-900 pl-2"
-                                    />
+                                 <input
+                                    placeholder="Fee Amount"
+                                    value={row?.fee_amount}
+                                    readOnly={row.readonly}
+                                    onChange={(e) => {
+                                      if (row.readonly) return; // extra safety
+                                      settransactionFeesError("");
+                                      handlePriceChange(numIndex, i, "fee_amount", e.target.value);
+                                    }}
+                                    className={`border h-7 border-gray-400 rounded py-0.5 w-full text-sm
+                                      ${row.readonly ? "bg-gray-200 cursor-not-allowed" : ""}`}
+                                  />
                                   </div>
                                 ) : (
                                    <div className="font text-black ">
@@ -1922,8 +1979,8 @@ console.log('debugger')
                                 <th className="px-3 py-2 text-center">Min £</th>
                                 <th className="px-3 py-2 text-center">Max £</th>
 
-                                {(formData["service_id"]?.includes(1) ||
-                                  formData["service_id"]?.includes(2)) && (
+                                {(formData["service_id"]?.includes(2) ||
+                                  formData["service_id"]?.includes(3)) && (
                                   <>
                                     <th className="px-3 py-2 text-center">
                                       Purchase Leasehold £
@@ -2043,7 +2100,7 @@ console.log('debugger')
                                       </div>
                                     </td>
 
-                                    {(formData["service_id"]?.includes(1) ||
+                                    {(formData["service_id"]?.includes(2) ||
                                       formData["service_id"]?.includes(3)) && (
                                       <td className="px-3 py-2">
                                         <div className="flex flex-col">
@@ -2073,7 +2130,7 @@ console.log('debugger')
                                     )}
 
                                     {/* PURCHASE FREEHOLD */}
-                                    {(formData["service_id"]?.includes(1) ||
+                                    {(formData["service_id"]?.includes(2) ||
                                       formData["service_id"]?.includes(3)) && (
                                       <td className="px-3 py-2">
                                         <div className="flex flex-col">
@@ -2103,7 +2160,7 @@ console.log('debugger')
                                     )}
 
                                     {/* SALES LEASEHOLD */}
-                                    {(formData["service_id"]?.includes(2) ||
+                                    {(formData["service_id"]?.includes(1) ||
                                       formData["service_id"]?.includes(3)) && (
                                       <td className="px-3 py-2">
                                         <div className="flex flex-col">
@@ -2133,7 +2190,7 @@ console.log('debugger')
                                     )}
 
                                     {/* SALES FREEHOLD */}
-                                    {(formData["service_id"]?.includes(2) ||
+                                    {(formData["service_id"]?.includes(1) ||
                                       formData["service_id"]?.includes(3)) && (
                                       <td className="px-3 py-2">
                                         <div className="flex flex-col">
