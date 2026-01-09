@@ -65,6 +65,7 @@ const[filterselected,setfilterselected]=useState([])
     companyName: "",
   });
   const [taxDetails, settaxDetails] = useState();
+  const [taxDetailsGroup, settaxDetailsGroup] = useState();
 
   // Toggle dropdown for a particular quote card
   function toggleDropdown(id) {
@@ -219,7 +220,7 @@ setgiftvalue(selectedquote[0].service_details[0].gift_deposit);
 console.log(giftvalue);
 
 let sum=0
-const grouped = selectedquote[0].conveying_details.taxDetails.reduce(
+const grouped = selectedquote[0].conveying_details.taxDetails[0].reduce(
   (acc, item) => {
     const key = item.fees_category;
     let total = 'total'
@@ -244,16 +245,32 @@ const grouped = selectedquote[0].conveying_details.taxDetails.reduce(
 );
 
 console.log(grouped);
-
-
-  console.log(grouped);
-  settaxDetails(grouped);
+settaxDetails(grouped);
+if(selectedquote[0].conveying_details.taxDetails[1]!=undefined){
+const grouped = selectedquote[0].conveying_details.taxDetails[1].reduce(
+  (acc, item) => {
+    const key = item.fees_category;
+    let total = 'total'
+    if (!acc[key]) {
+      acc[key] = {
+    items: [],
+    total: 0,
+     [`${key}${total}`]:0,
+      };
+    }
+    // ✅ push every item
+    acc[key].items.push(item);
+    acc[key].total += Number(item.fee_amount) || 0;
+    return acc;
+  },
+  {}
+);
+settaxDetailsGroup(grouped);
+}
 
   const totalTaxVat = selectedquote[0].conveying_details.taxDetails.reduce((sum, item) => {
-    
-      sum+=Number(item.vat)
-    
-   return sum;
+    sum+=Number(item.vat)
+    return sum;
 }, 0);
 
 const totalamount = selectedquote[0].conveying_details.taxDetails.reduce((sum, item) => {
@@ -981,12 +998,14 @@ function handlefilterchange(selectedoption = []) {
                                         
                                       </div>
                                       {view_data.service_details.length == 1 && (<>
-                                    {(view_data.service_details[0].service_type == 1 ) && <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]}/>}   
-                                   {(view_data.service_details[0].service_type == 2 ) && <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[0]} />}   
-                                   {(view_data.service_details[0].service_type == 4 ) && <RemortagePropertyDetails quote={quote} servicData={view_data.service_details[0]} />}  </>
+                                    {(view_data.service_details[0].service_type == 1 ) && 
+                                    <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} taxDetails={taxDetails}/>
+                                    }   
+                                   {(view_data.service_details[0].service_type == 2 ) && <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[0]} taxDetails={taxDetails} />}   
+                                   {(view_data.service_details[0].service_type == 4 ) && <RemortagePropertyDetails quote={quote} servicData={view_data.service_details[0]}  taxDetails={taxDetails}/>}  </>
                                       )} 
                                       {view_data.service_details.length > 1 && (<>
-                                  <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]}/> <PurchasePropertyDetails quote={quote}  servicData={view_data.service_details[1]}/></>)}   
+                                  <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} taxDetails={taxDetails}/> <PurchasePropertyDetails quote={quote}  servicData={view_data.service_details[1]} taxDetails={taxDetailsGroup}/></>)}   
                                      
                                     </div>
 
