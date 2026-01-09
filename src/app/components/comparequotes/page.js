@@ -65,13 +65,13 @@ const[filterselected,setfilterselected]=useState([])
     companyName: "",
   });
   const [taxDetails, settaxDetails] = useState();
-  const [taxDetailsGroup, settaxDetailsGroup] = useState();
+  const [taxDetails2, settaxDetails2] = useState();
 
   // Toggle dropdown for a particular quote card
   function toggleDropdown(id) {
     showviewquotes(true);
     quoteData.forEach((elememt)=>{
-      if(elememt.quote_id==id){
+      if(elememt.conveying_details.conveying_id==id){
         setview_data(elememt)
       }
     })
@@ -192,12 +192,15 @@ useEffect(() => {
     parsedData.service_type = serviceType;
     parsedData.user_id = Number(localStorage.getItem("user"));
 
+      setLoading(true);
     qutesdata(parsedData);
+   
   }
 }, []);
 
 
 function toggleDropdowncard(id) {
+  console.log(id)
    if (dropdownOpenId === id) {
     // toggle same card
     setDropdownOpenId(prev => !prev);
@@ -213,14 +216,17 @@ function toggleDropdowncard(id) {
 
 function fetchtaxdetails(id){
 
-let selectedquote=companydata.filter((item)=>item.quote_id==id);
+let selectedquote=companydata.filter((item)=>item.conveying_details.conveying_id==id);
 console.log(selectedquote)
 console.log(selectedquote[0].conveying_details.taxDetails);
 setgiftvalue(selectedquote[0].service_details[0].gift_deposit);
 console.log(giftvalue);
-
+let grouped;
+let grouped2;
 let sum=0
-const grouped = selectedquote[0].conveying_details.taxDetails[0].reduce(
+console.log(Object.keys(selectedquote[0].conveying_details.taxDetails).length)
+if(Object.keys(selectedquote[0].conveying_details.taxDetails).length==1){
+ grouped = selectedquote[0].conveying_details.taxDetails[0].reduce(
   (acc, item) => {
     const key = item.fees_category;
     let total = 'total'
@@ -243,11 +249,9 @@ const grouped = selectedquote[0].conveying_details.taxDetails[0].reduce(
   },
   {}
 );
-
-console.log(grouped);
-settaxDetails(grouped);
-if(selectedquote[0].conveying_details.taxDetails[1]!=undefined){
-const grouped = selectedquote[0].conveying_details.taxDetails[1].reduce(
+}
+else{
+ grouped2 = selectedquote[0].conveying_details.taxDetails[1].reduce(
   (acc, item) => {
     const key = item.fees_category;
     let total = 'total'
@@ -258,22 +262,38 @@ const grouped = selectedquote[0].conveying_details.taxDetails[1].reduce(
      [`${key}${total}`]:0,
       };
     }
+
     // ✅ push every item
     acc[key].items.push(item);
-    acc[key].total += Number(item.fee_amount) || 0;
+
+    // ✅ calculate total
+  acc[key].total += Number(item.fee_amount) || 0;
+
+
     return acc;
   },
   {}
 );
-settaxDetailsGroup(grouped);
 }
 
-  const totalTaxVat = selectedquote[0].conveying_details.taxDetails.reduce((sum, item) => {
-    sum+=Number(item.vat)
-    return sum;
+
+console.log(grouped);
+
+
+
+console.log(grouped);
+
+  settaxDetails(grouped);
+  settaxDetails2(grouped2);
+
+  const totalTaxVat = selectedquote[0].conveying_details.taxDetails[0].reduce((sum, item) => {
+    
+      sum+=Number(item.vat)
+    
+   return sum;
 }, 0);
 
-const totalamount = selectedquote[0].conveying_details.taxDetails.reduce((sum, item) => {
+const totalamount = selectedquote[0].conveying_details.taxDetails[0].reduce((sum, item) => {
     if(item.fee_amount>0){
       sum+=Number(item.fee_amount)
     }
@@ -360,7 +380,6 @@ function handlefilterchange(selectedoption = []) {
        </div>
      
 
-      {/* Body */}
       <main className="mx-auto max-w-[1200px] pt-10 px-4 lg:px-0 mb-10">
         {/* KEY CHANGE: The main layout switches from a single column (default) to a two-column grid on 'lg' screens. */}
         <div className="grid lg:grid-cols-[400px_1fr] gap-8 lg:gap-12">
@@ -650,7 +669,7 @@ function handlefilterchange(selectedoption = []) {
 )}                            </p>
                             <button
                               className="text-green-700 text-sm font-medium hover:underline"
-                              onClick={() => toggleDropdown(quote.quote_id)}
+                              onClick={() => toggleDropdown(quote.conveying_details.conveying_id)}
                             >
                               {dropdownOpenId === quote.quote_id ? (
                                 <u> Price Breakdown</u>
@@ -661,7 +680,7 @@ function handlefilterchange(selectedoption = []) {
                           </div>
                           <div
                             className="w-7 h-7 flex items-center justify-center bg-white border border-gray-300 rounded-md shadow-sm cursor-pointer"
-                            onClick={() => toggleDropdowncard(quote.quote_id)}
+                            onClick={() => toggleDropdowncard(quote.conveying_details.conveying_id)}
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -670,7 +689,7 @@ function handlefilterchange(selectedoption = []) {
                               strokeWidth="1.5"
                               stroke="currentColor"
                               className={`w-4 h-4 text-gray-600 transform transition-transform duration-200 ${
-                                dropdownOpenId === quote.quote_id
+                                dropdownOpenId === quote.conveying_details.conveying_id
                                   ? "rotate-180"
                                   : ""
                               }`}
@@ -761,7 +780,7 @@ function handlefilterchange(selectedoption = []) {
                         </div>
 
                         {/* Description + Price Breakdown */}
-                       {(dropdownOpenId === quote.quote_id && dropdownshow) && (
+                       {(dropdownOpenId === quote.conveying_details.conveying_id && dropdownshow) && (
                           <div className="border-t border-gray-200 pt-6 flex justify-end">
                            <table className=" border-collapse text-black font">
                               <thead>
@@ -846,7 +865,7 @@ function handlefilterchange(selectedoption = []) {
                         )}
                        
                       
-                        {cardid === quote.quote_id && viewquotes && (
+                        {cardid === quote.conveying_details.conveying_id && viewquotes && (
                           <div className="fixed inset-0  z-50 flex items-center justify-center  top-10  animate-fadeIn">
                             <div className="bg-white h-[200px] rounded-2xl  w-[90%] min-h-screen overflow-y-auto text-center shadow-2xl border border-green-200 animate-popIn">
                               <div className="absolute top-3 right-32 ">
@@ -945,8 +964,9 @@ function handlefilterchange(selectedoption = []) {
 
                                   {/* ---------- YOUR DETAILS ---------- */}
 
-                                  <div className="grid grid-cols-1 md:grid-cols-3  gap-6">
+                                  <div className="grid grid-cols-1  gap-6">
                                     <div className="">
+                                      <div className="">
                                       <div className="text-emerald-600">
                                         <h3 className="text-lg font-semibold text-start mt-2">
                                           User Details
@@ -997,155 +1017,19 @@ function handlefilterchange(selectedoption = []) {
                                         </div>
                                         
                                       </div>
+                                      </div>
+
                                       {view_data.service_details.length == 1 && (<>
-                                    {(view_data.service_details[0].service_type == 1 ) && 
-                                    <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} taxDetails={taxDetails}/>
-                                    }   
-                                   {(view_data.service_details[0].service_type == 2 ) && <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[0]} taxDetails={taxDetails} />}   
-                                   {(view_data.service_details[0].service_type == 4 ) && <RemortagePropertyDetails quote={quote} servicData={view_data.service_details[0]}  taxDetails={taxDetails}/>}  </>
+                                    {(view_data.service_details[0].service_type == 1 ) && <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails}  giftvalue={giftvalue} />  }
+                                   {(view_data.service_details[0].service_type == 2 ) && <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails}  giftvalue={giftvalue}  />}   
+                                   {(view_data.service_details[0].service_type == 4 ) && <RemortagePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails}  giftvalue={giftvalue}  />}  </>
                                       )} 
                                       {view_data.service_details.length > 1 && (<>
-                                  <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} taxDetails={taxDetails}/> <PurchasePropertyDetails quote={quote}  servicData={view_data.service_details[1]} taxDetails={taxDetailsGroup}/></>)}   
+                                  <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails}  giftvalue={giftvalue} hidetotal={"hidetotal"}/> <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[1]} companydata={companydata} cardid={cardid} taxDetails={taxDetails2} giftvalue={giftvalue} /></>)}   
                                      
                                     </div>
 
-                                    <div className="col-span-2 ">
-                                     
-                                     
-                               <div className=" p-3 ">
-                            <h3 className="text-lg text-start text-emerald-600 font-semibold  mb-3" onClick={()=>{
-                                        handleprice()
-                                      }}>
-                              Fee Breakdown
-                            </h3>
-                          
-                            <table className="w-full border-collapse text-black font">
-                              <thead>
-                                <tr className="border-b border-gray-300 text-left">
-                                  <th className="p-2 w-1/2">Type</th>
-                                  <th className="p-2 w-1/4 text-right">Fee Amount</th>
-                                  <th className="p-2 w-1/4 text-right">VAT</th>
-                                </tr>
-                              </thead>
-                          
-                              <tbody>
-                                {companydata
-                                  .filter((item) => item.quote_id == cardid)
-                                  .map((item, index) => (
-                                    <React.Fragment key={index}>
-                                    
-                                      <tr className="border-b border-gray-200" >
-                                        <td className="p-2 text-sm font-semibold text-start ">{`Legal Fees`}</td>
-                                        <td className="p-2 text-sm text-right font-bold ">{formatGBP(item.legal_fees)}</td>
-                                        <td className="p-2 text-sm text-right">
-                                          {formatGBP(item.vat)}
-                                        </td>
-                                      </tr>
-                          
-                                  
-                                     
-            {Object.entries(taxDetails || {}).map(([category, items]) => (
-              <React.Fragment key={category}>
-                {/* Category Row */}
-                <tr className="bg-gray-50 border-b border-gray-300">
-                  <td className="p-2 font-semibold text-start text-sm" colSpan={3}>
-                    {category}
-                  </td>
-                </tr>
-
-                {items?.items.map((fee, i) =>  Number(fee.fee_amount) > 0 ? (
-                  <tr key={i} className="border-b border-gray-200 text-start">
-                    <td className="p-2 break-words text-sm "> <div className="ml-4"> {/* margin-left works here */}
-       {
-  fee.fee_type === "Gifted Deposit Supplement"
-    ? `${fee.fee_type} (${giftvalue})`
-    : fee.fee_type
-}
-
-      </div></td>
-                    <td className="p-2 text-right text-sm">
-                      {formatGBP(fee.fee_amount)}
-                    </td>
-                    <td className="p-2 text-right text-sm">{formatGBP(Number(fee.vat))}</td>
-                  </tr>
-                ):"")}
-                  
-                <tr  className="border-b border-gray-200 text-start">
-                    <td className="p-2 break-words text-sm "> <div className="ml-4"> {/* margin-left works here */}
-        Total 
-      </div></td>
-    
-                    <td className="p-2 text-right text-sm">
-                      {formatGBP(items.total)}
-                    </td>
-                  </tr>
-
-              
-      
-               
-                
-              </React.Fragment>
-            ))}
-
-            
-                          
-                                      {/* Country-specific taxes */}
-                                      
-                          
-                                      {/* TOTAL */}
-                                      <tr className="bg-gray-100 font-semibold text-gray-800">
-                                        <td className="p-2 text-start">Total </td>
-                                        <td className="p-2 text-right text-emerald-600">
-                                         {formatGBP(
-  Number(quote.supplements || 0) +
-  Number(quote.disbursements || 0) +
-  Number(quote.legal_fees || 0)
-)}
-                                         
-                                        </td>
-                                        <td className="p-2 text-right text-emerald-600" > {formatGBP(vattax+Number(item.vat))}</td>
-                                      </tr>
-                                     
-                                       {item.service_details[0].service_type == 2 && (
-                                        <>
-                                          {(quote.service_details[0].country === "England" ||
-        quote.service_details[0].country === "Northern Ireland") && (
-                                            <tr className="border-b border-gray-200">
-                                              <td className="p-2 text-start">Stamp Duty</td>
-                                              <td className="p-2 text-right">
-                                                {formatGBP(item.stamp_duty)}
-                                              </td>
-                                              <td></td>
-                                            </tr>
-                                          )}
-                          
-                                          {item.service_details[0].country == "Scotland" && (
-                                            <tr className="border-b border-gray-200">
-                                              <td className="p-2">LBTT</td>
-                                              <td className="p-2 text-right">{formatGBP(item.lbtt)}</td>
-                                              <td></td>
-                                            </tr>
-                                          )}
-                          
-                                          {item.service_details[0].country == "Wales" && (
-                                            <tr className="border-b border-gray-200">
-                                              <td className="p-2">LLT</td>
-                                              <td className="p-2 text-right">{formatGBP(item.llt)}</td>
-                                              <td></td>
-                                            </tr>
-                                          )}
-                                        </>
-                                      )}
-                               
-                                     
-                                    </React.Fragment>
-                                  ))}
-                              </tbody>
-                            </table>
-                          </div>
-                       
-                                      </div>
-                                 
+                                   
                                     
                                   </div>
 
@@ -1153,58 +1037,7 @@ function handlefilterchange(selectedoption = []) {
                                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="">
                                        </div>
-                                  {/* <div>
-                                    
-                                    <div className="mb-1 p-4">
-                                      <h3 className="font-bold text-emerald-600 mb-3 ">
-                                        Sale Fees
-                                      </h3>
-
-                                      
-                                        <div className="flex">
-                                        <span className=" w-60 text-left">Legal Fee</span>
-                                          <span>£{quote?.legal_fees}.00</span>
-                                        </div>
-
-                                       <div className="flex">
-                                        <span className=" w-60 text-left">VAT</span>
-                                          <span>£{quote?.vat}.00</span>
-                                        </div>
-                                      
-
-                                      <div className="flex">
-                                        <span className=" w-60 text-left">Total Fees</span>
-                                        <span>
-                                          £
-                                          {Number(quote?.legal_fees) +
-                                            Number(quote?.vat)}
-                                          .00
-                                        </span>
-                                      </div>
-                                    </div>
-
-                                    <div className="border-t"></div>
-
-                                    <div className="p-4">
-                                      <h3 className="font-bold text-emerald-600 mb-3 ">
-                                        Disbursements
-                                      </h3>
-
-                                      
-                                       <div className="flex">
-                                        <span className=" w-60 text-left">Total Disbursements</span>
-                                          <span>£{quote?.disbursements}</span>
-                                        </div>
-                                      
-
-                                      <div className="flex">
-                                        <span className=" w-60 text-left">Total Fees & Disbursements</span>
-                                        <span>
-                                          {formatGBP(quote.total)}.00
-                                        </span>
-                                      </div>
-                                    </div>
-                                  </div> */}
+                                
                                    </div>
                                    
 

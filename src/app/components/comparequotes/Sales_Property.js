@@ -1,10 +1,27 @@
-import { useEffect, useState } from "react";
-import { API_ENDPOINTS, getData } from "../../auth/API/api";
+
+import React, { useEffect, useState,useRef } from "react";
+import DOMPurify from "dompurify";
+import Navbar from "../../parts/navbar/page";
+import { RiArrowDropDownLine } from "react-icons/ri";
+import Link from "next/link";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { getData, postData, API_ENDPOINTS } from "../../auth/API/api";
+import Swal from "sweetalert2";
+import { formatGBP } from "../utility/poundconverter";
+
+import { Check, Rows, X } from "lucide-react";
+import { Rating } from "react-simple-star-rating";
+import Footer from "../../parts/Footer/footer";
+import PurchasePropertyDetails from "./PurchasePropertyDetails";
+import SalesPurchasePropertyDetails from "./Sales_Purchase_PropertyDetails";
+import RemortagePropertyDetails from "./RemortagePropertyDetails"
+import Select from 'react-select';
+
 
 // PropertyDetails.js
-export default function SalesPropertyDetails({ quote, page, servicData }) {
+export default function SalesPropertyDetails({ quote, servicData,companydata,cardid,taxDetails,giftvalue,hidetotal }) {
     const [language,setlanguage]=useState([])
-console.log("PAGE VALUE = ", page);
 console.log("sales")
 
   async function fetchapi(){
@@ -29,6 +46,9 @@ console.log("sales")
   },[])
 
   return (
+    <div className="grid grid-cols-2">  
+
+
     <div className="py-1  text-sm">
                                       <div className="text-start">
                                         <h3 className="text-lg font-semibold text-emerald-600">
@@ -141,5 +161,154 @@ console.log("sales")
 
 
                                     </div>
+       <div className="col-span-1 ">
+                                                                         
+                                                                         
+                                                                   <div className=" p-3 ">
+                                                                <h3 className="text-lg text-start text-emerald-600 font-semibold  mb-3" onClick={()=>{
+                                                                            handleprice()
+                                                                          }}>
+                                                                  Fee Breakdown
+                                                                </h3>
+                                                              
+                                                                <table className="w-full border-collapse text-black font">
+                                                                  <thead>
+                                                                    <tr className="border-b border-gray-300 text-left">
+                                                                      <th className="p-2 w-1/2">Type</th>
+                                                                      <th className="p-2 w-1/4 text-right">Fee Amount</th>
+                                                                      <th className="p-2 w-1/4 text-right">VAT</th>
+                                                                    </tr>
+                                                                  </thead>
+                                                              
+                                                                  <tbody>
+                                                                    {companydata
+                                                                      ?.filter((item) => item.conveying_details.conveying_id == cardid)
+                                                                      .map((item, index) => (
+                                                                        <React.Fragment key={index}>
+                                                                        
+                                                                          <tr className="border-b border-gray-200" >
+                                                                            <td className="p-2 text-sm font-semibold text-start ">{`Legal Fees`}</td>
+                                                                            <td className="p-2 text-sm text-right font-bold ">{formatGBP(item.legal_fees)}</td>
+                                                                            <td className="p-2 text-sm text-right">
+                                                                              {formatGBP(item.vat)}
+                                                                            </td>
+                                                                          </tr>
+                                                              
+                                                                      
+                                                                         
+                                                {Object.entries(taxDetails || {}).map(([category, items]) => (
+                                                  <React.Fragment key={category}>
+                                                    {/* Category Row */}
+                                                    <tr className="bg-gray-50 border-b border-gray-300">
+                                                      <td className="p-2 font-semibold text-start text-sm" colSpan={3}>
+                                                        {category}
+                                                      </td>
+                                                    </tr>
+                                    
+                                                    {items?.items.map((fee, i) =>  Number(fee.fee_amount) > 0 ? (
+                                                      <tr key={i} className="border-b border-gray-200 text-start">
+                                                        <td className="p-2 break-words text-sm "> <div className="ml-4"> {/* margin-left works here */}
+                                           {
+                                      fee.fee_type === "Gifted Deposit Supplement"
+                                        ? `${fee.fee_type} (${giftvalue})`
+                                        : fee.fee_type
+                                    }
+                                    
+                                          </div></td>
+                                                        <td className="p-2 text-right text-sm">
+                                                          {formatGBP(fee.fee_amount)}
+                                                        </td>
+                                                        <td className="p-2 text-right text-sm">{formatGBP(Number(fee.vat))}</td>
+                                                      </tr>
+                                                    ):"")}
+
+
+                                                      
+                                                    <tr  className="border-b border-gray-200 text-start">
+                                                        <td className="p-2 break-words text-sm "> <div className="ml-4"> {/* margin-left works here */}
+                                       Total 
+                                          </div></td>
+                                        
+                                                        <td className="p-2 text-right text-sm">
+                                                          {formatGBP(items.total)}
+                                                        </td>
+                                                      </tr>
+                                    
+                                                  
+                                          
+                                                   
+                                                    
+                                                  </React.Fragment>
+                                                ))}
+                                    
+                                                
+                                                              
+                                                                          {/* Country-specific taxes */}
+                                                                          
+                                                              
+                                                                          {/* TOTAL */}
+                                                                          {hidetotal != "hidetotal" && (
+                                                                          <tr className="bg-gray-100 font-semibold text-gray-800">
+                                                                            <td className="p-2 text-start">Total </td>
+                                                                      
+                                                                              <td className="p-2 text-right text-emerald-600 ">
+                                                                      <span> {formatGBP(
+                                      Number(quote.supplements || 0) +
+                                      Number(quote.disbursements || 0) +
+                                      Number(quote.legal_fees || 0)
+                                    )}</span>      
+                                   
+                                 
+                                                                     
+                                                                            </td>
+                                                                            <td className="p-2 text-right text-emerald-600">
+                                                                               <span>    {
+                                    formatGBP( quote.total_vat) 
+                                    }</span>
+                                                                            </td>
+                                                                         
+                                                                            {/* <td className="p-2 text-right text-emerald-600" > {formatGBP(vattax+Number(item.vat))}</td> */}
+                                                                          </tr>
+                                                                           )} 
+                                                                           {item.service_details[0].service_type == 2 && (
+                                                                            <>
+                                                                              {(quote.service_details[0].country === "England" ||
+                                            quote.service_details[0].country === "Northern Ireland") && (
+                                                                                <tr className="border-b border-gray-200">
+                                                                                  <td className="p-2 text-start">Stamp Duty</td>
+                                                                                  <td className="p-2 text-right">
+                                                                                    {/* {formatGBP(item.stamp_duty)} */}
+                                                                                  </td>
+                                                                                  <td></td>
+                                                                                </tr>
+                                                                              )}
+                                                              
+                                                                              {item.service_details[0].country == "Scotland" && (
+                                                                                <tr className="border-b border-gray-200">
+                                                                                  <td className="p-2">LBTT</td>
+                                                                                  {/* <td className="p-2 text-right">{formatGBP(item.lbtt)}</td> */}
+                                                                                  <td></td>
+                                                                                </tr>
+                                                                              )}
+                                                              
+                                                                              {item.service_details[0].country == "Wales" && (
+                                                                                <tr className="border-b border-gray-200">
+                                                                                  <td className="p-2">LLT</td>
+                                                                                  {/* <td className="p-2 text-right">{formatGBP(item.llt)}</td> */}
+                                                                                  <td></td>
+                                                                                </tr>
+                                                                              )}
+                                                                            </>
+                                                                          )}
+                                                                   
+                                                                         
+                                                                        </React.Fragment>
+                                                                      ))}
+                                                                  </tbody>
+                                                                </table>
+                                                              </div>
+                                                           
+                   </div>
+                                                                              </div>
   );
 }
