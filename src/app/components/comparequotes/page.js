@@ -828,7 +828,14 @@ function handlefilterchange(selectedoption = []) {
   Number(quote.legal_fees || 0)
 )}
     </td>
-    <td className="text-sm font-semibold text-emerald-600">{formatGBP(Number(quote.disbursementsvat)+Number(quote.supplementsvat)+Number(quote.vat))}</td>
+   <td className="text-sm font-semibold text-emerald-600">
+  {formatGBP(
+    (Number(quote.disbursementsvat) || 0) +
+    (Number(quote.supplementsvat) || 0) +
+    (Number(quote.vat) || 0)
+  )}
+</td>
+
   </tr>
  {quote.service_details[0].service_type == 2 && (
     <>
