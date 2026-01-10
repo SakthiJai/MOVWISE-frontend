@@ -920,7 +920,7 @@ function handlefilterchange(selectedoption = []) {
                                       )}
                                     
                                       </span>
-                                      <p className="mt-2 font-semibold text-base quotes">
+                                      <p className="mt-2 font-semibold  quotes text-sm">
                                         Contact Details
                                       </p>
 
@@ -936,37 +936,8 @@ function handlefilterchange(selectedoption = []) {
                                         {view_data?.appsetting_details?.email}
                                       </a>
                                     </div>
-                                    <div>
-                                      <div className="flex justify-end mr-6">
-                    {view_data?.appsetting_details?.logo ? (
-  <img
-    src={view_data.appsetting_details.logo}
-    width={140}
-    height={60}
-    alt="Logo"
-    className="object-contain"
-  />
-) : (
-  <img
-    src="https://cdn-icons-png.flaticon.com/512/295/295128.png"
-    width={140}
-    height={60}
-    alt="Default Logo"
-    className="object-contain"
-  />
-)}
-
-</div>
-                                    </div>
-                                    </div>
-                                   
-                                  </div>
-
-                                  {/* ---------- YOUR DETAILS ---------- */}
-
-                                  <div className="grid grid-cols-1  gap-6">
-                                    <div className="">
-                                      <div className="">
+                                    <div className="ml-auto">
+                                         <div >
                                       <div className="text-emerald-600">
                                         <h3 className="text-lg font-semibold text-start mt-2">
                                           User Details
@@ -1018,6 +989,16 @@ function handlefilterchange(selectedoption = []) {
                                         
                                       </div>
                                       </div>
+                                    </div>
+                                    </div>
+                                   
+                                  </div>
+
+                                  {/* ---------- YOUR DETAILS ---------- */}
+
+                                  <div className="grid grid-cols-1  gap-6">
+                                    <div className="">
+                                    
 
                                       {view_data.service_details.length == 1 && (<>
                                     {(view_data.service_details[0].service_type == 1 ) && <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails}  giftvalue={giftvalue} />  }
@@ -1049,7 +1030,7 @@ function handlefilterchange(selectedoption = []) {
 
   {quote?.conveying_details?.notes ? (
     <div
-      className="text-xs mt-4"
+      className="text-xs mt-4 text-start"
       dangerouslySetInnerHTML={{
         __html: DOMPurify.sanitize(quote.conveying_details.notes),
       }}
