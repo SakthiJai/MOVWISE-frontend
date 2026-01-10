@@ -233,7 +233,6 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                                                                                                                   formatGBP( quote.total_vat) 
                                                                                                                                   }</span>
                                                                                                                                                                           </td>
-                                                                                              <td className="p-2 text-right text-emerald-600" > {formatGBP(vattax+Number(item.vat))}</td>
                                                                                             </tr>
                                                                                            
                                                                                              {item.service_details[0].service_type == 2 && (
