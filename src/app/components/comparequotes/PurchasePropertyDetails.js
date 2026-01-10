@@ -144,7 +144,9 @@ import Select from 'react-select';
                                           Gift Deposit
                                         </span>
                                         <span className="">
-                                          {servicData ?.gift_deposit? "yes":"no" || "--"}
+                                         {servicData?.gift_deposit != null
+                                          ? `${servicData.gift_deposit} Gift Deposit`
+                                          : "--"}
                                         </span> 
                                       </div>
 
