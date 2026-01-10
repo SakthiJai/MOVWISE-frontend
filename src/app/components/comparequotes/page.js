@@ -277,11 +277,11 @@ if(selectedquote[0].conveying_details.taxDetails && selectedquote[0].conveying_d
 }
 
 
-console.log(grouped);
+console.log( "grouped",grouped);
 
 
 
-console.log(grouped);
+console.log(grouped2);
 
   settaxDetails(grouped);
   settaxDetails2(grouped2);
@@ -1006,7 +1006,7 @@ function handlefilterchange(selectedoption = []) {
                                    {(view_data.service_details[0].service_type == 4 ) && <RemortagePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails}  giftvalue={giftvalue}  />}  </>
                                       )} 
                                       {view_data.service_details.length > 1 && (<>
-                                  <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails}  giftvalue={giftvalue} hidetotal={"hidetotal"}/> <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[1]} companydata={companydata} cardid={cardid} taxDetails={taxDetails2} giftvalue={giftvalue} /></>)}   
+                                  <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails}  giftvalue={giftvalue} /> <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[1]} companydata={companydata} cardid={cardid} taxDetails={taxDetails2} giftvalue={giftvalue} /></>)}   
                                      
                                     </div>
 

@@ -25,7 +25,7 @@ export default function SalesPropertyDetails({
   cardid,
   taxDetails,
   giftvalue,
-  hidetotal,
+  
 }) {
   const [language, setlanguage] = useState([]);
   console.log("sales");
@@ -215,7 +215,7 @@ export default function SalesPropertyDetails({
                     {/* Country-specific taxes */}
 
                     {/* TOTAL */}
-                    {hidetotal != "hidetotal" && (
+                    
                       <tr className="bg-gray-100 font-semibold text-gray-800">
                         <td className="p-2 text-start">Total </td>
 
@@ -235,7 +235,7 @@ export default function SalesPropertyDetails({
 
                         {/* <td className="p-2 text-right text-emerald-600 font_size_13px" > {formatGBP(Number(item.vat))}</td> */}
                       </tr>
-                    )}
+                  
                     {item.service_details[0].service_type == 2 && (
                       <>
                         {(quote.service_details[0].country === "England" ||
