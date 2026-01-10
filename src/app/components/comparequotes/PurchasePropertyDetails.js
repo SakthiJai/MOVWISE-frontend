@@ -45,41 +45,41 @@ export default function PurchasePropertyDetails({
             <h5 className="col-span-3 text-lg font-semibold text-emerald-600 mb-10">Purchase Quote</h5>
 <div></div>
       <div className=" text-sm">
-        <div className="text-emerald-600 text-start">
+        <div className="text-emerald-600 text-start font_size_13px">
           <h3 className="text-lg font-semibold ">Purchase Property Details</h3>
         </div>
-        <div className="flex">
-          <span className="font-semibold w-40 text-left">Stages</span>
+        <div className="flex font_size_13px">
+          <span className="font-semibold w-40 text-left font_size_13px ">Stages</span>
           <span className="">{servicData?.stages || "--"}</span>
         </div>
-        <div className="flex">
-          <span className="font-semibold w-40 text-left">Town_city</span>
+        <div className="flex font_size_13px">
+          <span className="font-semibold w-40 text-left font_size_13px">Town_city</span>
           <span className="">{servicData?.town_city || "--"}</span>
         </div>
-        <div className="flex">
-          <span className="font-semibold w-40 text-left">Country</span>
+        <div className="flex font_size_13px">
+          <span className="font-semibold w-40 text-left font_size_13px">Country</span>
           <span className="">{servicData?.country || "--"}</span>
         </div>
-        <div className="flex">
-          <span className="font-semibold w-40 text-left">Purchase Price</span>
+        <div className="flex font_size_13px">
+          <span className="font-semibold w-40 text-left font_size_13px">Purchase Price</span>
           <span className="">£{servicData?.purchase_price || "--"}</span>
         </div>
 
-        <div className="flex">
-          <span className="font-semibold w-40 text-left">No Of Bedrooms</span>
+        <div className="flex font_size_13px">
+          <span className="font-semibold w-40 text-left font_size_13px">No Of Bedrooms</span>
           <span className="">{servicData?.no_of_bedrooms || "--"}</span>
         </div>
-        <div className="flex">
-          <span className="font-semibold w-40 text-left">
+        <div className="flex font_size_13px">
+          <span className="font-semibold w-40 text-left font_size_13px">
             Leasehold Or Free
           </span>
           <span className="">{servicData?.leasehold_or_free || "--"}</span>
-        </div>
-        <div className="flex">
-          <span className="font-semibold w-40 text-left">Property Type</span>
+        </div> 
+        <div className="flex font_size_13px">
+          <span className="font-semibold w-40 text-left font_size_13px">Property Type</span>
           <span className="">{servicData?.property_type || "--"}</span>
         </div>
-        <div className="flex">
+        <div className="flex font_size_13px">
           <span className="font-semibold w-40 text-left">
             High Raise Support
           </span>
@@ -87,17 +87,17 @@ export default function PurchasePropertyDetails({
             {servicData?.purchase_high_raise_support == 0 ? "No" : "Yes"}
           </span>
         </div>
-        <div className="flex">
+        <div className="flex font_size_13px">
           <span className="font-semibold w-40 text-left">Purchase Mode</span>
           <span className="">{servicData?.purchase_mode || "--"}</span>
         </div>
 
-        <div className="flex mt-3">
+        <div className="flex mt-3 font_size_13px">
           <span className="font-semibold w-40 text-left">Buy To Let</span>
           <span className="">{servicData?.buy_to_let || "--"}</span>
         </div>
 
-        <div className="flex">
+        <div className="flex font_size_13px">
           <span className="font-semibold w-40 text-left">
             Obtaining Mortgage
           </span>
@@ -106,7 +106,7 @@ export default function PurchasePropertyDetails({
           </span>
         </div>
 
-        <div className="flex">
+        <div className="flex font_size_13px">
           <span className="font-semibold w-40 text-left">Gift Deposit</span>
           <span className="">
             {servicData?.gift_deposit != null
@@ -115,7 +115,7 @@ export default function PurchasePropertyDetails({
           </span>
         </div>
 
-        <div className="flex">
+        <div className="flex font_size_13px">
           <span className="font-semibold w-40 text-left">Languages</span>
           <span>
             {language.find((l) => l.id == servicData?.languages)
@@ -123,7 +123,7 @@ export default function PurchasePropertyDetails({
           </span>
         </div>
 
-        <div className="flex">
+        <div className="flex font_size_13px">
           <span className="font-semibold w-40 text-left">
             Life Time Support
           </span>
@@ -131,7 +131,7 @@ export default function PurchasePropertyDetails({
             {servicData?.purchase_lifetime_isa == 0 ? "No" : "Yes"}
           </span>
         </div>
-        <div className="flex">
+        <div className="flex font_size_13px">
           <span className="font-semibold w-40 text-left">HMO Support</span>
           <span className="">
             {servicData?.purchase_need_hmo == 0 ? "No" : "Yes"}
@@ -139,7 +139,7 @@ export default function PurchasePropertyDetails({
         </div>
       </div>
 
-      <div className=" ">
+      <div className="font_size_13px ">
         <div className=" p-3 ">
           <h3
             className="text-lg text-start text-emerald-600 font-semibold  mb-3"

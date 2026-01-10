@@ -20,25 +20,25 @@ import Select from 'react-select';
 export default function RemortagePropertyDetails({quote, servicData,companydata,cardid,taxDetails,giftvalue }) {
 
   return (
-        <div className="grid grid-cols-2  p-4 mt-5  border-1">
+        <div className="grid grid-cols-2  p-4 mt-5  border-1 ">
             <h5 className="col-span-2 text-lg font-semibold text-emerald-600 mb-10">Remortage Quote</h5>
 
     <div className=" text-sm">
-                                      <div className="text-emerald-600 text-start">
+                                      <div className="text-emerald-600 text-start font_size_13px">
                                         <h3 className="text-lg font-semibold">
                                           Property Details
                                         </h3>
                                       </div>
                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
+                                        <span className="font-semibold w-40 text-left font_size_13px">
                                           Address
                                         </span>
                                         <span className="ml-10">
                                           {servicData?.address || "--"}
                                         </span>
                                       </div>
-                                      <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
+                                      <div className="flex"> 
+                                        <span className="font-semibold w-40 text-left font_size_13px">
                                          Town City
                                         </span>
                                         <span className="ml-10">
@@ -46,7 +46,7 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                         </span>
                                       </div>
                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
+                                        <span className="font-semibold w-40 text-left font_size_13px">
                                           Country
                                         </span>
                                         <span className="ml-10">
@@ -54,7 +54,7 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                         </span>
                                       </div>
                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
+                                        <span className="font-semibold w-40 text-left font_size_13px">
                                            Property Values
                                         </span>
                                         <span className="ml-10">
@@ -63,7 +63,7 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                         </span>
                                       </div>
                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
+                                        <span className="font-semibold w-40 text-left font_size_13px">
                                           No Of Bedrooms
                                         </span>
                                         <span className="ml-10">
@@ -71,7 +71,7 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                         </span>
                                       </div>
                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
+                                        <span className="font-semibold w-40 text-left font_size_13px">
                                           Leasehold Or Free
                                         </span>
                                         <span className="ml-10">
@@ -79,7 +79,7 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                         </span>
                                       </div>
                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
+                                        <span className="font-semibold w-40 text-left font_size_13px">
                                           Property Type
                                         </span>
                                         <span className="ml-10">
@@ -88,7 +88,7 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                         </span>
                                       </div>
                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
+                                        <span className="font-semibold w-40 text-left font_size_13px">
                                           Buy To Let
                                         </span>
                                         <span className="ml-10">
@@ -96,7 +96,7 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                         </span>
                                       </div>
                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
+                                        <span className="font-semibold w-40 text-left font_size_13px">
                                           Ownership Housing Asso
                                         </span>
                                         <span className="ml-10">
@@ -105,7 +105,7 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                         </span>
                                       </div>
                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
+                                        <span className="font-semibold w-40 text-left font_size_13px">
                                          Obtaining Mortgage
                                         </span>
                                         <span className="ml-10">
@@ -113,7 +113,7 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                         </span>
                                       </div>
                                       <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
+                                        <span className="font-semibold w-40 text-left font_size_13px">
                                           Languages
                                         </span>
                                         <span className="ml-10">
@@ -122,7 +122,7 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                       </div>
                                        
                                        <div className="flex">
-                                        <span className="font-semibold w-40 text-left">
+                                        <span className="font-semibold w-40 text-left font_size_13px">
                                           Lenders
                                         </span>
                                         <span className="ml-10">
@@ -159,9 +159,9 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                                                                           <React.Fragment key={index}>
                                                                                           
                                                                                             <tr className="border-b border-gray-200" >
-                                                                                              <td className="p-2 text-sm font-semibold text-start ">{`Legal Fees`}</td>
-                                                                                              <td className="p-2 text-sm text-right font-bold ">{formatGBP(item.legal_fees)}</td>
-                                                                                              <td className="p-2 text-sm text-right">
+                                                                                              <td className="p-2 text-sm font-semibold text-start font_size_13px">{`Legal Fees`}</td>
+                                                                                              <td className="p-2 text-sm text-right font-bold font_size_13px">{formatGBP(item.legal_fees)}</td>
+                                                                                              <td className="p-2 text-sm text-right font_size_13px">
                                                                                                 {formatGBP(item.vat)}
                                                                                               </td>
                                                                                             </tr>
@@ -172,14 +172,14 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                                                     <React.Fragment key={category}>
                                                                       {/* Category Row */}
                                                                       <tr className="bg-gray-50 border-b border-gray-300">
-                                                                        <td className="p-2 font-semibold text-start text-sm" colSpan={3}>
+                                                                        <td className="p-2 font-semibold text-start text-sm font_size_13px" colSpan={3}>
                                                                           {category}
                                                                         </td>
                                                                       </tr>
                                                       
                                                                       {items?.items.map((fee, i) =>  Number(fee.fee_amount) > 0 ? (
                                                                         <tr key={i} className="border-b border-gray-200 text-start">
-                                                                          <td className="p-2 break-words text-sm "> <div className="ml-4"> {/* margin-left works here */}
+                                                                          <td className="p-2 break-words text-sm font_size_13px"> <div className="ml-4"> {/* margin-left works here */}
                                                              {
                                                         fee.fee_type === "Gifted Deposit Supplement"
                                                           ? `${fee.fee_type} (${giftvalue})`
@@ -187,7 +187,7 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                                       }
                                                       
                                                             </div></td>
-                                                                          <td className="p-2 text-right text-sm">
+                                                                          <td className="p-2 text-right text-sm font_size_13px">
                                                                             {formatGBP(fee.fee_amount)}
                                                                           </td>
                                                                           <td className="p-2 text-right text-sm">{formatGBP(Number(fee.vat))}</td>
@@ -195,11 +195,11 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                                                       ):"")}
                                                                         
                                                                       <tr  className="border-b border-gray-200 text-start">
-                                                                          <td className="p-2 break-words text-sm "> <div className="ml-4"> {/* margin-left works here */}
+                                                                          <td className="p-2 break-words text-sm font_size_13px"> <div className="ml-4"> {/* margin-left works here */}
                                                               Total 
                                                             </div></td>
                                                           
-                                                                          <td className="p-2 text-right text-sm">
+                                                                          <td className="p-2 text-right text-sm font_size_13px">
                                                                             {formatGBP(items.total)}
                                                                           </td>
                                                                         </tr>
@@ -233,7 +233,7 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                                                                                                                   formatGBP( quote.total_vat) 
                                                                                                                                   }</span>
                                                                                                                                                                           </td>
-                                                                                              {/* <td className="p-2 text-right text-emerald-600" > {formatGBP(vattax+Number(item.vat))}</td> */}
+                                                                                              <td className="p-2 text-right text-emerald-600" > {formatGBP(vattax+Number(item.vat))}</td>
                                                                                             </tr>
                                                                                            
                                                                                              {item.service_details[0].service_type == 2 && (
@@ -243,7 +243,7 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                                                                                   <tr className="border-b border-gray-200">
                                                                                                     <td className="p-2 text-start">Stamp Duty</td>
                                                                                                     <td className="p-2 text-right">
-                                                                                                      {/* {formatGBP(item.stamp_duty)} */}
+                                                                                                      {formatGBP(item.stamp_duty)}
                                                                                                     </td>
                                                                                                     <td></td>
                                                                                                   </tr>
@@ -252,7 +252,7 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                                                                                 {item.service_details[0].country == "Scotland" && (
                                                                                                   <tr className="border-b border-gray-200">
                                                                                                     <td className="p-2">LBTT</td>
-                                                                                                    {/* <td className="p-2 text-right">{formatGBP(item.lbtt)}</td> */}
+                                                                                                    <td className="p-2 text-right">{formatGBP(item.lbtt)}</td>
                                                                                                     <td></td>
                                                                                                   </tr>
                                                                                                 )}
@@ -260,7 +260,7 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                                                                                 {item.service_details[0].country == "Wales" && (
                                                                                                   <tr className="border-b border-gray-200">
                                                                                                     <td className="p-2">LLT</td>
-                                                                                                    {/* <td className="p-2 text-right">{formatGBP(item.llt)}</td> */}
+                                                                                                    <td className="p-2 text-right">{formatGBP(item.llt)}</td>
                                                                                                     <td></td>
                                                                                                   </tr>
                                                                                                 )}
