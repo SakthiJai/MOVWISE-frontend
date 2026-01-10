@@ -233,7 +233,7 @@ export default function SalesPropertyDetails({
                           <span> {formatGBP(quote.total_vat)}</span>
                         </td>
 
-                        <td className="p-2 text-right text-emerald-600 font_size_13px" > {formatGBP(vattax+Number(item.vat))}</td>
+                        {/* <td className="p-2 text-right text-emerald-600 font_size_13px" > {formatGBP(Number(item.vat))}</td> */}
                       </tr>
                     )}
                     {item.service_details[0].service_type == 2 && (
