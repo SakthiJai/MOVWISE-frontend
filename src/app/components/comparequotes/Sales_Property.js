@@ -28,7 +28,7 @@ console.log("sales")
     try{
   const res = await getData(API_ENDPOINTS.languages);
   const language = res.users
-  console.log(language);
+  console.log(taxDetails);
   setlanguage(language)
   
 

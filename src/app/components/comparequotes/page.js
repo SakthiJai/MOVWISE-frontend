@@ -225,7 +225,7 @@ let grouped;
 let grouped2;
 let sum=0
 console.log(Object.keys(selectedquote[0].conveying_details.taxDetails).length)
-if(Object.keys(selectedquote[0].conveying_details.taxDetails).length==1){
+if(selectedquote[0].conveying_details.taxDetails && selectedquote[0].conveying_details.taxDetails[0].length){
  grouped = selectedquote[0].conveying_details.taxDetails[0].reduce(
   (acc, item) => {
     const key = item.fees_category;
@@ -250,7 +250,7 @@ if(Object.keys(selectedquote[0].conveying_details.taxDetails).length==1){
   {}
 );
 }
-else{
+if(selectedquote[0].conveying_details.taxDetails && selectedquote[0].conveying_details.taxDetails[1].length){
  grouped2 = selectedquote[0].conveying_details.taxDetails[1].reduce(
   (acc, item) => {
     const key = item.fees_category;
@@ -828,14 +828,7 @@ function handlefilterchange(selectedoption = []) {
   Number(quote.legal_fees || 0)
 )}
     </td>
-   <td className="text-sm font-semibold text-emerald-600">
-  {formatGBP(
-    (Number(quote.disbursementsvat) || 0) +
-    (Number(quote.supplementsvat) || 0) +
-    (Number(quote.vat) || 0)
-  )}
-</td>
-
+    <td className="text-sm font-semibold text-emerald-600">{formatGBP(Number(quote.disbursementsvat)+Number(quote.supplementsvat)+Number(quote.vat))}</td>
   </tr>
  {quote.service_details[0].service_type == 2 && (
     <>
