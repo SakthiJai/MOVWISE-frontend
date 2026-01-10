@@ -225,7 +225,7 @@ let grouped;
 let grouped2;
 let sum=0
 console.log(Object.keys(selectedquote[0].conveying_details.taxDetails).length)
-if(selectedquote[0].conveying_details.taxDetails && selectedquote[0].conveying_details.taxDetails[0].length){
+if(selectedquote[0].conveying_details.taxDetails && selectedquote[0].conveying_details.taxDetails[0]?.length){
  grouped = selectedquote[0].conveying_details.taxDetails[0].reduce(
   (acc, item) => {
     const key = item.fees_category;
@@ -250,7 +250,7 @@ if(selectedquote[0].conveying_details.taxDetails && selectedquote[0].conveying_d
   {}
 );
 }
-if(selectedquote[0].conveying_details.taxDetails && selectedquote[0].conveying_details.taxDetails[1].length){
+if(selectedquote[0].conveying_details.taxDetails && selectedquote[0].conveying_details.taxDetails[1]?.length){
  grouped2 = selectedquote[0].conveying_details.taxDetails[1].reduce(
   (acc, item) => {
     const key = item.fees_category;
