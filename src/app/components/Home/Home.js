@@ -41,10 +41,10 @@ const Loader = () => (
 // --- Utility Components for Icons and Buttons (simplified) ---
 const iconColors = {
   Scale: "text-green-700",      
-  Languages: "text-yellow-400", 
-  UserCheck: "text-red-600",
-  Repeat: "text-red-600",   
-  Cloud: "text-yellow-400",       
+  Languages: "text-green-700", 
+  UserCheck: "text-green-700",
+  Repeat: "text-green-700",   
+  Cloud: "text-green-700",       
   Zap: "text-green-700", 
 };
 
@@ -170,17 +170,25 @@ const [loginformdata, setloginformdata] = useState({
 
 
   const [services, setservices] = useState([]);
+  const [showPopup, setShowPopup] = useState(false);
 
 
 
   const handleSelect = (type,id) => {
     localStorage.setItem("service",id);
     setLoading(true); 
+    console.log("Selected service type:", type);
+    console.log("Selected service id:", id);
+    if (id === 5) {
+  setLoading(false);
+  setShowPopup(true);
+  return;
+}
 
-    setTimeout(() => {
+    else{setTimeout(() => {
       setLoading(false);
       router.push(`/getquote/${type.replace(/\s+/g, "").toLowerCase()}`);
-    }, 2000);
+    }, 2000);}
   };
   
   const closeModal = () => {
@@ -545,6 +553,7 @@ const [loginformdata, setloginformdata] = useState({
 
       {/* ---------------------------------------------------------------------------------- */}
 
+
       {/* --- 10. FOR SOLICITORS & CONVEYANCERS (Partner CTA) --- */}
       <section id="solicitors" className="py-16 bg-gray-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -580,6 +589,22 @@ const [loginformdata, setloginformdata] = useState({
                         )}
       
       {/* ---------------------------------------------------------------------------------- */}
+
+      {showPopup && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/35 backdrop-blur-md">
+    <div className="bg-white p-6 rounded-xl shadow-xl text-center w-80">
+      <p className="text-lg font-semibold text-gray-800 mb-4">
+        Service is under development and will be available soon.
+      </p>
+      <button
+        onClick={() => setShowPopup(false)}
+        className="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2 rounded-lg"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
 
       {/* --- 12. FOOTER --- */}
      <Footer />

@@ -177,7 +177,7 @@ useEffect(() => {
 
       setcompanydata(formatted);
       setLoading(false);
-
+      // localStorage.removeItem("getquote");
     } catch (error) {
       console.error("❌ API Error:", error);
       setLoading(false);
@@ -234,6 +234,7 @@ if(selectedquote[0].conveying_details.taxDetails && selectedquote[0].conveying_d
       acc[key] = {
     items: [],
     total: 0,
+    vat:0,
      [`${key}${total}`]:0,
       };
     }
@@ -243,7 +244,7 @@ if(selectedquote[0].conveying_details.taxDetails && selectedquote[0].conveying_d
 
     // ✅ calculate total
   acc[key].total += Number(item.fee_amount) || 0;
-
+    acc[key].vat += Number(item.vat) || 0;
 
     return acc;
   },
@@ -259,6 +260,7 @@ if(selectedquote[0].conveying_details.taxDetails && selectedquote[0].conveying_d
       acc[key] = {
     items: [],
     total: 0,
+    vat:0,
      [`${key}${total}`]:0,
       };
     }
@@ -268,7 +270,7 @@ if(selectedquote[0].conveying_details.taxDetails && selectedquote[0].conveying_d
 
     // ✅ calculate total
   acc[key].total += Number(item.fee_amount) || 0;
-
+  acc[key].vat += Number(item.vat) || 0;
 
     return acc;
   },
@@ -612,12 +614,14 @@ function handlefilterchange(selectedoption = []) {
 
 
                 <div className="mt-8 space-y-6">
-                  {loading && (
-                <div className="flex justify-center items-center py-6">
-                  <div className="h-8 w-8 border-2 border-[#4A7C59] border-t-transparent rounded-full animate-spin"></div>
-                  
-                </div>
-              )}
+                {loading && (
+                  <div className="flex flex-col justify-center items-center py-6">
+                    <div className="h-8 w-8 border-2 border-[#4A7C59] border-t-transparent rounded-full animate-spin"></div>
+                    <div className="mt-2.5 text-gray-500">
+                      Your quotes are loading...
+                    </div>
+                  </div>
+                )}
                    {/* SHOW MESSAGE HERE */}
                 {companydata?.length === 0 && (
                   <div className="text-center py-10">
@@ -903,7 +907,7 @@ function handlefilterchange(selectedoption = []) {
                                         <span className="text-[34px] leading-none font-extrabold text-[#1E5C3B] tracking-tight">
                                           {quote.conveying_details.logo ? (
                                         <img
-                                          width={70}
+                                          width={100}
                                           height={60}
                                           src={quote.conveying_details.logo}
                                           alt={quote.company_name || "company logo"}
@@ -935,6 +939,14 @@ function handlefilterchange(selectedoption = []) {
                                       >
                                         {view_data?.appsetting_details?.email}
                                       </a>
+                                       <div className="flex">
+                                          <span className="font-semibold text-left">
+                                            Quote Ref No : 
+                                          </span>
+                                          <span className="">
+                                            {quote.service_details[0].quote_ref_number || "--"}
+                                          </span>
+                                        </div>
                                     </div>
                                     <div className="ml-auto">
                                          <div >

@@ -202,6 +202,9 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                                                           <td className="p-2 text-right text-sm font_size_13px">
                                                                             {formatGBP(items.total)}
                                                                           </td>
+                                                                           <td className="p-2 text-right text-sm">
+                                                                              {formatGBP(items.vat)}
+                                                                            </td>
                                                                         </tr>
                                                       
                                                                     

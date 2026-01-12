@@ -24,7 +24,7 @@ export default function ClientComponent({ type }) {
             <div className='bg-white shadow-md sticky top-0 p-4 z-50'>
             <Navbar />
             </div>
-                <main className="pt-8 pb-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <main className="pt-8 pb-12 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                   <h1>Type: {type}</h1>
                     {(type === 'sales' || type === 'sale') && <Sales />}
                     {type === 'saleswithpurchase' && <Salewithpurchase />}
@@ -33,8 +33,11 @@ export default function ClientComponent({ type }) {
                     {type === 'equity' && <Equity />}
                     
                 </main>
-            </div>
-            <Footer />
-    </div>
+            
+            {/* <Footer /> */}
+            <div className=" pb-4 text-center text-gray-700 text-sm">
+          <p>&copy; {new Date().getFullYear()} MovWise. All rights reserved.</p>
+        </div>
+    </div></div>
   );
 }

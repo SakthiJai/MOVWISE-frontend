@@ -141,7 +141,7 @@ export default function SalesPropertyDetails({
                   (item) => item.conveying_details.conveying_id == cardid
                 )
                 .map((item, index) => (
-                  <React.Fragment key={index} className="font_size_13px">
+                  <React.Fragment key={index} >
                     <tr className="border-b border-gray-200 font_size_13px">
                       <td className="p-2 text-sm font-semibold text-start font_size_13px ">{`Legal Fees`}</td>
                       <td className="p-2 text-sm text-right font-bold font_size_13px">
@@ -207,6 +207,9 @@ export default function SalesPropertyDetails({
                             <td className="p-2 text-right text-sm font_size_13px">
                               {formatGBP(items.total)}
                             </td>
+                             <td className="p-2 text-right text-sm">
+                              {formatGBP(items.vat)}
+                            </td>
                           </tr>
                         </React.Fragment>
                       )
@@ -244,7 +247,7 @@ export default function SalesPropertyDetails({
                           <tr className="border-b border-gray-200">
                             <td className="p-2 text-start font_size_13px">Stamp Duty</td>
                             <td className="p-2 text-right">
-                              {/* {formatGBP(item.stamp_duty)} */}
+                              {formatGBP(item.stamp_duty)}
                             </td>
                             <td></td>
                           </tr>

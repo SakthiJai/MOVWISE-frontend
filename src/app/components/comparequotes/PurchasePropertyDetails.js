@@ -231,6 +231,9 @@ export default function PurchasePropertyDetails({
                             <td className="p-2 text-right text-sm">
                               {formatGBP(items.total)}
                             </td>
+                            <td className="p-2 text-right text-sm">
+                              {formatGBP(items.vat)}
+                            </td>
                           </tr>
                         </React.Fragment>
                       )
@@ -262,7 +265,7 @@ export default function PurchasePropertyDetails({
                           <tr className="border-b border-gray-200">
                             <td className="p-2 text-start">Stamp Duty</td>
                             <td className="p-2 text-right">
-                              {/* {formatGBP(item.stamp_duty)} */}
+                              {formatGBP(item.stamp_duty)}
                             </td>
                             <td></td>
                           </tr>
@@ -271,7 +274,7 @@ export default function PurchasePropertyDetails({
                         {item.service_details[0].country == "Scotland" && (
                           <tr className="border-b border-gray-200">
                             <td className="p-2">LBTT</td>
-                            {/* <td className="p-2 text-right">{formatGBP(item.lbtt)}</td> */}
+                            <td className="p-2 text-right">{formatGBP(item.lbtt)}</td>
                             <td></td>
                           </tr>
                         )}
@@ -279,7 +282,7 @@ export default function PurchasePropertyDetails({
                         {item.service_details[0].country == "Wales" && (
                           <tr className="border-b border-gray-200">
                             <td className="p-2">LLT</td>
-                            {/* <td className="p-2 text-right">{formatGBP(item.llt)}</td> */}
+                            <td className="p-2 text-right">{formatGBP(item.llt)}</td>
                             <td></td>
                           </tr>
                         )}
