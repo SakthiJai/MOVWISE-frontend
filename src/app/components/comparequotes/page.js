@@ -24,7 +24,6 @@ import Select from 'react-select';
 
 export default function Comparequotes() {
   // State to hold companies data (initialized with static data)
-
   const [companydata, setcompanydata] = useState();
   const hasCalledService = useRef(false);
   const [ref, setref] = useState("");
@@ -41,6 +40,8 @@ export default function Comparequotes() {
   const [loading, setLoading] = useState(false);
   const [total, settotal] = useState(0);
   const [giftvalue,setgiftvalue]=useState(0);
+const [conveyancerid,setconveyancerid]=useState(0);
+
   const [filteroption, setfilteroption] = useState( [
     {
       value: "Rating",
@@ -97,20 +98,26 @@ console.log(companydata)
     user_id
   )
    {
-
+console.log(companyName,
+    guest_id,
+    conveyancer_id,
+    quote_id,
+    user_id)
  setinstructloader(true);
+ 
       console.log(instructloader);
 setquoteid(quote_id);
     instructquote(quote_id)
-
+setconveyancerid(conveyancer_id)
 
     async function instructquote(quote_id){
       try{
 const instruct = await getData(API_ENDPOINTS.instruct + "/" + quote_id);
 console.log(instruct)
+
 if(instruct){
   setinstructloader(false);
-router.push(`/Instruct?id=${quote_id}`);
+router.push(`/Instruct?id=${quote_id?quote_id:conveyancerid}`);
   console.log(instructloader);
 }
       }
@@ -769,7 +776,7 @@ function handlefilterchange(selectedoption = []) {
                                 
                              }
                             >
-                              {quoteid==quote.quote_id?<>
+                              {(quoteid==quote.conveying_details.conveyancer_id||quoteid==quote.quote_id)?<>
                                                      <div className="flex items-center gap-2">
   <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
   <span>{instructloader ? "Instructing..." : "Instruct"}</span>
