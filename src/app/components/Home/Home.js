@@ -522,7 +522,7 @@ const [loginformdata, setloginformdata] = useState({
               <p className="mt-2 pl-4 text-gray-700">A: <strong>Absolutely</strong>. All documents are stored safely in your MovWise Cloud Portal 24/7, giving you full control over your case files.</p>
             </details>
           </div>
-        </div>
+        </div> 
       </section> */}
       
       {/* ---------------------------------------------------------------------------------- */}
