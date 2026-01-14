@@ -41,9 +41,9 @@ export default function PurchasePropertyDetails({
   }, []);
 
   return (
-    <div className="grid grid-cols-[0.5fr_1fr_1fr] p-4 border-1 mt-3 font_size_13px">
+    <div className="grid grid-cols-[0.5fr_1fr] p-4 border-1 mt-3 font_size_13px">
             <h5 className="col-span-3 text-lg font-semibold text-emerald-600 mb-10">Purchase Quote</h5>
-<div></div>
+
       <div className=" text-sm">
         <div className="text-emerald-600 text-start font_size_13px">
           <h3 className="text-lg font-semibold ">Purchase Property Details</h3>

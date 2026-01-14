@@ -20,7 +20,7 @@ import Select from 'react-select';
 export default function RemortagePropertyDetails({quote, servicData,companydata,cardid,taxDetails,giftvalue }) {
 
   return (
-        <div className="grid grid-cols-2  p-4 mt-5  border-1 ">
+        <div className="grid grid-cols-[0.5fr_1fr]  p-4 mt-5  border-1 ">
             <h5 className="col-span-2 text-lg font-semibold text-emerald-600 mb-10">Remortage Quote</h5>
 
     <div className=" text-sm">

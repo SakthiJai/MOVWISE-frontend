@@ -29,6 +29,12 @@ export default function SalesPropertyDetails({
 }) {
   const [language, setlanguage] = useState([]);
   console.log("sales");
+  console.log(quote,
+  servicData,
+  companydata,
+  cardid,
+  taxDetails,
+  giftvalue,)
 
   async function fetchapi() {
     try {
@@ -46,9 +52,8 @@ export default function SalesPropertyDetails({
   }, []);
 
   return (
-    <div className="grid grid-cols-[0.5fr_1fr_1fr]  p-4 mt-5  border-1 ">
+    <div className="grid grid-cols-[0.5fr_1fr]  p-4 mt-5  border-1 ">
       <h5 className="col-span-3 text-lg font-semibold text-emerald-600 mb-10">Sales Quote</h5>
-<div className=""></div>
       <div className="py-1   text-sm ">
         <div className="text-start">
           <h3 className="text-lg font-semibold text-emerald-600">
