@@ -44,9 +44,10 @@ const countrySelectStyles = {
   }),
   option: (base, state) => ({
     ...base,
-    backgroundColor: state.isFocused || state.isSelected
+ backgroundColor: state.isFocused
       ? "#F6CE53"
-      : "white",
+      : "white",      
+    
     color: "#111",
     cursor: "pointer",
   }),
@@ -108,7 +109,7 @@ console.log("showAddressLines:" , showAddressLines);
           type="text"
           value={formData[town_city] || ""}
           onChange={(e) => onChange(town_city, e.target.value)}
-          className="block w-full h-[44px] rounded-xl border border-gray-300 px-4  text-gray-900"
+          className="block w-full h-[44px] rounded-xl border border-gray-300 px-4  text-gray-900 hover:border-[#1E5C3B] focus:border-[#1E5C3B] focus:ring-1 focus:ring-[#1E5C3B] outline-none"
         />
         <p className="text-[12px] text-red-500 min-h-[16px]">
           {errors[town_city]}
@@ -117,7 +118,7 @@ console.log("showAddressLines:" , showAddressLines);
 
       {/* Country */}
       <div className="flex flex-col h-full">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-700 mb-1 hover:border-[#1E5C3B] focus:border-[#1E5C3B] focus:ring-1 focus:ring-[#1E5C3B] outline-none">
           Country <span className="text-red-500">*</span>
         </label>
     <Select

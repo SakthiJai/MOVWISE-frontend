@@ -31,6 +31,55 @@ const sharedOwnershipOptions = [
   { label: "Equity Transfer", value: "Equity Transfer" },
   { label: "Expats / Overseas Client", value: "Expats / Overseas Client" }
 ];
+// const selectStyles = {
+//   control: (base, state) => ({
+//     ...base,
+//     minHeight: "44px",
+//     borderRadius: "12px",
+//     borderColor: state.isFocused ? "#1E5C3B" : "#D1D5DB",
+//     boxShadow: state.isFocused ? "0 0 0 1px #1E5C3B" : "none",
+//     "&:hover": {
+//       borderColor: "#1E5C3B",
+//     },
+//     fontSize: "14px",
+//     fontWeight: 500,
+//   }),
+//   option: (base, state) => ({
+//     ...base,
+//     backgroundColor: state.isFocused
+//       ? "#F6CE53"
+//       : "white",
+//     color: "#111",
+//     cursor: "pointer",
+//   }),
+// };
+
+const sharedOwnershipStyles = {
+  control: (base, state) => ({
+    ...base,
+    minHeight: "44px",
+    borderRadius: "12px",
+    borderColor: state.isFocused ? "#1E5C3B" : "#D1D5DB",
+    boxShadow: state.isFocused ? "0 0 0 1px #1E5C3B" : "none",
+    "&:hover": {
+      borderColor: "#1E5C3B",
+    },
+    fontSize: "14px",
+    fontWeight: 500,
+  }),
+  option: (base, state) => ({
+    ...base,
+   backgroundColor: state.isFocused
+      ? "#F6CE53"
+      : "white",
+    color: "#111",
+    cursor: "pointer",
+  }),
+  singleValue: (base) => ({
+    ...base,
+    color: "#111827",
+  }),
+};
 const selectStyles = {
   control: (base, state) => ({
     ...base,
@@ -48,40 +97,11 @@ const selectStyles = {
     ...base,
     backgroundColor: state.isFocused
       ? "#F6CE53"
-      : state.isSelected
-      ? "#F6CE53"
-      : "white",
+      : "white",  
     color: "#111",
     cursor: "pointer",
   }),
 };
-
-const sharedOwnershipStyles = {
-  control: (base, state) => ({
-    ...base,
-    minHeight: "44px",
-    borderRadius: "12px",
-    borderColor: state.isFocused ? "#1E5C3B" : "#D1D5DB",
-    boxShadow: state.isFocused ? "0 0 0 1px #1E5C3B" : "none",
-    "&:hover": {
-      borderColor: "#1E5C3B",
-    },
-    fontSize: "14px",
-    fontWeight: 500,
-  }),
-  option: (base, state) => ({
-    ...base,
-    backgroundColor:
-      state.isFocused || state.isSelected ? "#F6CE53" : "white",
-    color: "#111",
-    cursor: "pointer",
-  }),
-  singleValue: (base) => ({
-    ...base,
-    color: "#111827",
-  }),
-};
-
 const lender_languagestyles = {
   option: (base, state) => ({
     ...base,
@@ -665,7 +685,7 @@ useEffect(() => {
                                 type="text"
                                 value={formData.sales_price}
                                 onChange={(e)=>{handleChange("sales_price",e.target.value)}}
-                                className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
+                                className=" hover:border-[#1E5C3B]  outline-none block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
                               />
                               
 
@@ -910,7 +930,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
   options={lang}
   instanceId="language-select"
   value={selectedLanguage || formData.languages}
-  styles={lender_languagestyles}
+  styles={selectStyles}
   onChange={(selectedOption) => {
     handleChangeLang(selectedOption); // existing handler to update formData / state
 
@@ -947,7 +967,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
             options={lender}
               instanceId="lenders-select"
                           isDisabled={formData.existing_mortgage==0}
-            styles={lender_languagestyles}
+            styles={selectStyles}
 
             
             value={selectedLenders}

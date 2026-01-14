@@ -40,8 +40,6 @@ export default function Salewithpurchase() {
     ...base,
     backgroundColor: state.isFocused
       ? "#F6CE53"
-      : state.isSelected
-      ? "#F6CE53"
       : "white",
     color: "#111",
     cursor: "pointer",
@@ -924,7 +922,7 @@ console.log(e);
                                 type="text"
                                 value={formData.sales_price ?? ""} 
                                 onChange={(e)=>{handleChange("sales_price",e.target.value)}} 
-                                className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
+                                className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors outline-none"
                               />
                               
 

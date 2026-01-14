@@ -60,6 +60,7 @@ console.log(stampDutyOptions)
 useEffect(() => {
   console.log(purchaseRef.current); // now defined
 }, []);
+
 const selectStyles = {
   control: (base, state) => ({
     ...base,
@@ -77,9 +78,7 @@ const selectStyles = {
     ...base,
     backgroundColor: state.isFocused
       ? "#F6CE53"
-      : state.isSelected
-      ? "#F6CE53"
-      : "white",
+      : "white",  
     color: "#111",
     cursor: "pointer",
   }),
@@ -674,7 +673,7 @@ return (
           // }}
 
             onChange={(e)=>{handleChange("purchase_price",e.target.value)}}
-          className={`block w-full h-[44px] rounded-xl border pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors `}
+          className={`hover:border-[#1E5C3B]  outline-none block w-full h-[44px] rounded-xl border pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors `}
         />
       </div>
     

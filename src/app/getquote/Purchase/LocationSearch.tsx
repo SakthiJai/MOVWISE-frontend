@@ -218,7 +218,7 @@ useEffect(() => {
         onKeyDown={handleKeyDown}
         readOnly={readOnly}
         autoComplete="off"
-        className={`block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors appearance-none pr-10 ${readOnly ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+        className={`block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-[14px] text-gray-900 font-medium bg-white focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 outline-none transition-colors appearance-none pr-10  ${readOnly ? 'bg-gray-100 cursor-not-allowed' : ''}`}
       />
       {loading && <p className="mt-2 text-sm text-gray-500">Loading...</p>}
       {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
