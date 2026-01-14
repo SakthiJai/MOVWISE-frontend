@@ -452,16 +452,16 @@ const [loginformdata, setloginformdata] = useState({
               
               <ul className="grid md:grid-cols-2 gap-4 text-gray-700 list-none p-0 mb-6">
                   <li className="flex items-center">
-                      <span className="text-xl text-red-600 mr-3"><MessageCircle /></span> Translation and explanation services
+                      <span className="text-xl text-green-700 mr-3"><MessageCircle /></span> Translation and explanation services
                   </li>
                   <li className="flex items-center">
                       <span className="text-xl text-green-700 mr-3"><Clock /></span> Case tracking and regular follow-ups
                   </li>
                   <li className="flex items-center">
-                      <span className="text-xl text-yellow-400 mr-3"><Cloud /></span> Secure digital document storage
+                      <span className="text-xl text-green-700 mr-3"><Cloud /></span> Secure digital document storage
                   </li>
                   <li className="flex items-center">
-                      <span className="text-xl text-red-600 mr-3"><PhoneCall /></span> Multilingual client support
+                      <span className="text-xl text-green-700 mr-3"><PhoneCall /></span> Multilingual client support
                   </li>
               </ul>
 
