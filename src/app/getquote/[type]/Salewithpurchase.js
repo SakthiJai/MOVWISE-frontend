@@ -76,6 +76,8 @@ const buyToLetOptions = [
   { value: "personal", label: "Yes - Personal name" },
   { value: "company", label: "Yes - Company name" },
 ];
+
+const partnerloginshow=false;
     const [buytolet_readonlyfield,setbuytolet_readonlyfield]=useState(false);
 
   const [showAddressLines_purchase, setShowAddressLines_purchase] = useState(false);
@@ -1736,7 +1738,7 @@ console.log(e);
 
                     </form>
                      {modalopen && (
-                          <Signinmodal closeModal={closeModal}></Signinmodal>
+                        <Signinmodal closeModal={closeModal} partnerloginshow={partnerloginshow}></Signinmodal>
                         )}
 
                     <div className="mt-12 flex justify-end gap-4">

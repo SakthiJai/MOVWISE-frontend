@@ -14,7 +14,12 @@ import Signinmodal from "../../components/utility/Singingmodal";
 
 
 export default function Purchase() {
-
+  
+  const closeModal = () => {
+    console.log("closing...");
+    setModalopen(false);
+  };
+const partnerloginshow=false;
     const [showAddressLines, setShowAddressLines] = useState(false);
      const [rawValue, setRawValue] = useState("");
     const [lender, setLender] = useState([
@@ -1358,7 +1363,7 @@ return (
      </form>
     
    {modalopen && (
-                          <Signinmodal></Signinmodal>
+                        <Signinmodal closeModal={closeModal} partnerloginshow={partnerloginshow}></Signinmodal>
                           )}
       <div className="mt-12 flex justify-end gap-4">
          <button

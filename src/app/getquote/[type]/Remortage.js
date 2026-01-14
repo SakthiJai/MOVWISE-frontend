@@ -27,6 +27,11 @@ import Signinmodal from "../../components/utility/Singingmodal";
 
 
 export default function Remortage() {
+  const partnerloginshow=false;
+   const closeModal = () => {
+    console.log("closing...");
+    setModalopen(false);
+  };
   const selectStyles = {
   control: (base, state) => ({
     ...base,
@@ -951,7 +956,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
   
                     </form>
  {modalopen && (
-  <Signinmodal></Signinmodal>
+                        <Signinmodal closeModal={closeModal} partnerloginshow={partnerloginshow}></Signinmodal>
 )}
                     <div className="mt-12 flex justify-end gap-4">
                     <button

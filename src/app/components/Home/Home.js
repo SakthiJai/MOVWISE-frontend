@@ -118,6 +118,8 @@ catch(e){
     const router = useRouter();
 const [modalopen, setModalopen] = useState(false);
 const [loginformshow,setloginformshow]=useState(false);
+  const partnerloginshow=true;
+
 const [lang,setlang]=useState([])
 const [loginformdata, setloginformdata] = useState({
   email: "",
@@ -585,7 +587,7 @@ const [loginformdata, setloginformdata] = useState({
         </p>
       </section>
         {modalopen && (
-                        <Signinmodal closeModal={closeModal} page={"home"} ></Signinmodal>
+                        <Signinmodal closeModal={closeModal} partnerloginshow={partnerloginshow} ></Signinmodal>
                         )}
       
       {/* ---------------------------------------------------------------------------------- */}

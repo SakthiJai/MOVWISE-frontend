@@ -804,7 +804,7 @@ function handlefilterchange(selectedoption = []) {
   <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
     <td className="text-sm font-bold">Legal Fees</td>
     <td className="text-sm font-semibold text-emerald-600">{formatGBP(quote.legal_fees)}</td>
-    <td className="text-sm ">{formatGBP(quote.vat)}</td>
+    <td className="text-sm text-emerald-600 font-semibold">{formatGBP(quote.vat)}</td>
   </tr>
     <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
     <td className="text-sm ">Supplements</td>
@@ -885,19 +885,41 @@ function handlefilterchange(selectedoption = []) {
                               </div>
                               <div className="font-family min-h-screen p-5  text-black">
                                 {/* ---------- TOP BUTTONS ---------- */}
-                                <div className="grid grid-cols-12 items-center m-6 px-4 ">
-                                  <button
-                                    className="border px-4 py-2 rounded text-emerald-600 text-sm  items-center gap-2"
-                                    onClick={() => showviewquotes(false)}
-                                  >
-                                    Back
-                                  </button>
-                                  <span className="  text-[34px] col-span-11  p-2 leading-none font-extrabold text-[#1E5C3B] tracking-tight">
-                                    {view_data?.appsetting_details
-                                      ?.company_name || "MovWise"}
-                                  </span>
+                               <div className="grid grid-cols-12 items-center m-6 px-4">
+  <button
+    className="border px-4 py-2 rounded text-emerald-600 text-sm"
+    onClick={() => showviewquotes(false)}
+  >
+    Back
+  </button>
 
-                                                              </div>
+  <span className="text-[34px] col-span-8 me-1 p-2 leading-none font-extrabold text-[#1E5C3B] tracking-tight">
+    {view_data?.appsetting_details?.company_name || "MovWise"}
+  </span>
+
+  {/* Right side buttons */}
+  <div className="col-span-3 flex justify-end gap-4">
+    <button
+      className="border px-4 py-2 rounded text-emerald-600 text-sm"
+      onClick={() =>
+        handleInstruct(
+          quote.conveying_details.company_name,
+          quote.guest_id,
+          quote.conveying_details.conveying_id,
+          quote.quote_id,
+          quote.customer_details.customer_id
+        )
+      }
+    >
+      Instruct
+    </button>
+
+    <button className="border px-4 py-2 rounded text-emerald-600 text-sm">
+      Download
+    </button>
+  </div>
+</div>
+
 
                                 {/* ---------- MAIN CONTAINER ---------- */}
                                 <div className="border  rounded-lg bg-white shadow px-6 py-2 mb-2 space-y-2 quotes">

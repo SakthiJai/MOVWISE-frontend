@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import { Hand } from "lucide-react";
 
-export default function Signinmodal({ closeModal,page }) {
+export default function Signinmodal({ closeModal,partnerloginshow }) {
   const router = useRouter();
   // console.log(page)
   const [loginformshow, setloginformshow] = useState(false);
@@ -18,7 +18,8 @@ export default function Signinmodal({ closeModal,page }) {
   const [guestformshow, setguestformshow] = useState(false);
   const [guestformsdata, setguestformsdata] = useState({
     guest_email: "",
-    guest_name: "",
+    firstname: "",
+    lastname:"",
     guest_phonenumber: "",
   });
 
@@ -46,8 +47,8 @@ const validateLoginForm = () => {
 const validateGuestForm = () => {
   const errors = {};
 
-  if (!guestformsdata.guest_name?.trim()) {
-    errors.guest_name = "Full name is required";
+  if (!guestformsdata.firstname?.trim()) {
+    errors.firstname = "first name is required";
   }
 
   if (!guestformsdata.guest_email) {
@@ -193,11 +194,13 @@ async function createguestuser() {
     // 3️⃣ Create guest in backend
     const guest_uuid = uuidv4();
     const payload = {
-      name: guestformsdata.guest_name,
+      firstname: guestformsdata.firstname,
+      lastname:guestformsdata.lastname,
       email: guestformsdata.guest_email,
       phone_number: guestformsdata.guest_phonenumber,
       guest_uuid: guest_uuid,
     };
+    console.log(payload)
     const response =  await postData(
             `${API_ENDPOINTS.addguest}`,
             payload
@@ -320,7 +323,8 @@ async function createguestuser() {
             </div>
 
             <div className="grid grid-cols-1  gap-6 mt-5  mx-auto">
-              <button
+        {partnerloginshow&&(
+           <button
                 className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
                 onClick={() => {
                   setloginformshow(true);
@@ -330,6 +334,7 @@ async function createguestuser() {
               >
                 Partner Login
               </button>
+        )}     
             </div>
           </div>
         )}
@@ -462,12 +467,12 @@ async function createguestuser() {
                   </p>
               )}
               {/* Email */}
-              <div className="mb-6">
+              <div className="mb-4">
                 <label
                   htmlFor="Name"
                   className="block text-sm font-semibold text-gray-700 mb-2"
                 >
-                  Full Name
+                  First Name
                 </label>
                 <input
                   id="Name"
@@ -475,17 +480,36 @@ async function createguestuser() {
                   type="text"
                   
                   placeholder="Enter your Name"
-                  value={guestformsdata.guest_name || ""}
+                  value={guestformsdata.firstname || ""}
                   onChange={(e) =>
-                    handleguestformchange("guest_name", e.target.value)
+                    handleguestformchange("firstname", e.target.value)
                   }
                   autoComplete="current-password"
                   className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
                 />
-                {formErrors.guest_name && (
-                  <p className="text-red-500 text-xs mt-1">{formErrors.guest_name}</p>
+                {formErrors.firstname && (
+                  <p className="text-red-500 text-xs mt-1">{formErrors.firstname}</p>
                 )}
               </div>
+              <label
+                  htmlFor="Name"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
+                  Last Name
+                </label>
+                <input
+                  id="Name"
+                  name="guest_name"
+                  type="text"
+                  
+                  placeholder="Enter your Name"
+                  value={guestformsdata.lastname || ""}
+                  onChange={(e) =>
+                    handleguestformchange("lastname", e.target.value)
+                  }
+                  autoComplete="current-password"
+                  className="block w-full h-[44px] mb-4 rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
+                />
               <div className="mb-5">
                 <label
                   htmlFor="email"

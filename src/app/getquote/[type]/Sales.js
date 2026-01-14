@@ -31,28 +31,8 @@ const sharedOwnershipOptions = [
   { label: "Equity Transfer", value: "Equity Transfer" },
   { label: "Expats / Overseas Client", value: "Expats / Overseas Client" }
 ];
-// const selectStyles = {
-//   control: (base, state) => ({
-//     ...base,
-//     minHeight: "44px",
-//     borderRadius: "12px",
-//     borderColor: state.isFocused ? "#1E5C3B" : "#D1D5DB",
-//     boxShadow: state.isFocused ? "0 0 0 1px #1E5C3B" : "none",
-//     "&:hover": {
-//       borderColor: "#1E5C3B",
-//     },
-//     fontSize: "14px",
-//     fontWeight: 500,
-//   }),
-//   option: (base, state) => ({
-//     ...base,
-//     backgroundColor: state.isFocused
-//       ? "#F6CE53"
-//       : "white",
-//     color: "#111",
-//     cursor: "pointer",
-//   }),
-// };
+
+const partnerloginshow=false;
 
 const sharedOwnershipStyles = {
   control: (base, state) => ({
@@ -1046,7 +1026,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
   
                     </form>
                     {modalopen && (
-                        <Signinmodal></Signinmodal>
+                        <Signinmodal closeModal={closeModal} partnerloginshow={partnerloginshow}></Signinmodal>
                         )}
                     <div className="mt-12 flex justify-end gap-4">
                     <button
