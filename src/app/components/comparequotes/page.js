@@ -806,7 +806,7 @@ function handlefilterchange(selectedoption = []) {
     <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
     <td className="text-sm ">Supplements</td>
     <td className="text-sm ">{formatGBP(quote.supplements)}</td>
-    <td className="text-sm ">      {formatGBP(quote.supplementsvat)}
+    <td className="text-sm ">  {formatGBP(quote.supplementsvat)}
 </td>
   </tr>
 
@@ -1084,7 +1084,9 @@ function handlefilterchange(selectedoption = []) {
          
         </div>
       </main>
-      <Footer></Footer>
+      <div className=" pt-16 text-center text-gray-700 text-sm font">
+          <p>&copy; {new Date().getFullYear()} MovWise. All rights reserved.</p>
+        </div>
     </div>
   );
 }
