@@ -34,7 +34,7 @@ const about = [
         ],
       },
     ],
-    color: "text-green-700",
+    color: "text-yellow-400",
   },
   {
     iconSymbol: AlertTriangle,
@@ -125,7 +125,7 @@ const about = [
         ],
       },
     ],
-    color: "text-red-600",
+    color: "text-green-700",
   },
 ];
 
@@ -311,7 +311,7 @@ export default function ResourcePage() {
                 <section className="max-w-6xl mx-auto text-center mb-10">
           <div className="text-center">
   <h2 className="text-3xl sm:text-3xl font-bold text-gray-700 mb-4 flex items-center justify-center gap-2">
-    <Notebook className="w-7 h-7 text-red-500" /> Common Document Types
+    <Notebook className="w-7 h-7 text-green-700" /> Common Document Types
           </h2></div></section>
            <section className="py-20  pt-0">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">

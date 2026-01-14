@@ -110,7 +110,7 @@ const impact = [
       "Reduce completion times by 25% through better matching",
       "Maintain a 4.8/5 customer satisfaction rating",
     ],
-    color: "text-red-600",
+    color: "text-yellow-400",
   },
   {
     iconSymbol: HeartHandshake,
@@ -121,7 +121,7 @@ const impact = [
       "Partnerships with Charities & Community Groups",
       "Environmental initiatives in our operations",
     ],
-    color: "text-red-600",
+    color: "text-yellow-400",
   },
 ];
 
@@ -135,7 +135,7 @@ const chooseus = [
       "Technology developers focused on user-friendly solutions",
       "Customer service professionals trained in property law basics",
     ],
-    color: "text-red-600",
+    color: "text-yellow-400",
   },
   {
     icon: Handshake,
@@ -147,7 +147,7 @@ const chooseus = [
       "Inclusion that ensures everyone can participate",
       "Innovation that continuously improves your experience",
     ],
-    color: "text-red-600",
+    color: "text-yellow-400",
   },
 ];
 
@@ -214,7 +214,7 @@ export default function AboutPage() {
           {/* Values Section */}
           <section>
              <h2 className="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-green-600 pb-2 flex items-center gap-2">
-              < Target className="w-7 h-7 text-red-600" />  Our Mission Deep Dive
+              < Target className="w-7 h-7 text-green-700" />  Our Mission Deep Dive
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {values.map((value, index) => (
@@ -423,7 +423,7 @@ export default function AboutPage() {
           {/* Our Promise Section */}
           <section>
             <h2 className="text-3xl font-bold text-gray-800 mb-6 border-b-2 border-green-600 pb-2 flex items-center gap-2">
-  <Phone  className="w-7 h-7 text-red-600" />
+  <Phone  className="w-7 h-7 text-green-700" />
   Our Promise to You:
 </h2>
 

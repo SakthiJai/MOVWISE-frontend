@@ -452,16 +452,16 @@ const [loginformdata, setloginformdata] = useState({
               
               <ul className="grid md:grid-cols-2 gap-4 text-gray-700 list-none p-0 mb-6">
                   <li className="flex items-center">
-                      <span className="text-xl text-green-700 mr-3"><MessageCircle /></span> Translation and explanation services
+                      <span className="text-xl text-yellow-500 mr-3"><MessageCircle /></span> Translation and explanation services
                   </li>
                   <li className="flex items-center">
-                      <span className="text-xl text-green-700 mr-3"><Clock /></span> Case tracking and regular follow-ups
+                      <span className="text-xl text-yellow-500 mr-3"><Clock /></span> Case tracking and regular follow-ups
                   </li>
                   <li className="flex items-center">
-                      <span className="text-xl text-green-700 mr-3"><Cloud /></span> Secure digital document storage
+                      <span className="text-xl text-yellow-500 mr-3"><Cloud /></span> Secure digital document storage
                   </li>
                   <li className="flex items-center">
-                      <span className="text-xl text-green-700 mr-3"><PhoneCall /></span> Multilingual client support
+                      <span className="text-xl text-yellow-500 mr-3"><PhoneCall /></span> Multilingual client support
                   </li>
               </ul>
 
@@ -534,12 +534,12 @@ const [loginformdata, setloginformdata] = useState({
           <p className="text-gray-700 text-lg mb-8">We&apos;re happy to help! Get in touch with our multilingual support team for assistance.</p>
           <div className="flex justify-center space-x-12">
             <div className="text-center">
-              <p className="text-3xl text-emerald-600 mb-1 pl-17"><Mail /></p>
+              <p className="text-3xl text-yellow-500 mb-1 pl-17"><Mail /></p>
               <p className="font-semibold text-gray-800">Email Support</p>
               <a href="mailto:support@movwise.co.uk" className="text-emerald-600 hover:underline">support@movwise.co.uk</a>
             </div>
             <div className="text-center">
-              <p className="text-3xl text-emerald-600 mb-1 pl-10"><PhoneCall /></p>
+              <p className="text-3xl text-yellow-500 mb-1 pl-10"><PhoneCall /></p>
               <p className="font-semibold text-gray-800">Call Us</p>
               <a href="tel:08001234567" className="text-emerald-600 hover:underline">0800 123 4567</a>
             </div>
