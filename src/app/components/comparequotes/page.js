@@ -98,13 +98,9 @@ console.log(companydata)
     user_id
   )
    {
-console.log(companyName,
-    guest_id,
-    conveyancer_id,
-    quote_id,
-    user_id)
+
  setinstructloader(true);
- 
+
       console.log(instructloader);
 setquoteid(quote_id);
     instructquote(quote_id)
