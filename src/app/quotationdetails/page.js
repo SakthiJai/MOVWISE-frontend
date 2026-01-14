@@ -189,6 +189,7 @@ console.log(serviceId);
                 ...response2.supplement_fees.map((category) => ({
                   type_id: category.id,
                   fee_amount: "",
+                  vat: 0,
                   paid_to: "",
                   description: "",
                   is_delete: "",
@@ -203,6 +204,7 @@ console.log(serviceId);
                 ...response2.standard_disbursement.map((category) => ({
                   type_id: category.id,
                   fee_amount: "",
+                  vat: 0,
                   paid_to: "",
                   description: "",
                   is_delete: "",
@@ -219,6 +221,7 @@ console.log(serviceId);
                   type_id: category.id,
                   fee_amount: "",
                   paid_to: "",
+                  vat: 0,
                   description: "",
                   is_delete: "",
                   status: "",
@@ -414,6 +417,7 @@ console.log(serviceId);
                   type_id: "",
                   fee_amount: "",
                   paid_to: "",
+                  vat: 0,
                   description: "",
                   is_delete: "",
                   status: "",
@@ -436,6 +440,7 @@ console.log(serviceId);
                   type_id: "",
                   fee_amount: "",
                   paid_to: "",
+                  vat: 0,
                   description: "",
                   is_delete: "",
                   status: "",
@@ -473,6 +478,7 @@ console.log(serviceId);
                   type_id: "",
                   fee_amount: "",
                   paid_to: "",
+                  vat: 0,
                   description: "",
                   is_delete: "",
                   status: "",
@@ -497,6 +503,7 @@ console.log(serviceId);
                   type_id: "",
                   fee_amount: "",
                   paid_to: "",
+                  vat: 0,
                   description: "",
                   is_delete: "",
                   status: "",
@@ -519,6 +526,7 @@ console.log(serviceId);
                   type_id: "",
                   fee_amount: "",
                   paid_to: "",
+                  vat: 0,
                   description: "",
                   is_delete: "",
                   status: "",
@@ -538,7 +546,9 @@ console.log(serviceId);
     }).format(num);
     //check
 const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
-  const rawValue = value.replace(/[^\d.]/g, "");
+  const rawValue =
+  typeof value === "string" ? value.replace(/[^\d.]/g, "") : value;
+
 
   // STEP 1: Immediate update (typing)
   setpricingList((prev) =>
@@ -608,7 +618,8 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
     clearTimeout(timers.current[feesCategoryId]);
 
   timers.current[feesCategoryId] = setTimeout(() => {
-    if (field === "type_id" || field === "description") return;
+   if (field === "type_id" || field === "description" || field === "vat") return;
+
 
     const num = Number(rawValue);
     if (!isNaN(num)) {
@@ -1314,7 +1325,10 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                               Supplement check Type{" "}
                             </div>
                             <div className="text-center">Fee Cost £</div>
-                            <div className="text-end me-14">Action</div>
+                            <div className=" grid  grid-cols-2 items-center text-xs ">
+                              <div className="text-center">Vat</div>
+                              <div className="text-end me-14">Action</div>
+                              </div>
                           </div>
                           {pricingList
                             .find((item) => item.fees_category_id === numIndex)
@@ -1373,6 +1387,21 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                   }}
                                   className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
                                 />
+                                 <div className="grid grid-cols-2 items-center">
+                                    <div className="flex justify-center">
+                                    <input
+                                      type="checkbox"
+                                      checked={Number(row?.vat) === 1 }
+                                      onChange={(e) =>
+                                        handlePriceChange(
+                                          numIndex,
+                                          i,
+                                          "vat",
+                                          e.target.checked ? 1 : 0
+                                        )
+                                      }
+                                    />
+                                  </div>
                                <div className="text-right">
                                     <button
                                       className="text-green-600 tooltip mr-4 flex items-center justify-center "
@@ -1397,7 +1426,9 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                       </span>
                                     </button>
                                   </div>
+                                  </div>
                                   </>):(
+                                    <>
                                   <input
                                   placeholder="Fee Amount"
                                   value={row?.fee_amount}
@@ -1413,9 +1444,21 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                   }}
                                   className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2 poundtransform"
                                 />
-                                ) }
-                                
-                                 
+                                 <div className="grid grid-cols-2 items-center">
+                                    <div className="flex justify-center">
+                                  <input
+                                    type="checkbox"
+                                    checked={Number(row?.vat) === 1 }
+                                    onChange={(e) =>
+                                      handlePriceChange(
+                                        numIndex,
+                                        i,
+                                        "vat",
+                                        e.target.checked ? 1 : 0
+                                      )
+                                    }
+                                  />
+                                </div>
                                 {purchaseFeeTypeList.length -1 == i && (
                                   <div className="text-right">
                                     <button
@@ -1442,6 +1485,11 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                     </button>
                                   </div>
                                 )}
+                                </div>
+                                </>
+                                ) }
+                                
+
                               </div>
                             ))}
                          
@@ -1470,7 +1518,10 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                             </div>
                             <div className="text-center">Fee Cost £</div>
                             {/* <div className="text-center">Transaction Type</div> */}
-                            <div className="text-end pr-14">Action</div>
+                            <div className=" grid  grid-cols-2 items-center text-xs ">
+                              <div className="text-center">Vat</div>
+                              <div className="text-end me-14">Action</div>
+                              </div>
                           </div>
                           {pricingList
                             .find((item) => item.fees_category_id === numIndex).price_list.filter((row) => row.is_delete != 1)
@@ -1491,10 +1542,11 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                       settransactionFeesError("");
                                       handlePriceChange(numIndex, i, "fee_amount", e.target.value);
                                     }}
-                                    className={`border h-7 border-gray-400 rounded py-0.5 w-full text-sm
+                                    className={`border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2 poundtransform
                                       ${row.readonly ? "bg-gray-200 cursor-not-allowed" : ""}`}
                                   />
                                   </div>
+
                                 ) : (
                                    <div className="font text-black ">
                                     <label
@@ -1521,11 +1573,24 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                   }}
                                   className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
                                 />
-                              <div className=" gap-3  py-1 ">
                            
 
                             {/* ADD ROW – only last row */}
-
+                             <div className="grid grid-cols-2 items-center">
+                             <div className="flex justify-center">
+                            <input
+                              type="checkbox"
+                              checked={Number(row?.vat) === 1 }
+                              onChange={(e) =>
+                                handlePriceChange(
+                                  numIndex,
+                                  i,
+                                  "vat",
+                                  e.target.checked ? 1 : 0
+                                )
+                              }
+                            />
+                          </div>
                             <div className="text-right">
                               <button
                                 className="text-green-600 tooltip mr-4 flex items-center justify-center "
@@ -1548,6 +1613,7 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                 </span>
                               </button>
                             </div>
+                          
                           </div>
                                   </>):(<>
                                   <input
@@ -1566,6 +1632,24 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                   className="border h-7
                                    border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
                                 />
+                                {/* VAT checkbox */}
+                                
+
+                                  <div className="grid grid-cols-2 items-center">
+                                    <div className="flex justify-center">
+                                  <input
+                                    type="checkbox"
+                                    checked={Number(row?.vat) === 1 }
+                                    onChange={(e) =>
+                                      handlePriceChange(
+                                        numIndex,
+                                        i,
+                                        "vat",
+                                        e.target.checked ? 1 : 0
+                                      )
+                                    }
+                                  />
+                                </div>
                                  {standardDisbursementList.length -1 == i && (
                                   <div className="text-right">
                                     <button
@@ -1591,7 +1675,7 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                       </span>
                                     </button>
                                   </div>
-                                )}
+                                )}</div>
                                 </>
                                 )
                                   
@@ -1635,11 +1719,11 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                   <th className="px-2 py-2 text-center w-1/4">
                                     Fee Type
                                   </th>
-
-                                  {/* <th className="px-3 py-2 text-center w-1/4">Paid To</th> */}
-                                  <th className="px-2 py-2 text-end pr-16 w-1/4">
-                                    Action
+                                  <th className="px-2 py-2 text-center w-1/4">
+                                    Vat
                                   </th>
+
+
                                 </tr>
                               </thead>
 
@@ -1698,6 +1782,22 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                           }}
                                           className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full legalfeesrow_input"
                                         />
+                                      </td>
+                                      <td className="pl-2 py-2 text-center">
+                                        <div className="flex justify-center">
+                                        <input
+                                          type="checkbox"
+                                          checked={Number(row?.vat) === 1 }
+                                          onChange={(e) =>
+                                            handlePriceChange(
+                                              numIndex,
+                                              i,
+                                              "vat",
+                                              e.target.checked ? 1 : 0
+                                            )
+                                          }
+                                        />
+                                      </div>
                                       </td>
 
                                       {/* PAID TO */}
@@ -2268,11 +2368,12 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                               {sub.sub_category}
                             </div>
 
-                            <div className="grid  grid-cols-2 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
+                            <div className="grid  grid-cols-3 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
                               <div className="text-center">
                                 Supplement Type check
                               </div>
                               <div className="text-center">Fee Cost £</div>
+                              <div className="text-center">Vat</div>
                             </div>
 
                             {pricingList
@@ -2282,7 +2383,7 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                               .price_list.map((row, i) => (
                                 <div
                                   key={i}
-                                  className="grid grid-cols-2 gap-3 px-3 py-2"
+                                  className="grid grid-cols-3 gap-3 px-3 py-2"
                                 >
                                   {!row.isOthers ? (
                                     <div>
@@ -2298,6 +2399,7 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                           )
                                       )}
                                     </div>
+                                    
                                   ) : (
                                     <div>
                                       <input
@@ -2316,6 +2418,8 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                         }
                                         className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
                                       />
+                                      
+                                    
                                     </div>
                                   )}
 
@@ -2334,7 +2438,13 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                     }
                                     className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
                                   />
-
+                              <div className="flex justify-center">
+                                <input
+                                readOnly
+                                  type="checkbox"
+                                  checked={Number(row?.vat) === 1 }
+                                />
+                              </div>
                                   {/* REMOVE BUTTON */}
                                 </div>
                               ))}
@@ -2379,6 +2489,7 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                 Disbursement Type
                               </div>
                               <div className="text-center">Fee Cost £</div>
+                              <div className="text-center">Vat</div>
                             </div>
                             {pricingList
                               .find(
@@ -2388,7 +2499,7 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                               .price_list.map((row, i) => (
                                 <div
                                   key={i}
-                                  className=" grid grid-cols-2 gap-3 px-3 py-2"
+                                  className=" grid grid-cols-3 gap-3 px-3 py-2"
                                 >
                                   {!row.isOthers ? (
                                     <div className="col-span-1">
@@ -2440,6 +2551,13 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                     }
                                     className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black col-span-1"
                                   />
+                                  <div className="flex justify-center">
+                                    <input
+                                    readOnly
+                                      type="checkbox"
+                                      checked={Number(row?.vat) === 1 }
+                                    />
+                                  </div>
                                 </div>
                               ))}
                             {remainingdisbursement.map((item, i) => (
@@ -2494,6 +2612,9 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
 
                                     <th className="px-3 py-2 text-center">
                                       Cost £
+                                    </th>
+                                    <th className="px-3 py-2 text-center">
+                                      Vat
                                     </th>
                                   </tr>
                                 </thead>
@@ -2557,6 +2678,13 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                               )
                                             }
                                             className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
+                                          />
+                                        </td>
+                                        <td className="flex justify-center py-5">
+                                          <input
+                                          readOnly
+                                            type="checkbox"
+                                            checked={Number(row?.vat) === 1 }
                                           />
                                         </td>
 

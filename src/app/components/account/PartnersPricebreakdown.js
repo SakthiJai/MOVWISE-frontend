@@ -49,7 +49,7 @@ export default function Quotationdetails({service_id,companydata}) {
   );
   const [additionalServiceError, setadditionalServiceError] = useState([]);
   const [headings, setHeadings] = useState([]);
-  const [formData, setformData] = useState({});
+  const [formData, setformData] = useState({ company_id: "",});
   const [notesData, setnotesData] = useState("");
   const [loading, setLoading] = useState(false);
   const timers = useRef({});
@@ -89,30 +89,35 @@ export default function Quotationdetails({service_id,companydata}) {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
 
-  useEffect(() => {
-    const storedData = JSON.parse(localStorage.getItem("companyData"));
+useEffect(() => {
+  if (!companydata || !companydata.company_id) return;
 
-    if (storedData) {
-      setformData(storedData);
-      //console.loglog(formData)
-    }
-  }, []);
+  const storedData = JSON.parse(localStorage.getItem("companyData")) || {};
+
+  setformData({
+    ...storedData,
+    company_id: companydata.company_id,
+  });
+}, [companydata]);
+
+
 
   const [finalPayload, setFinalPayload] = useState(null);
 
   useEffect(() => {
-    // Define async function inside useEffect
+
 
     const fetchData = async () => {
       const user     = localStorage.getItem("user");
-      console.log("121212");
       try {
-        // setLoading(true);
 
-        // Call both APIs in parallel
+        const serviceIds = service_id?.map(s => s.id) || [];
+
         const [response1, response2, response3,response4] = await Promise.all([
           getData(API_ENDPOINTS.feecatgory),
-          getData(API_ENDPOINTS.feetype + "/2"),
+          postData(API_ENDPOINTS.feetype, {
+            service_id: serviceIds
+          }),
           getData(API_ENDPOINTS.pricing),
           getData(API_ENDPOINTS.getCompanyFee+"/"+user),
 
@@ -153,6 +158,7 @@ export default function Quotationdetails({service_id,companydata}) {
                   type_id: category.others?0:category.type_id,
                   fee_amount: category.fee_amount,
                   paid_to: "",
+                  vat: 0,
                   description: "",
                   is_delete: "",
                   status: "",
@@ -170,10 +176,27 @@ export default function Quotationdetails({service_id,companydata}) {
                    type_id: category.others?0:category.type_id,
                   fee_amount: category.fee_amount,
                   paid_to: "",
+                  vat: 0,
                   description: "",
                   is_delete: "",
                   status: "",
                    others:category.others
+                })),
+              ],
+            };
+          }
+          else if (item.fees_category_id === 4) {
+            return {
+              ...item,
+              price_list: [
+                ...response2.leasehold_disbursement.map((category) => ({
+                  type_id: category.id,
+                  fee_amount: "",
+                  paid_to: "",
+                  vat: 0,
+                  description: "",
+                  is_delete: "",
+                  status: "",
                 })),
               ],
             };
@@ -366,6 +389,7 @@ export default function Quotationdetails({service_id,companydata}) {
                   type_id: "",
                   fee_amount: "",
                   paid_to: "",
+                  vat: 0,
                   description: "",
                   is_delete: "",
                   status: "",
@@ -388,6 +412,7 @@ export default function Quotationdetails({service_id,companydata}) {
                   type_id: 0,
                   fee_amount: "",
                   paid_to: "",
+                  vat: 0,
                   description: "",
                   is_delete: "",
                   status: "",
@@ -425,6 +450,7 @@ export default function Quotationdetails({service_id,companydata}) {
                   type_id: "",
                   fee_amount: "",
                   paid_to: "",
+                  vat: 0,
                   description: "",
                   is_delete: "",
                   status: "",
@@ -449,6 +475,7 @@ export default function Quotationdetails({service_id,companydata}) {
                   type_id: "",
                   fee_amount: "",
                   paid_to: "",
+                  vat: 0,
                   description: "",
                   is_delete: "",
                   status: "",
@@ -471,6 +498,7 @@ export default function Quotationdetails({service_id,companydata}) {
                   type_id: "",
                   fee_amount: "",
                   paid_to: "",
+                  vat: 0,
                   description: "",
                   is_delete: "",
                   status: "",
@@ -505,7 +533,9 @@ export default function Quotationdetails({service_id,companydata}) {
       maximumFractionDigits: 2,
     }).format(num);
   const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
-    const rawValue = value.replace(/[^\d.]/g, "");
+    const rawValue =
+  typeof value === "string" ? value.replace(/[^\d.]/g, "") : value;
+
     console.log(feesCategoryId, rowIndex, field, value);
 
     setpricingList((prev) =>
@@ -532,7 +562,7 @@ export default function Quotationdetails({service_id,companydata}) {
       clearTimeout(timers.current[feesCategoryId]);
 
     timers.current[feesCategoryId] = setTimeout(() => {
-      if (field === "type_id" || field === "description") return;
+      if (field === "type_id" || field === "description" || field === "vat") return;
 
       const num = Number(rawValue);
       if (!isNaN(num)) {
@@ -1233,7 +1263,10 @@ export default function Quotationdetails({service_id,companydata}) {
                               Supplement check Type
                             </div>
                             <div className="text-center">Fee Cost £</div>
-                            <div className="text-end me-14">Action</div>
+                           <div className=" grid  grid-cols-2 items-center text-xs ">
+                              <div className="text-center">Vat</div>
+                              <div className="text-end me-14">Action</div>
+                              </div>
                           </div>
 
 
@@ -1297,6 +1330,21 @@ export default function Quotationdetails({service_id,companydata}) {
                                   }}
                                   className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
                                 />
+                                <div className="grid grid-cols-2 items-center">
+                                    <div className="flex justify-center">
+                                    <input
+                                      type="checkbox"
+                                      checked={Number(row?.vat) === 1 }
+                                      onChange={(e) =>
+                                        handlePriceChange(
+                                          numIndex,
+                                          i,
+                                          "vat",
+                                          e.target.checked ? 1 : 0
+                                        )
+                                      }
+                                    />
+                                  </div>
                                <div className="text-right">
                                    {arr.length-1 == i && (
                                  
@@ -1325,7 +1373,7 @@ export default function Quotationdetails({service_id,companydata}) {
                                         Delete current row
                                       </span>
                                     </button>
-                                  </div>
+                                  </div></div>
                                   </>):(<>
                                  
                                   <input
@@ -1343,6 +1391,21 @@ export default function Quotationdetails({service_id,companydata}) {
                                   }}
                                   className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
                                 />
+                                 <div className="grid grid-cols-2 items-center">
+                                    <div className="flex justify-center">
+                                  <input
+                                    type="checkbox"
+                                    checked={Number(row?.vat) === 1 }
+                                    onChange={(e) =>
+                                      handlePriceChange(
+                                        numIndex,
+                                        i,
+                                        "vat",
+                                        e.target.checked ? 1 : 0
+                                      )
+                                    }
+                                  />
+                                </div>
                                 <div className="text-right">
                                 {arr.length-1 == i && (
                                  
@@ -1360,6 +1423,7 @@ export default function Quotationdetails({service_id,companydata}) {
                                  
                                   
                                 )}
+                                </div>
                                 </div>
                                 </>
                                 ) }
@@ -1395,7 +1459,10 @@ export default function Quotationdetails({service_id,companydata}) {
                             </div>
                             <div className="text-center">Fee Cost £</div>
                             {/* <div className="text-center">Transaction Type</div> */}
-                            <div className="text-end pr-14">Action</div>
+                            <div className=" grid  grid-cols-2 items-center text-xs ">
+                              <div className="text-center">Vat</div>
+                              <div className="text-end me-14">Action</div>
+                              </div>
                           </div>
                           {pricingList
                             .find((item) => item.fees_category_id === numIndex).price_list
@@ -1454,7 +1521,21 @@ export default function Quotationdetails({service_id,companydata}) {
                            
 
                             {/* ADD ROW – only last row */}
-
+                            <div className="grid grid-cols-2 items-center">
+                             <div className="flex justify-center">
+                            <input
+                              type="checkbox"
+                              checked={Number(row?.vat) === 1 }
+                              onChange={(e) =>
+                                handlePriceChange(
+                                  numIndex,
+                                  i,
+                                  "vat",
+                                  e.target.checked ? 1 : 0
+                                )
+                              }
+                            />
+                          </div>
                             <div className="text-right">
                               {arr.length-1==i&&(
                                 <button
@@ -1479,6 +1560,7 @@ export default function Quotationdetails({service_id,companydata}) {
                                 </span>
                               </button>
                             </div>
+                            </div>
                           </div>
                                   </>):(<>
                                   <input
@@ -1496,6 +1578,21 @@ export default function Quotationdetails({service_id,companydata}) {
                                   }}
                                   className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
                                 />
+                                  <div className="grid grid-cols-2 items-center">
+                                    <div className="flex justify-center">
+                                  <input
+                                    type="checkbox"
+                                    checked={Number(row?.vat) === 1 }
+                                    onChange={(e) =>
+                                      handlePriceChange(
+                                        numIndex,
+                                        i,
+                                        "vat",
+                                        e.target.checked ? 1 : 0
+                                      )
+                                    }
+                                  />
+                                </div>
                                  {arr.length-1 == i && (
                                   <div className="text-right">
                                     
@@ -1513,6 +1610,7 @@ export default function Quotationdetails({service_id,companydata}) {
                                    
                                   </div>
                                 )}
+                                </div>
                                 </>
                                 )
                                   
@@ -1557,6 +1655,9 @@ export default function Quotationdetails({service_id,companydata}) {
                                   <th className="px-2 py-2 text-center w-1/4">
                                     Fee Type
                                   </th>
+                                  <th className="px-3 py-2 text-center">
+                                      Vat
+                                    </th>
 
                                   {/* <th className="px-3 py-2 text-center w-1/4">Paid To</th> */}
                                   
@@ -1617,6 +1718,22 @@ export default function Quotationdetails({service_id,companydata}) {
                                           }}
                                           className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full "
                                         />
+                                      </td>
+                                      <td className="pl-2 py-2 text-center">
+                                        <div className="flex justify-center">
+                                        <input
+                                          type="checkbox"
+                                          checked={Number(row?.vat) === 1 }
+                                          onChange={(e) =>
+                                            handlePriceChange(
+                                              numIndex,
+                                              i,
+                                              "vat",
+                                              e.target.checked ? 1 : 0
+                                            )
+                                          }
+                                        />
+                                      </div>
                                       </td>
 
                                       {/* PAID TO */}
@@ -2193,11 +2310,13 @@ export default function Quotationdetails({service_id,companydata}) {
                               {sub.sub_category}
                             </div>
 
-                            <div className="grid  grid-cols-2 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
+                            <div className="grid  grid-cols-3 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
                               <div className="text-center">
                                 Supplement Type check
                               </div>
                               <div className="text-center">Fee Cost £</div>
+                              <div className="text-center">Vat</div>
+                              
                             </div>
 
                             {pricingList
@@ -2207,7 +2326,7 @@ export default function Quotationdetails({service_id,companydata}) {
                               .price_list.map((row, i) => (
                                 <div
                                   key={i}
-                                  className="grid grid-cols-2 gap-3 px-3 py-2"
+                                  className="grid grid-cols-3 gap-3 px-3 py-2"
                                 >
                                   {!row.isOthers ? (
                                     <div>
@@ -2258,7 +2377,14 @@ export default function Quotationdetails({service_id,companydata}) {
                                       )
                                     }
                                     className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
-                                  />{row.fee_amount}
+                                  />
+                                   <div className="flex justify-center">
+                                <input
+                                readOnly
+                                  type="checkbox"
+                                  checked={Number(row?.vat) === 1 }
+                                />
+                              </div>
 
                                   {/* REMOVE BUTTON */}
                                 </div>
@@ -2299,11 +2425,12 @@ export default function Quotationdetails({service_id,companydata}) {
                                 {disbursementFeesError}
                               </p>
                             )}
-                            <div className="grid grid-cols-2 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
+                            <div className="grid grid-cols-3 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
                               <div className="text-center">
                                 Disbursement Type
                               </div>
                               <div className="text-center">Fee Cost £</div>
+                              <div className="text-center">Vat</div>
                             </div>
                             {pricingList
                               .find(
@@ -2313,7 +2440,7 @@ export default function Quotationdetails({service_id,companydata}) {
                               .price_list.map((row, i) => (
                                 <div
                                   key={i}
-                                  className=" grid grid-cols-2 gap-3 px-3 py-2"
+                                  className=" grid grid-cols-3 gap-3 px-3 py-2"
                                 >
                                   {!row.isOthers ? (
                                     <div className="col-span-1">
@@ -2365,6 +2492,13 @@ export default function Quotationdetails({service_id,companydata}) {
                                     }
                                     className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black col-span-1"
                                   />
+                                  <div className="flex justify-center">
+                                    <input
+                                    readOnly
+                                      type="checkbox"
+                                      checked={Number(row?.vat) === 1 }
+                                    />
+                                  </div>
                                 </div>
                               ))}
                             {remainingdisbursement.map((item, i) => (
@@ -2419,6 +2553,9 @@ export default function Quotationdetails({service_id,companydata}) {
 
                                     <th className="px-3 py-2 text-center">
                                       Cost £
+                                    </th>
+                                    <th className="px-3 py-2 text-center">
+                                      Vat
                                     </th>
                                   </tr>
                                 </thead>
@@ -2482,6 +2619,13 @@ export default function Quotationdetails({service_id,companydata}) {
                                               )
                                             }
                                             className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
+                                          />
+                                        </td>
+                                         <td className="flex justify-center py-5">
+                                          <input
+                                          readOnly
+                                            type="checkbox"
+                                            checked={Number(row?.vat) === 1 }
                                           />
                                         </td>
 
