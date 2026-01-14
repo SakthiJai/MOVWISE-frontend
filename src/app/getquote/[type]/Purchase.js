@@ -46,7 +46,6 @@ const buyToLetOptions = [
   { value: "company", label: "Yes - Company name" },
 ];
 const giftDepositOptions = [
-  { value: "", label: "Select...", isDisabled: true },
   { value: 0, label: "0" },
   { value: 1, label: "1" },
   { value: 2, label: "2" },
@@ -463,52 +462,52 @@ const [highRaiseSupport, setHighRaiseSupport] = useState("");
 return (
      <div className="flex flex-col lg:flex-row gap-8 mt-7">
               {/* Left stepper */}
-                 <aside className="z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-1/2 lg:h-[80vh] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white   lg:top-22">
-                <div className="p-6">
-                  {/* Step 1 */}
-                  <div className="flex items-start">
-                    <div className="relative mr-4">
-                      <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
-                        <Check size={18} />
-                      </div>
-                      <div className="absolute left-[19px] top-[40px] w-[2px] h-[50px] bg-[#CFE3CF]" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-semibold text-[#1E1E1E]">STEP 1</div>
-                      <div className="text-lg font-extrabold text-[#1E1E1E]">Personal Details</div>
-                      <div className="text-xs text-[#2D7C57] mt-1">Completed</div>
-                    </div>
-                  </div>
-    
-                  {/* Step 2 (Current) */}
-                  <div className="flex items-start mt-6">
-                    <div className="relative mr-4">
-                      <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-white text-[#1E5C3B] flex items-center justify-center">
-                        <div className="w-4 h-4 rounded-full bg-[#1E5C3B]" />
-                      </div>
-                      <div className="absolute left-[19px] top-[40px] w-[2px] h-[50px] bg-gray-200" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-semibold text-[#1E1E1E]">STEP 2</div>
-                      <div className="text-lg font-extrabold text-[#1E1E1E]">Property Details</div>
-                      <div className="text-xs text-[#A38320] mt-1">In Progress</div>
-                    </div>
-                  </div>
-    
-                  {/* Step 3 */}
-                  <div className="flex items-start mt-6">
-                    <div className="mr-4">
-                      <div className="w-10 h-10 rounded-full border-2 border-gray-300 text-gray-400 flex items-center justify-center">
-                        <div className="w-3 h-3 rounded-full border-2 border-gray-300"></div>
-                      </div>
-                    </div>
-                    <div>
-                      <div className="text-xs font-semibold text-[#1E1E1E]">STEP 3</div>
-                      <div className="text-lg font-bold text-[#1E1E1E]">Compare Quotes</div>
-                    </div>
-                  </div>
-                </div>
-              </aside>
+                  <aside className="z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-1/2 lg:h-[80vh] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white   lg:top-22">
+                                <div className="p-6 h-full flex flex-col justify-around ">
+                                  {/* Step 1 */}
+                                  <div className="flex items-start">
+                                    <div className="relative mr-4">
+                                      <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
+                                        <Check size={18} />
+                                      </div>
+                                      <div className="absolute left-[19px] top-[40px] w-[2px] h-[150px] bg-[#CFE3CF]" />
+                                    </div>
+                                    <div>
+                                      <div className="text-xs font-semibold text-[#1E1E1E]">STEP 1</div>
+                                      <div className="text-lg font-extrabold text-[#1E1E1E]">Personal Details</div>
+                                      <div className="text-xs text-[#2D7C57] mt-1">Completed</div>
+                                    </div>
+                                  </div>
+                    
+                                  {/* Step 2 (Current) */}
+                                  <div className="flex items-start mt-6">
+                                    <div className="relative mr-4">
+                                      <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-white text-[#1E5C3B] flex items-center justify-center">
+                                        <div className="w-4 h-4 rounded-full bg-[#1E5C3B]" />
+                                      </div>
+                                      <div className="absolute left-[19px] top-[40px] w-[2px] h-[150px] bg-gray-200" />
+                                    </div>
+                                    <div>
+                                      <div className="text-xs font-semibold text-[#1E1E1E]">STEP 2</div>
+                                      <div className="text-lg font-extrabold text-[#1E1E1E]">Property Details</div>
+                                      <div className="text-xs text-[#A38320] mt-1">In Progress</div>
+                                    </div>
+                                  </div>
+                    
+                                  {/* Step 3 */}
+                                  <div className="flex items-start mt-6">
+                                    <div className="mr-4">
+                                      <div className="w-10 h-10 rounded-full border-2 border-gray-300 text-gray-400 flex items-center justify-center">
+                                        <div className="w-3 h-3 rounded-full border-2 border-gray-300"></div>
+                                      </div>
+                                    </div>
+                                    <div>
+                                      <div className="text-xs font-semibold text-[#1E1E1E]">STEP 3</div>
+                                      <div className="text-lg font-bold text-[#1E1E1E]">Compare Quotes</div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </aside>
     
               {/* Right Form */}
               <section className="flex-1 bg-white border border-gray-200 shadow-xl rounded-2xl p-4 sm:p-8 lg:p-10 lg:ml-83">

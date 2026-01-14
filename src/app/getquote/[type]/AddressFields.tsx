@@ -24,7 +24,6 @@ const AddressFields: React.FC<AddressFieldsProps> = ({
 const town_city = prefix ? `${prefix}city` : "town_city";
 const country = prefix ? `${prefix}country` : "country";
 const countryOptions = [
-  { value: "", label: "Select country", isDisabled: true },
   { value: "England", label: "England" },
   { value: "Scotland", label: "Scotland" },
   { value: "Wales", label: "Wales" },

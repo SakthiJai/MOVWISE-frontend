@@ -167,11 +167,11 @@ export default function PurchasePropertyDetails({
                 .map((item, index) => (
                   <React.Fragment key={index}>
                     <tr className="border-b border-gray-200">
-                      <td className="p-2 text-sm font-semibold text-start ">{`Legal Fees`}</td>
-                      <td className="p-2 text-sm text-right font-bold ">
+                      <td className="p-2 text-sm font-semibold text-start text-emerald-600">{`Legal Fees`}</td>
+                      <td className="p-2 text-sm text-right font-bold text-emerald-600">
                         {formatGBP(item.legal_fees)}
                       </td>
-                      <td className="p-2 text-sm text-right">
+                      <td className="p-2 text-sm text-right text-emerald-600 font-bold">
                         {formatGBP(item.vat)}
                       </td>
                     </tr>
@@ -219,7 +219,7 @@ export default function PurchasePropertyDetails({
                           )}
 
                           <tr className="border-b border-gray-200 text-start">
-                            <td className="p-2 break-words text-sm ">
+                            <td className="p-2 break-words text-sm font-bold">
                               {" "}
                               <div className="ml-4">
                                 {" "}
@@ -228,10 +228,10 @@ export default function PurchasePropertyDetails({
                               </div>
                             </td>
 
-                            <td className="p-2 text-right text-sm">
+                            <td className="p-2 text-right text-sm font-bold">
                               {formatGBP(items.total)}
                             </td>
-                            <td className="p-2 text-right text-sm">
+                            <td className="p-2 text-right text-sm font-bold">
                               {formatGBP(items.vat)}
                             </td>
                           </tr>
@@ -242,20 +242,25 @@ export default function PurchasePropertyDetails({
                     {/* Country-specific taxes */}
 
                     {/* TOTAL */}
-                    <tr className="bg-gray-100 font-semibold text-gray-800">
-                      <td className="p-2 text-start">Total </td>
-                      <td className="p-2 text-right text-emerald-600">
-                        {formatGBP(
-                          Number(quote.supplements || 0) +
-                            Number(quote.disbursements || 0) +
-                            Number(quote.legal_fees || 0)
-                        )}
-                      </td>
-                      <td className="p-2 text-right text-emerald-600">
-                        <span> {formatGBP(quote.total_vat)}</span>
-                      </td>
-                      {/* <td className="p-2 text-right text-emerald-600" > {formatGBP(vattax+Number(item.vat))}</td> */}
-                    </tr>
+                    <tr className="bg-gray-100 font-semibold ">
+                                          <td className="p-2 text-start text-emerald-600 font-bold text-lg">Total </td>
+                  
+                                          <td className="p-2 text-right text-emerald-600 font-bold text-base">
+                                            <span>
+                                              {" "}
+                                              {formatGBP(
+                                                Number(quote.supplements || 0) +
+                                                  Number(quote.disbursements || 0) +
+                                                  Number(quote.legal_fees || 0)
+                                              )}
+                                            </span>
+                                          </td>
+                                          <td className="p-2 text-right text-emerald-600 font-bold text-base">
+                                            <span> {formatGBP(quote.total_vat)}</span>
+                                          </td>
+                  
+                                          {/* <td className="p-2 text-right text-emerald-600 font_size_13px" > {formatGBP(Number(item.vat))}</td> */}
+                                        </tr>
 
                     {item.service_details[0].service_type == 2 && (
                       <>

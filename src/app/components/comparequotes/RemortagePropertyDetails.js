@@ -159,9 +159,9 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                                                                           <React.Fragment key={index}>
                                                                                           
                                                                                             <tr className="border-b border-gray-200" >
-                                                                                              <td className="p-2 text-sm font-semibold text-start font_size_13px">{`Legal Fees`}</td>
-                                                                                              <td className="p-2 text-sm text-right font-bold font_size_13px">{formatGBP(item.legal_fees)}</td>
-                                                                                              <td className="p-2 text-sm text-right font_size_13px">
+                                                                                              <td className="p-2 text-sm  text-start font_size_13px text-emerald-600 font-bold">{`Legal Fees`}</td>
+                                                                                              <td className="p-2 text-sm text-right  font_size_13px text-emerald-600 font-bold">{formatGBP(item.legal_fees)}</td>
+                                                                                              <td className="p-2 text-sm text-right font_size_13px text-emerald-600 font-bold">
                                                                                                 {formatGBP(item.vat)}
                                                                                               </td>
                                                                                             </tr>
@@ -195,14 +195,14 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                                                       ):"")}
                                                                         
                                                                       <tr  className="border-b border-gray-200 text-start">
-                                                                          <td className="p-2 break-words text-sm font_size_13px"> <div className="ml-4"> {/* margin-left works here */}
+                                                                          <td className="p-2 break-words text-sm font_size_13px font-bold"> <div className="ml-4"> {/* margin-left works here */}
                                                               Total 
                                                             </div></td>
                                                           
-                                                                          <td className="p-2 text-right text-sm font_size_13px">
+                                                                          <td className="p-2 text-right text-sm font_size_13px font-bold">
                                                                             {formatGBP(items.total)}
-                                                                          </td>
-                                                                           <td className="p-2 text-right text-sm">
+                                                                          </td> 
+                                                                           <td className="p-2 text-right text-sm font-bold">
                                                                               {formatGBP(items.vat)}
                                                                             </td>
                                                                         </tr>

@@ -148,11 +148,11 @@ export default function SalesPropertyDetails({
                 .map((item, index) => (
                   <React.Fragment key={index} >
                     <tr className="border-b border-gray-200 font_size_13px">
-                      <td className="p-2 text-sm font-semibold text-start font_size_13px ">{`Legal Fees`}</td>
-                      <td className="p-2 text-sm text-right font-bold font_size_13px">
+                      <td className="p-2 text-sm  text-start font_size_13px text-emerald-600 font-bold">{`Legal Fees`}</td>
+                      <td className="p-2 text-sm text-right  font_size_13px text-emerald-600 font-bold">
                         {formatGBP(item.legal_fees)}
                       </td>
-                      <td className="p-2 text-sm text-right font_size_13px">
+                      <td className="p-2 text-sm text-right font_size_13px text-emerald-600 font-bold">
                         {formatGBP(item.vat)}
                       </td>
                     </tr>
@@ -202,17 +202,17 @@ export default function SalesPropertyDetails({
                           <tr className="border-b border-gray-200 text-start">
                             <td className="p-2 break-words text-sm ">
                               {" "}
-                              <div className="ml-4 font_size_13px">
+                              <div className="ml-4 font_size_13px font-bold">
                                 {" "}
                                 {/* margin-left works here */}
                                 Total
                               </div>
                             </td>
 
-                            <td className="p-2 text-right text-sm font_size_13px">
+                            <td className="p-2 text-right text-sm font_size_13px font-bold">
                               {formatGBP(items.total)}
                             </td>
-                             <td className="p-2 text-right text-sm">
+                             <td className="p-2 text-right text-sm font-bold">
                               {formatGBP(items.vat)}
                             </td>
                           </tr>
@@ -224,8 +224,8 @@ export default function SalesPropertyDetails({
 
                     {/* TOTAL */}
                     
-                      <tr className="bg-gray-100 font-semibold text-gray-800">
-                        <td className="p-2 text-start">Total </td>
+                      <tr className="bg-gray-100 font-semibold ">
+                        <td className="p-2 text-start text-emerald-600 font-bold">Total </td>
 
                         <td className="p-2 text-right text-emerald-600 ">
                           <span>
