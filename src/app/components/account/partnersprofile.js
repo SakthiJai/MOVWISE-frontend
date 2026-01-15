@@ -6,7 +6,7 @@ import Footer from "../../parts/Footer/footer";
 import PriceBreakdownCard from "./PartnersPricebreakdown";
 import { useRouter } from "next/navigation";
 import { useFormStore } from "../../store/useFormStore";
-import { Languages, Pencil } from "lucide-react";
+import { BookCheckIcon, BookmarkCheckIcon, Languages, Pencil, User } from "lucide-react";
 
 import Select from "react-select";
 import { API_ENDPOINTS, getData, postData } from "../../auth/API/api";
@@ -1197,7 +1197,7 @@ console.log(formData)
                   : "text-gray-600 hover:bg-gray-100"
               }`}
             >
-              👤 Company Profile
+             <User className="inline w-5 h-5 mr-1 text-yellow-400" /> Company Profile
             </span>
             <span
               onClick={() => handlechangepage(2)}
@@ -1207,7 +1207,7 @@ console.log(formData)
                   : "text-gray-600 hover:bg-gray-100"
               }`}
             >
-              📜 Fee Details
+              <BookCheckIcon className="inline w-5 h-5 mr-1 text-yellow-400" /> Fee Details
             </span>
              <span
               onClick={() => handlechangepage(3)}
@@ -1217,7 +1217,7 @@ console.log(formData)
                   : "text-gray-600 hover:bg-gray-100"
               }`}
             >
-              📜Quote Raised
+              <BookmarkCheckIcon className="inline w-5 h-5 mr-1 text-yellow-400" />Quote Raised
             </span>
           </div>
         </aside>

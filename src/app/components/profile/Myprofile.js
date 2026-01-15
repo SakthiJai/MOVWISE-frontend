@@ -527,7 +527,7 @@ let response = await postData(
               }`}
             >
            
-                   <BookCheckIcon className="inline w-5 h-5 mr-1 text-red-500" />MY Quotes
+                   <BookCheckIcon className="inline w-5 h-5 mr-1 text-yellow-400" />MY Quotes
             </span>
           </div>
         </aside>
