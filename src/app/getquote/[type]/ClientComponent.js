@@ -15,6 +15,10 @@ export default function ClientComponent({ type }) {
 
   useEffect(() => {
     // Fetch data or perform side effects here
+    let ref = localStorage.getItem("ref_no")
+    if(ref){
+      localStorage.removeItem("ref_no");
+    }
   }, []);
 
   return (

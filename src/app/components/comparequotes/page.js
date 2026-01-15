@@ -33,6 +33,11 @@ export default function Comparequotes() {
   const [viewquotes, showviewquotes] = useState(false);
   const [instructloader,setinstructloader]=useState(false);
   const [quoteid,setquoteid]=useState("");
+  const [instructpayload,setinstructpayload]=useState({
+    "ref_no":"",
+    "servicetype":"",
+    "quoteid":"",
+  })
   const [cardid,setcardid]=useState();
   const [cardshow,setcardshown]=useState(false);
   const [vattax,setvattax]=useState(0);
@@ -90,30 +95,63 @@ console.log(companydata)
 
 }
   // On instruct button, show popup modal with message
-  function handleInstruct(
-    companyName,
-    guest_id,
-    conveyancer_id,
-    quote_id,
-    user_id
-  )
+  function handleInstruct( companyName,guest_id, conveyancer_id, quote_id, user_id, tax_info_quote_id, refno,)
    {
 
  setinstructloader(true);
 
-      console.log(instructloader);
-setquoteid(quote_id);
-    instructquote(quote_id)
-setconveyancerid(conveyancer_id)
+    console.log(
+      companyName,
+      guest_id,
+      conveyancer_id,
+      quote_id,
+      user_id,
+      tax_info_quote_id,
+      refno
+    );
 
-    async function instructquote(quote_id){
+    let servicetype = localStorage.getItem("service");
+
+    if(quote_id==undefined || quote_id==null || quote_id==" "){
+      setquoteid(tax_info_quote_id);
+let instructpayloadtemp={
+   ref_no: refno,
+    servicetype: servicetype,
+    quoteid: tax_info_quote_id,
+}
+
+      setconveyancerid(conveyancer_id)
+      instructquote(instructpayloadtemp)
+      console.log(instructpayload);
+    }
+
+    else{
+      let instructpayloadtemp={
+   ref_no: refno,
+    servicetype: servicetype,
+    quoteid: tax_info_quote_id,
+}
+      setquoteid(quote_id);
+      setconveyancerid(conveyancer_id)
+   
+        console.log(instructpayload);
+
+ instructquote(instructpayloadtemp)
+    }
+
+    
+
+    
+   }
+
+  async function instructquote(instructpayload){
       try{
-const instruct = await getData(API_ENDPOINTS.instruct + "/" + quote_id);
+const instruct = await postData(API_ENDPOINTS.instruct , instructpayload);
 console.log(instruct)
 
 if(instruct){
   setinstructloader(false);
-router.push(`/Instruct?id=${quote_id?quote_id:conveyancerid}`);
+router.push(`/Instruct?id=${quoteid}`);
   console.log(instructloader);
 }
       }
@@ -123,14 +161,7 @@ router.push(`/Instruct?id=${quote_id?quote_id:conveyancerid}`);
     
     
    
-    console.log(companyName);
     console.log(popupData);
-  }
-   }
-  // Close popup
-  function closePopup() {
-    setPopupData({ visible: false, companyName: "" });
-    router.push("/"); // Redirect to home page after closing
   }
 
   const router = useRouter();
@@ -140,23 +171,32 @@ useEffect(() => {
 
   async function qutesdata(formData) {
     try {
+      let refNumberExist = localStorage.getItem("ref_no");
+      if(!refNumberExist || refNumberExist=="" || refNumberExist.trim()==""){
       const response = await postData(API_ENDPOINTS.services, formData);
       console.log("✅ service API Response:", response?.service?.quote_ref_number);
 
       localStorage.setItem("ref_no", response?.service?.quote_ref_number);
 
       if (response.code === 200) {
+        refNumberExist = response?.service?.quote_ref_number
         setref(response?.service?.quote_ref_number);
         setquotefound(true);
       } else {
         setquotefound(false);
         return;
       }
+    }
+    else
+    {
+       setref(refNumberExist);
+       setquotefound(true);
+    }
 
       setLoading(true);
 
       const quoteResponse = await getData(
-        `${API_ENDPOINTS.quotesfilter}/${response?.service?.quote_ref_number}`
+        `${API_ENDPOINTS.quotesfilter}/${refNumberExist}`
       );
 
       if (quoteResponse?.status === false) {
@@ -745,14 +785,7 @@ function handlefilterchange(selectedoption = []) {
 
                           {/* Middle: Features - Static placeholder */}
                           <ul className="text-xs text-gray-700 space-y-2 font-normal text-[12px] list-none pl-4">
-                            {/* <li className="relative before:content-['•'] before:absolute before:left-0 before:text-[#4A7C59] before:text-base pl-3">
-                              {quote?.conveying_details.short_notes?.length > 60
-                                ? `${quote.conveying_details.short_notes.slice(
-                                    0,
-                                    100
-                                  )}...`
-                                : quote?.short_notes}
-                            </li> */}
+                         
                           </ul>
 
                           {/* Right: Buttons */}
@@ -766,8 +799,11 @@ function handlefilterchange(selectedoption = []) {
                                   quote.conveying_details.company_name,
                                   quote.guest_id,
                                   quote.conveying_details.conveying_id,
-                                  quote.quote_id,
-                                  quote.customer_details.customer_id
+                                  quote.quote_id ,
+                                  quote.customer_details.customer_id,
+                                  quote?.service_details[0]?.taxInfo?.quote_id,
+                                  ref,
+                                  
                                 )
                                 
                              }

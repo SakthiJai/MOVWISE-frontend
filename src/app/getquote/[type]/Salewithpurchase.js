@@ -102,9 +102,7 @@ useEffect(() => {
   }
 }, []);
 
-useEffect(() => {
-  console.log(purchaseRef.current); 
-  }, []);
+
 const handleUnknownPostcode = () => {
   // 1️⃣ Condition: user clicked "I don’t know the postcode yet"
   setShowAddressLines(true); // show address fields
@@ -144,6 +142,7 @@ const options = ["1", "2", "3", "4","5", "5+"];
 const options_purchase = ["1", "2", "3", "4","5", "5+"];
 const [rawValue, setRawValue] = useState("");
 const [rawValuePurchase, setRawValuePurchase] = useState("");
+
 useEffect(() => {
   if (typeof window === "undefined") return; 
 
