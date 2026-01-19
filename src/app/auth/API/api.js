@@ -1,6 +1,6 @@
 // ✅ Base URL for your backend
 const BASE_URL = "https://admin.movwise.com/api";
-//const BASE_URL = "http://localhost:5000/api";
+// const BASE_URL = "http://localhost:5000/api";
 export const config = {
   api: {
     bodyParser: {
@@ -36,11 +36,11 @@ export const API_ENDPOINTS = {
     getCompanyFee:`${BASE_URL}/feeDetails`,
     intstructquote_list:`${BASE_URL}/get-user-quotes`,
     update_user_profile : `${BASE_URL}/editpersonal_details`,
-update_partner_profile : `${BASE_URL}/editcompanydetials`,
+    update_partner_profile : `${BASE_URL}/editcompanydetials`,
     addguest:`${BASE_URL}/addguest`,
-    api_key:`${BASE_URL}/app-setting`
-
-
+    api_key:`${BASE_URL}/app-setting`,
+    forgetpassword:`${BASE_URL}/send-email`,
+    resetpassword:`${BASE_URL}/reset_password`
 }
   // add more endpoints here
 

@@ -25,6 +25,11 @@ export default function Signinmodal({ closeModal,partnerloginshow }) {
 
   const [loginError, setLoginError] = useState("");
 const [formErrors, setFormErrors] = useState({});
+const [forgotPasswordShow, setForgotPasswordShow] = useState(false);
+const [forgotEmail, setForgotEmail] = useState("");
+const [forgotError, setForgotError] = useState("");
+const [forgotLoading, setForgotLoading] = useState(false);
+const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
 const validateLoginForm = () => {
   const errors = {};
@@ -183,6 +188,30 @@ const validateGuestForm = () => {
       console.error("Error logging in:", error);
     }
   }
+const forgotPasswordApiCall = async () => {
+  try {
+    setForgotError("");
+    setForgotLoading(true);
+
+    const response = await postData(
+      API_ENDPOINTS.forgetpassword,
+      { email: forgotEmail }
+    );
+
+    if (response.code === 200) {
+      setShowSuccessPopup(true);   
+      setForgotEmail("");
+    } else {
+      setForgotError(response.message || "Email not found");
+    }
+  } catch (error) {
+    console.error("Forgot password error:", error);
+    setForgotError("Something went wrong. Please try again.");
+  } finally {
+    setForgotLoading(false);       
+  }
+};
+
 async function createguestuser() {
   try {
     // 1️⃣ Validate guest form
@@ -339,8 +368,65 @@ async function createguestuser() {
           </div>
         )}
 
-        {/* LOGIN FORM */}
-        {loginformshow && (
+       {forgotPasswordShow ? (
+        <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-6">
+  <form
+    onSubmit={(e) => {
+      e.preventDefault();
+      if (!forgotEmail) {
+        setForgotError("Email is required");
+        return;
+      }
+      forgotPasswordApiCall(); // call your API here
+    }}
+    className="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg border border-gray-200"
+  >
+    <h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">
+      Forgot Password
+    </h2>
+
+    {forgotError && (
+      <p className="text-red-600 text-sm text-center mb-4">
+        {forgotError}
+      </p>
+    )}
+
+    <div className="mb-6">
+      <label className="block text-sm font-semibold text-gray-700 mb-2">
+        Email Address
+      </label>
+      <input
+        type="email"
+        placeholder="Enter registered email"
+        value={forgotEmail}
+        onChange={(e) => setForgotEmail(e.target.value)}
+        className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all "
+      />
+    </div>
+
+<button
+  type="submit"
+  disabled={forgotLoading}
+  className={`w-full font-semibold py-3 rounded-lg transition-all
+    ${forgotLoading
+      ? "bg-gray-400 cursor-not-allowed"
+      : "bg-[#1E5C3B] hover:bg-green-700 text-white"
+    }`}
+>
+  {forgotLoading ? "Sending..." : "Send Reset Link"}
+</button>
+
+
+    <button
+      type="button"
+      onClick={() => setForgotPasswordShow(false)}
+      className="mt-2 w-full bg-[#ffd954] text-white font-semibold py-3 rounded-lg"
+    >
+      Back to Login
+    </button>
+  </form>
+  </div>
+) : loginformshow ? (
           <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-6">
             <form
             noValidate
@@ -412,7 +498,16 @@ async function createguestuser() {
                   <p className="text-red-500 text-xs mt-1">{formErrors.password}</p>
                 )}
               </div>
-
+              {/* Forgot Password */}
+              <div className="mb-6 text-right">
+                <button
+                  type="button"
+                  onClick={() => setForgotPasswordShow(true)}
+                  className="text-sm font-medium text-[#1E5C3B] hover:underline"
+                >
+                  Forgot Password?
+                </button>
+              </div>
               {/* Submit Button */}
               <button
                 type="submit"
@@ -442,7 +537,30 @@ async function createguestuser() {
               </button>
             </form>
           </div>
-        )}
+        ): null}
+
+{showSuccessPopup && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-20 backdrop-blur-sm">
+    <div className="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full text-center">
+      <h3 className="text-xl font-bold text-[#1E5C3B] mb-3">
+        Check your email
+      </h3>
+      <p className="text-gray-600 mb-6">
+        We’ve sent a password reset link to your email address.
+        Please check your inbox or spam folder.
+      </p>
+      <button
+        onClick={() => {
+          setShowSuccessPopup(false);
+          setForgotPasswordShow(false); // back to login
+        }}
+        className="w-full bg-[#1E5C3B] text-white font-semibold py-2 rounded-lg hover:bg-green-700"
+      >
+        OK
+      </button>
+    </div>
+  </div>
+)}
 
         {guestformshow && (
           <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-6">
