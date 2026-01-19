@@ -430,9 +430,9 @@ function handlefilterchange(selectedoption = []) {
         <div className="grid lg:grid-cols-[400px_1fr] gap-8 lg:gap-12">
           {/* Left rail: stepper panel (Sidebar) */}
           {/* KEY CHANGE: Removed w-[400px] from here. It now spans the full width on small screens and is controlled by the grid on 'lg'. */}
-          <aside className="relative rounded-[40px] overflow-hidden bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] shadow-[inset_0_1px_0_rgba(0,0,0,0.03)] p-6 lg:p-0">
+           <aside className="relative rounded-[40px] overflow-hidden bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] shadow-[inset_0_1px_0_rgba(0,0,0,0.03)] lg:h-[80vh]  w-full  p-6 lg:p-0" style={{height : "140%"}}>
             {/* Added p-6 for padding on small screens since the original design had 'absolute inset-0 p-8' */}
-            <div className="relative z-10 p-2 lg:p-8">
+            <div className="p-6 h-full flex flex-col justify-around ">
               {" "}
               {/* Re-adjusted padding for lg */}
               {/* Step 1 - Completed */}
@@ -455,7 +455,7 @@ function handlefilterchange(selectedoption = []) {
                       />
                     </svg>
                   </div>
-                  <div className="absolute left-[22px] top-[44px] w-[2px] h-[56px] bg-[#CFE3CF]" />
+                  <div className="absolute left-[22px] top-[44px] w-[2px] h-[510%] bg-[#CFE3CF]" />
                 </div>
                 <div>
                   <div className="text-[12px] font-semibold pesonaldetails-steps font-gilroy">
@@ -489,7 +489,7 @@ function handlefilterchange(selectedoption = []) {
                       />
                     </svg>
                   </div>
-                  <div className="absolute left-[22px] top-[44px] w-[2px] h-[56px] bg-[#CFE3CF]" />
+                  <div className="absolute left-[22px] top-[44px] w-[2px] h-[420%] bg-[#CFE3CF]" />
                 </div>
                 <div>
                   <div className="text-[12px] font-semibold pesonaldetails-steps font-gilroy">

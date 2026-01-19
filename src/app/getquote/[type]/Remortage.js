@@ -430,7 +430,7 @@ const getIconForType = (type) => {
         return (
                          <div className="flex flex-col lg:flex-row gap-8 mt-8">
                 {/* Left stepper */}
-                       <aside className="z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-1/2 lg:h-[80vh] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white   lg:top-22">
+                       <aside className="z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-1/2 lg:h-[80vh] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white   lg:top-22" style={{height : "88.5%"}}>
                                      <div className="p-6 h-full flex flex-col justify-around ">
                                        {/* Step 1 */}
                                        <div className="flex items-start">
@@ -438,7 +438,7 @@ const getIconForType = (type) => {
                                            <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
                                              <Check size={18} />
                                            </div>
-                                           <div className="absolute left-[19px] top-[40px] w-[2px] h-[150px] bg-[#CFE3CF]" />
+                                           <div className="absolute left-[19px] top-[40px] w-[2px] h-[510%] bg-[#CFE3CF]" />
                                          </div>
                                          <div>
                                            <div className="text-xs font-semibold text-[#1E1E1E]">STEP 1</div>
@@ -453,7 +453,7 @@ const getIconForType = (type) => {
                                            <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-white text-[#1E5C3B] flex items-center justify-center">
                                              <div className="w-4 h-4 rounded-full bg-[#1E5C3B]" />
                                            </div>
-                                           <div className="absolute left-[19px] top-[40px] w-[2px] h-[150px] bg-gray-200" />
+                                           <div className="absolute left-[19px] top-[40px] w-[2px] h-[510%] bg-gray-200" />
                                          </div>
                                          <div>
                                            <div className="text-xs font-semibold text-[#1E1E1E]">STEP 2</div>
