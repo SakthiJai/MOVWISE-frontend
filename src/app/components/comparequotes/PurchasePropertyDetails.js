@@ -224,7 +224,7 @@ export default function PurchasePropertyDetails({
                               <div className="ml-4">
                                 {" "}
                                 {/* margin-left works here */}
-                                Total
+                               {category}  Total
                               </div>
                             </td>
 

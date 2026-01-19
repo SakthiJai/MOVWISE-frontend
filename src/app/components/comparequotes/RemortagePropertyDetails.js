@@ -196,7 +196,7 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                                                         
                                                                       <tr  className="border-b border-gray-200 text-start">
                                                                           <td className="p-2 break-words text-sm font_size_13px font-bold"> <div className="ml-4"> {/* margin-left works here */}
-                                                              Total 
+                                                             {category}  Total 
                                                             </div></td>
                                                           
                                                                           <td className="p-2 text-right text-sm font_size_13px font-bold">

@@ -418,141 +418,66 @@ function handlefilterchange(selectedoption = []) {
 }
 
   return (
-    <div className="min-h-screen bg-white antialiased">
-      {/* Top bar */}
-       <div className='bg-white shadow-md p-1 pb-1'>
-         <Navbar />
-       </div>
-     
-
-      <main className="mx-auto max-w-[1200px] pt-10 px-4 lg:px-0 mb-10">
-        {/* KEY CHANGE: The main layout switches from a single column (default) to a two-column grid on 'lg' screens. */}
-        <div className="grid lg:grid-cols-[400px_1fr] gap-8 lg:gap-12">
-          {/* Left rail: stepper panel (Sidebar) */}
-          {/* KEY CHANGE: Removed w-[400px] from here. It now spans the full width on small screens and is controlled by the grid on 'lg'. */}
-           <aside className="relative rounded-[40px] overflow-hidden bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] shadow-[inset_0_1px_0_rgba(0,0,0,0.03)] lg:h-[80vh]  w-full  p-6 lg:p-0" style={{height : "140%"}}>
-            {/* Added p-6 for padding on small screens since the original design had 'absolute inset-0 p-8' */}
-            <div className="p-6 h-full flex flex-col justify-around ">
-              {" "}
-              {/* Re-adjusted padding for lg */}
-              {/* Step 1 - Completed */}
-              <div className="flex items-start">
-                <div className="relative mr-4">
-                  <div className="w-11 h-11 rounded-full border-[2px] border-[#1E5C3B] bg-[#1E5C3B] flex items-center justify-center text-white">
-                    {/* Check icon */}
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth="2"
-                      stroke="currentColor"
-                      className="w-5 h-5"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  </div>
-                  <div className="absolute left-[22px] top-[44px] w-[2px] h-[510%] bg-[#CFE3CF]" />
-                </div>
-                <div>
-                  <div className="text-[12px] font-semibold pesonaldetails-steps font-gilroy">
-                    STEP 1
-                  </div>
-                  <div className="font-outfit text-[20px] text-gray-900 font-semibold">
-                    Personal Details
-                  </div>
-                  <div className="text-[12px] font-medium text-[#2D7C57] mt-1">
-                    Completed
-                  </div>
-                </div>
-              </div>
-              {/* Step 2 - Completed */}
-              <div className="flex items-start mt-8">
-                <div className="relative mr-4">
-                  <div className="w-11 h-11 rounded-full border-[2px] border-[#1E5C3B] bg-[#1E5C3B] flex items-center justify-center text-white">
-                    {/* Check icon */}
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth="2"
-                      stroke="currentColor"
-                      className="w-5 h-5"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  </div>
-                  <div className="absolute left-[22px] top-[44px] w-[2px] h-[420%] bg-[#CFE3CF]" />
-                </div>
-                <div>
-                  <div className="text-[12px] font-semibold pesonaldetails-steps font-gilroy">
-                    STEP 2
-                  </div>
-                  <div className="font-outfit text-[20px] text-gray-900 font-semibold">
-                    Property Details
-                  </div>
-                  <div className="text-[12px] font-medium text-[#2D7C57] mt-1">
-                    Completed
-                  </div>
-                </div>
-              </div>
-              {/* Step 3 - In progress (keep as current) */}
-              <div className="flex items-start mt-8">
-                <div className="mr-4">
-                  <div className="w-11 h-11 rounded-full border-[2px] border-[#1E5C3B] bg-[#1E5C3B] flex items-center justify-center text-white">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth="2"
-                      stroke="currentColor"
-                      className="w-5 h-5"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                  </div>
-                </div>
-                <div>
-                  <div className="text-[12px] font-semibold pesonaldetails-steps font-gilroy">
-                    STEP 3
-                  </div>
-                  <div className="font-outfit text-[20px] font-semibold text-gray-900">
-                    Compare Quotes
-                  </div>
-                   <div className="text-[12px] font-medium text-[#2D7C57] mt-1">
-                    Completed
-                  </div>
-                </div>
-              </div>
+ <div className=" bg-white antialiased font ">
+   
+            <div className='bg-white shadow-md sticky top-0 p-4 z-50'>
+            <Navbar />
             </div>
+               <main className="mx-auto max-w-[1200px] pt-2 px-4 lg:px-0 mb-5 mt-20">
+                   <div className="flex flex-col lg:flex-row gap-8">
+                       <aside className="z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-1/2 lg:h-[80vh] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white   lg:top-22" style={{height : "88.5%"}}>
+                         <div className="p-6 h-full flex flex-col justify-around ">
+                                 {/* Step 1 */}
+                                 <div className="flex items-start">
+                                   <div className="relative mr-4">
+                                     <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
+                                       <Check size={18} />
+                                     </div>
+                                     <div className="absolute left-[19px] top-[40px] w-[2px] h-[510%] bg-[#CFE3CF]" />
+                                   </div>
+                                   <div>
+                                     <div className="text-xs font-semibold text-[#1E1E1E]">STEP 1</div>
+                                     <div className="text-lg font-extrabold text-[#1E1E1E]">Personal Details</div>
+                                     <div className="text-xs text-[#2D7C57] mt-1">Completed</div>
+                                   </div>
+                                 </div>
+                   
+                                 {/* Step 2 (Current) */}
+                                 <div className="flex items-start mt-6">
+                                   <div className="relative mr-4">
+                                     <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
+                                       <Check size={18} />
+                                     </div>
+                                     <div className="absolute left-[19px] top-[40px] w-[2px] h-[510%] bg-[#CFE3CF]" />
+                                   </div>
+                                   <div>
+                                     <div className="text-xs font-semibold text-[#1E1E1E]">STEP 2</div>
+                                     <div className="text-lg font-extrabold text-[#1E1E1E]">Property Details</div>
+                                     <div className="text-xs text-[#2D7C57] mt-1">Completed</div>
+                                   </div>
+                                 </div>
+                   
+                                 {/* Step 3 */}
+                                 <div className="flex items-start mt-6">
+                                   <div className="relative mr-4">
+                                     <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
+                                       <Check size={18} />
+                                     </div>
 
-            {/* Decorative wave */}
-            {/* KEY CHANGE: Changed h-[45%] to h-full and removed absolute for better stacking on mobile. Re-added lg:absolute for large screens. */}
-            <div
-              aria-hidden="true"
-              className="h-full lg:absolute inset-x-0 bottom-0 lg:h-[45%] "
-              style={{
-                background:
-                  "radial-gradient(120% 80% at 0% 100%, rgba(178,196,160,0.45) 0%, rgba(178,196,160,0.25) 35%, transparent 70%)",
-              }}
-            />
+                                   </div>
+                                   <div>
+                                     <div className="text-xs font-semibold text-[#1E1E1E]">STEP 3</div>
+                                     <div className="text-lg font-extrabold text-[#1E1E1E]">Compare Quotes</div>
+                                      <div className="text-xs text-[#2D7C57] mt-1">Completed</div>
+                                   </div>
+                                 </div>
+                               </div>
           </aside>
 
           {/* Right section (Main Content) */}
           {/* KEY CHANGE: Removed col-start-2. The natural flow of the grid handles the stacking on mobile and placement on 'lg' */}
-          <section>
-            <div className="overflow-auto space-y-6 pr-2 rounded-[18px] border border-[#f2eded] shadow-[0_6px_24px_rgba(16,24,40,0.04)] bg-white w-full lg:h-[500px]">
+           <section className=" ">
+            <div className="overflow-auto space-y-6 pr-2 rounded-[18px] border border-[#f2eded] shadow-[0_6px_24px_rgba(16,24,40,0.04)] bg-white  lg:h-[690px] flex-1 p-4 sm:p-8 lg:p-10 lg:ml-83">
               <div className="p-4 sm:p-8">
                 <nav
                   className="text-[13px] text-[#6B7280] mb-1 flex items-center gap-4"
@@ -1143,10 +1068,12 @@ function handlefilterchange(selectedoption = []) {
 
           {/* Popup Modal for Instruct */}
          
-        </div>
+       </div>
       </main>
-      <div className=" pt-16 text-center text-gray-700 text-sm font">
-          <p>&copy; {new Date().getFullYear()} MovWise. All rights reserved.</p>
+      
+  
+    <div className="pt-0.5 text-center text-gray-700 text-sm font">
+          <p className="">&copy; {new Date().getFullYear()} MovWise. All rights reserved.</p>
         </div>
     </div>
   );

@@ -471,7 +471,7 @@ const getIconForType = (type) => {
                                          </div>
                                          <div>
                                            <div className="text-xs font-semibold text-[#1E1E1E]">STEP 3</div>
-                                           <div className="text-lg font-bold text-[#1E1E1E]">Compare Quotes</div>
+                                           <div className="text-lg font-extrabold text-[#1E1E1E]">Compare Quotes</div>
                                          </div>
                                        </div>
                                      </div>

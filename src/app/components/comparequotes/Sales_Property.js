@@ -205,7 +205,7 @@ export default function SalesPropertyDetails({
                               <div className="ml-4 font_size_13px font-bold">
                                 {" "}
                                 {/* margin-left works here */}
-                                Total
+                                {category} Total
                               </div>
                             </td>
 
