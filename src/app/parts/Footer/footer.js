@@ -75,7 +75,7 @@ export default function Footer(){
             <ul className="space-y-2">
               <li><Link href="/" className="hover:text-amber-500">Home</Link></li>
               <li><Link href="/#quote_type" className="hover:text-amber-500">Get Quotes</Link></li>
-              <li><Link href="/conveyancers/Companyregistration" className="hover:text-amber-500">For Solicitors</Link></li>
+              {/* <li><Link href="/conveyancers/Companyregistration" className="hover:text-amber-500">For Solicitors</Link></li> */}
               <li><Link href="/components/About" className="hover:text-amber-500">About Us</Link></li>
               <li><Link href="/#contact" className="hover:text-amber-500">Contact</Link></li>
             </ul>

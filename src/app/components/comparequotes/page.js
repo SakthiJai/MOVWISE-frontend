@@ -110,10 +110,11 @@ const generatePDF = async () => {
     wrapper.style.position = 'absolute';
     wrapper.style.left = '-9999px';
     wrapper.style.top = '0';
-    wrapper.style.width = '900px';
+    wrapper.style.width = '800px';
     wrapper.style.backgroundColor = 'white';
-    wrapper.style.padding = '20px';
+    wrapper.style.padding = '15px';
     wrapper.style.fontFamily = 'Arial, sans-serif';
+    wrapper.style.lineHeight = '1.4';
 
     // Clone the pdfRef content
     const cloned = pdfRef.current.cloneNode(true);
@@ -127,6 +128,8 @@ const generatePDF = async () => {
         // Set basic text properties
         el.style.fontFamily = 'Arial, sans-serif';
         el.style.color = '#000';
+        el.style.fontSize = '11px';
+        el.style.margin = '0';
       });
     };
 
@@ -136,25 +139,26 @@ const generatePDF = async () => {
 
     // Capture with html2canvas
     const canvas = await html2canvas(wrapper, {
-      scale: 2,
+      scale: 1.5,
       useCORS: true,
       allowTaint: true,
       backgroundColor: '#ffffff',
       logging: false,
       imageTimeout: 10000,
+      windowHeight: wrapper.scrollHeight,
+      windowWidth: 800,
       onclone: (clonedDocument) => {
         // Ensure styles are applied to cloned document
         const style = clonedDocument.createElement('style');
         style.textContent = `
-          body { font-family: Arial, sans-serif; color: #000; background: white; }
-          * { 
-            color: #000 !important; 
-            background-color: transparent !important;
-            border-color: #ddd !important;
-          }
-          table { border-collapse: collapse; width: 100%; }
-          th, td { border: 1px solid #ddd; padding: 8px; }
+          * { margin: 0; padding: 0; }
+          body { font-family: Arial, sans-serif; color: #000; background: white; font-size: 11px; line-height: 1.4; }
+          div, p, span { color: #000 !important; background-color: transparent !important; }
+          table { border-collapse: collapse; width: 100%; margin: 5px 0; }
+          tr { page-break-inside: avoid; }
+          th, td { border: 1px solid #ddd; padding: 4px; font-size: 11px; }
           th { background-color: #f5f5f5 !important; }
+          h3, h4 { font-size: 13px; margin: 8px 0 4px 0; }
         `;
         clonedDocument.head.appendChild(style);
       }
@@ -177,23 +181,25 @@ const generatePDF = async () => {
       orientation: 'portrait',
       unit: 'mm',
       format: 'a4',
+      compress: true,
     });
 
-    const imgWidth = 210; // A4 width
-    const pageHeight = 295; // A4 height
+    const margin = 10; // 10mm margins
+    const imgWidth = 210 - (margin * 2); // A4 width minus margins
+    const pageHeight = 297 - (margin * 2); // A4 height minus margins
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
     let heightLeft = imgHeight;
-    let position = 0;
+    let position = margin;
 
     // Add first page
-    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
     heightLeft -= pageHeight;
 
     // Add additional pages if needed
     while (heightLeft > 0) {
-      position = heightLeft - imgHeight;
+      position = heightLeft - imgHeight + margin;
       pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
       heightLeft -= pageHeight;
     }
 
@@ -557,7 +563,7 @@ function handlefilterchange(selectedoption = []) {
                                    </div>
                                    <div>
                                      <div className="text-xs font-semibold text-[#1E1E1E]">STEP 1</div>
-                                     <div className="text-lg font-extrabold text-[#1E1E1E]">Personal Details</div>
+                                     <div className="text-lg font-extrabold text-[#1E1E1E]">Property Details</div>
                                      <div className="text-xs text-[#2D7C57] mt-1">Completed</div>
                                    </div>
                                  </div>
@@ -572,7 +578,7 @@ function handlefilterchange(selectedoption = []) {
                                    </div>
                                    <div>
                                      <div className="text-xs font-semibold text-[#1E1E1E]">STEP 2</div>
-                                     <div className="text-lg font-extrabold text-[#1E1E1E]">Property Details</div>
+                                     <div className="text-lg font-extrabold text-[#1E1E1E]">Personal Details</div>
                                      <div className="text-xs text-[#2D7C57] mt-1">Completed</div>
                                    </div>
                                  </div>
@@ -995,9 +1001,9 @@ function handlefilterchange(selectedoption = []) {
       Instruct
     </button>
 
-    <button className="border px-4 py-2 rounded text-emerald-600 text-sm" onClick={generatePDF}>
+    {/* <button className="border px-4 py-2 rounded text-emerald-600 text-sm" onClick={generatePDF}>
       Download
-    </button>
+    </button> */}
   </div>
 </div>
 
@@ -1038,6 +1044,11 @@ function handlefilterchange(selectedoption = []) {
                                             />
                                           )}
                                         </td>
+                                           {/* <td colSpan="2" className="p-3"> 
+                                             <span className="text-[34px] col-span-2 me-1 p-2 leading-none font-extrabold text-[#1E5C3B] tracking-tight">
+                                                {view_data?.appsetting_details?.company_name || "MovWise"}
+                                              </span> 
+                                             </td> */}
                                       </tr>
                                   
                                       {/* Contact Details and User Details in Single Row */}
@@ -1080,7 +1091,7 @@ function handlefilterchange(selectedoption = []) {
                                               <div className="flex">
                                                 <span className="font-semibold w-20 text-sm">Email:</span>
                                                 <span className="text-sm">{quote?.customer_details?.email || "--"}</span>
-                                              </div>
+                                               </div>
                                               <div className="flex">
                                                 <span className="font-semibold w-20 text-sm">Phone:</span>
                                                 <span className="text-sm">{quote?.customer_details?.phone_number || "--"}</span>

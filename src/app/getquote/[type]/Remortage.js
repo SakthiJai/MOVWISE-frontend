@@ -442,8 +442,8 @@ const getIconForType = (type) => {
                                          </div>
                                          <div>
                                            <div className="text-xs font-semibold text-[#1E1E1E]">STEP 1</div>
-                                           <div className="text-lg font-extrabold text-[#1E1E1E]">Personal Details</div>
-                                           <div className="text-xs text-[#2D7C57] mt-1">Completed</div>
+                                           <div className="text-lg font-extrabold text-[#1E1E1E]">Property Details</div>
+                                           <div className="text-xs text-[#2D7C57] mt-1">In Progress</div>
                                          </div>
                                        </div>
                          
@@ -457,8 +457,8 @@ const getIconForType = (type) => {
                                          </div>
                                          <div>
                                            <div className="text-xs font-semibold text-[#1E1E1E]">STEP 2</div>
-                                           <div className="text-lg font-extrabold text-[#1E1E1E]">Property Details</div>
-                                           <div className="text-xs text-[#A38320] mt-1">In Progress</div>
+                                           <div className="text-lg font-extrabold text-[#1E1E1E]">Personal Details</div>
+                                           <div className="text-xs text-[#A38320] mt-1"></div>
                                          </div>
                                        </div>
                          
