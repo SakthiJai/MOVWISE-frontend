@@ -20,7 +20,7 @@ const Navbar = ({ originalstyle = false }) => {
     { name: "Home", href: "/" },
     { name: "About", href: "/components/About" },
     { name: "Services", href: "/components/Service" },
-    { name: "Advice / Blog", href: "/components/Advice" },
+    { name: "Advice / Blog", href: "/blog" },
     { name: "Resources", href: "/components/Resources" },
   ];
 

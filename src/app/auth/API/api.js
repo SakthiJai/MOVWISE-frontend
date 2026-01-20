@@ -40,7 +40,9 @@ export const API_ENDPOINTS = {
     addguest:`${BASE_URL}/addguest`,
     api_key:`${BASE_URL}/app-setting`,
     forgetpassword:`${BASE_URL}/send-email`,
-    resetpassword:`${BASE_URL}/reset_password`
+    resetpassword:`${BASE_URL}/reset_password`,
+     blogs:`${BASE_URL}/blog`,
+     blogDetail:`${BASE_URL}/blog`,
 }
   // add more endpoints here
 

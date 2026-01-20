@@ -65,7 +65,7 @@ export default function Footer() {
         <ul className="space-y-2 text-gray-300 text-sm  p-1 m-1">
           <li><a href="#">Buying</a></li>
           <li><a href="#">Selling</a></li>
-          <li><a href="#">Advice / Blog</a></li>
+          <li><a href="/blog">Advice / Blog</a></li>
         </ul>
       </div>
 
