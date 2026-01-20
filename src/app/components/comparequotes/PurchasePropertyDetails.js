@@ -44,99 +44,80 @@ export default function PurchasePropertyDetails({
     <div className="grid grid-cols-[0.5fr_1fr] p-4 border-1 mt-3 font_size_13px">
             <h5 className="col-span-3 text-lg font-semibold text-emerald-600 mb-10">Purchase Quote</h5>
 
-      <div className=" text-sm">
-        <div className="text-emerald-600 text-start font_size_13px">
-          <h3 className="text-lg font-semibold ">Purchase Property Details</h3>
+      <div className="py-1 text-sm">
+        <div className="text-start">
+          <h3 className="text-lg font-semibold text-emerald-600">
+            Purchase Property Details
+          </h3>
         </div>
-        <div className="flex font_size_13px">
-          <span className="font-semibold w-40 text-left font_size_13px ">Stages</span>
-          <span className="">{servicData?.stages || "--"}</span>
-        </div>
-        <div className="flex font_size_13px">
-          <span className="font-semibold w-40 text-left font_size_13px">Town_city</span>
-          <span className="">{servicData?.town_city || "--"}</span>
-        </div>
-        <div className="flex font_size_13px">
-          <span className="font-semibold w-40 text-left font_size_13px">Country</span>
-          <span className="">{servicData?.country || "--"}</span>
-        </div>
-        <div className="flex font_size_13px">
-          <span className="font-semibold w-40 text-left font_size_13px">Purchase Price</span>
-          <span className="">£{servicData?.purchase_price || "--"}</span>
-        </div>
-
-        <div className="flex font_size_13px">
-          <span className="font-semibold w-40 text-left font_size_13px">No Of Bedrooms</span>
-          <span className="">{servicData?.no_of_bedrooms || "--"}</span>
-        </div>
-        <div className="flex font_size_13px">
-          <span className="font-semibold w-40 text-left font_size_13px">
-            Leasehold Or Free
-          </span>
-          <span className="">{servicData?.leasehold_or_free || "--"}</span>
-        </div> 
-        <div className="flex font_size_13px">
-          <span className="font-semibold w-40 text-left font_size_13px">Property Type</span>
-          <span className="">{servicData?.property_type || "--"}</span>
-        </div>
-        <div className="flex font_size_13px">
-          <span className="font-semibold w-40 text-left">
-            High Raise Support
-          </span>
-          <span className="">
-            {servicData?.purchase_high_raise_support == 0 ? "No" : "Yes"}
-          </span>
-        </div>
-        <div className="flex font_size_13px">
-          <span className="font-semibold w-40 text-left">Purchase Mode</span>
-          <span className="">{servicData?.purchase_mode || "--"}</span>
-        </div>
-
-        <div className="flex mt-3 font_size_13px">
-          <span className="font-semibold w-40 text-left">Buy To Let</span>
-          <span className="">{servicData?.buy_to_let || "--"}</span>
-        </div>
-
-        <div className="flex font_size_13px">
-          <span className="font-semibold w-40 text-left">
-            Obtaining Mortgage
-          </span>
-          <span className="">
-            {servicData?.obtaining_mortgage == 0 ? "No" : "Yes"}
-          </span>
-        </div>
-
-        <div className="flex font_size_13px">
-          <span className="font-semibold w-40 text-left">Gift Deposit</span>
-          <span className="">
-            {servicData?.gift_deposit != null
-              ? `${servicData.gift_deposit} Gift Deposit`
-              : "--"}
-          </span>
-        </div>
-
-        <div className="flex font_size_13px">
-          <span className="font-semibold w-40 text-left">Languages</span>
-          <span>
-            {language.find((l) => l.id == servicData?.languages)
-              ?.language_name || "--"}
-          </span>
-        </div>
-
-        <div className="flex font_size_13px">
-          <span className="font-semibold w-40 text-left">
-            Life Time Support
-          </span>
-          <span className="">
-            {servicData?.purchase_lifetime_isa == 0 ? "No" : "Yes"}
-          </span>
-        </div>
-        <div className="flex font_size_13px">
-          <span className="font-semibold w-40 text-left">HMO Support</span>
-          <span className="">
-            {servicData?.purchase_need_hmo == 0 ? "No" : "Yes"}
-          </span>
-        </div>
+        <table className="w-full border-collapse">
+          <tbody>
+            <tr className=" border-gray-200">
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">Stages</td>
+              <td className="p-2 text-left font_size_13px">{servicData?.stages || "--"}</td>
+            </tr>
+            <tr className=" border-gray-200">
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">Town City</td>
+              <td className="p-2 text-left font_size_13px">{servicData?.town_city || "--"}</td>
+            </tr>
+            <tr className=" border-gray-200">
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">Country</td>
+              <td className="p-2 text-left font_size_13px">{servicData?.country || "--"}</td>
+            </tr>
+            <tr className=" border-gray-200">
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">Purchase Price</td>
+              <td className="p-2 text-left font_size_13px">£{servicData?.purchase_price || "--"}</td>
+            </tr>
+            <tr className=" border-gray-200">
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">No Of Bedrooms</td>
+              <td className="p-2 text-left font_size_13px">{servicData?.no_of_bedrooms || "--"}</td>
+            </tr>
+            <tr className=" border-gray-200">
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">Leasehold Or Free</td>
+              <td className="p-2 text-left font_size_13px">{servicData?.leasehold_or_free || "--"}</td>
+            </tr>
+            <tr className="border-gray-200">
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">Property Type</td>
+              <td className="p-2 text-left font_size_13px">{servicData?.property_type || "--"}</td>
+            </tr>
+            <tr className=" border-gray-200">
+              <td className="p-2 font-semibold w-40 text-left">High Raise Support</td>
+              <td className="p-2 text-left font_size_13px">{servicData?.purchase_high_raise_support == 0 ? "No" : "Yes"}</td>
+            </tr>
+            <tr className=" border-gray-200">
+              <td className="p-2 font-semibold w-40 text-left">Purchase Mode</td>
+              <td className="p-2 text-left font_size_13px">{servicData?.purchase_mode || "--"}</td>
+            </tr>
+            <tr className=" border-gray-200">
+              <td className="p-2 font-semibold w-40 text-left">Buy To Let</td>
+              <td className="p-2 text-left font_size_13px">{servicData?.buy_to_let || "--"}</td>
+            </tr>
+            <tr className=" border-gray-200">
+              <td className="p-2 font-semibold w-40 text-left">Obtaining Mortgage</td>
+              <td className="p-2 text-left font_size_13px">{servicData?.obtaining_mortgage == 0 ? "No" : "Yes"}</td>
+            </tr>
+            <tr className=" border-gray-200">
+              <td className="p-2 font-semibold w-40 text-left">Gift Deposit</td>
+              <td className="p-2 text-left font_size_13px">
+                {servicData?.gift_deposit != null ? `${servicData.gift_deposit} Gift Deposit` : "--"}
+              </td>
+            </tr>
+            <tr className="border-gray-200">
+              <td className="p-2 font-semibold w-40 text-left">Languages</td>
+              <td className="p-2 text-left font_size_13px">
+                {language.find((l) => l.id == servicData?.languages)?.language_name || "--"}
+              </td>
+            </tr>
+            <tr className=" border-gray-200">
+              <td className="p-2 font-semibold w-40 text-left">Life Time Support</td>
+              <td className="p-2 text-left font_size_13px">{servicData?.purchase_lifetime_isa == 0 ? "No" : "Yes"}</td>
+            </tr>
+            <tr>
+              <td className="p-2 font-semibold w-40 text-left">HMO Support</td>
+              <td className="p-2 text-left font_size_13px">{servicData?.purchase_need_hmo == 0 ? "No" : "Yes"}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       <div className="font_size_13px ">

@@ -1,5 +1,7 @@
 "use client";
 import React, { useEffect, useState,useRef } from "react";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 import DOMPurify from "dompurify";
 import Navbar from "../../parts/navbar/page";
 import { RiArrowDropDownLine } from "react-icons/ri";
@@ -25,6 +27,7 @@ import Select from 'react-select';
 export default function Comparequotes() {
   // State to hold companies data (initialized with static data)
   const [companydata, setcompanydata] = useState();
+  const pdfRef = useRef();
   const hasCalledService = useRef(false);
   const [ref, setref] = useState("");
   const [quotefound, setquotefound] = useState(false);
@@ -94,6 +97,115 @@ function handleprice()
 console.log(companydata)
 
 }
+
+const generatePDF = async () => {
+  try {
+    if (!pdfRef.current) {
+      Swal.fire('Error', 'PDF element not found', 'error');
+      return;
+    }
+
+    // Create a temporary wrapper to capture the content with clean styles
+    const wrapper = document.createElement('div');
+    wrapper.style.position = 'absolute';
+    wrapper.style.left = '-9999px';
+    wrapper.style.top = '0';
+    wrapper.style.width = '900px';
+    wrapper.style.backgroundColor = 'white';
+    wrapper.style.padding = '20px';
+    wrapper.style.fontFamily = 'Arial, sans-serif';
+
+    // Clone the pdfRef content
+    const cloned = pdfRef.current.cloneNode(true);
+    
+    // Remove/fix problematic styles
+    const removeProblematicStyles = (element) => {
+      const allElements = element.querySelectorAll('*');
+      allElements.forEach(el => {
+        // Remove Tailwind classes that might have complex colors
+        el.className = '';
+        // Set basic text properties
+        el.style.fontFamily = 'Arial, sans-serif';
+        el.style.color = '#000';
+      });
+    };
+
+    removeProblematicStyles(cloned);
+    wrapper.appendChild(cloned);
+    document.body.appendChild(wrapper);
+
+    // Capture with html2canvas
+    const canvas = await html2canvas(wrapper, {
+      scale: 2,
+      useCORS: true,
+      allowTaint: true,
+      backgroundColor: '#ffffff',
+      logging: false,
+      imageTimeout: 10000,
+      onclone: (clonedDocument) => {
+        // Ensure styles are applied to cloned document
+        const style = clonedDocument.createElement('style');
+        style.textContent = `
+          body { font-family: Arial, sans-serif; color: #000; background: white; }
+          * { 
+            color: #000 !important; 
+            background-color: transparent !important;
+            border-color: #ddd !important;
+          }
+          table { border-collapse: collapse; width: 100%; }
+          th, td { border: 1px solid #ddd; padding: 8px; }
+          th { background-color: #f5f5f5 !important; }
+        `;
+        clonedDocument.head.appendChild(style);
+      }
+    });
+
+    document.body.removeChild(wrapper);
+
+    // Check if canvas has valid data
+    if (!canvas || canvas.width === 0 || canvas.height === 0) {
+      throw new Error('Canvas rendering failed - empty canvas');
+    }
+
+    const imgData = canvas.toDataURL('image/png');
+    
+    if (!imgData || imgData === 'data:image/png;base64,') {
+      throw new Error('Failed to generate image data from canvas');
+    }
+
+    const pdf = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4',
+    });
+
+    const imgWidth = 210; // A4 width
+    const pageHeight = 295; // A4 height
+    const imgHeight = (canvas.height * imgWidth) / canvas.width;
+    let heightLeft = imgHeight;
+    let position = 0;
+
+    // Add first page
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+
+    // Add additional pages if needed
+    while (heightLeft > 0) {
+      position = heightLeft - imgHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+    }
+
+    // Save PDF
+    const currentRef = ref || 'quote';
+    pdf.save(`${currentRef}.pdf`);
+    Swal.fire('Success', 'PDF downloaded successfully!', 'success');
+  } catch (error) {
+    console.error('PDF generation error:', error);
+    Swal.fire('Error', `Failed to generate PDF: ${error.message}`, 'error');
+  }
+};
   // On instruct button, show popup modal with message
   function handleInstruct( companyName,guest_id, conveyancer_id, quote_id, user_id, tax_info_quote_id, refno,)
    {
@@ -418,11 +530,19 @@ function handlefilterchange(selectedoption = []) {
 }
 
   return (
- <div className=" bg-white antialiased font ">
+    <div className=" bg-white antialiased font ">
    
             <div className='bg-white shadow-md sticky top-0 p-4 z-50'>
             <Navbar />
             </div>
+     
+
+      {/* <main className="mx-auto max-w-[1200px] pt-10 px-4 lg:px-0 mb-10">
+        KEY CHANGE: The main layout switches from a single column (default) to a two-column grid on 'lg' screens. */}
+        {/* <div className="grid lg:grid-cols-[400px_1fr] gap-8 lg:gap-12"> */}
+          {/* Left rail: stepper panel (Sidebar) */}
+          {/* KEY CHANGE: Removed w-[400px] from here. It now spans the full width on small screens and is controlled by the grid on 'lg'. */}
+         
                <main className="mx-auto max-w-[1200px] pt-2 px-4 lg:px-0 mb-5 mt-20">
                    <div className="flex flex-col lg:flex-row gap-8">
                        <aside className="z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-1/2 lg:h-[80vh] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white   lg:top-22" style={{height : "88.5%"}}>
@@ -875,7 +995,7 @@ function handlefilterchange(selectedoption = []) {
       Instruct
     </button>
 
-    <button className="border px-4 py-2 rounded text-emerald-600 text-sm">
+    <button className="border px-4 py-2 rounded text-emerald-600 text-sm" onClick={generatePDF}>
       Download
     </button>
   </div>
@@ -883,114 +1003,98 @@ function handlefilterchange(selectedoption = []) {
 
 
                                 {/* ---------- MAIN CONTAINER ---------- */}
-                                <div className="border  rounded-lg bg-white shadow px-6 py-2 mb-2 space-y-2 quotes">
+                               <div ref={pdfRef} className="border  rounded-lg bg-white shadow px-6 py-2 mb-2 space-y-2 quotes" style={{
+                                  backgroundColor: 'white', 
+                                  color: 'black',
+                                  padding: '24px',
+                                  border: '1px solid #e5e7eb',
+                                  borderRadius: '8px',
+                                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                                  fontFamily: 'Arial, sans-serif',
+                                  lineHeight: '1.6',
+                                  maxWidth: '100%',
+                                  overflow: 'auto'
+                                }}>
                                   {/* ---------- COMPANY LOGO + RATING ---------- */}
-                                  <div className=" justify-between items-start">
-                                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-                                    <div className="ml-6 text-left">
-                                     
-                                        <span className="text-[34px] leading-none font-extrabold text-[#1E5C3B] tracking-tight">
+                                  <table className="w-full border-collapse mb-6">
+                                    <tbody>
+                                      {/* Company Logo Row */}
+                                      <tr>
+                                        <td colSpan="2" className="p-4">
                                           {quote.conveying_details.logo ? (
-                                        <img
-                                          width={100}
-                                          height={60}
-                                          src={quote.conveying_details.logo}
-                                          alt={quote.company_name || "company logo"}
-                                          // <- controls visible size
-                                        />
-                                      ) : (
-                                        <Image
-                                          width={70}
-                                          height={60}
-                                          src="https://cdn-icons-png.flaticon.com/512/295/295128.png"
-                                          alt={quote.company_name || "company logo"}
-                                          className="object-contain"
-                                        />
-                                      )}
-                                    
-                                      </span>
-                                      <p className="mt-2 font-semibold  quotes text-sm">
-                                        Contact Details
-                                      </p>
+                                            <img
+                                              width={100}
+                                              height={60}
+                                              src={quote.conveying_details.logo}
+                                              alt={quote.company_name || "company logo"}
+                                            />
+                                          ) : (
+                                            <Image
+                                              width={70}
+                                              height={60}
+                                              src="https://cdn-icons-png.flaticon.com/512/295/295128.png"
+                                              alt={quote.company_name || "company logo"}
+                                              className="object-contain"
+                                            />
+                                          )}
+                                        </td>
+                                      </tr>
+                                  
+                                      {/* Contact Details and User Details in Single Row */}
+                                      <tr className=" border-gray-200">
+                                        {/* Contact Details Column */}
+                                        <td className="p-4  border-gray-200 align-top w-1/2">
+                                          <div className="bg-gray-50 p-5 mb-3 rounded pb-9 ">
+                                            <h4 className="font-semibold text-emerald-600 mb-3">Contact Details</h4>
+                                            <div className="space-y-2">
+                                              <div className="flex">
+                                                <span className="font-semibold w-20 text-sm">Phone:</span>
+                                                <span className="text-sm">{view_data?.appsetting_details?.phone_number || "N/A"}</span>
+                                              </div>
+                                              <div className="flex">
+                                                <span className="font-semibold w-20 text-sm">Email:</span>
+                                                <a
+                                                  href={`mailto:${view_data?.appsetting_details?.email}`}
+                                                  className="text-emerald-600 text-sm"
+                                                >
+                                                  {view_data?.appsetting_details?.email}
+                                                </a>
+                                              </div>
+                                              <div className="flex">
+                                                <span className="font-semibold w-20 text-sm">Quote Ref:</span>
+                                                <span className="text-sm">{quote.service_details[0].quote_ref_number || "--"}</span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </td>
 
-                                      <p className="font-semibold mt-1 text-base ">
-                                        {view_data?.appsetting_details
-                                          ?.phone_number || "N/A"}
-                                      </p>
-
-                                      <a
-                                        href={`mailto:${view_data?.appsetting_details?.email}`}
-                                        className="text-emerald-600 text-xs"
-                                      >
-                                        {view_data?.appsetting_details?.email}
-                                      </a>
-                                       <div className="flex">
-                                          <span className="font-semibold text-left">
-                                            Quote Ref No : 
-                                          </span>
-                                          <span className="">
-                                            {quote.service_details[0].quote_ref_number || "--"}
-                                          </span>
-                                        </div>
-                                    </div>
-                                    <div className="ml-auto">
-                                         <div >
-                                      <div className="text-emerald-600">
-                                        <h3 className="text-lg font-semibold text-start mt-2">
-                                          User Details
-                                        </h3>
-                                      </div>
-
-                                      <div className="space-y-1 text-sm  mt-3">
-                                        <div className="flex">
-                                          <span className="font-semibold w-20 text-left">
-                                            Name
-                                          </span>
-                                          <span className="">
-                                            {
-                                              quote?.customer_details
-                                                ?.first_name
-                                            }{" "}
-                                            {quote?.customer_details?.last_name}
-                                          </span>
-                                        </div>
-
-                                        <div className="flex">
-                                          <span className="font-semibold w-20 text-left">
-                                            Email
-                                          </span>
-                                          <span className="">
-                                            {quote?.customer_details?.email ||
-                                              "--"}
-                                          </span>
-                                        </div>
-
-                                        <div className="flex">
-                                          <span className="font-semibold w-20 text-left">
-                                            Phone
-                                          </span>
-                                          <span className="">
-                                            {quote?.customer_details
-                                              ?.phone_number || "--"}
-                                          </span>
-                                        </div>
-                                        <div className="flex">
-                                          <span className="font-semibold w-20 text-left">
-                                            Address
-                                          </span>
-                                          <span className="">
-                                            {quote?.service_details[0]
-                                              ?.address || "--"}
-                                          </span>
-                                        </div>
-                                        
-                                      </div>
-                                      </div>
-                                    </div>
-                                    </div>
-                                   
-                                  </div>
+                                        {/* User Details Column */}
+                                        <td className="p-4 align-top w-1/2">
+                                          <div className="bg-gray-50 p-3 rounded">
+                                            <h4 className="font-semibold text-emerald-600 mb-3">User Details</h4>
+                                            <div className="space-y-2">
+                                              <div className="flex">
+                                                <span className="font-semibold w-20 text-sm">Name:</span>
+                                                <span className="text-sm">{quote?.customer_details?.first_name} {quote?.customer_details?.last_name}</span>
+                                              </div>
+                                              <div className="flex">
+                                                <span className="font-semibold w-20 text-sm">Email:</span>
+                                                <span className="text-sm">{quote?.customer_details?.email || "--"}</span>
+                                              </div>
+                                              <div className="flex">
+                                                <span className="font-semibold w-20 text-sm">Phone:</span>
+                                                <span className="text-sm">{quote?.customer_details?.phone_number || "--"}</span>
+                                              </div>
+                                              <div className="flex">
+                                                <span className="font-semibold w-20 text-sm">Address:</span>
+                                                <span className="text-sm">{quote?.service_details[0]?.address || "--"}</span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </td>
+                                      </tr>
+                                    </tbody>
+                                  </table>
 
                                   {/* ---------- YOUR DETAILS ---------- */}
 

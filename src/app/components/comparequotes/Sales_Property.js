@@ -54,71 +54,63 @@ export default function SalesPropertyDetails({
   return (
     <div className="grid grid-cols-[0.5fr_1fr]  p-4 mt-5  border-1 ">
       <h5 className="col-span-3 text-lg font-semibold text-emerald-600 mb-10">Sales Quote</h5>
-      <div className="py-1   text-sm ">
-        <div className="text-start">
+      <div className="py-1 text-sm">
+        <div className="text-start mb-4">
           <h3 className="text-lg font-semibold text-emerald-600">
             Sales Property Details
           </h3>
         </div>
-        <div className="flex font_size_13px">
-          <span className="font-semibold w-40 text-left">Stages</span>
-          <span className=" text-left">{servicData?.sales_stages || "--"}</span>
-        </div>
-        <div className="flex font_size_13px">
-          <span className="font-semibold w-40 text-left">Town City</span>
-          <span className="">{servicData?.sales_town_city || "--"}</span>
-        </div>
-
-        <div className="flex font_size_13px">
-          <span className="font-semibold w-40 text-left">Country</span>
-          <span className="">{servicData?.sales_country || "--"}</span>
-        </div>
-        <div className="flex font_size_13px">
-          <span className="font-semibold w-40 text-left">Price</span>
-          <span className="">£{servicData?.sales_price || "--"}.00</span>
-        </div>
-        <div className="flex font_size_13px">
-          <span className="font-semibold w-40 text-left">No Of Bedrooms</span>
-          <span className="">{servicData?.sales_no_of_bedrooms || "--"}</span>
-        </div>
-        <div className="flex font_size_13px">
-          <span className="font-semibold w-40 text-left">
-            Leasehold Or Free
-          </span>
-          <span className="">
-            {servicData?.sales_leasehold_or_free || "--"}
-          </span>
-        </div>
-        <div className="flex font_size_13px">
-          <span className="font-semibold w-40 text-left">Property Type</span>
-          <span className="">{servicData?.sales_property_type || "--"}</span>
-        </div>
-        <div className="flex">
-          <span className="font-semibold w-40 text-left">Shared Ownership</span>
-          <span className="">{servicData?.shared_ownership || "--"}</span>
-        </div>
-
-        <div className="flex mt-3 font_size_13px">
-          <span className="font-semibold w-40 text-left">
-            Existing Mortgage
-          </span>
-          <span className=" ">
-            {servicData?.existing_mortgage === 1 ? "Yes" : "No"}
-          </span>
-        </div>
-
-        <div className="flex font_size_13px">
-          <span className="font-semibold w-40 text-left">Languages</span>
-          <span>
-            {language.find((l) => l.id == servicData?.languages)
-              ?.language_name || "--"}
-          </span>
-        </div>
-
-        <div className="flex font_size_13px">
-          <span className="font-semibold w-40 text-left">Lenders</span>
-          <span className="">{servicData?.lenders || "--"}</span>
-        </div>
+        <table className="w-full border-collapse">
+          <tbody>
+            <tr className=" border-gray-200">
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">Stages</td>
+              <td className="p-2 text-left font_size_13px">{servicData?.sales_stages || "--"}</td>
+            </tr>
+            <tr className=" border-gray-200">
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">Town City</td>
+              <td className="p-2 text-left font_size_13px">{servicData?.sales_town_city || "--"}</td>
+            </tr>
+            <tr className="border-gray-200">
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">Country</td>
+              <td className="p-2 text-left font_size_13px">{servicData?.sales_country || "--"}</td>
+            </tr>
+            <tr className=" border-gray-200">
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">Price</td>
+              <td className="p-2 text-left font_size_13px">£{servicData?.sales_price || "--"}.00</td>
+            </tr>
+            <tr className=" border-gray-200">
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">No Of Bedrooms</td>
+              <td className="p-2 text-left font_size_13px">{servicData?.sales_no_of_bedrooms || "--"}</td>
+            </tr>
+            <tr className=" border-gray-200">
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">Leasehold Or Free</td>
+              <td className="p-2 text-left font_size_13px">{servicData?.sales_leasehold_or_free || "--"}</td>
+            </tr>
+            <tr className=" border-gray-200">
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">Property Type</td>
+              <td className="p-2 text-left font_size_13px">{servicData?.sales_property_type || "--"}</td>
+            </tr>
+            <tr className=" border-gray-200">
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">Shared Ownership</td>
+              <td className="p-2 text-left font_size_13px">{servicData?.shared_ownership || "--"}</td>
+            </tr>
+            <tr className=" border-gray-200">
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">Existing Mortgage</td>
+              <td className="p-2 text-left font_size_13px">{servicData?.existing_mortgage === 1 ? "Yes" : "No"}</td>
+            </tr>
+            <tr className=" border-gray-200">
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">Languages</td>
+              <td className="p-2 text-left font_size_13px">
+                {language.find((l) => l.id == servicData?.languages)
+                  ?.language_name || "--"}
+              </td>
+            </tr>
+            <tr>
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">Lenders</td>
+              <td className="p-2 text-left font_size_13px">{servicData?.lenders || "--"}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
       <div className="">
         <div className=" p-3 ">
@@ -205,7 +197,7 @@ export default function SalesPropertyDetails({
                               <div className="ml-4 font_size_13px font-bold">
                                 {" "}
                                 {/* margin-left works here */}
-                                {category} Total
+                                Total
                               </div>
                             </td>
 
