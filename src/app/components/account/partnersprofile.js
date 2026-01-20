@@ -147,6 +147,7 @@ const getServiceTypeLabel = (type) => {
   const [selectedLanguage, setSelectedLanguage] = useState([]);
   const [selectedJurisdictions, setSelectedJurisdictions] = useState([]);
   const [notes, setNotes] = useState("");
+  let languageOptions
 
   const [jurisdictions, setjuisdictions] = useState([]);
 
@@ -154,17 +155,17 @@ const getServiceTypeLabel = (type) => {
     try {
       const languages = await getData(API_ENDPOINTS.languages);
       const region = await getData(API_ENDPOINTS.region);
-
-      setjuisdictions(
-        region.users.map((item) => ({
-          label: item.region_name,
-          value: item.id,
-        }))
-      );
+      let regiondata =  region.users.map((item) => ({
+            label: item.region_name,
+            value: item.id,
+          }))
+       setjuisdictions(
+          regiondata
+        );
 
       console.log(languages.users);
       if (Array.isArray(languages.users)) {
-        const languageOptions = languages.users.map((l) => ({
+         languageOptions = languages.users.map((l) => ({
           value: l.language_name,
           label: l.language_name,
           id: l.id,
@@ -226,6 +227,8 @@ const getServiceTypeLabel = (type) => {
         });
         setSelectedServices(templang);
       }
+      return {regiondata:regiondata,language:languageOptions}
+
       //selectedServices
     } catch (error) {
       console.error("Error fetching languages:", error);
@@ -252,7 +255,8 @@ console.log(formData)
     return updated;
   });
 };
-  const fetchCompanyInforamtion = async () => {
+  const fetchCompanyInforamtion = async (region) => {
+    console.log(region)
     const user = localStorage.getItem("user");
     const details = await getData(
       API_ENDPOINTS.getCompanyInformation + "/" + user
@@ -276,37 +280,39 @@ console.log(formData)
         setImage(details.data.logo);
       }
     }
-
+console.log(details.data?.service_id)
     if(details.data?.service_id?.length){
       const selected = serviceoptions.filter((opt)=>(details.data.service_id.includes(opt.id)))
       setSelectedServices(selected)
     }
 
     if(details.data?.regions?.length){
-      if(jurisdictions.length>0){
-         const selected = jurisdictions.filter((opt) =>
-    details.data.regions.includes(
-      Number(opt.value) 
-    )
+         const selected = region?.regiondata?.filter((opt) =>details.data.regions.includes(Number(opt.value) )
   );
+  console.log(selected)
   setSelectedJurisdictions(selected);
-      }
-     
 console.log("API service_id:", details.data?.service_id);
 console.log("jurisdictions:", jurisdictions);
-
-  
     }
-
-
+    if(details.data?.languages){
+               const selected = region?.language?.filter((opt) =>details.data.languages.includes(Number(opt.id) ))
+console.log(selected)
+setSelectedLanguage(selected)
+    }
 
   };
 
   useEffect(() => {
-    fetchlanguages();
-    fetchCompanyInforamtion();
-    fetchapi()
+    const initPage = async () =>{
+let regionsandlenders = await fetchlanguages()
+    if(regionsandlenders){
+ fetchCompanyInforamtion(regionsandlenders)
+    }
+    }
     
+    
+    fetchapi()
+    initPage()
   }, []);
 
 const handleChangeLang = (lang) => {
@@ -548,8 +554,8 @@ console.log(formData)
   };
 
   const serviceoptions = [
-    { value: "Purchase", label: "Purchase", id: 1, },
-    { value: "Sales", label: "Sales", id: 2 },
+    { value: "Purchase", label: "Purchase", id: 2, },
+    { value: "Sales", label: "Sales", id: 1 },
     { value: "Purchase and Sales", label: "Purchase and Sales", id: 3 },
     { value: "Remortgage", label: "Remortgage", id: 4 },
   ];
@@ -783,10 +789,10 @@ console.log(formData)
       };
   
         
-     let profiledetails = await postData(API_ENDPOINTS.intstructquote_list,payload);
-     let userprofile=profiledetails.data[0].user_details
-      let companydetailsitem = profiledetails.data.map((item,index) => item.company_details)
-      let items_c=companydetailsitem.flat();
+    let profiledetails = await postData(API_ENDPOINTS.intstructquote_list,payload);
+    let userprofile=profiledetails.data[0].user_details
+    let companydetailsitem = profiledetails.data.map((item,index) => item.company_details)
+    let items_c=companydetailsitem.flat();
     let companydetails = profiledetails.data[0].company_details
 
      console.log(userprofile)
@@ -796,7 +802,7 @@ console.log(formData)
       first_name:userprofile[0].first_name,
       last_name:userprofile[0].last_name,
       phone_number:userprofile[0].phone_number,
-  email:userprofile[0].email,
+      email:userprofile[0].email,
      })
      
      setcompany(companydetails)
@@ -1007,7 +1013,7 @@ console.log(formData)
                 <div className="grid grid-cols-1 mt-4">
                   <div className="flex flex-col gap-2">
                     <label className="block text-sm font-medium text-[#6A7682]">
-                      Services We Offered{" "}
+                      Services We Offered
                       <span className="text-red-500">*</span>
                     </label>
 
@@ -1020,7 +1026,7 @@ console.log(formData)
                           <input
                             type="checkbox"
                             checked={selectedServices.some(
-                              (s) => s.id === opt.id
+                              (s) => s.id == opt.id
                             )}
                             onChange={() => togglesercice(opt)}
                             className="w-4 h-4"
@@ -1058,7 +1064,7 @@ console.log(formData)
                           <input
                             type="checkbox"
                             checked={selectedJurisdictions.some(
-                              (item) => item.value === opt.value
+                              (item) => item.value == opt.value
                             )}
                             onChange={() => toggleJurisdiction(opt)}
                             className="w-4 h-4"
@@ -1091,7 +1097,7 @@ console.log(formData)
                             type="checkbox"
                             value={lang.value}
                             checked={selectedLanguage?.some(
-                              (l) => l.value === lang.value
+                              (l) => l.value == lang.id
                             )}
                             onChange={() => handleChangeLang(lang)}
                           />

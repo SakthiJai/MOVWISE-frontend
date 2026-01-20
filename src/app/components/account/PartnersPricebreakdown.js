@@ -148,6 +148,7 @@ useEffect(() => {
 
         setserviceType(response4.data.service[0])
         console.log("pricing",response4);
+
         const updatedPricing = response4.data.pricing.map((item) => {
           if (item.fees_category_id === 2) {
             return {
@@ -158,7 +159,7 @@ useEffect(() => {
                   type_id: category.others?0:category.type_id,
                   fee_amount: category.fee_amount,
                   paid_to: "",
-                  vat: 0,
+                  vat: category.vat,
                   description: "",
                   is_delete: "",
                   status: "",
@@ -176,7 +177,7 @@ useEffect(() => {
                    type_id: category.others?0:category.type_id,
                   fee_amount: category.fee_amount,
                   paid_to: "",
-                  vat: 0,
+                  vat: category.vat,
                   description: "",
                   is_delete: "",
                   status: "",
@@ -189,11 +190,12 @@ useEffect(() => {
             return {
               ...item,
               price_list: [
-                ...response2.leasehold_disbursement.map((category) => ({
-                  type_id: category.id,
-                  fee_amount: "",
+                ...item.price_list.map((category) => ({
+                    id:category.id,
+                  type_id: category.others?0:category.type_id,
+                  fee_amount: category.fee_amount,
                   paid_to: "",
-                  vat: 0,
+                      vat: category.vat,
                   description: "",
                   is_delete: "",
                   status: "",
@@ -1565,7 +1567,7 @@ useEffect(() => {
                                   </>):(<>
                                   <input
                                   placeholder="Fee Amount "
-                                 
+                                  defaultValue={row.fee_amount}
                                   onChange={(e) => {
                                     settransactionFeesError("");
                                       
@@ -1705,7 +1707,7 @@ useEffect(() => {
                                         <input
                                           type="text"
                                           placeholder="Fee Cost"
-                                          value={row.fee_amount}
+                                  defaultValue={row.fee_amount}
                                           onChange={(e) => {
                                             setleasedisbursementFeesError("");
 
@@ -2773,3 +2775,13 @@ useEffect(() => {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
