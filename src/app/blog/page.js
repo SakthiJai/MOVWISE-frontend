@@ -69,37 +69,37 @@ const [blogs, setBlogs] = useState([]);
                       {/* Blog list: 3 columns per row on large screens, 2 rows (6 cards) */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                         {blogs.map((data, i) => (
-                          <article
-                            key={i}
-                            className="bg-white border border-gray-100 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-transform duration-150"
-                          >
-                            <div className="w-full h-40 bg-gray-100 overflow-hidden">
-                              <Image
-                                src={data.banner}
-                                alt={`Blog ${i + 1}`}
-                                width={1200}
-                                height={600}
-                                className="object-cover w-full h-full"
-                              />
-                            </div>
-
-                            <div className="p-4">
-                              <time className="text-xs text-gray-500">{formatBlogDate(data.created_at)}</time>
-                              <h3 className="mt-2 text-lg font-semibold text-gray-900">
-                                {data.blog_title}
-                              </h3>
-                              <p className="mt-2 text-sm text-gray-600">
-                                {data.sub_title}
-                              </p>
-
-                              <div className="mt-4 flex items-center justify-between">
-                                <Link href={`/blog/${data.slug}`} className="text-emerald-600 font-medium">
-                                  Read more
-                                </Link>
-                                
+                          <Link href={`/blog/${data.slug}`} key={i}>
+                            <article
+                              className="bg-white border border-gray-100 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-transform duration-150"
+                            >
+                              <div className="w-full h-40 bg-gray-100 overflow-hidden">
+                                <Image
+                                  src={data.banner}
+                                  alt={`Blog ${i + 1}`}
+                                  width={1200}
+                                  height={600}
+                                  className="object-cover w-full h-full"
+                                />
                               </div>
-                            </div>
-                          </article>
+
+                              <div className="p-4">
+                                <time className="text-xs text-gray-500">{formatBlogDate(data.created_at)}</time>
+                                <h3 className="text-lg font-bold text-emerald-800 mb-4">
+                                  {data.blog_title}
+                                </h3>
+                                <p className="mt-2 text-sm text-gray-600">
+                                  {data.sub_title}
+                                </p>
+
+                                <div className="mt-4 flex items-center justify-between">
+                                  <Link href={`/blog/${data.slug}`} className="text-emerald-600 font-medium">
+                                    Read more
+                                  </Link>
+                                </div>
+                              </div>
+                            </article>
+                          </Link>
                         ))}
                       </div>
 

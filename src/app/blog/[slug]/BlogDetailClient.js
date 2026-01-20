@@ -2,12 +2,46 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { getData, postData, API_ENDPOINTS } from "../../auth/API/api";
 
-export default function BlogDetailClient({ title, author, date, coverImage, content }) {
+export default function BlogDetailClient({ slug }) {
+    const [blog, setBlog] = React.useState(null);
+    React.useEffect(() => {
+        async function fetchBlog() {
+            try {
+                //const response = await fetch(`/api/blogs/${slug}`);
+               const response =  await getData(API_ENDPOINTS.blogs+"/"+slug);
+                setBlog(response.data);
+            } catch (error) {
+                console.error("Error fetching blog:", error);
+            }
+        }
+        if (slug) {
+            fetchBlog();
+        }
+    }, [slug]);
+
+    if (!blog) {
+        return <div className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-lg shadow-xl transition duration-300 text-center">Loading blog details...</div>;
+    }
+
+    const blogtitle = blog.blog_title || "Blog Title";
+    const author = "Movwise";
+    const date = new Date(blog.created_at).toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+    }) || "Jan 01, 2024";
+    const content = blog.content ? (
+        <div dangerouslySetInnerHTML={{ __html: blog.content }} />
+    ) : (
+        <p>No content available.</p>
+    );
+
   return (
     <article className="max-w-3xl mx-auto bg-white rounded-lg shadow p-6">
       <header className="mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">{title}</h1>
+        <h1 className="text-3xl font-bold text-emerald-800 mb-4 text-center">{blogtitle}</h1>
         <div className="flex items-center gap-3 text-sm text-gray-500">
           <span>By {author}</span>
           <span>•</span>
@@ -19,7 +53,7 @@ export default function BlogDetailClient({ title, author, date, coverImage, cont
 
 
       <Image
-        src={coverImage}
+        src={blog.banner}
         alt="Blog Cover"
         width={1200}
         height={600}
@@ -30,7 +64,8 @@ export default function BlogDetailClient({ title, author, date, coverImage, cont
       </div>
       <div className="prose prose-lg max-w-none text-gray-800">
         <p className="mt-4 text-lg text-gray-500">Compare fixed-fee quotes from trusted UK conveyancers and solicitors in minutes. MovWise helps you find the right legal partner to buy, sell, or remortgage your home — faster, clearer, and smarter.</p>
-<div class="mt-8 text-center"><a href="/#quote_type"><div class="text-blue-500 underline"><button class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-lg shadow-xl transition duration-300">Get Your Free Quote →</button></div></a></div>
+<div className="mt-8 text-center"><Link href={`/#quote_type`} >
+<div class="text-blue-500 underline"><button class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-lg shadow-xl transition duration-300">Get Your Free Quote →</button></div></Link></div>
       </div>
 
       

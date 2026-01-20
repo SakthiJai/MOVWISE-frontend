@@ -2,7 +2,9 @@
 
 
 
+
 import { FaArrowRight } from "react-icons/fa";
+import Link from "next/link";
 
 export default function Footer() {
   
@@ -65,7 +67,7 @@ export default function Footer() {
         <ul className="space-y-2 text-gray-300 text-sm  p-1 m-1">
           <li><a href="#">Buying</a></li>
           <li><a href="#">Selling</a></li>
-          <li><a href="/blog">Advice / Blog</a></li>
+          <li><Link href={`/blog`} >Advice / Blog</Link></li>
         </ul>
       </div>
 
