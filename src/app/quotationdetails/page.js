@@ -546,6 +546,7 @@ console.log(serviceId);
     }).format(num);
     //check
 const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
+  console.log(feesCategoryId, rowIndex, field, value);
   const rawValue =
   typeof value === "string" ? value.replace(/[^\d.]/g, "") : value;
 
@@ -1060,6 +1061,7 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                       <input
                                         type="text"
                                         placeholder="Min"
+                                        onFocus={(e) => e.target.select()}
                                         value={row?.min}
                                         className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black bg-white legalfeesrow_input"
                                         onChange={(e) =>
@@ -1103,6 +1105,7 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                       <input
                                         type="text"
                                         placeholder="Max"
+                                        onFocus={(e) => e.target.select()}
                                         value={row.max}
                                         className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black legalfeesrow_input"
                                         onChange={(e) =>
@@ -1140,6 +1143,7 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                         <input
                                           type="text"
                                           placeholder="Purchase Freehold"
+                                          onFocus={(e) => e.target.select()}
                                           value={row.purchase_freehold}
                                           className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black  pl-2  legalfeesrow_input"
                                           onChange={(e) =>
@@ -1168,6 +1172,7 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                         <input
                                           type="text"
                                           value={row.purchase_leasehold}
+                                          onFocus={(e) => e.target.select()}
                                           placeholder="Purchase Leasehold"
                                           className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black legalfeesrow_input"
                                           onChange={(e) =>
@@ -1197,6 +1202,7 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                         <input
                                           type="text"
                                           value={row.sales_freehold}
+                                          onFocus={(e) => e.target.select()}
                                           placeholder="Sales Freehold"
                                           className="poundtransform border border-gray-400 rounded py-0.5 text-sm legalfeesrow_input"
                                           onChange={(e) =>
@@ -1226,6 +1232,7 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                         <input
                                           type="text"
                                           value={row.sales_leasehold}
+                                          onFocus={(e) => e.target.select()}
                                           placeholder="Sales Leasehold"
                                           className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black legalfeesrow_input"
                                           onChange={(e) =>
@@ -1254,6 +1261,7 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                         <input
                                           type="text"
                                           placeholder="Remortgage"
+                                          onFocus={(e) => e.target.select()}
                                           value={row.remortgage}
                                           className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black legalfeesrow_input"
                                           onChange={(e) =>
@@ -1374,6 +1382,7 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                 {/* FEE AMOUNT */}
 
                                  {"others" in row ?( <> <input
+                                 onFocus={(e) => e.target.select()}
                                   placeholder="Fee Amount"
                                   onChange={(e) => {
                                     settransactionFeesError("");
@@ -1432,6 +1441,7 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                   <input
                                   placeholder="Fee Amount"
                                   value={row?.fee_amount}
+                                  onFocus={(e) => e.target.select()}
                                   onChange={(e) => {
                                     settransactionFeesError("");
                                     
@@ -1534,17 +1544,20 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                 
                                    <div>
                                  <input
-                                    placeholder="Fee Amount"
-                                    value={row?.fee_amount}
-                                    readOnly={row.readonly}
-                                    onChange={(e) => {
-                                      if (row.readonly) return; // extra safety
-                                      settransactionFeesError("");
-                                      handlePriceChange(numIndex, i, "fee_amount", e.target.value);
-                                    }}
-                                    className={`border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2 poundtransform
-                                      ${row.readonly ? "bg-gray-200 cursor-not-allowed" : ""}`}
-                                  />
+                                      id="Disbursement_type"
+                                      type="text"
+                                      placeholder="Enter other Disbursement Type"
+                                      value={row.type}
+                                      onChange={(e) =>
+                                        handlePriceChange(
+                                          numIndex,
+                                          i,
+                                          "others",
+                                          e.target.value
+                                        )
+                                      }
+                                      className=" border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
+                                    />
                                   </div>
 
                                 ) : (
@@ -1559,8 +1572,11 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                   </div>
                                 )}
 
-                                  {"others" in row ?( <> <input
+                                  {"others" in row ?( <> 
+                                  <input
+                                  onFocus={(e) => e.target.select()}
                                   placeholder="Fee others"
+                                  value={row?.fee_amount}
                                   onChange={(e) => {
                                     setdisbursementFeesError("");
 
@@ -1618,6 +1634,7 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                   </>):(<>
                                   <input
                                   placeholder="Fee Amount"
+                                  onFocus={(e) => e.target.select()}
                                        value={row?.fee_amount}
                                   onChange={(e) => {
                                     settransactionFeesError("");
@@ -1768,6 +1785,7 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
                                       <td className="pl-2 py-2 text-center">
                                         <input
                                           type="text"
+                                          onFocus={(e) => e.target.select()}
                                           placeholder="Fee Cost"
                                        value={row?.fee_amount}
                                           onChange={(e) => {

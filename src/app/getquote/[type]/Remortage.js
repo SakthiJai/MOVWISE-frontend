@@ -438,7 +438,7 @@ const getIconForType = (type) => {
                                            <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
                                              <Check size={18} />
                                            </div>
-                                           <div className="absolute left-[19px] top-[40px] w-[2px] h-[510%] bg-[#CFE3CF]" />
+                                           <div className="absolute left-[19px] top-[40px] w-[2px] h-[520%] bg-[#CFE3CF]" />
                                          </div>
                                          <div>
                                            <div className="text-xs font-semibold text-[#1E1E1E]">STEP 1</div>
@@ -453,7 +453,7 @@ const getIconForType = (type) => {
                                            <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-white text-[#1E5C3B] flex items-center justify-center">
                                              <div className="w-4 h-4 rounded-full bg-[#1E5C3B]" />
                                            </div>
-                                           <div className="absolute left-[19px] top-[40px] w-[2px] h-[510%] bg-gray-200" />
+                                           <div className="absolute left-[19px] top-[40px] w-[2px] h-[485%] bg-gray-200" />
                                          </div>
                                          <div>
                                            <div className="text-xs font-semibold text-[#1E1E1E]">STEP 2</div>
@@ -593,6 +593,7 @@ const getIconForType = (type) => {
                             <input
                                 id="price"
                                 type="text"
+                                onFocus={(e) => e.target.select()}
                                   value={formData?.property_values ?? ""}
                                 className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors outline-none"
                             name="property_values
