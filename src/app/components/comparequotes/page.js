@@ -1187,9 +1187,9 @@ function handlefilterchange(selectedoption = []) {
       </main>
       
   
-    <div className="pt-0.5 text-center text-gray-700 text-sm font">
-          <p className="">&copy; {new Date().getFullYear()} MovWise. All rights reserved.</p>
-        </div>
+  <footer className="fixed bottom-0 left-0 w-full text-center text-gray-700 text-sm py-2 z-50">
+  © {new Date().getFullYear()} MovWise. All rights reserved.
+</footer>
     </div>
   );
 }
