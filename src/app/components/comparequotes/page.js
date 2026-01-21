@@ -1073,7 +1073,7 @@ function handlefilterchange(selectedoption = []) {
                                               </div>
                                               <div className="flex">
                                                 <span className="font-semibold w-20 text-sm">Quote Ref:</span>
-                                                <span className="text-sm">{quote.service_details[0].quote_ref_number || "--"}</span>
+                                                <span className="text-sm">{quote.service_details[0].quote_ref_id || "--"}</span>
                                               </div>
                                             </div>
                                           </div>

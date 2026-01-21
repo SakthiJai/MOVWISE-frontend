@@ -130,7 +130,7 @@ const [loginformdata, setloginformdata] = useState({
  const[data,setdata]=useState()
   const options = [
     {
-  label: "Sales",
+  label: "Sale",
   icon: <Tag className="w-10 h-10 text-[#256041]" />,
   desc: "Quick and easy property sales.",
   "service_id":1,
@@ -145,7 +145,7 @@ const [loginformdata, setloginformdata] = useState({
     },
   
     {
-      label: "Sales & Purchase",
+      label: "Sale & Purchase",
       icon: <Repeat className="w-10 h-10 text-[#256041]" />,
       desc: "Buy and sell in one smooth move",
       "service_id":3,
@@ -447,9 +447,9 @@ const [loginformdata, setloginformdata] = useState({
       {/* --- 6. SUPPORT FEE SECTION --- */}
       <section className="py-16 bg-white">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 p-8 rounded-xl border border-emerald-300 bg-emerald-50 shadow-lg">
-              <h2 className="text-2xl font-bold text-emerald-800 mb-4">MovWise Support Fee: Complete Peace of Mind</h2>
+              <h2 className="text-2xl font-bold text-emerald-800 mb-4">MovWise Support: Complete Peace of Mind</h2>
               <p className="text-lg text-gray-700 mb-6">
-                  MovWise includes a <strong>small support fee</strong> covering essential services that guarantee a smoother, clearer process:
+                  MovWise includes an optional  covering essential services that guarantee a smoother, clearer process:
               </p>
               
               <ul className="grid md:grid-cols-2 gap-4 text-gray-700 list-none p-0 mb-6">
@@ -468,7 +468,7 @@ const [loginformdata, setloginformdata] = useState({
               </ul>
 
               <p className="text-xl font-semibold text-emerald-800 border-t border-emerald-200 pt-4 mt-4">
-                  <strong>Value Proposition:</strong> A small price for complete peace of mind — especially when every property detail matters.
+                  For complete peace of mind — especially when every property detail matters.
               </p>
           </div>
       </section>
@@ -543,13 +543,13 @@ const [loginformdata, setloginformdata] = useState({
             <div className="text-center">
               <p className="text-3xl text-yellow-500 mb-1 pl-10"><PhoneCall /></p>
               <p className="font-semibold text-gray-800">Call Us</p>
-              <a href="tel:08001234567" className="text-emerald-600 hover:underline">0800 123 4567</a>
+              <a href="tel:08001234567" className="text-emerald-600 hover:underline">020 7550 5665</a>
             </div>
           </div>
           <div className="flex justify-center mt-6">
            <p className="mt-6 text-sm text-gray-500 flex items-center gap-2">
     <Clock className="w-6 h-6 text-gray-700" />
-    Mon–Fri, 9am–6pm (UK time)
+    Mon - Sat, 9 AM - 6 PM
   </p></div></div>
       </section>
 

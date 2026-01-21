@@ -316,7 +316,7 @@ export default function AboutPage() {
 
     <tbody className="bg-white text-gray-700">
       
-      <tr className="border-t">
+      {/* <tr className="border-t">
         <td className="py-2 px-3">Complex legal jargon</td>
         <td className="py-2 px-3 text-center">
           <Check className="w-5 h-5 text-green-700 inline"strokeWidth={4} />
@@ -364,7 +364,7 @@ export default function AboutPage() {
         <td className="py-2 px-3 text-center">
           <X className="w-5 h-5 text-red-600 inline"strokeWidth={4} />
         </td>
-      </tr>
+      </tr> */}
       <tr className="border-t">
         <td className="py-2 px-3">Plain English explanations</td>
         <td className="py-2 px-3 text-center">

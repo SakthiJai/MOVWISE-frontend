@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import { Hand } from "lucide-react";
 
-export default function Signinmodal({ closeModal,partnerloginshow }) {
+export default function Signinmodal({ closeModal, partnerloginshow }) {
   const router = useRouter();
   // console.log(page)
   const [loginformshow, setloginformshow] = useState(false);
@@ -19,59 +19,60 @@ export default function Signinmodal({ closeModal,partnerloginshow }) {
   const [guestformsdata, setguestformsdata] = useState({
     guest_email: "",
     firstname: "",
-    lastname:"",
+    lastname: "",
     guest_phonenumber: "",
   });
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
   const [loginError, setLoginError] = useState("");
-const [formErrors, setFormErrors] = useState({});
-const [forgotPasswordShow, setForgotPasswordShow] = useState(false);
-const [forgotEmail, setForgotEmail] = useState("");
-const [forgotError, setForgotError] = useState("");
-const [forgotLoading, setForgotLoading] = useState(false);
-const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
+  const [forgotPasswordShow, setForgotPasswordShow] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotError, setForgotError] = useState("");
+  const [forgotLoading, setForgotLoading] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
-const validateLoginForm = () => {
-  const errors = {};
+  const validateLoginForm = () => {
+    const errors = {};
 
-  if (!loginformdata.email) {
-    errors.email = "Email is required";
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginformdata.email)) {
-    errors.email = "Invalid email address";
-  }
+    if (!loginformdata.email) {
+      errors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(loginformdata.email)) {
+      errors.email = "Invalid email address";
+    }
 
-  // if (!loginformdata.password) {
-  //   errors.password = "Password is required";
-  // } else if (loginformdata.password.length < 6) {
-  //   errors.password = "Password must be at least 6 characters";
-  // }
+    // if (!loginformdata.password) {
+    //   errors.password = "Password is required";
+    // } else if (loginformdata.password.length < 6) {
+    //   errors.password = "Password must be at least 6 characters";
+    // }
 
-  setFormErrors(errors);
-  return Object.keys(errors).length === 0;
-};
-const validateGuestForm = () => {
-  const errors = {};
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+  const validateGuestForm = () => {
+    const errors = {};
 
-  if (!guestformsdata.firstname?.trim()) {
-    errors.firstname = "first name is required";
-  }
+    if (!guestformsdata.firstname?.trim()) {
+      errors.firstname = "first name is required";
+    }
 
-  if (!guestformsdata.guest_email) {
-    errors.guest_email = "Email is required";
-  } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestformsdata.guest_email)) {
-    errors.guest_email = "Invalid email address";
-  }
+    if (!guestformsdata.guest_email) {
+      errors.guest_email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestformsdata.guest_email)) {
+      errors.guest_email = "Invalid email address";
+    }
 
-  if (!guestformsdata.guest_phonenumber) {
-    errors.guest_phonenumber = "Phone number is required";
-  } 
-  // else if (!/^\d{10}$/.test(guestformsdata.guest_phonenumber)) {
-  //   errors.guest_phonenumber = "Phone number must be 10 digits";
-  // }
+    if (!guestformsdata.guest_phonenumber) {
+      errors.guest_phonenumber = "Phone number is required";
+    }
+    // else if (!/^\d{10}$/.test(guestformsdata.guest_phonenumber)) {
+    //   errors.guest_phonenumber = "Phone number must be 10 digits";
+    // }
 
-  setFormErrors(errors);
-  return Object.keys(errors).length === 0;
-};
+    setFormErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
 
 
   const [modalopen, setModalopen] = useState(false);
@@ -102,25 +103,26 @@ const validateGuestForm = () => {
     setFormErrors(prev => ({ ...prev, [name]: "" }));
   }
   function handleguestformchange(name, value) {
-    console.log(value,name);
-    if(name=="guest_phonenumber"){
+    console.log(value, name);
+    if (name == "guest_phonenumber") {
       console.log("guestcheck");
-      setguestformsdata((prev)=>(
+      setguestformsdata((prev) => (
         {
           ...prev,
-          [name]:Number(value)
+          [name]: Number(value)
         }
       ))
     }
-    else{
+    else {
       console.log("other guest check")
-    setguestformsdata((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    setFormErrors(prev => ({ ...prev, [name]: "" }));
-  }}
-   async function logindata() {
+      setguestformsdata((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+      setFormErrors(prev => ({ ...prev, [name]: "" }));
+    }
+  }
+  async function logindata() {
 
 
     console.log(logintype);
@@ -135,13 +137,13 @@ const validateGuestForm = () => {
     console.log("check");
     try {
       let data = JSON.parse(localStorage.getItem("getquote") || "{}");
-      
+
       const dataToSubmit = {
         ...loginformdata,
         type: logintype,
       };
 
-    console.log("loginformdata:", dataToSubmit);
+      console.log("loginformdata:", dataToSubmit);
 
       const loginResponse = await postData(API_ENDPOINTS.login, dataToSubmit);
       console.log("Login response:", loginResponse);
@@ -150,7 +152,7 @@ const validateGuestForm = () => {
         const userId = loginResponse.user?.id; // <-- get it from API response
         console.log(userId);
         console.log("userId type:", typeof userId);
-        
+
         localStorage.setItem("user", userId);
         console.log(Number(localStorage.getItem("service")));
 
@@ -179,102 +181,101 @@ const validateGuestForm = () => {
           router.push("/#quote_type");
         }
       }
-      else  if (loginResponse.status === false)
-      {
-         setLoginError("Invalid email or password");
+      else if (loginResponse.status === false) {
+        setLoginError("Invalid email or password");
       }
     } catch (error) {
       setLoginError("Invalid email or password");
       console.error("Error logging in:", error);
     }
   }
-const forgotPasswordApiCall = async () => {
-  try {
-    setForgotError("");
-    setForgotLoading(true);
+  const forgotPasswordApiCall = async () => {
+    try {
+      setForgotError("");
+      setForgotLoading(true);
 
-    const response = await postData(
-      API_ENDPOINTS.forgetpassword,
-      { email: forgotEmail }
-    );
+      const response = await postData(
+        API_ENDPOINTS.forgetpassword,
+        { email: forgotEmail }
+      );
 
-    if (response.code === 200) {
-      setShowSuccessPopup(true);   
-      setForgotEmail("");
-    } else {
-      setForgotError(response.message || "Email not found");
+      if (response.code === 200) {
+        setShowSuccessPopup(true);
+        setForgotEmail("");
+      } else {
+        setForgotError(response.message || "Email not found");
+      }
+    } catch (error) {
+      console.error("Forgot password error:", error);
+      setForgotError("Something went wrong. Please try again.");
+    } finally {
+      setForgotLoading(false);
     }
-  } catch (error) {
-    console.error("Forgot password error:", error);
-    setForgotError("Something went wrong. Please try again.");
-  } finally {
-    setForgotLoading(false);       
-  }
-};
+  };
 
-async function createguestuser() {
-  try {
-    // 1️⃣ Validate guest form
-    if (!validateGuestForm()) return;
+  async function createguestuser() {
+    try {
+      // 1️⃣ Validate guest form
+      if (!validateGuestForm()) return;
 
-    // 2️⃣ Read existing quote
-    let quoteData = JSON.parse(localStorage.getItem("getquote") || "{}");
+      // 2️⃣ Read existing quote
+      let quoteData = JSON.parse(localStorage.getItem("getquote") || "{}");
 
-    // 3️⃣ Create guest in backend
-    const guest_uuid = uuidv4();
-    const payload = {
-      firstname: guestformsdata.firstname,
-      lastname:guestformsdata.lastname,
-      email: guestformsdata.guest_email,
-      phone_number: guestformsdata.guest_phonenumber,
-      guest_uuid: guest_uuid,
-    };
-    console.log(payload)
-    const response =  await postData(
-            `${API_ENDPOINTS.addguest}`,
-            payload
-          );
-   
+      // 3️⃣ Create guest in backend
+      const guest_uuid = uuidv4();
+      const payload = {
+        firstname: guestformsdata.firstname,
+        lastname: guestformsdata.lastname,
+        email: guestformsdata.guest_email,
+        phone_number: guestformsdata.guest_phonenumber,
+        guest_uuid: guest_uuid,
+      };
+      console.log(payload)
+      const response = await postData(
+        `${API_ENDPOINTS.addguest}`,
+        payload
+      );
 
-    const result = await response;
 
-    if (result.code !== 200) {
-      setLoginError(result.message || "Failed to create guest user");
-      return;
+      const result = await response;
+
+      if (result.code !== 200) {
+        setLoginError(result.message || "Failed to create guest user");
+        return;
+      }
+
+      // 4️⃣ Generate UUID (FRONTEND ONLY)
+
+
+      // 5️⃣ Build quote object (LOGIN-LIKE)
+      const updatedQuote = {
+        ...quoteData,
+        guest_user: guest_uuid, // ✅ numeric DB ID
+        guest_name: result.data.name,
+        guest_email: result.data.email,
+        guest_phonenumber: result.data.phone_number,
+        user_id: null,
+        service_type: 2,
+      };
+
+      // 6️⃣ Store everything safely
+      localStorage.setItem("getquote", JSON.stringify(updatedQuote));
+      localStorage.setItem("guest_uuid", guest_uuid); // ✅ UUID stored safely
+      localStorage.setItem("logintype", "guest");
+
+      // 7️⃣ Redirect
+      router.push("/components/comparequotes");
+
+    } catch (error) {
+      console.error("Guest login failed:", error);
+      setLoginError("Something went wrong. Please try again.");
     }
-
-    // 4️⃣ Generate UUID (FRONTEND ONLY)
-   
-
-    // 5️⃣ Build quote object (LOGIN-LIKE)
-    const updatedQuote = {
-      ...quoteData,
-      guest_user: guest_uuid, // ✅ numeric DB ID
-      guest_name: result.data.name,
-      guest_email: result.data.email,
-      guest_phonenumber: result.data.phone_number,
-      user_id: null,
-      service_type: 2,
-    };
-
-    // 6️⃣ Store everything safely
-    localStorage.setItem("getquote", JSON.stringify(updatedQuote));
-    localStorage.setItem("guest_uuid", guest_uuid); // ✅ UUID stored safely
-    localStorage.setItem("logintype", "guest");
-
-    // 7️⃣ Redirect
-    router.push("/components/comparequotes");
-
-  } catch (error) {
-    console.error("Guest login failed:", error);
-    setLoginError("Something went wrong. Please try again.");
   }
-}
 
 
 
   const quoteData = localStorage.getItem("service");
-  const isEmptyQuote = quoteData?true:false;
+  const isEmptyQuote = quoteData ? true : false;
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-4xl h-[500px] md:h-auto grid grid-cols-1 md:grid-cols-[35%_65%] animate-scale-in relative">
@@ -314,18 +315,18 @@ async function createguestuser() {
               X
             </button>
 
-            
-          <div className="text-gray-600 mb-8 leading-relaxed">
-            {isEmptyQuote ? (
-              <>
-                You’re about to submit your <b>Property Details</b>. Would you
-                like to continue as a <b>logged-in user</b> or a <b>guest user</b>?
-              </>
-            ) : (
-                            <><h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">Access your account or Register a new one to proceed.</h2></>
 
-            )}
-          </div>
+            <div className="text-gray-600 mb-8 leading-relaxed">
+              {isEmptyQuote ? (
+                <>
+                  You’re about to submit your <b>Property Details</b>. Would you
+                  like to continue as a <b>logged-in user</b> or a <b>guest user</b>?
+                </>
+              ) : (
+                <><h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">Access your account or Register a new one to proceed.</h2></>
+
+              )}
+            </div>
 
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -335,6 +336,7 @@ async function createguestuser() {
                   setloginformshow(true);
                   setlogintype("user");
                   setLoginError(false);
+                  setTermsAccepted(false);
                 }}
               >
                 Sign In
@@ -344,6 +346,7 @@ async function createguestuser() {
                 onClick={() => {
                   setguestformshow(true);
                   setLoginError(false);
+                  setTermsAccepted(false);
                 }}
                 className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
               >
@@ -352,84 +355,85 @@ async function createguestuser() {
             </div>
 
             <div className="grid grid-cols-1  gap-6 mt-5  mx-auto">
-        {partnerloginshow&&(
-           <button
-                className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
-                onClick={() => {
-                  setloginformshow(true);
-                  setlogintype("partner");
-                  setLoginError(false);
-                }}
-              >
-                Partner Login
-              </button>
-        )}     
+              {partnerloginshow && (
+                <button
+                  className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
+                  onClick={() => {
+                    setloginformshow(true);
+                    setlogintype("partner");
+                    setLoginError(false);
+                    setTermsAccepted(false);
+                  }}
+                >
+                  Partner Login
+                </button>
+              )}
             </div>
           </div>
         )}
 
-       {forgotPasswordShow ? (
-        <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-6">
-  <form
-    onSubmit={(e) => {
-      e.preventDefault();
-      if (!forgotEmail) {
-        setForgotError("Email is required");
-        return;
-      }
-      forgotPasswordApiCall(); // call your API here
-    }}
-    className="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg border border-gray-200"
-  >
-    <h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">
-      Forgot Password
-    </h2>
-
-    {forgotError && (
-      <p className="text-red-600 text-sm text-center mb-4">
-        {forgotError}
-      </p>
-    )}
-
-    <div className="mb-6">
-      <label className="block text-sm font-semibold text-gray-700 mb-2">
-        Email Address
-      </label>
-      <input
-        type="email"
-        placeholder="Enter registered email"
-        value={forgotEmail}
-        onChange={(e) => setForgotEmail(e.target.value)}
-        className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all "
-      />
-    </div>
-
-<button
-  type="submit"
-  disabled={forgotLoading}
-  className={`w-full font-semibold py-3 rounded-lg transition-all
-    ${forgotLoading
-      ? "bg-gray-400 cursor-not-allowed"
-      : "bg-[#1E5C3B] hover:bg-green-700 text-white"
-    }`}
->
-  {forgotLoading ? "Sending..." : "Send Reset Link"}
-</button>
-
-
-    <button
-      type="button"
-      onClick={() => setForgotPasswordShow(false)}
-      className="mt-2 w-full bg-[#ffd954] text-white font-semibold py-3 rounded-lg"
-    >
-      Back to Login
-    </button>
-  </form>
-  </div>
-) : loginformshow ? (
+        {forgotPasswordShow ? (
           <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-6">
             <form
-            noValidate
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!forgotEmail) {
+                  setForgotError("Email is required");
+                  return;
+                }
+                forgotPasswordApiCall(); // call your API here
+              }}
+              className="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg border border-gray-200"
+            >
+              <h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">
+                Forgot Password
+              </h2>
+
+              {forgotError && (
+                <p className="text-red-600 text-sm text-center mb-4">
+                  {forgotError}
+                </p>
+              )}
+
+              <div className="mb-6">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Email Address
+                </label>
+                <input
+                  type="email"
+                  placeholder="Enter registered email"
+                  value={forgotEmail}
+                  onChange={(e) => setForgotEmail(e.target.value)}
+                  className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all "
+                />
+              </div>
+
+              <button
+                type="submit"
+                disabled={forgotLoading}
+                className={`w-full font-semibold py-3 rounded-lg transition-all
+    ${forgotLoading
+                    ? "bg-gray-400 cursor-not-allowed"
+                    : "bg-[#1E5C3B] hover:bg-green-700 text-white"
+                  }`}
+              >
+                {forgotLoading ? "Sending..." : "Send Reset Link"}
+              </button>
+
+
+              <button
+                type="button"
+                onClick={() => setForgotPasswordShow(false)}
+                className="mt-2 w-full bg-[#ffd954] text-white font-semibold py-3 rounded-lg"
+              >
+                Back to Login
+              </button>
+            </form>
+          </div>
+        ) : loginformshow ? (
+          <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-6">
+            <form
+              noValidate
               onSubmit={(e) => {
                 e.preventDefault();
                 setLoginError("");
@@ -439,14 +443,14 @@ async function createguestuser() {
               }}
               className="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg border border-gray-200"
             >
-             <h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center flex items-center justify-center gap-2">
+              <h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center flex items-center justify-center gap-2">
                 User / Partner Login <Hand className="w-6 h-6 text-yellow-400" />
               </h2>
 
               {loginError && (
-                  <p className="text-red-600 text-sm font-medium text-center mb-4">
-                      {loginError}
-                  </p>
+                <p className="text-red-600 text-sm font-medium text-center mb-4">
+                  {loginError}
+                </p>
               )}
               {/* Email */}
               <div className="mb-5">
@@ -460,7 +464,7 @@ async function createguestuser() {
                   id="email"
                   name="email"
                   type="email"
-                  
+
                   placeholder="Enter your email"
                   value={loginformdata.email || ""}
                   onChange={(e) =>
@@ -485,7 +489,7 @@ async function createguestuser() {
                   id="password"
                   name="password"
                   type="password"
-                  
+
                   placeholder="Enter your password"
                   value={loginformdata.password || ""}
                   onChange={(e) =>
@@ -511,7 +515,11 @@ async function createguestuser() {
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-[#1E5C3B] text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md transform hover:scale-105"
+                disabled={!termsAccepted}
+                className={`w-full font-semibold py-3 rounded-lg transition-all duration-300 shadow-md ${termsAccepted
+                    ? "bg-[#1E5C3B] text-white hover:bg-green-700 transform hover:scale-105"
+                    : "bg-gray-400 text-gray-200 cursor-not-allowed"
+                  }`}
               >
                 Login
               </button>
@@ -530,42 +538,69 @@ async function createguestuser() {
 
                   setFormErrors({});
                   setLoginError("");
+                  setTermsAccepted(false);
                 }}
                 className="mt-1 w-full bg-[#ffd954] text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md transform hover:scale-105"
               >
                 Back
               </button>
+              <div className="mt-4 flex items-center justify-center gap-2">
+                <input
+                  type="checkbox"
+                  id="login_terms"
+                  className="w-4 h-4 text-[#1E5C3B] border-gray-300 rounded focus:ring-[#1E5C3B]"
+                  checked={termsAccepted}
+                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                />
+                <label htmlFor="login_terms" className="text-sm text-gray-600">
+                    I agree to MovWise
+                    <Link
+                      href="/terms-of-use"
+                      className="text-green-600 underline hover:text-green-700"
+                    >
+                      Terms and Conditions
+                    </Link>{" "}
+                    and{" "}
+                    <Link
+                      href="/privacy-policy"
+                      className="text-green-600 underline hover:text-green-700"
+                    >
+                      Privacy Policy
+                    </Link>
+                  </label>
+
+              </div>
             </form>
           </div>
-        ): null}
+        ) : null}
 
-{showSuccessPopup && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-20 backdrop-blur-sm">
-    <div className="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full text-center">
-      <h3 className="text-xl font-bold text-[#1E5C3B] mb-3">
-        Check your email
-      </h3>
-      <p className="text-gray-600 mb-6">
-        We’ve sent a password reset link to your email address.
-        Please check your inbox or spam folder.
-      </p>
-      <button
-        onClick={() => {
-          setShowSuccessPopup(false);
-          setForgotPasswordShow(false); // back to login
-        }}
-        className="w-full bg-[#1E5C3B] text-white font-semibold py-2 rounded-lg hover:bg-green-700"
-      >
-        OK
-      </button>
-    </div>
-  </div>
-)}
+        {showSuccessPopup && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-20 backdrop-blur-sm">
+            <div className="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full text-center">
+              <h3 className="text-xl font-bold text-[#1E5C3B] mb-3">
+                Check your email
+              </h3>
+              <p className="text-gray-600 mb-6">
+                We’ve sent a password reset link to your email address.
+                Please check your inbox or spam folder.
+              </p>
+              <button
+                onClick={() => {
+                  setShowSuccessPopup(false);
+                  setForgotPasswordShow(false); // back to login
+                }}
+                className="w-full bg-[#1E5C3B] text-white font-semibold py-2 rounded-lg hover:bg-green-700"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        )}
 
         {guestformshow && (
           <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-6">
             <form
-            noValidate
+              noValidate
               onSubmit={(e) => {
                 e.preventDefault();
                 setLoginError("");
@@ -580,9 +615,9 @@ async function createguestuser() {
               </h2>
 
               {loginError && (
-                  <p className="text-red-600 text-sm font-medium text-center mb-4">
-                      {loginError}
-                  </p>
+                <p className="text-red-600 text-sm font-medium text-center mb-4">
+                  {loginError}
+                </p>
               )}
               {/* Email */}
               <div className="mb-4">
@@ -596,7 +631,7 @@ async function createguestuser() {
                   id="Name"
                   name="guest_name"
                   type="text"
-                  
+
                   placeholder="Enter your Name"
                   value={guestformsdata.firstname || ""}
                   onChange={(e) =>
@@ -610,24 +645,24 @@ async function createguestuser() {
                 )}
               </div>
               <label
-                  htmlFor="Name"
-                  className="block text-sm font-semibold text-gray-700 mb-2"
-                >
-                  Last Name
-                </label>
-                <input
-                  id="Name"
-                  name="guest_name"
-                  type="text"
-                  
-                  placeholder="Enter your Name"
-                  value={guestformsdata.lastname || ""}
-                  onChange={(e) =>
-                    handleguestformchange("lastname", e.target.value)
-                  }
-                  autoComplete="current-password"
-                  className="block w-full h-[44px] mb-4 rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
-                />
+                htmlFor="Name"
+                className="block text-sm font-semibold text-gray-700 mb-2"
+              >
+                Last Name
+              </label>
+              <input
+                id="Name"
+                name="guest_name"
+                type="text"
+
+                placeholder="Enter your Name"
+                value={guestformsdata.lastname || ""}
+                onChange={(e) =>
+                  handleguestformchange("lastname", e.target.value)
+                }
+                autoComplete="current-password"
+                className="block w-full h-[44px] mb-4 rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
+              />
               <div className="mb-5">
                 <label
                   htmlFor="email"
@@ -639,7 +674,7 @@ async function createguestuser() {
                   id="email"
                   name="guest_email"
                   type="email"
-                  
+
                   placeholder="Enter your email"
                   value={guestformsdata.guest_email || ""}
                   onChange={(e) =>
@@ -651,20 +686,20 @@ async function createguestuser() {
                   <p className="text-red-500 text-xs mt-1">{formErrors.guest_email}</p>
                 )}
               </div>
-                <div className="mb-5">
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Phone Number
-                  </label>
+              <div className="mb-5">
+                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                  Phone Number
+                </label>
                 <input
                   type="text"
                   name="guest_phonenumber"
                   maxLength={10}
                   inputMode="numeric"
-                  
+
                   placeholder="Enter your phone number"
                   value={guestformsdata.guest_phonenumber || ""}
                   onChange={(e) => {
-                    const value = Number( e.target.value);
+                    const value = Number(e.target.value);
 
                     // Allow only numbers
                     if (/^\d*$/.test(value)) {
@@ -681,14 +716,18 @@ async function createguestuser() {
                     {formErrors.guest_phonenumber}
                   </p>
                 )}
-                </div>
+              </div>
 
               {/* Password */}
 
               {/* Submit Button */}
               <button
                 type="submit"
-                className="w-full bg-[#1E5C3B] text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md transform hover:scale-105"
+                disabled={!termsAccepted}
+                className={`w-full font-semibold py-3 rounded-lg transition-all duration-300 shadow-md ${termsAccepted
+                  ? "bg-[#1E5C3B] text-white hover:bg-green-700 transform hover:scale-105"
+                  : "bg-gray-400 text-gray-200 cursor-not-allowed"
+                  }`}
               >
                 Proceed
               </button>
@@ -703,14 +742,40 @@ async function createguestuser() {
                     guest_name: "",
                     guest_phonenumber: "",
                   });
+                  setTermsAccepted(false);
 
                   setFormErrors({});
                   setLoginError("");
-                              }}
+                }}
                 className="mt-1 w-full bg-[#ffd954] text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md transform hover:scale-105"
               >
                 Back
               </button>
+              <div className="mt-4 flex items-center justify-center gap-2">
+                <input
+                  type="checkbox"
+                  id="terms"
+                  className="w-4 h-4 text-[#1E5C3B] border-gray-300 rounded focus:ring-[#1E5C3B]"
+                  checked={termsAccepted}
+                  onChange={(e) => setTermsAccepted(e.target.checked)}
+                />
+             <label htmlFor="login_terms" className="text-sm text-gray-600">
+                    I agree to MovWise
+                    <Link
+                      href="/terms-of-use"
+                      className="text-green-600 underline hover:text-green-700"
+                    >
+                      Terms and Conditions
+                    </Link>{" "}
+                    and{" "}
+                    <Link
+                      href="/privacy-policy"
+                      className="text-green-600 underline hover:text-green-700"
+                    >
+                      Privacy Policy
+                    </Link>
+                  </label>
+              </div>
             </form>
           </div>
         )}

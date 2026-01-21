@@ -1,20 +1,16 @@
 'use client';
-import Link from "next/link";
 
+import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { API_BASE_URL } from "../.././constants/config";
-import { CircleUserRound, Menu, MenuIcon, MenuSquareIcon, SquareMenu } from "lucide-react";
+import { CircleUserRound, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
-
 const Navbar = ({ originalstyle = false }) => {
-
   const pathname = usePathname();
- const [open, setOpen] = useState(false);
- const[isloggeduser,setisloggeduser]=useState(false)
- const[userlogin,setuserlogin]=useState();
- const[logintype,setlogintype]=useState();
-
+  const [open, setOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [userlogin, setuserlogin] = useState();
+  const [logintype, setlogintype] = useState();
 
   const links = [
     { name: "Home", href: "/" },
@@ -24,18 +20,18 @@ const Navbar = ({ originalstyle = false }) => {
     { name: "Resources", href: "/components/Resources" },
   ];
 
-useEffect(()=>{
-  if(localStorage.getItem("user")&&localStorage.getItem("logintype"))
-  setuserlogin(localStorage.getItem("user"));
-setlogintype(localStorage.getItem("logintype"));
-})
-
+  useEffect(() => {
+    if (localStorage.getItem("user") && localStorage.getItem("logintype")) {
+      setuserlogin(localStorage.getItem("user"));
+      setlogintype(localStorage.getItem("logintype"));
+    }
+  }, []);
 
   return (
     <header
-      className={`w-full bg-white z-100   ${
+      className={`w-full bg-white z-100 ${
         originalstyle ? "" : "pt-1"
-      }  flex items-center px-5`} 
+      } flex items-center px-5 relative`}
     >
       {/* Logo */}
       <Link href="/" className="flex-1 items-center select-none">
@@ -44,8 +40,8 @@ setlogintype(localStorage.getItem("logintype"));
         </span>
       </Link>
 
-      {/* Nav */}
-      <nav className="items-center text-[16px] text-[#1D2630] justify-end ">
+      {/* DESKTOP NAV */}
+      <nav className="hidden md:flex items-center text-[16px] text-[#1D2630] justify-end">
         {links.map((link) => {
           const isActive =
             pathname === link.href || pathname.startsWith(link.href + "/");
@@ -65,76 +61,119 @@ setlogintype(localStorage.getItem("logintype"));
           );
         })}
 
-        {/* Register button */}
         <Link
           href="/#quote_type"
-          className="ml-6 inline-flex items-center justify-center  h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
+          className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
         >
-          Get Quote 
+          Get Quote
         </Link>
-    
-
-   
-
       </nav>
-      <div className="relative inline-block">
-      {/* Button */}
-    {userlogin&&(
- <button
-  onClick={() => setOpen(!open)}
-  className="ml-2 flex items-center justify-center 
-             bg-white  border-gray-300 
-             hover:bg-gray-100 
-             text-gray-700 
-             rounded-full pr-2 transition"
->
-  <CircleUserRound size={32} className="text-gray-600" />
-</button>
-    )} 
-   
 
+      {/* DESKTOP PROFILE */}
+      {userlogin && (
+        <div className="relative hidden md:block">
+          <button
+            onClick={() => setOpen(!open)}
+            className="ml-2 flex items-center justify-center bg-white hover:bg-gray-100 text-black rounded-full pr-2 transition"
+          >
+            <CircleUserRound size={32} className="text-black" />
+          </button>
 
-      {/* Dropdown */}
-      {open && (
-        <div className="absolute right-0  z-10 bg-neutral-primary-medium border bg-white  rounded-base shadow-lg w-44 animate-fade-in font">
-          <ul className="p-0.5 text-sm text-body font-medium">
-            {logintype=="user"&&(
-                <li className="hover:bg-yellow-400 hover:rounded-sm text-black">
-              <Link className="block w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded" href="/components/profile">
-             MY Profile
-              </Link>
-            </li>
-            )}
-          {logintype=="user" &&(
-           <li className="hover:bg-yellow-400 hover:rounded-sm text-black ">
-              <Link className="block w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded"  href="/components/profile">
-            My Quotes
-              </Link>
-            </li>
+          {open && (
+            <div className="absolute right-0 mt-2 bg-white border rounded-base shadow-lg w-44 z-50">
+              <ul className="p-0.5 text-sm font-medium">
+                {logintype === "user" && (
+                  <li className="hover:bg-yellow-400 text-black">
+                    <Link className="block p-2 text-black" href="/components/profile">
+                      My Profile
+                    </Link>
+                  </li>
+                )}
+
+                {logintype === "partner" && (
+                  <li className="hover:bg-yellow-400 text-black">
+                    <Link className="block p-2 text-black" href="/components/account">
+                      My Account
+                    </Link>
+                  </li>
+                )}
+
+                <li className="hover:bg-yellow-400 text-black">
+                  <Link
+                    className="block p-2 text-black"
+                    href="/"
+                    onClick={() => {
+                      localStorage.clear();
+                      window.location.reload();
+                    }}
+                  >
+                    Sign out
+                  </Link>
+                </li>
+              </ul>
+            </div>
           )}
-          {logintype=="partner"&&(
-            <li className="hover:bg-yellow-400 hover:rounded-sm text-black ">
-              <Link className="block w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded"  href="/components/account/">
-            My Account
-              </Link>
-            </li>
-          )}
-           
-           
-            <li className="hover:bg-yellow-400 hover:rounded-sm text-black">
-              <Link className="block w-full p-2 hover:bg-neutral-tertiary-medium hover:text-heading rounded " href="/" onClick={()=>{
-                localStorage.clear();
-               // setOpen(false);
-               window.location.reload();
-                router.push("/");
-              }}>
-                Sign out
-              </Link>
-            </li>
-          </ul>
         </div>
       )}
-    </div>
+
+      {/* MOBILE BUTTONS */}
+      <div className="flex items-center gap-2 md:hidden">
+        <Link
+          href="/#quote_type"
+          className="h-[40px] px-4 rounded-full bg-[#F8C537] font-extrabold flex items-center justify-center"
+        >
+          Get Quote
+        </Link>
+
+        <button
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="p-2 text-black"
+        >
+          {menuOpen ? <X size={28} /> : <Menu size={28} />}
+        </button>
+      </div>
+
+      {/* MOBILE MENU */}
+      {menuOpen && (
+        <div className="absolute top-full left-0 w-full bg-white border-t md:hidden z-50">
+          <nav className="flex flex-col">
+            {links.map((link) => (
+              <Link
+                key={link.href}
+                href={link.href}
+                className="px-5 py-3 text-black hover:bg-gray-100"
+                onClick={() => setMenuOpen(false)}
+              >
+                {link.name}
+              </Link>
+            ))}
+
+            {userlogin && (
+              <div className="border-t px-5 py-3">
+                {logintype === "user" && (
+                  <Link
+                    href="/components/profile"
+                    className="block py-2 text-black"
+                  >
+                    My Profile
+                  </Link>
+                )}
+
+                <Link
+                  href="/"
+                  className="block py-2 text-black"
+                  onClick={() => {
+                    localStorage.clear();
+                    window.location.reload();
+                  }}
+                >
+                  Sign out
+                </Link>
+              </div>
+            )}
+          </nav>
+        </div>
+      )}
     </header>
   );
 };
