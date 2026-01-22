@@ -92,6 +92,12 @@ const PrimaryCTA = ({ text }) => (
     {text} →
   </button>
 );
+const PrimaryCAT = ({ text }) => (
+  // Primary Action colour: Emerald Green
+  <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-8 rounded-lg shadow-xl transition duration-300">
+    {text} →
+  </button>
+);
 
 // --- Main Page Component ---
 export default  function HomePage() {
@@ -585,6 +591,23 @@ const [loginformdata, setloginformdata] = useState({
         <p className="text-xl mb-8 max-w-3xl mx-auto">
           Get transparent quotes from trusted conveyancers and make your move with total confidence. <strong>Your next chapter starts with MovWise.</strong>
         </p>
+        <div
+                  onClick={(e) => {
+                    localStorage.removeItem("service");
+                    const userId = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+                    e.preventDefault();
+                    if (userId) {
+                      // If user is logged in, go to the getquote flow
+                      router.push('/#quote_type');
+                    } else {
+                      // If not logged in, open sign-in modal
+                      setModalopen(true);
+                    }
+                  }}
+                  className="text-blue-500 underline"
+                >
+                  <PrimaryCAT text="Get Your Free Quote" />
+                </div>
       </section>
         {modalopen && (
                         <Signinmodal closeModal={closeModal} partnerloginshow={partnerloginshow} ></Signinmodal>

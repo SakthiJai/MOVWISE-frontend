@@ -89,12 +89,12 @@ const services = [
 
         {/* Call to Action Example */}
         <div className="mt-20 text-center">
-          <a
-            href="#" // Replace with actual link
+          <Link
+           href="/#quote_type"
             className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-full shadow-lg text-white bg-emerald-600 hover:bg-emerald-700 transition duration-300 transform hover:scale-105"
           >
             Get a Free Quote Today
-          </a>
+          </Link>
         </div>
       </div>
     </div>

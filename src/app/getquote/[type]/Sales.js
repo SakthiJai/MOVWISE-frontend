@@ -475,7 +475,7 @@ useEffect(() => {
                         <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
                           <Check size={18} />
                         </div>
-                        <div className="absolute left-[19px] top-[40px] w-[2px] h-[510%] bg-[#CFE3CF]" />
+                        <div className="absolute left-[19px] top-[40px] w-[2px] h-[520%] bg-[#CFE3CF]" />
                       </div>
                       <div>
                         <div className="text-xs font-semibold text-[#1E1E1E]">STEP 1</div>
@@ -490,7 +490,7 @@ useEffect(() => {
                         <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-white text-[#1E5C3B] flex items-center justify-center">
                           <div className="w-4 h-4 rounded-full bg-[#1E5C3B]" />
                         </div>
-                        <div className="absolute left-[19px] top-[40px] w-[2px] h-[510%] bg-gray-200" />
+                        <div className="absolute left-[19px] top-[40px] w-[2px] h-[480%] bg-gray-200" />
                       </div>
                       <div>
                         <div className="text-xs font-semibold text-[#1E1E1E]">STEP 2</div>
@@ -502,8 +502,8 @@ useEffect(() => {
                     {/* Step 3 */}
                     <div className="flex items-start mt-6">
                       <div className="mr-4">
-                        <div className="w-10 h-10 rounded-full border-2 border-gray-300 text-gray-400 flex items-center justify-center">
-                          <div className="w-3 h-3 rounded-full border-2 border-gray-300"></div>
+                        <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-white text-[#1E5C3B] flex items-center justify-center">
+                                                 <div className="w-4 h-4 rounded-full bg-[#1E5C3B]" />
                         </div>
                       </div>
                       <div>
@@ -973,10 +973,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
                 placeholder="Not Applicable"
                 isSearchable={false}
             />
-            <ChevronDown
-                size={16}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"
-            />
+           
         </div>
         <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
             errors.addition_applicable ? "text-red-500 opacity-100" : "opacity-0"
