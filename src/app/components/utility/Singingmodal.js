@@ -277,28 +277,28 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
   const quoteData = localStorage.getItem("service");
   const isEmptyQuote = quoteData ? true : false;
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-4xl h-[500px] md:h-auto grid grid-cols-1 md:grid-cols-[35%_65%] animate-scale-in relative">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 md:p-4">
+      <div className="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-4xl h-auto max-h-[90vh] md:max-h-none grid grid-cols-1 md:grid-cols-[35%_65%] animate-scale-in relative">
         <button
           onClick={closeModal}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold leading-none"
         >
-          X
+          
         </button>
         {/* LEFT SIDE (Brand Section - 35%) */}
-        <div className="text-center bg-gradient-to-br from-[#1E5C3B] to-green-600 text-white flex flex-col justify-between items-center md:items-start p-8">
-          <div className="mt-12">
-            <h2 className="text-4xl font-extrabold tracking-wide mb-2">
+        <div className="text-center bg-gradient-to-br from-[#1E5C3B] to-green-600 text-white flex flex-col justify-between items-center md:items-start p-4 md:p-8">
+          <div className="mt-8 md:mt-12">
+            <h2 className="text-2xl md:text-4xl font-extrabold tracking-wide mb-2">
               MOVWISE
             </h2>
-            <p className="text-sm opacity-90 leading-relaxed mt-12">
+            <p className="text-xs md:text-sm opacity-90 leading-relaxed mt-8 md:mt-12 px-2">
               Making property transactions simple, secure, and smart.
             </p>
           </div>
 
           <Link
             href="/components/personaldetails"
-            className="mt-8 mx-auto bg-white text-[#1E5C3B] font-semibold px-8 py-3 rounded-full hover:bg-gray-100 transition-all duration-300 shadow-lg transform hover:scale-105"
+            className="mt-6 md:mt-8 mx-auto bg-white text-[#1E5C3B] font-semibold px-6 md:px-8 py-2 md:py-3 rounded-full hover:bg-gray-100 transition-all duration-300 shadow-lg transform hover:scale-105 text-sm md:text-base"
           >
             Sign Up
           </Link>
@@ -306,32 +306,32 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
 
         {/* RIGHT SIDE (Content Section - 65%) */}
         {!loginformshow && !guestformshow && (
-          <div className="relative p-8 flex flex-col justify-center text-center md:text-left">
+          <div className="relative p-4 md:p-8 flex flex-col justify-center text-center md:text-left">
             {/* Close Button */}
             <button
               onClick={closeModal}
-              className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold leading-none"
+              className="absolute top-2 right-2 md:top-4 md:right-4 text-gray-400 hover:text-gray-700 text-lg md:text-xl font-bold leading-none"
             >
               X
             </button>
 
 
-            <div className="text-gray-600 mb-8 leading-relaxed">
+            <div className="text-gray-600 mb-6 md:mb-8 leading-relaxed text-sm md:text-base px-2 md:px-0">
               {isEmptyQuote ? (
                 <>
                   You’re about to submit your <b>Property Details</b>. Would you
                   like to continue as a <b>logged-in user</b> or a <b>guest user</b>?
                 </>
               ) : (
-                <><h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">Access your account or Register a new one to proceed.</h2></>
+                <><h2 className="text-lg md:text-2xl font-bold text-[#1E5C3B] mb-4 md:mb-6 text-center">Access your account or Register a new one to proceed.</h2></>
 
               )}
             </div>
 
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
               <button
-                className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
+                className="inline-flex items-center justify-center h-[40px] md:h-[44px] px-4 md:px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition text-sm md:text-base"
                 onClick={() => {
                   setloginformshow(true);
                   setlogintype("user");
@@ -348,16 +348,16 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
                   setLoginError(false);
                   setTermsAccepted(false);
                 }}
-                className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
+                className="inline-flex items-center justify-center h-[40px] md:h-[44px] px-4 md:px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition text-sm md:text-base"
               >
                 Guest User
               </button>
             </div>
 
-            <div className="grid grid-cols-1  gap-6 mt-5  mx-auto">
+            <div className="grid grid-cols-1 gap-4 md:gap-6 mt-4 md:mt-5 mx-auto">
               {partnerloginshow && (
                 <button
-                  className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
+                  className="inline-flex items-center justify-center h-[40px] md:h-[44px] px-4 md:px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition text-sm md:text-base"
                   onClick={() => {
                     setloginformshow(true);
                     setlogintype("partner");
@@ -373,7 +373,7 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
         )}
 
         {forgotPasswordShow ? (
-          <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-6">
+          <div className="flex justify-center items-center min-h-[60vh] md:min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-4 md:p-6">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -383,9 +383,9 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
                 }
                 forgotPasswordApiCall(); // call your API here
               }}
-              className="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg border border-gray-200"
+              className="bg-white w-full max-w-md p-6 md:p-8 rounded-2xl shadow-lg border border-gray-200"
             >
-              <h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center">
+              <h2 className="text-xl md:text-2xl font-bold text-[#1E5C3B] mb-4 md:mb-6 text-center">
                 Forgot Password
               </h2>
 
@@ -395,7 +395,7 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
                 </p>
               )}
 
-              <div className="mb-6">
+              <div className="mb-4 md:mb-6">
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Email Address
                 </label>
@@ -404,14 +404,14 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
                   placeholder="Enter registered email"
                   value={forgotEmail}
                   onChange={(e) => setForgotEmail(e.target.value)}
-                  className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all "
+                  className="block w-full h-[40px] md:h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all "
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={forgotLoading}
-                className={`w-full font-semibold py-3 rounded-lg transition-all
+                className={`w-full font-semibold py-2 md:py-3 rounded-lg transition-all text-sm md:text-base
     ${forgotLoading
                     ? "bg-gray-400 cursor-not-allowed"
                     : "bg-[#1E5C3B] hover:bg-green-700 text-white"
@@ -424,14 +424,14 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
               <button
                 type="button"
                 onClick={() => setForgotPasswordShow(false)}
-                className="mt-2 w-full bg-[#ffd954] text-white font-semibold py-3 rounded-lg"
+                className="mt-2 w-full bg-[#ffd954] text-white font-semibold py-2 md:py-3 rounded-lg text-sm md:text-base"
               >
                 Back to Login
               </button>
             </form>
           </div>
         ) : loginformshow ? (
-          <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-6">
+          <div className="flex justify-center items-center min-h-[60vh] md:min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-4 md:p-6">
             <form
               noValidate
               onSubmit={(e) => {
@@ -441,10 +441,10 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
                   logindata();
                 }
               }}
-              className="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg border border-gray-200"
+              className="bg-white w-full max-w-md p-6 md:p-8 rounded-2xl shadow-lg border border-gray-200"
             >
-              <h2 className="text-2xl font-bold text-[#1E5C3B] mb-6 text-center flex items-center justify-center gap-2">
-                User / Partner Login <Hand className="w-6 h-6 text-yellow-400" />
+              <h2 className="text-xl md:text-2xl font-bold text-[#1E5C3B] mb-4 md:mb-6 text-center flex items-center justify-center gap-2">
+                User / Partner Login <Hand className="w-5 h-5 md:w-6 md:h-6 text-yellow-400" />
               </h2>
 
               {loginError && (
@@ -453,7 +453,7 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
                 </p>
               )}
               {/* Email */}
-              <div className="mb-5">
+              <div className="mb-4 md:mb-5">
                 <label
                   htmlFor="email"
                   className="block text-sm font-semibold text-gray-700 mb-2"
@@ -470,7 +470,7 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
                   onChange={(e) =>
                     handleloginformchange("email", e.target.value)
                   }
-                  className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
+                  className="block w-full h-[40px] md:h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
                 />
                 {formErrors.email && (
                   <p className="text-red-500 text-xs mt-1">{formErrors.email}</p>
@@ -478,7 +478,7 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
               </div>
 
               {/* Password */}
-              <div className="mb-6">
+              <div className="mb-4 md:mb-6">
                 <label
                   htmlFor="password"
                   className="block text-sm font-semibold text-gray-700 mb-2"
@@ -496,14 +496,14 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
                     handleloginformchange("password", e.target.value)
                   }
                   autoComplete="current-password"
-                  className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
+                  className="block w-full h-[40px] md:h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
                 />
                 {formErrors.password && (
                   <p className="text-red-500 text-xs mt-1">{formErrors.password}</p>
                 )}
               </div>
               {/* Forgot Password */}
-              <div className="mb-6 text-right">
+              <div className="mb-4 md:mb-6 text-right">
                 <button
                   type="button"
                   onClick={() => setForgotPasswordShow(true)}
@@ -516,7 +516,7 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
               <button
                 type="submit"
                 disabled={!termsAccepted}
-                className={`w-full font-semibold py-3 rounded-lg transition-all duration-300 shadow-md ${termsAccepted
+                className={`w-full font-semibold py-2 md:py-3 rounded-lg transition-all duration-300 shadow-md text-sm md:text-base ${termsAccepted
                     ? "bg-[#1E5C3B] text-white hover:bg-green-700 transform hover:scale-105"
                     : "bg-gray-400 text-gray-200 cursor-not-allowed"
                   }`}
@@ -540,19 +540,19 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
                   setLoginError("");
                   setTermsAccepted(false);
                 }}
-                className="mt-1 w-full bg-[#ffd954] text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md transform hover:scale-105"
+                className="mt-1 w-full bg-[#ffd954] text-white font-semibold py-2 md:py-3 rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md transform hover:scale-105 text-sm md:text-base"
               >
                 Back
               </button>
-              <div className="mt-4 flex items-center justify-center gap-2">
+              <div className="mt-3 md:mt-4 flex items-start justify-center gap-2">
                 <input
                   type="checkbox"
                   id="login_terms"
-                  className="w-4 h-4 text-[#1E5C3B] border-gray-300 rounded focus:ring-[#1E5C3B]"
+                  className="w-4 h-4 mt-0.5 text-[#1E5C3B] border-gray-300 rounded focus:ring-[#1E5C3B]"
                   checked={termsAccepted}
                   onChange={(e) => setTermsAccepted(e.target.checked)}
                 />
-                <label htmlFor="login_terms" className="text-sm text-gray-600">
+                <label htmlFor="login_terms" className="text-xs md:text-sm text-gray-600 leading-tight">
                     I agree to MovWise
                     <Link
                       href="/terms-of-use"
@@ -575,12 +575,12 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
         ) : null}
 
         {showSuccessPopup && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-20 backdrop-blur-sm">
-            <div className="bg-white rounded-xl shadow-xl p-6 max-w-sm w-full text-center">
-              <h3 className="text-xl font-bold text-[#1E5C3B] mb-3">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-20 backdrop-blur-sm p-4">
+            <div className="bg-white rounded-xl shadow-xl p-4 md:p-6 max-w-sm w-full text-center">
+              <h3 className="text-lg md:text-xl font-bold text-[#1E5C3B] mb-2 md:mb-3">
                 Check your email
               </h3>
-              <p className="text-gray-600 mb-6">
+              <p className="text-gray-600 mb-4 md:mb-6 text-sm md:text-base">
                 We’ve sent a password reset link to your email address.
                 Please check your inbox or spam folder.
               </p>
@@ -589,7 +589,7 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
                   setShowSuccessPopup(false);
                   setForgotPasswordShow(false); // back to login
                 }}
-                className="w-full bg-[#1E5C3B] text-white font-semibold py-2 rounded-lg hover:bg-green-700"
+                className="w-full bg-[#1E5C3B] text-white font-semibold py-2 md:py-3 rounded-lg hover:bg-green-700 text-sm md:text-base"
               >
                 OK
               </button>
@@ -598,7 +598,7 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
         )}
 
         {guestformshow && (
-          <div className="flex justify-center items-center min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-6">
+          <div className="flex justify-center items-center min-h-[60vh] md:min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-4 md:p-6">
             <form
               noValidate
               onSubmit={(e) => {
@@ -608,9 +608,9 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
                   createguestuser();
                 }
               }}
-              className="bg-white w-full max-w-md p-8 rounded-2xl shadow-lg border border-gray-200"
+              className="bg-white w-full max-w-md p-6 md:p-8 rounded-2xl shadow-lg border border-gray-200"
             >
-              <h2 className="text-xl font-bold text-[#1E5C3B] mb-6 text-center">
+              <h2 className="text-lg md:text-xl font-bold text-[#1E5C3B] mb-4 md:mb-6 text-center">
                 Guest Users Please Fill Below Details
               </h2>
 
@@ -619,8 +619,7 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
                   {loginError}
                 </p>
               )}
-              {/* Email */}
-              <div className="mb-4">
+              <div className="mb-3 md:mb-4">
                 <label
                   htmlFor="Name"
                   className="block text-sm font-semibold text-gray-700 mb-2"
@@ -638,7 +637,7 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
                     handleguestformchange("firstname", e.target.value)
                   }
                   autoComplete="current-password"
-                  className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
+                  className="block w-full h-[40px] md:h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
                 />
                 {formErrors.firstname && (
                   <p className="text-red-500 text-xs mt-1">{formErrors.firstname}</p>
@@ -661,9 +660,9 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
                   handleguestformchange("lastname", e.target.value)
                 }
                 autoComplete="current-password"
-                className="block w-full h-[44px] mb-4 rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
+                className="block w-full h-[40px] md:h-[44px] mb-3 md:mb-4 rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
               />
-              <div className="mb-5">
+              <div className="mb-4 md:mb-5">
                 <label
                   htmlFor="email"
                   className="block text-sm font-semibold text-gray-700 mb-2"
@@ -680,13 +679,13 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
                   onChange={(e) =>
                     handleguestformchange("guest_email", e.target.value)
                   }
-                  className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
+                  className="block w-full h-[40px] md:h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
                 />
                 {formErrors.guest_email && (
                   <p className="text-red-500 text-xs mt-1">{formErrors.guest_email}</p>
                 )}
               </div>
-              <div className="mb-5">
+              <div className="mb-4 md:mb-5">
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Phone Number
                 </label>
@@ -706,7 +705,7 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
                       handleguestformchange("guest_phonenumber", value);
                     }
                   }}
-                  className="block w-full h-[44px] rounded-lg border border-gray-300 px-3 
+                  className="block w-full h-[40px] md:h-[44px] rounded-lg border border-gray-300 px-3 
                     text-[14px] text-gray-800 placeholder-gray-400 
                     focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] 
                     outline-none transition-all"
@@ -724,7 +723,7 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
               <button
                 type="submit"
                 disabled={!termsAccepted}
-                className={`w-full font-semibold py-3 rounded-lg transition-all duration-300 shadow-md ${termsAccepted
+                className={`w-full font-semibold py-2 md:py-3 rounded-lg transition-all duration-300 shadow-md text-sm md:text-base ${termsAccepted
                   ? "bg-[#1E5C3B] text-white hover:bg-green-700 transform hover:scale-105"
                   : "bg-gray-400 text-gray-200 cursor-not-allowed"
                   }`}
@@ -747,19 +746,19 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
                   setFormErrors({});
                   setLoginError("");
                 }}
-                className="mt-1 w-full bg-[#ffd954] text-white font-semibold py-3 rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md transform hover:scale-105"
+                className="mt-1 w-full bg-[#ffd954] text-white font-semibold py-2 md:py-3 rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md transform hover:scale-105 text-sm md:text-base"
               >
                 Back
               </button>
-              <div className="mt-4 flex items-center justify-center gap-2">
+              <div className="mt-3 md:mt-4 flex items-start justify-center gap-2">
                 <input
                   type="checkbox"
                   id="terms"
-                  className="w-4 h-4 text-[#1E5C3B] border-gray-300 rounded focus:ring-[#1E5C3B]"
+                  className="w-4 h-4 mt-0.5 text-[#1E5C3B] border-gray-300 rounded focus:ring-[#1E5C3B]"
                   checked={termsAccepted}
                   onChange={(e) => setTermsAccepted(e.target.checked)}
                 />
-             <label htmlFor="login_terms" className="text-sm text-gray-600">
+             <label htmlFor="login_terms" className="text-xs md:text-sm text-gray-600 leading-tight">
                     I agree to MovWise
                     <Link
                       href="/terms-of-use"

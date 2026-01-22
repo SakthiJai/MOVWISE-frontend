@@ -194,12 +194,19 @@ if (!formdata.phone_number || formdata.phone_number.trim() === "") {
         <main className="mx-auto max-w-[1200px] pt-10">
           <div className="flex gap-12 mt-24">
             {/* Left rail: stepper panel */}
-            <aside
-              className="relative w-[400px]    rounded-[40px] overflow-hidden bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)]
-shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]"
+           <aside
+              className="
+                relative 
+                w-[400px]
+                rounded-[40px] 
+                overflow-hidden 
+                hidden md:block
+                bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)]
+                shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]
+              "
             >
+              {/* Step Indicator */}
               <div className="absolute inset-0 p-8">
-                {/* Step 1 */}
                 <div className="flex items-start">
                   <div className="relative mr-4">
                     <div className="w-11 h-11 rounded-full border-[2px] border-[#1E5C3B] bg-white flex items-center justify-center text-[#1E5C3B]">
@@ -220,13 +227,13 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]"
                         <circle cx="10" cy="10" r="3" fill="currentColor" />
                       </svg>
                     </div>
-                    <div />
                   </div>
+
                   <div>
                     <div className="text-[12px] font-semibold pesonaldetails-steps font-gilroy">
                       STEP 1
                     </div>
-                    <div className="font-outfit text-[20px] text-gray-900 font-semibold ">
+                    <div className="font-outfit text-[20px] text-gray-900 font-semibold">
                       Personal Details
                     </div>
                   </div>
@@ -243,6 +250,7 @@ shadow-[inset_0_1px_0_rgba(0,0,0,0.03)]"
                 }}
               />
             </aside>
+
 
             {/* Right: form card and actions */}
             <section className="flex-1">
