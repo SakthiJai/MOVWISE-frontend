@@ -64,7 +64,7 @@ const [blogs, setBlogs] = useState([]);
                 <main className="mx-auto max-w-[1200px] pt-2 px-4 lg:px-0 mb-5 mt-20">
                    <div className="flex flex-col lg:flex-row gap-8">
                     <section className="w-full">
-                      <h2 class="text-3xl font-bold text-emerald-800 mb-4 text-center">Latest Articals!</h2>
+                      <h2 class="text-3xl font-bold text-emerald-800 mb-4 text-center">Conveyancing advice and guides</h2>
 
                       {/* Blog list: 3 columns per row on large screens, 2 rows (6 cards) */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
