@@ -31,7 +31,10 @@ const Navbar = ({ originalstyle = false }) => {
     <header
       className={`w-full bg-white z-100 ${
         originalstyle ? "" : "pt-1"
-      } flex items-center px-5 relative`}
+      } flex items-center px-5 relative p-0`}
+
+      style={{padding:0}}
+      
     >
       {/* Logo */}
       <Link href="/" className="flex-1 items-center select-none">
@@ -117,7 +120,7 @@ const Navbar = ({ originalstyle = false }) => {
       )}
 
       {/* MOBILE BUTTONS */}
-      <div className="flex items-center gap-2 md:hidden">
+      <div className="flex items-center gap-2 md:hidden sm:ml-4">
         <Link
           href="/#quote_type"
           className="h-[40px] px-4 rounded-full bg-[#F8C537] font-extrabold flex items-center justify-center"
@@ -135,7 +138,7 @@ const Navbar = ({ originalstyle = false }) => {
 
       {/* MOBILE MENU */}
       {menuOpen && (
-        <div className="absolute top-full left-0 w-full bg-white border-t md:hidden z-50">
+        <div className="absolute top-17 left-0 right-0 w-full bg-white border-t md:hidden z-50">
           <nav className="flex flex-col">
             {links.map((link) => (
               <Link

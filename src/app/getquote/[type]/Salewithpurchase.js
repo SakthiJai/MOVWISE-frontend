@@ -768,53 +768,53 @@ console.log(e);
         return (
 
                             <div className="flex flex-col lg:flex-row gap-8 mt-7">
-                {/* Left stepper */}
-               <aside className="z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-1/2 lg:h-[80vh] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white   lg:top-22" style={{height : "88.5%"}}>
-                             <div className="p-6 h-full flex flex-col justify-around ">
-                               {/* Step 1 */}
-                               <div className="flex items-start">
-                                 <div className="relative mr-4">
-                                   <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
-                                     <Check size={18} />
+                              {/* Left stepper */}
+                                <aside className="hidden lg:block z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-1/2 lg:h-[80vh] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white lg:top-22" style={{height: "88.5%"}}>
+                                 <div className="p-6 h-full flex flex-col justify-around">
+                                   {/* Step 1 */}
+                                   <div className="flex items-start">
+                                     <div className="relative mr-4">
+                                       <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
+                                         <Check size={18} />
+                                       </div>
+                                       <div className="absolute left-[19px] top-[40px] w-[2px] h-[510%] bg-[#CFE3CF]" />
+                                     </div>
+                                     <div>
+                                       <div className="text-xs font-semibold text-[#1E1E1E]">STEP 1</div>
+                                       <div className="text-lg font-extrabold text-[#1E1E1E]">Property Details</div>
+                                       <div className="text-xs text-[#2D7C57] mt-1">In Progress</div>
+                                     </div>
                                    </div>
-                                   <div className="absolute left-[19px] top-[40px] w-[2px] h-[520%] bg-[#CFE3CF]" />
-                                 </div>
-                                 <div>
-                                   <div className="text-xs font-semibold text-[#1E1E1E]">STEP 1</div>
-                                   <div className="text-lg font-extrabold text-[#1E1E1E]">Property Details</div>
-                                   <div className="text-xs text-[#2D7C57] mt-1">In Progress</div>
-                                 </div>
-                               </div>
-                 
-                               {/* Step 2 (Current) */}
-                               <div className="flex items-start mt-6">
-                                 <div className="relative mr-4">
-                                   <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-white text-[#1E5C3B] flex items-center justify-center">
-                                     <div className="w-4 h-4 rounded-full bg-[#1E5C3B]" />
+               
+                                   {/* Step 2 (Current) */}
+                                   <div className="flex items-start mt-6">
+                                     <div className="relative mr-4">
+                                       <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-white text-[#1E5C3B] flex items-center justify-center">
+                                         <div className="w-4 h-4 rounded-full bg-[#1E5C3B]" />
+                                       </div>
+                                       <div className="absolute left-[19px] top-[40px] w-[2px] h-[510%] bg-gray-200" />
+                                     </div>
+                                     <div>
+                                       <div className="text-xs font-semibold text-[#1E1E1E]">STEP 2</div>
+                                       <div className="text-lg font-extrabold text-[#1E1E1E]">Personal Details</div>
+                                       <div className="text-xs text-[#A38320] mt-1"></div>
+                                     </div>
                                    </div>
-                                   <div className="absolute left-[19px] top-[40px] w-[2px] h-[485%] bg-gray-200" />
-                                 </div>
-                                 <div>
-                                   <div className="text-xs font-semibold text-[#1E1E1E]">STEP 2</div>
-                                   <div className="text-lg font-extrabold text-[#1E1E1E]">Personal Details</div>
-                                   <div className="text-xs text-[#A38320] mt-1"></div>
-                                 </div>
-                               </div>
-                 
-                               {/* Step 3 */}
-                               <div className="flex items-start mt-6">
-                                 <div className="mr-4">
-                                   <div className="w-10 h-10 rounded-full border-2 border-gray-300 text-gray-400 flex items-center justify-center">
-                                     <div className="w-3 h-3 rounded-full border-2 border-gray-300"></div>
+               
+                                   {/* Step 3 */}
+                                   <div className="flex items-start mt-6">
+                                     <div className="mr-4">
+                                       <div className="w-10 h-10 rounded-full border-2 border-gray-300 text-gray-400 flex items-center justify-center">
+                                         <div className="w-3 h-3 rounded-full border-2 border-gray-300"></div>
+                                       </div>
+                                     </div>
+                                     <div>
+                                       <div className="text-xs font-semibold text-[#1E1E1E]">STEP 3</div>
+                                       <div className="text-lg font-extrabold text-[#1E1E1E]">Compare Quotes</div>
+                                     </div>
                                    </div>
                                  </div>
-                                 <div>
-                                   <div className="text-xs font-semibold text-[#1E1E1E]">STEP 3</div>
-                                   <div className="text-lg font-extrabold text-[#1E1E1E]">Compare Quotes</div>
-                                 </div>
-                               </div>
-                             </div>
-                           </aside>
+                               </aside>
                 {/* Right Form */}
                 <section className="flex-1 bg-white border border-gray-200 shadow-xl rounded-2xl p-4 sm:p-8 lg:p-10 lg:ml-83">
                     <nav
@@ -920,7 +920,6 @@ console.log(e);
                                 id="price"
                                 name="price"
                                 type="text"
-                                onFocus={(e) => e.target.select()}
                                 value={formData.sales_price ?? ""} 
                                 onChange={(e)=>{handleChange("sales_price",e.target.value)}} 
                                 className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors outline-none"
@@ -1006,35 +1005,34 @@ console.log(e);
     Property Type:<span className="text-red-500">*</span>
   </label>
 
-  <div className="flex flex-wrap gap-9">
-    {propertyTypeOptions.map((opt) => (
-      <button
-        key={opt.label}
-        type="button"
-        onClick={() => {
-          // ✅ Update property type in formData
-          setFormData((prev) => ({ ...prev, sales_property_type: opt.label }));
-          // ✅ Clear the specific error
-          setErrors((prev) => ({ ...prev, sales_property_type: "" }));
-        }}
-        className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 transition-all duration-200 shadow-sm w-[170.76px]
-          ${
-            formData.sales_property_type === opt.label
-              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
-              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-          }`}
+  <div className="grid grid-cols-2 md:flex md:flex-wrap gap-4 md:gap-9">
+  {propertyTypeOptions.map((opt) => (
+    <button
+      key={opt.label}
+      type="button"
+      onClick={() => {
+        setFormData((prev) => ({ ...prev, sales_property_type: opt.label }));
+        setErrors((prev) => ({ ...prev, sales_property_type: "" }));
+      }}
+      className={`flex items-center gap-2 px-4 md:px-5 py-2.5 rounded-xl border-2 transition-all duration-200 shadow-sm
+        w-full md:w-[170.76px]
+        ${
+          formData.sales_property_type === opt.label
+            ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+        }`}
+    >
+      <span
+        className={`${
+          formData.sales_property_type === opt.label ? "text-white" : "text-gray-700"
+        } text-[16px] md:text-[18px]`}
       >
-        <span
-          className={`${
-            formData.sales_property_type === opt.label ? "text-white" : "text-gray-700"
-          } text-[18px]`}
-        >
-          {opt.icon}
-        </span>
-        <span className="text-sm font-semibold">{opt.label}</span>
-      </button>
-    ))}
-  </div>
+        {opt.icon}
+      </span>
+      <span className="text-xs md:text-sm font-semibold text-left">{opt.label}</span>
+    </button>
+  ))}
+</div>
   {errors.sales_property_type && (
     <p className="text-red-500 text-[12px] mt-1">{errors.sales_property_type}</p>
   )}
@@ -1170,7 +1168,6 @@ console.log(e);
      id="purchase_price"
   name="purchase_price"
       type="text"
-      onFocus={(e) => e.target.select()}
       value={formData.purchase_price?? ""}
       onChange={(e)=>{handleChange("purchase_price",e.target.value)}} 
       placeholder="Enter purchase price"
@@ -1306,38 +1303,34 @@ console.log(e);
     Property Type:<span className="text-red-500">*</span>
   </label>
 
-  <div className="flex flex-wrap gap-9">
-    {propertyTypeOptions_purchase.map((opt) => (
-      <button
-        key={opt.label}
-        type="button"
-        onClick={() => {
-          // Update the property type
-          handleChange("property_type", opt.label);
-
-          // Reset high_raise_support if not Flat
-          if (opt.label !== "Flat") {
-            handleChange("high_raise_support", 0);
-          }
-        }}
-        className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 transition-all duration-200 shadow-sm w-[170.76px]
-          ${
-            formData.property_type === opt.label
-              ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
-              : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-          }`}
+  <div className="grid grid-cols-2 md:flex md:flex-wrap gap-4 md:gap-9">
+  {propertyTypeOptions_purchase.map((opt) => (
+    <button
+      key={opt.label}
+      type="button"
+      onClick={() => {
+        setFormData((prev) => ({ ...prev, sales_property_type: opt.label }));
+        setErrors((prev) => ({ ...prev, sales_property_type: "" }));
+      }}
+      className={`flex items-center gap-2 px-4 md:px-5 py-2.5 rounded-xl border-2 transition-all duration-200 shadow-sm
+        w-full md:w-[170.76px]
+        ${
+          formData.sales_property_type === opt.label
+            ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+        }`}
+    >
+      <span
+        className={`${
+          formData.sales_property_type === opt.label ? "text-white" : "text-gray-700"
+        } text-[16px] md:text-[18px]`}
       >
-        <span
-          className={`${
-            formData.property_type === opt.label ? "text-[#1E5C3B]" : "text-gray-700"
-          } text-[18px]`}
-        >
-          {opt.icon}
-        </span>
-        <span className="text-sm font-semibold">{opt.label}</span>
-      </button>
-    ))}
-  </div>
+        {opt.icon}
+      </span>
+      <span className="text-xs md:text-sm font-semibold text-left">{opt.label}</span>
+    </button>
+  ))}
+</div>
 
   {errors.property_type && (
     <p className="text-red-500 text-[12px] mt-1">{errors.property_type}</p>

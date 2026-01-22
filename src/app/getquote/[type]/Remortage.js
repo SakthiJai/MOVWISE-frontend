@@ -430,52 +430,52 @@ const getIconForType = (type) => {
         return (
                          <div className="flex flex-col lg:flex-row gap-8 mt-8">
                 {/* Left stepper */}
-                       <aside className="z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-1/2 lg:h-[80vh] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white   lg:top-22" style={{height : "88.5%"}}>
-                                     <div className="p-6 h-full flex flex-col justify-around ">
-                                       {/* Step 1 */}
-                                       <div className="flex items-start">
-                                         <div className="relative mr-4">
-                                           <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
-                                             <Check size={18} />
+                       <aside className="hidden lg:block z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-1/2 lg:h-[80vh] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white lg:top-22" style={{height: "88.5%"}}>
+                                         <div className="p-6 h-full flex flex-col justify-around">
+                                           {/* Step 1 */}
+                                           <div className="flex items-start">
+                                             <div className="relative mr-4">
+                                               <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
+                                                 <Check size={18} />
+                                               </div>
+                                               <div className="absolute left-[19px] top-[40px] w-[2px] h-[510%] bg-[#CFE3CF]" />
+                                             </div>
+                                             <div>
+                                               <div className="text-xs font-semibold text-[#1E1E1E]">STEP 1</div>
+                                               <div className="text-lg font-extrabold text-[#1E1E1E]">Property Details</div>
+                                               <div className="text-xs text-[#2D7C57] mt-1">In Progress</div>
+                                             </div>
                                            </div>
-                                           <div className="absolute left-[19px] top-[40px] w-[2px] h-[520%] bg-[#CFE3CF]" />
-                                         </div>
-                                         <div>
-                                           <div className="text-xs font-semibold text-[#1E1E1E]">STEP 1</div>
-                                           <div className="text-lg font-extrabold text-[#1E1E1E]">Property Details</div>
-                                           <div className="text-xs text-[#2D7C57] mt-1">In Progress</div>
-                                         </div>
-                                       </div>
-                         
-                                       {/* Step 2 (Current) */}
-                                       <div className="flex items-start mt-6">
-                                         <div className="relative mr-4">
-                                           <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-white text-[#1E5C3B] flex items-center justify-center">
-                                             <div className="w-4 h-4 rounded-full bg-[#1E5C3B]" />
+                       
+                                           {/* Step 2 (Current) */}
+                                           <div className="flex items-start mt-6">
+                                             <div className="relative mr-4">
+                                               <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-white text-[#1E5C3B] flex items-center justify-center">
+                                                 <div className="w-4 h-4 rounded-full bg-[#1E5C3B]" />
+                                               </div>
+                                               <div className="absolute left-[19px] top-[40px] w-[2px] h-[510%] bg-gray-200" />
+                                             </div>
+                                             <div>
+                                               <div className="text-xs font-semibold text-[#1E1E1E]">STEP 2</div>
+                                               <div className="text-lg font-extrabold text-[#1E1E1E]">Personal Details</div>
+                                               <div className="text-xs text-[#A38320] mt-1"></div>
+                                             </div>
                                            </div>
-                                           <div className="absolute left-[19px] top-[40px] w-[2px] h-[485%] bg-gray-200" />
-                                         </div>
-                                         <div>
-                                           <div className="text-xs font-semibold text-[#1E1E1E]">STEP 2</div>
-                                           <div className="text-lg font-extrabold text-[#1E1E1E]">Personal Details</div>
-                                           <div className="text-xs text-[#A38320] mt-1"></div>
-                                         </div>
-                                       </div>
-                         
-                                       {/* Step 3 */}
-                                       <div className="flex items-start mt-6">
-                                         <div className="mr-4">
-                                           <div className="w-10 h-10 rounded-full border-2 border-gray-300 text-gray-400 flex items-center justify-center">
-                                             <div className="w-3 h-3 rounded-full border-2 border-gray-300"></div>
+                       
+                                           {/* Step 3 */}
+                                           <div className="flex items-start mt-6">
+                                             <div className="mr-4">
+                                               <div className="w-10 h-10 rounded-full border-2 border-gray-300 text-gray-400 flex items-center justify-center">
+                                                 <div className="w-3 h-3 rounded-full border-2 border-gray-300"></div>
+                                               </div>
+                                             </div>
+                                             <div>
+                                               <div className="text-xs font-semibold text-[#1E1E1E]">STEP 3</div>
+                                               <div className="text-lg font-extrabold text-[#1E1E1E]">Compare Quotes</div>
+                                             </div>
                                            </div>
                                          </div>
-                                         <div>
-                                           <div className="text-xs font-semibold text-[#1E1E1E]">STEP 3</div>
-                                           <div className="text-lg font-extrabold text-[#1E1E1E]">Compare Quotes</div>
-                                         </div>
-                                       </div>
-                                     </div>
-                                   </aside>
+                                       </aside>
 
                 {/* Right Form */}
                 <section className="flex-1 bg-white border border-gray-200 shadow-xl rounded-2xl p-4 sm:p-8 lg:p-10 lg:ml-83">
@@ -593,7 +593,6 @@ const getIconForType = (type) => {
                             <input
                                 id="price"
                                 type="text"
-                                onFocus={(e) => e.target.select()}
                                   value={formData?.property_values ?? ""}
                                 className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors outline-none"
                             name="property_values
@@ -680,31 +679,34 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
          <div>
                  
 
-                            <div className="flex flex-wrap  gap-9">
-                            {propertyTypeOptions.map((opt) => (
-                                <button
-                                key={opt.id}
-                                type="button"
-                                onClick={()=> handleChange ( "property_type",opt.label)}
-                                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl border-2 transition-all duration-200 shadow-sm w-[170.76px]
-                                    ${
-                                   formData.property_type === opt.label
-                                        ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
-                                        : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
-                                    }`}
-                                >
-                                <span
-                                    className={`${
-                                    propertyType === opt.label ? "text-[#1E5C3B]" : "text-gray-700"
-                                    } text-[18px]`}
-                                >
-                                    {opt.icon}
-                                </span>
-                                <span className="text-sm font-semibold">{opt.label
-}</span>
-                                </button>
-                            ))}
-                            </div>
+                            <div className="grid grid-cols-2 md:flex md:flex-wrap gap-4 md:gap-9">
+  {propertyTypeOptions.map((opt) => (
+    <button
+      key={opt.label}
+      type="button"
+      onClick={() => {
+        setFormData((prev) => ({ ...prev, sales_property_type: opt.label }));
+        setErrors((prev) => ({ ...prev, sales_property_type: "" }));
+      }}
+      className={`flex items-center gap-2 px-4 md:px-5 py-2.5 rounded-xl border-2 transition-all duration-200 shadow-sm
+        w-full md:w-[170.76px]
+        ${
+          formData.sales_property_type === opt.label
+            ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+        }`}
+    >
+      <span
+        className={`${
+          formData.sales_property_type === opt.label ? "text-white" : "text-gray-700"
+        } text-[16px] md:text-[18px]`}
+      >
+        {opt.icon}
+      </span>
+      <span className="text-xs md:text-sm font-semibold text-left">{opt.label}</span>
+    </button>
+  ))}
+</div>
                            
  <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
    errors.property_type ? "text-red-500 opacity-100" : "opacity-0"
