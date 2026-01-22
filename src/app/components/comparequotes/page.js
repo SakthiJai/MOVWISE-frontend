@@ -213,74 +213,177 @@ const generatePDF = async () => {
   }
 };
   // On instruct button, show popup modal with message
-  function handleInstruct( companyName,guest_id, conveyancer_id, quote_id, user_id, tax_info_quote_id, refno,)
-   {
+//   function handleInstruct( companyName,guest_id, conveyancer_id, quote_id, user_id, tax_info_quote_id, refno,pdfRef)
+//    {
 
- setinstructloader(true);
+//  setinstructloader(true);
+//  const popupHtml = pdfRef?.current?.outerHTML;
+//   if (!popupHtml) {
+//     setinstructloader(false);
+//     console.error("Popup HTML not found");
+//     return;
+//   }
+//     console.log(
+//       companyName,
+//       guest_id,
+//       conveyancer_id,
+//       quote_id,
+//       user_id,
+//       tax_info_quote_id,
+//       refno
+//     );
 
-    console.log(
+//     let servicetype = localStorage.getItem("service");
+
+//     if(quote_id==undefined || quote_id==null || quote_id==" "){
+//       setquoteid(tax_info_quote_id);
+// let instructpayloadtemp={
+//    ref_no: refno,
+//     servicetype: servicetype,
+//     quoteid: tax_info_quote_id,
+//     popup_html: popupHtml   
+// }
+
+//       setconveyancerid(conveyancer_id)
+//       instructquote(instructpayloadtemp)
+//       console.log(instructpayload);
+//     }
+
+//     else{
+//       let instructpayloadtemp={
+//    ref_no: refno,
+//     servicetype: servicetype,
+//     quoteid: quote_id,
+//     popup_html: popupHtml
+// }
+//       setquoteid(quote_id);
+//       setconveyancerid(conveyancer_id)
+   
+//         console.log(instructpayload);
+
+//  instructquote(instructpayloadtemp)
+//     }
+
+    
+
+    
+//    }
+
+//   async function instructquote(instructpayload){
+//       try{
+// const instruct = await postData(API_ENDPOINTS.instruct , instructpayload);
+// console.log(instruct)
+
+// if(instruct){
+//   setinstructloader(false);
+// router.push(`/Instruct?id=${quoteid}`);
+//   console.log(instructloader);
+// }
+//       }
+//       catch(e){
+//         console.log(e);
+//       }
+    
+    
+   
+//     console.log(popupData);
+//   }
+
+// Step 1: Opens modal and waits for pdfRef to render
+function handleInstructFromCard(
+  companyName,
+  guest_id,
+  conveyancer_id,
+  quote_id,
+  user_id,
+  tax_info_quote_id,
+  refno,
+  quote
+) {
+  // Open the modal first
+  showviewquotes(true);
+  setcardid(conveyancer_id);
+  setcardshown(true);
+  setview_data(quote);
+  setdropdownshow(true);
+  
+  // Wait 600ms for React to render pdfRef, then send mail
+  setTimeout(() => {
+    handleInstruct(
       companyName,
       guest_id,
       conveyancer_id,
       quote_id,
       user_id,
       tax_info_quote_id,
-      refno
+      refno,
+      pdfRef
     );
+  }, 600);
+}
 
-    let servicetype = localStorage.getItem("service");
+function handleInstruct(
+  companyName,
+  guest_id,
+  conveyancer_id,
+  quote_id,
+  user_id,
+  tax_info_quote_id,
+  refno,
+  pdfRef
+) {
+  setinstructloader(true);
 
-    if(quote_id==undefined || quote_id==null || quote_id==" "){
-      setquoteid(tax_info_quote_id);
-let instructpayloadtemp={
-   ref_no: refno,
+  // Step 1: Get HTML from ref
+  const popupHtml = pdfRef?.current?.outerHTML;
+
+  console.log(
+    companyName,
+    guest_id,
+    conveyancer_id,
+    quote_id,
+    user_id,
+    tax_info_quote_id,
+    refno,
+    pdfRef
+  );
+
+  let servicetype = localStorage.getItem("service");
+
+  // Step 2: Build payload
+  let finalQuoteId = quote_id || tax_info_quote_id; // use fallback
+  setquoteid(finalQuoteId);
+  setconveyancerid(conveyancer_id);
+
+  let instructpayload = {
+    ref_no: refno,
     servicetype: servicetype,
-    quoteid: tax_info_quote_id,
+    quoteid: finalQuoteId,
+    popup_html: popupHtml, 
+  };
+
+  console.log("Payload ready:", instructpayload);
+
+  // Step 3: Call API
+  instructquote(instructpayload);
 }
 
-      setconveyancerid(conveyancer_id)
-      instructquote(instructpayloadtemp)
-      console.log(instructpayload);
+async function instructquote(instructpayload) {
+  try {
+    const instruct = await postData(API_ENDPOINTS.instruct, instructpayload);
+    console.log("API Response:", instruct);
+
+    if (instruct) {
+      setinstructloader(false);
+
+      // Step 4: Redirect using payload ID, not state
+      router.push(`/Instruct?id=${instructpayload.quoteid}`);
     }
-
-    else{
-      let instructpayloadtemp={
-   ref_no: refno,
-    servicetype: servicetype,
-    quoteid: quote_id,
-}
-      setquoteid(quote_id);
-      setconveyancerid(conveyancer_id)
-   
-        console.log(instructpayload);
-
- instructquote(instructpayloadtemp)
-    }
-
-    
-
-    
-   }
-
-  async function instructquote(instructpayload){
-      try{
-const instruct = await postData(API_ENDPOINTS.instruct , instructpayload);
-console.log(instruct)
-
-if(instruct){
-  setinstructloader(false);
-router.push(`/Instruct?id=${quoteid}`);
-  console.log(instructloader);
-}
-      }
-      catch(e){
-        console.log(e);
-      }
-    
-    
-   
-    console.log(popupData);
+  } catch (e) {
+    setinstructloader(false);
+    console.error("API error:", e);
   }
+}
 
   const router = useRouter();
 useEffect(() => {
@@ -569,7 +672,7 @@ function handlefilterchange(selectedoption = []) {
                                  </div>
                    
                                  {/* Step 2 (Current) */}
-                                 <div className="flex items-start mt-6">
+                                 <div className="flex items-start ">
                                    <div className="relative mr-4">
                                      <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
                                        <Check size={18} />
@@ -846,15 +949,15 @@ function handlefilterchange(selectedoption = []) {
                             <button
                               className="px-3 py-1.5 bg-[#4A7C59] text-white text-sm rounded-full hover:bg-[#3b6248]"
                              onClick={() =>
-                                handleInstruct(
+                                handleInstructFromCard(
                                   quote.conveying_details.company_name,
                                   quote.guest_id,
                                   quote.conveying_details.conveying_id,
                                   quote.quote_id ,
                                   quote.customer_details.customer_id,
                                   quote?.service_details[0]?.taxInfo?.quote_id,
-                                  ref,
-                                  
+                                  quote.service_details[0].quote_ref_number,
+                                  quote
                                 )
                                 
                              }
@@ -866,9 +969,8 @@ function handlefilterchange(selectedoption = []) {
 </div>
                               </>:"Instruct"
 
-                                                       
                            }
-                           
+
                             </button>
                           </div>
                         </div>
@@ -994,7 +1096,10 @@ function handlefilterchange(selectedoption = []) {
           quote.guest_id,
           quote.conveying_details.conveying_id,
           quote.quote_id,
-          quote.customer_details.customer_id
+          quote.customer_details.customer_id,
+          quote?.service_details[0]?.taxInfo?.quote_id,
+          quote.service_details[0].quote_ref_number,
+          pdfRef
         )
       }
     >
@@ -1009,7 +1114,7 @@ function handlefilterchange(selectedoption = []) {
 
 
                                 {/* ---------- MAIN CONTAINER ---------- */}
-                               <div ref={pdfRef} className="border  rounded-lg bg-white shadow px-6 py-2 mb-2 space-y-2 quotes" style={{
+                               <div ref={pdfRef}  id ="quote-popup" className="border  rounded-lg bg-white shadow px-6 py-2 mb-2 space-y-2 quotes" style={{
                                   backgroundColor: 'white', 
                                   color: 'black',
                                   padding: '24px',
