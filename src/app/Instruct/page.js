@@ -28,7 +28,8 @@ We are currently assessing your details to prepare an accurate and comprehensive
                   <li className="flex items-center"><CircleCheckBig className="mr-2 text-green-600" />
 You will receive your detailed quotation shortly by email(Please check your Inbox,Incase in your spam folder).
                   </li>
-                  <li className="flex items-center"><CircleCheckBig className="mr-2 text-green-600" />
+                  <li className="flex items-center"> 
+                     <CircleCheckBig className="mr-3 text-green-600 w-8 h-8" />
 We appreciate your interest in Movwise services and remain committed to providing you with clear, efficient, and reliable support throughout this process.
                   </li>
               </ul>

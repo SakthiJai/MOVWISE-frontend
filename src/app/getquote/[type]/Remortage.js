@@ -593,6 +593,7 @@ const getIconForType = (type) => {
                             <input
                                 id="price"
                                 type="text"
+                                onFocus={(e) => e.target.select()}
                                   value={formData?.property_values ?? ""}
                                 className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors outline-none"
                             name="property_values

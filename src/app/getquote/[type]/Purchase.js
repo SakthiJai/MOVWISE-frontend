@@ -666,6 +666,7 @@ return (
           id="purchase_price"
           name="purchase_price"
           type="text"
+          onFocus={(e) => e.target.select()}
           value={formData.purchase_price || ""}
           // onChange={(e) => {
           //   setFormData({ ...formData, purchase_price: Number( e.target.value ) });

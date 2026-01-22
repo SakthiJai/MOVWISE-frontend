@@ -920,6 +920,7 @@ console.log(e);
                                 id="price"
                                 name="price"
                                 type="text"
+                                onFocus={(e) => e.target.select()}
                                 value={formData.sales_price ?? ""} 
                                 onChange={(e)=>{handleChange("sales_price",e.target.value)}} 
                                 className="block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors outline-none"
@@ -1168,6 +1169,7 @@ console.log(e);
      id="purchase_price"
   name="purchase_price"
       type="text"
+      onFocus={(e) => e.target.select()}
       value={formData.purchase_price?? ""}
       onChange={(e)=>{handleChange("purchase_price",e.target.value)}} 
       placeholder="Enter purchase price"
