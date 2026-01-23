@@ -20,11 +20,15 @@ import PurchasePropertyDetails from "./PurchasePropertyDetails";
 import SalesPurchasePropertyDetails from "./Sales_Purchase_PropertyDetails";
 import RemortagePropertyDetails from "./RemortagePropertyDetails"
 import Select from 'react-select';
+import { useSearchParams } from "next/navigation";
+
 
 
 
 
 export default function Comparequotes() {
+  const searchParams = useSearchParams();
+  const query_ref_no = searchParams.get("ref_no");
   // State to hold companies data (initialized with static data)
   const [companydata, setcompanydata] = useState();
   const pdfRef = useRef();
@@ -392,7 +396,8 @@ useEffect(() => {
 
   async function qutesdata(formData) {
     try {
-      let refNumberExist = localStorage.getItem("ref_no");
+      let refNumberExist = query_ref_no || localStorage.getItem("ref_no");
+      console.log("Using ref number:", query_ref_no);
       if(!refNumberExist || refNumberExist=="" || refNumberExist.trim()==""){
       const response = await postData(API_ENDPOINTS.services, formData);
       console.log("✅ service API Response:", response?.service?.quote_ref_number);
@@ -460,6 +465,12 @@ useEffect(() => {
     qutesdata(parsedData);
    
   }
+  else if(query_ref_no.length>0)
+    {
+      setLoading(true);
+      console.log("Using ref number:", query_ref_no);
+      qutesdata(null);
+      }
 }, []);
 
 
