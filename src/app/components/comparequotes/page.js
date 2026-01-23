@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState,useRef } from "react";
+import React, { useEffect, useState,useRef, Suspense } from "react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import DOMPurify from "dompurify";
@@ -22,11 +22,7 @@ import RemortagePropertyDetails from "./RemortagePropertyDetails"
 import Select from 'react-select';
 import { useSearchParams } from "next/navigation";
 
-
-
-
-
-export default function Comparequotes() {
+function ComparequotesContent() {
   const searchParams = useSearchParams();
   const query_ref_no = searchParams.get("ref_no");
   // State to hold companies data (initialized with static data)
@@ -937,6 +933,12 @@ function handlefilterchange(selectedoption = []) {
                               <span className="font-bold text-[#4A7C59]">
                                 {quote.conveying_details?.rating ?? 0} out of 5
                               </span>
+                            <span className="font-bold text-white text-xs px-1 py-0.5 rounded"
+                                style={{ backgroundColor: '#4A7C59' }}
+                              >
+                                {quote.conveying_details?.badge ?? 'Reliable'}
+                              </span>
+
 
                               {quote.conveying_details?.reviews_count && (
                                 <span className="text-black">
@@ -1307,5 +1309,13 @@ function handlefilterchange(selectedoption = []) {
   © {new Date().getFullYear()} MovWise. All rights reserved.
 </footer>
     </div>
+  );
+}
+
+export default function Comparequotes() {
+  return (
+    <React.Suspense fallback={<div>Loading...</div>}>
+      <ComparequotesContent />
+    </React.Suspense>
   );
 }

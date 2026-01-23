@@ -563,7 +563,7 @@ const [loginformdata, setloginformdata] = useState({
 
 
       {/* --- 10. FOR SOLICITORS & CONVEYANCERS (Partner CTA) --- */}
-      <section id="solicitors" className="py-16 bg-gray-900 text-white">
+      {/* <section id="solicitors" className="py-16 bg-gray-900 text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-3xl font-bold">Grow Your Practice with Qualified Clients</h2>
           <p className="mt-4 text-gray-400 max-w-2xl mx-auto">
@@ -581,7 +581,7 @@ const [loginformdata, setloginformdata] = useState({
             </button></Link>
           </div>
         </div> 
-      </section>
+      </section> */}
 
       {/* ---------------------------------------------------------------------------------- */}
 
