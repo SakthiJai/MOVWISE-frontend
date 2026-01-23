@@ -499,7 +499,7 @@ let response = await postData(
   return (
     // 1. GRID CONTAINER: Establishes the grid layout
     <div className='min-h-screen  '>
-      <div className="bg-white shadow-md sticky top-0 p-4">
+      <div className="bg-white shadow-md sticky top-0 p-4 font">
         <Navbar originalstyle={true} />
       </div>
       <div className='mx-auto px-4 lg:px-16  grid grid-cols-1 md:grid-cols-4  gap-8 govt_by_scheme mt-30 mb-10'>

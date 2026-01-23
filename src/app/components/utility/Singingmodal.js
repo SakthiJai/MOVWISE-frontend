@@ -104,23 +104,11 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
   }
   function handleguestformchange(name, value) {
     console.log(value, name);
-    if (name == "guest_phonenumber") {
-      console.log("guestcheck");
-      setguestformsdata((prev) => (
-        {
-          ...prev,
-          [name]: Number(value)
-        }
-      ))
-    }
-    else {
-      console.log("other guest check")
-      setguestformsdata((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-      setFormErrors(prev => ({ ...prev, [name]: "" }));
-    }
+   setguestformsdata((prev) => ({
+  ...prev,
+  [name]: value, // always store as string
+}));
+
   }
   async function logindata() {
 
@@ -692,13 +680,12 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
                 <input
                   type="text"
                   name="guest_phonenumber"
-                  maxLength={10}
                   inputMode="numeric"
-
+                   maxLength={12}
                   placeholder="Enter your phone number"
                   value={guestformsdata.guest_phonenumber || ""}
                   onChange={(e) => {
-                    const value = Number(e.target.value);
+                    const value = e.target.value;
 
                     // Allow only numbers
                     if (/^\d*$/.test(value)) {

@@ -138,7 +138,8 @@ const getServiceTypeLabel = (type) => {
     languages: [],
     sra_clc_number:"",
     service_id:[],
-    notes:""
+    notes:"",
+      lender: [], 
   });
   const [languagepreference, setlanguagepreference] = useState(" ");
 
@@ -299,6 +300,16 @@ console.log("jurisdictions:", jurisdictions);
 console.log(selected)
 setSelectedLanguage(selected)
     }
+if (details.data?.lenders?.length) {
+  setselectedLender(details.data.lenders);
+
+  setFormData((f) => ({
+    ...f,
+    lender: details.data.lenders,
+  }));
+}
+
+
 
   };
 
@@ -824,7 +835,7 @@ console.log(formData)
   const Partnerquotescontent = () => {
     return (
       <div>
-        <section className="flex-1">
+        <section className="flex-1 font">
           <div className="rounded-[18px] border border-[#f2eded] shadow-[0_6px_24px_rgba(16,24,40,0.04)] bg-white max-w-[1000px] w-auto">
             <div className="p-6">
               {/* Breadcrumb */}
@@ -1096,9 +1107,9 @@ console.log(formData)
                           <input
                             type="checkbox"
                             value={lang.value}
-                            checked={selectedLanguage?.some(
-                              (l) => l.value == lang.id
-                            )}
+                            checked={selectedLanguage.some(
+                                (l) => l.id === lang.id
+                              )}
                             onChange={() => handleChangeLang(lang)}
                           />
                           <span className="font text-[#6A7682]">
@@ -1114,7 +1125,7 @@ console.log(formData)
                       )}
                   </div>
                 </div>
-                <div className="flex flex-col gap-2 w-full">
+                <div className="flex flex-col gap-2 w-full mt-2.5">
     <label className="block text-sm font-medium text-[#6A7682]">
       Select Lenders <span className="text-red-500">*</span>
     </label>
@@ -1184,7 +1195,7 @@ console.log(formData)
   return (
     // 1. GRID CONTAINER: Establishes the grid layout
     <div className="min-h-screen  ">
-      <div className="bg-white shadow-md sticky top-0 p-4">
+      <div className="bg-white shadow-md sticky top-0 p-4 font">
         <Navbar originalstyle={true} />
       </div>
       <div className="mx-auto px-4 lg:px-16  grid grid-cols-1 md:grid-cols-4  gap-8 govt_by_scheme mt-30 mb-10">

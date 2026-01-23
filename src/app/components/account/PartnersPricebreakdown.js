@@ -974,11 +974,11 @@ useEffect(() => {
                                 </>
                               )}
 
-                              {/* {formData["service_id"]?.includes(4) && (
+                              {(service_id?.some(s => s.id === 4)) && (
                                 <th className="px-3 py-2 text-center">
                                   Remortgage
                                 </th>
-                              )} */}
+                              )}
 
                               <th className="px-3 py-2 text-center">Action</th>
                             </tr>
@@ -1000,6 +1000,7 @@ useEffect(() => {
                                       <input
                                         type="text"
                                         placeholder="Min"
+                                         onFocus={(e) => e.target.select()}
                                         value={row?.min}
                                         className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black bg-white"
                                         onChange={(e) =>
@@ -1043,6 +1044,7 @@ useEffect(() => {
                                       <input
                                         type="text"
                                         placeholder="Max"
+                                         onFocus={(e) => e.target.select()}
                                         value={row.max}
                                         className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
                                         onChange={(e) =>
@@ -1079,6 +1081,7 @@ useEffect(() => {
                                         <input
                                           type="text"
                                           placeholder="Purchase Freehold"
+                                           onFocus={(e) => e.target.select()}
                                           value={row.purchase_freehold}
                                           className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
                                           onChange={(e) =>
@@ -1106,6 +1109,7 @@ useEffect(() => {
                                         <input
                                           type="text"
                                           value={row.purchase_leasehold}
+                                           onFocus={(e) => e.target.select()}
                                           placeholder="Purchase Leasehold"
                                           className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
                                           onChange={(e) =>
@@ -1133,6 +1137,7 @@ useEffect(() => {
                                       <div className="flex flex-col">
                                         <input
                                           type="text"
+                                           onFocus={(e) => e.target.select()}
                                           value={row.sales_freehold}
                                           placeholder="Sales Freehold"
                                           className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
@@ -1161,6 +1166,7 @@ useEffect(() => {
                                       <div className="flex flex-col">
                                         <input
                                           type="text"
+                                           onFocus={(e) => e.target.select()}
                                           value={row.sales_leasehold}
                                           placeholder="Sales Leasehold"
                                           className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
@@ -1190,6 +1196,7 @@ useEffect(() => {
                                         <input
                                           type="text"
                                           placeholder="Remortgage"
+                                           onFocus={(e) => e.target.select()}
                                           value={row.remortgage}
                                           className="poundtransform border border-gray-400 rounded py-0.5 text-sm text-black"
                                           onChange={(e) =>
@@ -1319,6 +1326,7 @@ useEffect(() => {
                                  {row.type_id==0 ?( 
                                   <> <input
                                   placeholder="Fee Amount "
+                                   onFocus={(e) => e.target.select()}
                                   value={row.fee_amount}
                                   onChange={(e) => {
                                     settransactionFeesError("");
@@ -1380,6 +1388,7 @@ useEffect(() => {
                                  
                                   <input
                                   placeholder="Fee Amount "
+                                   onFocus={(e) => e.target.select()}
                                   defaultValue={row.fee_amount}
                                   onChange={(e) => {
                                     settransactionFeesError("");
@@ -1506,7 +1515,8 @@ useEffect(() => {
 
                                   {row.type_id==0 ?(
                                      <> <input
-                                  placeholder="Fee others "
+                                  placeholder="Fee Amount"
+                                  onFocus={(e) => e.target.select()}
                                   defaultValue={row.fee_amount}
                                   onChange={(e) => {
                                     setdisbursementFeesError("");
@@ -1567,6 +1577,7 @@ useEffect(() => {
                                   </>):(<>
                                   <input
                                   placeholder="Fee Amount "
+                                  onFocus={(e) => e.target.select()}
                                   defaultValue={row.fee_amount}
                                   onChange={(e) => {
                                     settransactionFeesError("");
@@ -1707,6 +1718,7 @@ useEffect(() => {
                                         <input
                                           type="text"
                                           placeholder="Fee Cost"
+                                          onFocus={(e) => e.target.select()}
                                   defaultValue={row.fee_amount}
                                           onChange={(e) => {
                                             setleasedisbursementFeesError("");
@@ -1817,6 +1829,7 @@ useEffect(() => {
                                     <input
                                       type="text"
                                       placeholder="Fee Cost"
+                                      onFocus={(e) => e.target.select()}
                                       value={row.fee_amount}
                                       onChange={(e) =>
                                         handlePriceChange(
@@ -2039,7 +2052,7 @@ useEffect(() => {
                                   formData["service_id"]?.includes(3)) && (
                                   <>
                                     <th className="px-3 py-2 text-center">
-                                      Sales Leasehold £
+                                      Sales Leasehold £{formData.service_id}
                                     </th>
                                     <th className="px-3 py-2 text-center">
                                       Sales Freehold £
@@ -2047,7 +2060,7 @@ useEffect(() => {
                                   </>
                                 )}
 
-                                {formData["service_id"]?.includes(4) && (
+                                {formData["service_id"]?.includes(3) && (
                                   <th className="px-3 py-2 text-center">
                                     Remortgage
                                   </th>
