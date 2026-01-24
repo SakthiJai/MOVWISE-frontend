@@ -21,6 +21,7 @@ import SalesPurchasePropertyDetails from "./Sales_Purchase_PropertyDetails";
 import RemortagePropertyDetails from "./RemortagePropertyDetails"
 import Select from 'react-select';
 import { useSearchParams } from "next/navigation";
+import { toPng } from "html-to-image";
 
 
 
@@ -30,7 +31,7 @@ function ComparequotesContent() {
   const query_ref_no = searchParams.get("ref_no");
   // State to hold companies data (initialized with static data)
   const [companydata, setcompanydata] = useState();
-  const pdfRef = useRef();
+  const pdfRef = useRef(null);
   const hasCalledService = useRef(false);
   const [ref, setref] = useState("");
   const [quotefound, setquotefound] = useState(false);
@@ -379,7 +380,7 @@ function handleInstructFromCard(
   }, 600);
 }
 
-function handleInstruct(
+async function handleInstruct(
   companyName,
   guest_id,
   conveyancer_id,
@@ -391,38 +392,100 @@ function handleInstruct(
 ) {
   setinstructloader(true);
 
-  // Step 1: Get HTML from ref
-  const popupHtml = pdfRef?.current?.outerHTML;
+  try {
+    console.log("🚀 [handleInstruct] Starting");
+    console.log("Parameters received:", {
+      companyName,
+      guest_id,
+      conveyancer_id,
+      quote_id,
+      user_id,
+      tax_info_quote_id,
+      refno,
+      pdfRefExists: !!pdfRef,
+      pdfRefCurrentExists: !!pdfRef?.current
+    });
 
-  console.log(
-    companyName,
-    guest_id,
-    conveyancer_id,
-    quote_id,
-    user_id,
-    tax_info_quote_id,
-    refno,
-    pdfRef
-  );
+    // STEP 4.1: Convert popup HTML to image
+    console.log("📸 [handleInstruct] Calling capturePopupImage...");
+    let image;
+    try {
+      image = await capturePopupImage(pdfRef);
+      console.log("✅ [handleInstruct] Image captured successfully");
+    } catch (captureError) {
+      console.error("❌ [handleInstruct] Failed to capture image:", captureError);
+      image = null;
+    }
 
-  let servicetype = localStorage.getItem("service");
+    // STEP 4.2: Prepare payload
+    let servicetype = localStorage.getItem("service");
+    let finalQuoteId = quote_id || tax_info_quote_id;
 
-  // Step 2: Build payload
-  let finalQuoteId = quote_id || tax_info_quote_id; // use fallback
-  setquoteid(finalQuoteId);
-  setconveyancerid(conveyancer_id);
+    let instructpayload = {
+      ref_no: refno,
+      servicetype: servicetype,
+      quoteid: finalQuoteId,
+      popup_image: image, // ✅ send base64 image
+    };
 
-  let instructpayload = {
-    ref_no: refno,
-    servicetype: servicetype,
-    quoteid: finalQuoteId,
-    popup_html: popupHtml, 
-  };
+    console.log("📋 [handleInstruct] Payload prepared:", {
+      ref_no: instructpayload.ref_no,
+      servicetype: instructpayload.servicetype,
+      quoteid: instructpayload.quoteid,
+      popup_image: instructpayload.popup_image ? "✅ Present (" + instructpayload.popup_image.length + " chars)" : "❌ NULL"
+    });
 
-  console.log("Payload ready:", instructpayload);
+    // STEP 4.3: Call your backend API
+    instructquote(instructpayload);
 
-  // Step 3: Call API
-  instructquote(instructpayload);
+  } catch (error) {
+    console.error("❌ [handleInstruct] Failed:", error);
+    setinstructloader(false);
+  }
+}
+
+
+async function capturePopupImage(pdfRef) {
+  try {
+    console.log("🔍 [capturePopupImage] Starting...");
+    console.log("pdfRef exists?", !!pdfRef);
+    console.log("pdfRef.current exists?", !!pdfRef?.current);
+
+    if (!pdfRef?.current) {
+      console.error("❌ pdfRef.current is null");
+      throw new Error("Popup not rendered");
+    }
+
+    const element = pdfRef.current;
+    console.log("✅ Element found:", {
+      tag: element.tagName,
+      id: element.id,
+      visible: element.offsetHeight > 0 && element.offsetWidth > 0,
+      height: element.offsetHeight,
+      width: element.offsetWidth
+    });
+
+    // Check if element has content
+    if (element.offsetHeight === 0 || element.offsetWidth === 0) {
+      console.error("❌ Element has zero dimensions");
+      throw new Error("Element not visible");
+    }
+
+    console.log("🎨 Calling toPng...");
+    const imageData = await toPng(element, {
+      backgroundColor: "#ffffff",
+      pixelRatio: 2,
+      cacheBust: true,
+      quality: 0.95,
+    });
+
+    console.log("✅ Image generated successfully, size:", imageData.length);
+    return imageData;
+  } catch (error) {
+    console.error("❌ [capturePopupImage] Error:", error.message);
+    console.error("Full error:", error);
+    throw error;
+  }
 }
 
 async function instructquote(instructpayload) {
@@ -905,8 +968,8 @@ function handlefilterchange(selectedoption = []) {
                         <div className="flex items-center gap-5 mb-3 sm:mb-0">
                           {quote.conveying_details.logo ? (
                             <img
-                              width={35}
-                              height={35}
+                              width={40}
+                              height={40}
                               src={quote.conveying_details.logo}
                               alt={quote.company_name || "company logo"}
                               // <- controls visible size
@@ -1167,23 +1230,26 @@ function handlefilterchange(selectedoption = []) {
 
   {/* Right side buttons */}
   <div className="col-span-3 flex justify-end gap-4">
-    <button
-      className="border px-4 py-2 rounded text-emerald-600 text-sm"
-      onClick={() =>
-        handleInstruct(
-          quote.conveying_details.company_name,
-          quote.guest_id,
-          quote.conveying_details.conveying_id,
-          quote.quote_id,
-          quote.customer_details.customer_id,
-          quote?.service_details[0]?.taxInfo?.quote_id,
-          quote.service_details[0].quote_ref_number,
-          pdfRef
-        )
-      }
-    >
-      Instruct
-    </button>
+   <button
+  className="border px-4 py-2 rounded text-emerald-600 text-sm"
+  onClick={() => {
+    // Add small delay to ensure pdfRef is fully rendered
+    setTimeout(() => {
+      handleInstruct(
+        quote.conveying_details.company_name,
+        quote.guest_id,
+        quote.conveying_details.conveying_id,
+        quote.quote_id,
+        quote.customer_details.customer_id,
+        quote?.service_details[0]?.taxInfo?.quote_id,
+        quote.service_details[0].quote_ref_number,
+        pdfRef
+      );
+    }, 100);
+  }}
+>
+  Instruct
+</button>
 
     {/* <button className="border px-4 py-2 rounded text-emerald-600 text-sm" onClick={generatePDF}>
       Download
@@ -1212,22 +1278,23 @@ function handlefilterchange(selectedoption = []) {
                                       <tr>
                                         <td colSpan="2" className="p-4">
                                           {quote.conveying_details.logo ? (
-                                            <img
-                                              width={100}
-                                              height={60}
-                                              src={quote.conveying_details.logo}
-                                              alt={quote.company_name || "company logo"}
-                                            />
-                                          ) : (
-                                            <Image
-                                              width={70}
-                                              height={60}
-                                              src="https://cdn-icons-png.flaticon.com/512/295/295128.png"
-                                              alt={quote.company_name || "company logo"}
-                                              className="object-contain"
-                                            />
-                                            
-                                          )}
+  <img
+    width={100}
+    height={60}
+    src={quote.conveying_details.logo}
+    alt={quote.company_name || "company logo"}
+    crossOrigin="anonymous"  // ✅ add this
+  />
+) : (
+  <img
+    width={70}
+    height={60}
+    src="https://cdn-icons-png.flaticon.com/512/295/295128.png"
+    alt={quote.company_name || "company logo"}
+    className="object-contain"
+    crossOrigin="anonymous"  // ✅ add this
+  />
+)}
                                                 <h3 className="font-semibold font text-left mt-2 text-gray-800">
                             {quote.conveying_details.company_name}
                           </h3>
