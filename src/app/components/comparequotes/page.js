@@ -22,6 +22,9 @@ import RemortagePropertyDetails from "./RemortagePropertyDetails"
 import Select from 'react-select';
 import { useSearchParams } from "next/navigation";
 
+
+
+
 function ComparequotesContent() {
   const searchParams = useSearchParams();
   const query_ref_no = searchParams.get("ref_no");
@@ -49,6 +52,60 @@ function ComparequotesContent() {
   const [total, settotal] = useState(0);
   const [giftvalue,setgiftvalue]=useState(0);
 const [conveyancerid,setconveyancerid]=useState(0);
+const CircularProgress = ({ progress, label }) => {
+  const radius = 16;
+  const stroke = 4;
+	const size = radius * 2 + stroke; // 36
+  const circumference = 2 * Math.PI * radius;
+
+  const offset = circumference - (progress / 100) * circumference;
+
+  return (
+    <div className="flex items-center">
+      <div className="relative w-10 h-10">
+        <svg
+          width={size}
+          height={size}
+          viewBox={`0 0 ${size} ${size}`}
+          className="-rotate-90"
+          aria-label={`${label} progress`}
+        >
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            stroke="#e6e6e6"
+            strokeWidth={stroke}
+            fill="transparent"
+          />
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            stroke="#16a34a"
+            strokeWidth={stroke}
+            fill="transparent"
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            style={{ transition: "stroke-dashoffset 0.35s" }}
+          />
+        </svg>
+
+        {/* Centered text */}
+        <div className="absolute text-[10px] inset-0 flex items-center justify-center font-bold text-green-800 text-sm select-none">
+          {progress}%
+        </div>
+      </div>
+
+      <div className="text-gray-700 text-sm">{label}</div>
+    </div>
+  );
+};
+
+
+
+
 
   const [filteroption, setfilteroption] = useState( [
     {
@@ -927,9 +984,16 @@ function handlefilterchange(selectedoption = []) {
                                 size={20}
                                 allowFraction
                               />
+                               <span className="pl-2 font-bold text-[#4A7C59]">
+                                {quote.conveying_details?.rating ?? 0} out of 5
+                              </span>
                             </div>
-
-                            <p className="text-sm mt-1">
+ <div className="flex gap-10 mt-3">
+        <CircularProgress progress={91} label="Recomended" />
+        <CircularProgress progress={90} label="SRA" />
+        <CircularProgress progress={90} label="Reliable " />
+      </div>
+                            {/* <p className="text-sm mt-1">
                               <span className="font-bold text-[#4A7C59]">
                                 {quote.conveying_details?.rating ?? 0} out of 5
                               </span>
@@ -946,8 +1010,10 @@ function handlefilterchange(selectedoption = []) {
                                   ({quote.conveying_details.reviews_count}{" "}
                                   reviews)
                                 </span>
+                                
                               )}
-                            </p>
+                            </p> */}
+                            
                           </div>
 
                           {/* Middle: Features - Static placeholder */}
