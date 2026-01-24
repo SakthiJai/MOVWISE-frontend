@@ -20,10 +20,21 @@ import Select from 'react-select';
 export default function RemortagePropertyDetails({quote, servicData,companydata,cardid,taxDetails,giftvalue }) {
 
   return (
-        <div className="grid grid-cols-[0.5fr_1fr]  p-4 mt-5  border-1 ">
-            <h5 className="col-span-2 text-lg font-semibold text-emerald-600 mb-10">Remortage Quote</h5>
+      <div className="grid grid-cols-[0.5fr_1fr] p-1 border font  rounded-lg bg-white shadow px-6 py-2 mb-2 space-y-2 quotes  font_size_13px"  style={{
+                                  backgroundColor: 'white', 
+                                  color: 'black',
+                                  padding: '24px',
+                                  border: '1px solid #e5e7eb',
+                                  borderRadius: '8px',
+                                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                                  fontFamily: 'Arial, sans-serif',
+                                  lineHeight: '1.6',
+                                  maxWidth: '100%',
+                                  overflow: 'auto'
+                                }}>
+            <h5 className="col-span-2 text-lg font-semibold font text-emerald-600 mb-10">Remortage Quote</h5>
 
-    <div className=" text-sm">
+    <div className="font text-sm">
                                       <div className="text-emerald-600 text-start font_size_13px">
                                         <h3 className="text-lg font-semibold">
                                           Property Details
@@ -136,7 +147,7 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                    <div className="col-span-1 ">
                                                                                            
                                                                                            
-                                                                                     <div className=" p-3 ">
+                                                                                     <div className=" font p-3 ">
                                                                                   <h3 className="text-lg text-start text-emerald-600 font-semibold  mb-3" onClick={()=>{
                                                                                               handleprice()
                                                                                             }}>

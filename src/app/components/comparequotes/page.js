@@ -1140,7 +1140,7 @@ function handlefilterchange(selectedoption = []) {
                                   overflow: 'auto'
                                 }}>
                                   {/* ---------- COMPANY LOGO + RATING ---------- */}
-                                  <table className="w-full border-collapse mb-6">
+                                  <table className="w-full font  border-collapse mb-6">
                                     <tbody>
                                       {/* Company Logo Row */}
                                       <tr>
@@ -1160,7 +1160,14 @@ function handlefilterchange(selectedoption = []) {
                                               alt={quote.company_name || "company logo"}
                                               className="object-contain"
                                             />
+                                            
                                           )}
+                                                <h3 className="font-semibold font text-left mt-2 text-gray-800">
+                            {quote.conveying_details.company_name}
+                          </h3>
+                                        </td>
+                                        <td>
+                                    
                                         </td>
                                            {/* <td colSpan="2" className="p-3"> 
                                              <span className="text-[34px] col-span-2 me-1 p-2 leading-none font-extrabold text-[#1E5C3B] tracking-tight">
@@ -1172,16 +1179,16 @@ function handlefilterchange(selectedoption = []) {
                                       {/* Contact Details and User Details in Single Row */}
                                       <tr className=" border-gray-200">
                                         {/* Contact Details Column */}
-                                        <td className="p-4  border-gray-200 align-top w-1/2">
-                                          <div className="bg-gray-50 p-5 mb-3 rounded pb-9 ">
+                                        <td className="p-1  border-gray-200 align-top w-1/2">
+                                          <div className="bg-gray-50 p-5 mb-3 rounded pb-8 ">
                                             <h4 className="font-semibold text-emerald-600 mb-3">Contact Details</h4>
                                             <div className="space-y-2">
                                               <div className="flex">
-                                                <span className="font-semibold w-20 text-sm">Phone:</span>
+                                                <span className="font-semibold  text-sm">Phone :</span>
                                                 <span className="text-sm">{view_data?.appsetting_details?.phone_number || "N/A"}</span>
                                               </div>
                                               <div className="flex">
-                                                <span className="font-semibold w-20 text-sm">Email:</span>
+                                                <span className="font-semibold  text-sm">Email :</span>
                                                 <a
                                                   href={`mailto:${view_data?.appsetting_details?.email}`}
                                                   className="text-emerald-600 text-sm"
@@ -1190,7 +1197,7 @@ function handlefilterchange(selectedoption = []) {
                                                 </a>
                                               </div>
                                               <div className="flex">
-                                                <span className="font-semibold w-20 text-sm">Quote Ref:</span>
+                                                <span className="font-semibold  text-sm">Quote Ref :</span>
                                                 <span className="text-sm">{quote.service_details[0].quote_ref_id || "--"}</span>
                                               </div>
                                             </div>
@@ -1198,24 +1205,24 @@ function handlefilterchange(selectedoption = []) {
                                         </td>
 
                                         {/* User Details Column */}
-                                        <td className="p-4 align-top w-1/2">
+                                        <td className="p-1 align-top w-1/2">
                                           <div className="bg-gray-50 p-3 rounded">
                                             <h4 className="font-semibold text-emerald-600 mb-3">User Details</h4>
                                             <div className="space-y-2">
                                               <div className="flex">
-                                                <span className="font-semibold w-20 text-sm">Name:</span>
+                                                <span className="font-semibold  text-sm">Name :</span>
                                                 <span className="text-sm">{quote?.customer_details?.first_name} {quote?.customer_details?.last_name}</span>
                                               </div>
                                               <div className="flex">
-                                                <span className="font-semibold w-20 text-sm">Email:</span>
+                                                <span className="font-semibold  text-sm">Email :</span>
                                                 <span className="text-sm">{quote?.customer_details?.email || "--"}</span>
                                                </div>
                                               <div className="flex">
-                                                <span className="font-semibold w-20 text-sm">Phone:</span>
+                                                <span className="font-semibold  text-sm">Phone :</span>
                                                 <span className="text-sm">{quote?.customer_details?.phone_number || "--"}</span>
                                               </div>
                                               <div className="flex">
-                                                <span className="font-semibold w-20 text-sm">Address:</span>
+                                                <span className="font-semibold  text-sm">Address :</span>
                                                 <span className="text-sm">{quote?.service_details[0]?.address || "--"}</span>
                                               </div>
                                             </div>
@@ -1227,7 +1234,7 @@ function handlefilterchange(selectedoption = []) {
 
                                   {/* ---------- YOUR DETAILS ---------- */}
 
-                                  <div className="grid grid-cols-1  gap-6">
+                                  <div className="grid grid-cols-1 font gap-6">
                                     <div className="">
                                     
 
@@ -1253,15 +1260,15 @@ function handlefilterchange(selectedoption = []) {
                                    </div>
                                    
 
-                                  <div className="border-t  w-full"></div>
+                                  <div className="  w-full"></div>
 
                                   {/* ---------- NOTES ---------- */}
-                                  <div>
+                                  <div className="font">
   <h4>Notes</h4>
 
   {quote?.conveying_details?.notes ? (
     <div
-      className="text-xs mt-4 text-start"
+      className="text-xs mt-4 font  text-start"
       dangerouslySetInnerHTML={{
         __html: DOMPurify.sanitize(quote.conveying_details.notes),
       }}
@@ -1305,7 +1312,7 @@ function handlefilterchange(selectedoption = []) {
       </main>
       
   
-  <footer className="fixed bottom-0 left-0 w-full text-center text-gray-700 text-sm py-2 z-50">
+  <footer className="fixed bottom-0 font  left-0 w-full text-center text-gray-700 text-sm py-2 z-50 bg-white p-1">
   © {new Date().getFullYear()} MovWise. All rights reserved.
 </footer>
     </div>

@@ -41,10 +41,21 @@ export default function PurchasePropertyDetails({
   }, []);
 
   return (
-    <div className="grid grid-cols-[0.5fr_1fr] p-4 border-1 mt-3 font_size_13px">
-            <h5 className="col-span-3 text-lg font-semibold text-emerald-600 mb-10">Purchase Quote</h5>
+    <div className="grid grid-cols-[0.5fr_1fr] p-1 border font  rounded-lg bg-white shadow px-6 py-2 mb-2 space-y-2 quotes  font_size_13px"  style={{
+                                  backgroundColor: 'white', 
+                                  color: 'black',
+                                  padding: '24px',
+                                  border: '1px solid #e5e7eb',
+                                  borderRadius: '8px',
+                                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                                  fontFamily: 'Arial, sans-serif',
+                                  lineHeight: '1.6',
+                                  maxWidth: '100%',
+                                  overflow: 'auto'
+                                }}>
+            <h5 className="col-span-3 text-lg font font-semibold text-emerald-600 mb-4">Purchase Quote</h5>
 
-      <div className="py-1 text-sm">
+      <div className="py-1 font text-sm">
         <div className="text-start">
           <h3 className="text-lg font-semibold text-emerald-600">
             Purchase Property Details
@@ -109,7 +120,7 @@ export default function PurchasePropertyDetails({
               </td>
             </tr>
             <tr className=" border-gray-200">
-              <td className="p-2 font-semibold w-40 text-left">Life Time Support</td>
+              <td className="p-2 font-semibold w-40 text-left">LTA ISA</td>
               <td className="p-2 text-left font_size_13px">{servicData?.purchase_lifetime_isa == 0 ? "No" : "Yes"}</td>
             </tr>
             <tr>
@@ -121,7 +132,7 @@ export default function PurchasePropertyDetails({
       </div>
 
       <div className="font_size_13px ">
-        <div className=" p-3 ">
+        <div className=" font p-3 ">
           <h3
             className="text-lg text-start text-emerald-600 font-semibold  mb-3"
             onClick={() => {

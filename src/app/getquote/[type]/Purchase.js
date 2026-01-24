@@ -222,7 +222,7 @@ const handleChange_l = (selectedOption) => {
   if(field=="purchase_mode" && (value=="firstTime"|| value=="standard"||value=="additional"||value=="HomeMoving") ){
     console.log("check")
     setbuytolet_readonlyfield(true);
-    formData.buy_to_let="";
+    formData.buy_to_let="No";
     console.log(formData.buy_to_let)
   }
   else{

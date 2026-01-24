@@ -267,7 +267,7 @@ const handleChange = (name,value) => {
   if(name=="purchase_mode" && (value=="firstTime"|| value=="standard"||value=="additional"||value=="commercial") ){
     console.log("check")
     setbuytolet_readonlyfield(true);
-    formData.buy_to_let=""
+    formData.buy_to_let="No"
   }
   else{
     setbuytolet_readonlyfield(false);
