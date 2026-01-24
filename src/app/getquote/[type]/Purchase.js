@@ -804,23 +804,29 @@ return (
                                 <div className="grid grid-cols-2 md:flex md:flex-wrap gap-4 md:gap-9">
                                   {propertyTypeOptions.map((opt) => (
                                     <button
-                                      key={opt.label}
+                                      key={opt.id}
                                       type="button"
                                       onClick={() => {
-                                        setFormData((prev) => ({ ...prev, sales_property_type: opt.label }));
-                                        setErrors((prev) => ({ ...prev, sales_property_type: "" }));
+                                       
+                                        handleChange("property_type", opt.label);
+
+                                        if (opt.label === "Flat") {
+                                            setHighRaiseSupport("Yes");
+                                        } else {
+                                            setHighRaiseSupport("");
+                                        }
                                       }}
                                       className={`flex items-center gap-2 px-4 md:px-5 py-2.5 rounded-xl border-2 transition-all duration-200 shadow-sm
                                         w-full md:w-[170.76px]
                                         ${
-                                          formData.sales_property_type === opt.label
+                                          formData.property_type === opt.label
                                             ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
                                             : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
                                         }`}
                                     >
                                       <span
                                         className={`${
-                                          formData.sales_property_type === opt.label ? "text-white" : "text-gray-700"
+                                          formData.property_type === opt.label ? "text-white" : "text-gray-700"
                                         } text-[16px] md:text-[18px]`}
                                       >
                                         {opt.icon}
