@@ -233,20 +233,18 @@ const [loginformdata, setloginformdata] = useState({
             </p>
             <div className="mt-8">
               
-            <Link href="#" passHref>
+            <Link href="/#quote_type" passHref>
                 <div
-                  onClick={(e) => {
-                    localStorage.removeItem("service");
-                    const userId = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
-                    e.preventDefault();
-                    if (userId) {
-                      // If user is logged in, go to the getquote flow
-                      router.push('/#quote_type');
-                    } else {
-                      // If not logged in, open sign-in modal
-                      setModalopen(true);
-                    }
-                  }}
+                  // onClick={(e) => {
+                  //   localStorage.removeItem("service");
+                  //   const userId = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+                  //   e.preventDefault();
+                  //   if (userId) {
+                  //     router.push('/#quote_type');
+                  //   } else {
+                  //     setModalopen(true);
+                  //   }
+                  // }}
                   className="text-blue-500 underline"
                 >
                   <PrimaryCTA text="Get Your Free Quote" />
@@ -591,23 +589,24 @@ const [loginformdata, setloginformdata] = useState({
         <p className="text-xl mb-8 max-w-3xl mx-auto">
           Get transparent quotes from trusted conveyancers and make your move with total confidence. <strong>Your next chapter starts with MovWise.</strong>
         </p>
-        <div
-                  onClick={(e) => {
-                    localStorage.removeItem("service");
-                    const userId = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
-                    e.preventDefault();
-                    if (userId) {
-                      // If user is logged in, go to the getquote flow
-                      router.push('/#quote_type');
-                    } else {
-                      // If not logged in, open sign-in modal
-                      setModalopen(true);
-                    }
-                  }}
+        <Link href="/#quote_type" passHref>
+        <div 
+                  // onClick={(e) => {
+                  //   localStorage.removeItem("service");
+                  //   const userId = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+                  //   e.preventDefault();
+                  //   if (userId) {
+                      
+                  //     router.push('/#quote_type');
+                  //   } else {
+                  //     setModalopen(true);
+                  //   }
+                  // }}
                   className="text-blue-500 underline"
                 >
                   <PrimaryCAT text="Get Your Free Quote" />
                 </div>
+                </Link>
       </section>
         {modalopen && (
                         <Signinmodal closeModal={closeModal} partnerloginshow={partnerloginshow} ></Signinmodal>

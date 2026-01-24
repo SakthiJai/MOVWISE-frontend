@@ -3,6 +3,7 @@ import { Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
 import Link from "next/link";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import Signinmodal from "../../components/utility/Singingmodal";
 
 
 export const metadata = {
@@ -26,6 +27,17 @@ export const metadata = {
 
 export default function Footer(){
   const router = useRouter();
+  const [modalopen, setModalopen] = useState(false);
+  const [partnerloginshow, setPartnerloginshow] = useState(true);
+  const closeModal = () => {
+    setModalopen(false);
+  };
+
+  const PrimaryCAT = ({ text }) => (
+  <button className=" hover:text-amber-500 text-gray-400 transition duration-300">
+    {text}
+  </button>
+);
 
   // ...existing code...
   const [filterselected,setfilterselected]=useState([])
@@ -75,7 +87,27 @@ export default function Footer(){
             <ul className="space-y-2">
               <li><Link href="/" className="hover:text-amber-500">Home</Link></li>
               <li><Link href="/#quote_type" className="hover:text-amber-500">Get Quotes</Link></li>
-              {/* <li><Link href="/conveyancers/Companyregistration" className="hover:text-amber-500">For Solicitors</Link></li> */}
+              <li><Link href="/#quote_type" passHref>
+        <div 
+                  onClick={(e) => {
+                    localStorage.removeItem("service");
+                    const userId = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+                    e.preventDefault();
+                    if (userId) {
+                      
+                      router.push('/#quote_type');
+                    } else {
+                      setModalopen(true);
+                    }
+                  }}
+                  className="text-blue-500 underline"
+                >
+                  <PrimaryCAT text="For Login" />
+                </div>
+                </Link>
+        {modalopen && (
+                        <Signinmodal closeModal={closeModal} partnerloginshow={partnerloginshow} ></Signinmodal>
+                        )}</li>
               <li><Link href="/components/About" className="hover:text-amber-500">About Us</Link></li>
               <li><Link href="/#contact" className="hover:text-amber-500">Contact</Link></li>
             </ul>

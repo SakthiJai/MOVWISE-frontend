@@ -32,21 +32,17 @@ const partnerloginshow=false;
     const [addresskey,setaddresskey]=useState("");
 
     const stampDutyOptions = [
-  { label: "Not Applicable", value: "" },
   { label: "First-Time Buyer ", value: "firstTime" },
   { label: "Additional Property (Second Home)", value: "additional" },
   { label: "Additional Property (Buy to let)", value: "Buy to let" },
-  { label: "Home Moving", value: "Home Moving" }
+  { label: "Home Moving", value: "HomeMoving" }
 ];
     const addition_applicable = [
-  { label: "Not Applicable", value: "" },
   { label: "Islamic Mortgage", value: "Islamic Mortgage" },
   { label: "Equity Transfer", value: "Equity Transfer" },
   { label: "Expats / Overseas Client", value: "Expats / Overseas Client" }
 ];
 const buyToLetOptions = [
-  { value: "", label: "Not Applicable", isDisabled: true },
-  { value: "No", label: "No" },
   { value: "personal", label: "Yes - Personal name" },
   { value: "company", label: "Yes - Company name" },
 ];
@@ -223,10 +219,10 @@ const handleChange_l = (selectedOption) => {
       }
       
   console.log(field, value);
-  if(field=="purchase_mode" && (value=="firstTime"|| value=="standard"||value=="additional") ){
+  if(field=="purchase_mode" && (value=="firstTime"|| value=="standard"||value=="additional"||value=="HomeMoving") ){
     console.log("check")
     setbuytolet_readonlyfield(true);
-    formData.buy_to_let="No";
+    formData.buy_to_let="";
     console.log(formData.buy_to_let)
   }
   else{

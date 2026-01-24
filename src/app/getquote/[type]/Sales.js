@@ -14,19 +14,16 @@ import Signinmodal from "../../components/utility/Singingmodal";
 
 export default function Sales() {
   const stageOptions = [
-  { value: "", label: "Not Applicable", isDisabled: true },
   { value: "Just researching / budgeting", label: "Just researching / budgeting" },
   { value: "Have received an offer", label: "Have received an offer" },
   { value: "Sale agreed", label: "Sale agreed" },
 ];
 const sharedOwnershipOptions = [
-  { value: "", label: "Not Applicable", isDisabled: true },
   { value: "Yes (housing association)", label: "Yes (housing association)" },
   { value: "Yes (Help To Buy)", label: "Yes (Help To Buy)" },
   { value: "No", label: "No" },
 ];
     const addition_applicable = [
-  { label: "Not Applicable", value: "" },
   { label: "Islamic Mortgage", value: "Islamic Mortgage" },
   { label: "Equity Transfer", value: "Equity Transfer" },
   { label: "Expats / Overseas Client", value: "Expats / Overseas Client" }

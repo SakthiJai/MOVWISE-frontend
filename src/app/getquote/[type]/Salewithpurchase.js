@@ -46,13 +46,11 @@ export default function Salewithpurchase() {
   }),
 };
   const stageOptions = [
-  { value: "", label: "Not Applicable", isDisabled: true },
   { value: "Just researching / budgeting", label: "Just researching / budgeting" },
   { value: "Have received an offer", label: "Have received an offer" },
   { value: "Sale agreed", label: "Sale agreed" },
 ];
 const sharedOwnershipOptions = [
-  { value: "", label: "Not Applicable", isDisabled: true },
   { value: "Yes (housing association)", label: "Yes (housing association)" },
   { value: "Yes (Help To Buy)", label: "Yes (Help To Buy)" },
   { value: "No", label: "No" },
@@ -64,15 +62,12 @@ const giftDepositOptions = [
   { value: 3, label: "3" },
 ];
     const stampDutyOptions = [
-  { label: "Not Applicable", value: "" },
   { label: "First-Time Buyer ", value: "firstTime" },
   { label: "Additional Property (Second Home)", value: "additional" },
   { label: "Additional Property (Buy to let)", value: "Buy to let" },
   { label: "Home Moving", value: "commercial" }
 ];
 const buyToLetOptions = [
-  { value: "", label: "Not Applicable", isDisabled: true },
-  { value: "No", label: "No" },
   { value: "personal", label: "Yes - Personal name" },
   { value: "company", label: "Yes - Company name" },
 ];
@@ -269,10 +264,10 @@ const handleChange = (name,value) => {
   if (name === "property_type" && value !== "Flat") {
     setFormData((prev) => ({ ...prev, high_raise_support: 0 }));
   }
-  if(name=="purchase_mode" && (value=="firstTime"|| value=="standard"||value=="additional") ){
+  if(name=="purchase_mode" && (value=="firstTime"|| value=="standard"||value=="additional"||value=="commercial") ){
     console.log("check")
     setbuytolet_readonlyfield(true);
-    formData.buy_to_let="No"
+    formData.buy_to_let=""
   }
   else{
     setbuytolet_readonlyfield(false);

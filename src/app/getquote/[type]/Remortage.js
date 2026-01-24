@@ -55,7 +55,6 @@ export default function Remortage() {
   }),
 };
     const addition_applicable = [
-  { label: "Not Applicable", value: "" },
   { label: "Islamic Mortgage", value: "Islamic Mortgage" },
   { label: "Equity Transfer", value: "Equity Transfer" },
   { label: "Expats / Overseas Client", value: "Expats / Overseas Client" },
@@ -64,7 +63,6 @@ export default function Remortage() {
    { label: "HMO BTL", value: "HMO BTL" }
 ];
   const buyToLetOptions = [
-  { value: "", label: "Not Applicable", isDisabled: true },
   { value: "No", label: "No" },
   { value: "personal", label: "Yes - Personal name" },
   { value: "company", label: "Yes - Company name" },
