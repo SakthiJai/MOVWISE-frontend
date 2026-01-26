@@ -1982,11 +1982,6 @@ useEffect(() => {
       )}
 
 
-
-
-
-
-
       {showConfirm && (
         <div className="fixed inset-0 mt-20 bg-black/40 backdrop-blur-sm flex  items-center justify-center z-50 animate-fadeIn reviewpopup">
           <div className="bg-white rounded-2xl p-6 w-[90%]  text-center shadow-xl animate-slideUp">
@@ -2036,8 +2031,7 @@ useEffect(() => {
                                 <th className="px-3 py-2 text-center">Min £</th>
                                 <th className="px-3 py-2 text-center">Max £</th>
 
-                                {(formData["service_id"]?.includes(1) ||
-                                  formData["service_id"]?.includes(2)) && (
+                                 {service_id?.some(s => s.id === 2 || s.id === 3) && (
                                   <>
                                     <th className="px-3 py-2 text-center">
                                       Purchase Leasehold £
@@ -2048,8 +2042,7 @@ useEffect(() => {
                                   </>
                                 )}
 
-                                {(formData["service_id"]?.includes(1) ||
-                                  formData["service_id"]?.includes(3)) && (
+                                 {service_id?.some(s => s.id === 1 || s.id === 3) && (
                                   <>
                                     <th className="px-3 py-2 text-center">
                                       Sales Leasehold £{formData.service_id}
@@ -2060,7 +2053,7 @@ useEffect(() => {
                                   </>
                                 )}
 
-                                {formData["service_id"]?.includes(3) && (
+                                {service_id?.some(s => s.id === 4) && (
                                   <th className="px-3 py-2 text-center">
                                     Remortgage
                                   </th>
@@ -2157,8 +2150,7 @@ useEffect(() => {
                                       </div>
                                     </td>
 
-                                    {(formData["service_id"]?.includes(1) ||
-                                      formData["service_id"]?.includes(3)) && (
+                                    {service_id?.some(s => s.id === 2 || s.id === 3) && (
                                       <td className="px-3 py-2">
                                         <div className="flex flex-col">
                                           <input
@@ -2187,8 +2179,7 @@ useEffect(() => {
                                     )}
 
                                     {/* PURCHASE FREEHOLD */}
-                                    {(formData["service_id"]?.includes(1) ||
-                                      formData["service_id"]?.includes(3)) && (
+                                    {service_id?.some(s => s.id === 1 || s.id === 3) && (
                                       <td className="px-3 py-2">
                                         <div className="flex flex-col">
                                           <input
@@ -2217,8 +2208,7 @@ useEffect(() => {
                                     )}
 
                                     {/* SALES LEASEHOLD */}
-                                    {(formData["service_id"]?.includes(2) ||
-                                      formData["service_id"]?.includes(3)) && (
+                                    {service_id?.some(s => s.id === 1 || s.id === 3) && (
                                       <td className="px-3 py-2">
                                         <div className="flex flex-col">
                                           <input
@@ -2247,8 +2237,7 @@ useEffect(() => {
                                     )}
 
                                     {/* SALES FREEHOLD */}
-                                    {(formData["service_id"]?.includes(2) ||
-                                      formData["service_id"]?.includes(3)) && (
+                                    {service_id?.some(s => s.id === 1 || s.id === 3) && (
                                       <td className="px-3 py-2">
                                         <div className="flex flex-col">
                                           <input
@@ -2277,7 +2266,7 @@ useEffect(() => {
                                     )}
 
                                     {/* REMORTGAGE */}
-                                    {formData["service_id"]?.includes(4) && (
+                                    {service_id?.some(s => s.id === 4) && (
                                       <td className="px-3 py-2">
                                         <div className="flex flex-col">
                                           <input
@@ -2315,364 +2304,346 @@ useEffect(() => {
                     )}
 
                     {numIndex === 2 && (
-                      <div className="transactionblock mb-5">
-                        <div className="bg-gray-50  px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
-                          {item.fees_category}
-                        </div>
-                        {item.sub_categories.map((sub, i) => (
-                          <div key={i}>
-                            <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
-                              {sub.sub_category}
+                    <div className="transactionblock mb-5">
+                      <div className="bg-gray-50  px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
+                        {item.fees_category}
+                      </div>
+                      {item.sub_categories.map((sub, i) => (
+                        <div key={i}>
+                          <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
+                            {sub.sub_category}
+                          </div>
+                          {transactionFeesError && (
+                            <p style={{ color: "red" }}>
+                              {transactionFeesError}
+                            </p>
+                          )}
+                          <div className="grid  grid-cols-3 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
+                            <div className="text-center">
+                              Supplement check Type
                             </div>
-
-                            <div className="grid  grid-cols-3 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
-                              <div className="text-center">
-                                Supplement Type check
-                              </div>
-                              <div className="text-center">Fee Cost £</div>
+                            <div className="text-center">Fee Cost £</div>
+                          
                               <div className="text-center">Vat</div>
-                              
-                            </div>
+                            
+                          </div>
 
-                            {pricingList
-                              .find(
-                                (item) => item.fees_category_id === numIndex
-                              )
-                              .price_list.map((row, i) => (
-                                <div
-                                  key={i}
-                                  className="grid grid-cols-3 gap-3 px-3 py-2"
-                                >
-                                  {!row.isOthers ? (
-                                    <div>
-                                      {purchaseFeeTypeList.map(
-                                        (opt, index) =>
-                                          opt.id == row.type_id && (
-                                            <span
-                                              key={index}
-                                              className="text-black"
-                                            >
-                                              {opt.fee_type}{" "}
-                                            </span>
-                                          )
-                                      )}
-                                    </div>
-                                  ) : (
-                                    <div>
-                                      <input
-                                        disabled
-                                        id="Supplement_type"
-                                        type="text"
-                                        placeholder="Enter other Supplement Type"
-                                        value={row.fee_amount}
-                                        onChange={(e) =>
-                                          handlePriceChange(
-                                            numIndex,
-                                            i,
-                                            "type_id",
-                                            e.target.value
-                                          )
-                                        }
-                                        className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
-                                      />
-                                    </div>
-                                  )}
 
-                                  {/* FEE AMOUNT */}
-                                  <input
-                                    readOnly
-                                    placeholder="Fee Amount "
-                                    value={row.fee_amount}
-                                    onChange={(e) =>
-                                      handlePriceChange(
-                                        numIndex,
-                                        i,
-                                        "fee_amount",
-                                        e.target.value
-                                      )
-                                    }
-                                    className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
-                                  />
-                                   <div className="flex justify-center">
-                                <input
-                                readOnly
-                                  type="checkbox"
-                                  checked={Number(row?.vat) === 1 }
-                                />
-                              </div>
+               
 
-                                  {/* REMOVE BUTTON */}
-                                </div>
-                              ))}
-                            {remainingsupplement.map((item, i) => (
+                          {pricingList
+                            .find((item) => item.fees_category_id === numIndex)
+                            .price_list.map((row,index,) => row.is_delete != 1?row:"null")
+                            .map((row, i,arr) => ( 
                               <div
                                 key={i}
-                                className="text-black grid grid-cols-2 gap-3 px-3 py-2"
+                                className=" gap-3 px-3 py-1 grid grid-cols-3 "
                               >
-                                <span key={index} className="text-black">
-                                  {item.fee_type}{" "}
-                                </span>
-                                <input
-                                  readOnly
-                                  value={0}
-                                  placeholder="Fee Amount"
-                                  className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
-                                />
-                              </div>
-                            ))}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {numIndex === 3 && (
-                      <div className="standarddisblock mb-5">
-                        <div className="bg-gray-50 px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
-                          {item.fees_category}
-                        </div>
-                        {item.sub_categories.map((sub, i) => (
-                          <div key={i}>
-                            <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
-                              {sub.sub_category}
-                            </div>
-                            {disbursementFeesError && (
-                              <p style={{ color: "red" }}>
-                                {disbursementFeesError}
-                              </p>
-                            )}
-                            <div className="grid grid-cols-3 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
-                              <div className="text-center">
-                                Disbursement Type
-                              </div>
-                              <div className="text-center">Fee Cost £</div>
-                              <div className="text-center">Vat</div>
-                            </div>
-                            {pricingList
-                              .find(
-                                (item, index) =>
-                                  item.fees_category_id === numIndex
-                              )
-                              .price_list.map((row, i) => (
-                                <div
-                                  key={i}
-                                  className=" grid grid-cols-3 gap-3 px-3 py-2"
-                                >
-                                  {!row.isOthers ? (
-                                    <div className="col-span-1">
-                                      {standardDisbursementList.map(
-                                        (opt, index) =>
-                                          opt.id == row.type_id && (
-                                            <span
-                                              key={index}
-                                              className="text-black"
-                                            >
-                                              {opt.fee_type}{" "}
-                                            </span>
-                                          )
-                                      )}
-                                    </div>
-                                  ) : (
-                                    <div className="grid grid-cols-1">
-                                      <input
-                                        readOnly
-                                        type="text"
-                                        placeholder="Enter other Supplement"
-                                        value={row.type}
-                                        onChange={(e) =>
-                                          handlePriceChange(
-                                            numIndex,
-                                            i,
-                                            "type_id",
-                                            e.target.value
-                                          )
-                                        }
-                                        className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-gray-900"
-                                      />
-                                    </div>
-                                  )}
-
-                                  {/* COST */}
-                                  <input
-                                    readOnly
-                                    type="text"
-                                    placeholder="Fee Cost"
-                                    value={row.fee_amount}
-                                    onChange={(e) =>
-                                      handlePriceChange(
-                                        numIndex,
-                                        i,
-                                        "fee_amount",
-                                        e.target.value
-                                      )
-                                    }
-                                    className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black col-span-1"
-                                  />
-                                  <div className="flex justify-center">
+                                {row.type_id==0 ? (
+                                  <div>
                                     <input
-                                    readOnly
-                                      type="checkbox"
-                                      checked={Number(row?.vat) === 1 }
+                                      id="Supplement_type"
+                                      type="text"
+                                      placeholder="Enter other Supplement Type"
+                                      value={row.others}
+                                      onChange={(e) =>
+                                        handlePriceChange(
+                                          numIndex,
+                                          i,
+                                          "others",
+                                          e.target.value
+                                        )
+                                      }
+                                      className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
                                     />
                                   </div>
-                                </div>
-                              ))}
-                            {remainingdisbursement.map((item, i) => (
-                              <div
-                                key={i}
-                                className="text-black grid grid-cols-2 gap-3 px-3 py-2"
-                              >
-                                <span key={index} className="text-black">
-                                  {item.fee_type}{" "}
-                                </span>
-                                <input
-                                  readOnly
-                                  value={0}
-                                  placeholder="Fee Amount"
-                                  className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
+                                ) : (
+                                  <div>
+                                    <div className="font text-black ">
+                                      <label
+                                        key={purchaseFeeTypeList?.[i]?.id}
+                                        value={purchaseFeeTypeList?.[i]?.id}
+                                        className="text-sm"
+                                      >
+                                        {purchaseFeeTypeList[i]?.fee_type}  
+                                      </label>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* FEE AMOUNT */}
+
+                                 {row.type_id==0 ?( 
+                                  <> <input
+                                  placeholder="Fee Amount "
+                                   onFocus={(e) => e.target.select()}
+                                  value={row.fee_amount}
+                                  onChange={(e) => {
+                                    settransactionFeesError("");
+                                      
+                                    handlePriceChange(
+                                      numIndex,
+                                      i,
+                                      "fee_amount",
+                                      e.target.value
+                                    );
+                                  }}
+                                  className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
                                 />
+                                <div className="grid grid-cols-2 items-center">
+                                    <div className="flex justify-center">
+                                    <input
+                                      type="checkbox"
+                                      checked={Number(row?.vat) === 1 }
+                                      onChange={(e) =>
+                                        handlePriceChange(
+                                          numIndex,
+                                          i,
+                                          "vat",
+                                          e.target.checked ? 1 : 0
+                                        )
+                                      }
+                                    />
+                                  </div>
+                               </div>
+                                  </>):(<>
+                                 
+                                  <input
+                                  readOnly
+                                  placeholder="Fee Amount "
+                                  
+                                  defaultValue={row.fee_amount}
+                                  
+                                  className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
+                                />
+                                    <div className="flex justify-center">
+                                  <input
+                                  readOnly
+                                    type="checkbox"
+                                    checked={Number(row?.vat) === 1 }
+                                   
+                                  />
+                                </div>
+                                </>
+                                ) }
+                                
+                                 
+                                
                               </div>
                             ))}
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {numIndex === 4 && (
-                      <div className="standarddisblock mb-5">
-                        {/* MAIN CATEGORY HEADER */}
-                        <div className="bg-gray-50 px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
-                          {item.fees_category}
+                         
                         </div>
+                      ))}
+                    </div>
+                  )}
 
-                        {item.sub_categories.map((sub, sIndex) => (
-                          <div key={sIndex}>
-                            {/* SUB CATEGORY HEADER */}
-                            <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
-                              {sub.sub_category}
-                            </div>
-
-                            {leasedisbursementFeesError && (
-                              <p className="text-red-500 px-3">
-                                {leasedisbursementFeesError}
-                              </p>
-                            )}
-
-                            {/* RESPONSIVE WRAPPER */}
-                            <div className=" w-full">
-                              <table className="min-w-max w-full text-xs font-semibold text-gray-600 ">
-                                <thead className="bg-gray-100">
-                                  <tr className="">
-                                    <th className="px-3 py-2 text-center">
-                                      Leasehold Service
-                                    </th>
-
-                                    <th className="px-3 py-2 text-center">
-                                      Cost £
-                                    </th>
-                                    <th className="px-3 py-2 text-center">
-                                      Vat
-                                    </th>
-                                  </tr>
-                                </thead>
-
-                                <tbody>
-                                  {pricingList
-                                    .find(
-                                      (x) => x.fees_category_id === numIndex
-                                    )
-                                    .price_list.map((row, i) => (
-                                      
-                                      <tr key={i} className="">
-                                        {/* LEASEHOLD SERVICE SELECT */}
-                                        <td className="px-3 py-2 text-center">
-                                          {!row.isOthers ? (
-                                            leaseholdDisbursementList.map(
-                                              (opt, index) =>
-                                                opt.id == row.type_id && (
-                                                  <span
-                                                    key={index}
-                                                    className="text-black font-extrabold px-3 py-2 bg- text-sm"
-                                                  >
-                                                    {opt.fee_type}
-                                                  </span>
-                                                )
-                                            )
-                                          ) : (
-                                            <div>
-                                              <input
-                                                readOnly
-                                                type="text"
-                                                placeholder="Enter other Supplement"
-                                                value={row.type}
-                                                onChange={(e) =>
-                                                  handlePriceChange(
-                                                    numIndex,
-                                                    i,
-                                                    "type_id",
-                                                    e.target.value
-                                                  )
-                                                }
-                                                className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-gray-900"
-                                              />
-                                            </div>
-                                          )}
-                                        </td>
-
-                                        {/* COST */}
-                                        <td className="px-3 py-2 text-center">
-                                          <input
-                                            readOnly
-                                            type="text"
-                                            placeholder="Fee Cost"
-                                            value={row.fee_amount}
-                                            onChange={(e) =>
-                                              handlePriceChange(
-                                                numIndex,
-                                                i,
-                                                "fee_amount",
-                                                e.target.value
-                                              )
-                                            }
-                                            className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
-                                          />
-                                        </td>
-                                         <td className="flex justify-center py-5">
-                                          <input
-                                          readOnly
-                                            type="checkbox"
-                                            checked={Number(row?.vat) === 1 }
-                                          />
-                                        </td>
-
-                                        {/* PAID TO */}
-
-                                        {/* TRANSACTION TYPE */}
-                                      </tr>
-                                    ))}
-                                </tbody>
-                              </table>
-                            </div>
+                     {numIndex === 3 && (
+                    <div className="standarddisblock mb-5">
+                      <div className="bg-gray-50 px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
+                        {item.fees_category}
+                      </div>
+                      {item.sub_categories.map((sub, i) => (
+                        <div key={i}>
+                          <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
+                            {sub.sub_category}
                           </div>
-                        ))}
+                          {disbursementFeesError && (
+                            <p style={{ color: "red" }}>
+                              {disbursementFeesError}
+                            </p>
+                          )}
+                          <div className="grid grid-cols-3 items-center text-xs font-semibold text-gray-600 border-b bg-gray-100 px-3 py-2">
+                            <div className="text-center">
+                              Disbursement Type £
+                            </div>
+                            <div className="text-center">Fee Cost £</div>
+                            {/* <div className="text-center">Transaction Type</div> */}
+                              <div className="text-center">Vat</div>
+                             
+                          </div>
+                          {pricingList
+                            .find((item) => item.fees_category_id === numIndex).price_list
+                            .map((row,index) => row.is_delete !=1?row:"null")
+                      .map((row, i,arr) => (
+                              <div
+                                key={i}
+                                className="gap-3 px-3 py-1 grid grid-cols-3"
+                              >
+                                {row.type_id==0  ? (
+                                
+                                   <div>
+                                    <input
+                                      type="text"
+                                      placeholder="Enter other supplement type"
+                                      value={row.others}
+                                      readOnly
+                                      className="poundtransform border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black placeholder:text-gray-900 pl-2"
+                                    />
+                                  </div>
+                                ) : (
+                                   <div className="font text-black ">
+                                    <label
+                                    readOnly
+                                      key={standardDisbursementList?.[i]?.id}
+                                      value={standardDisbursementList?.[i]?.id}
+                                      className="cols-span-1 text-sm"
+                                    >
+                                      {standardDisbursementList[i]?.fee_type}
+                                    </label>
+                                  </div>
+                                )}
 
-                        {remainingleashold.map((item, i) => (
-                          <div
-                            key={i}
-                            className="text-black grid grid-cols-2 gap-3 px-3 py-2"
-                          >
-                            <span key={index} className="text-black">
-                              {item.fee_type}{" "}
-                            </span>
+                                  {row.type_id==0 ?(
+                                     <> <input
+                                  placeholder="Fee Amount"
+                                  defaultValue={row.fee_amount}
+                                 readOnly
+                                  className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
+                                />
+                              <div className=" gap-3  py-1 ">
+                           
+
+                            {/* ADD ROW – only last row */}
+                             <div className="flex justify-center">
                             <input
-                              readOnly
-                              value={0}
-                              placeholder="Fee Amount"
-                              className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black"
+                              type="checkbox"
+                              checked={Number(row?.vat) === 1 }
+                             readOnly
                             />
                           </div>
-                        ))}
+                            
+                          </div>
+                                  </>):(<>
+                                  <input
+                                  placeholder="Fee Amount "
+                                  defaultValue={row.fee_amount}
+                                 readOnly
+                                  className="border border-gray-400 rounded py-0.5 w-full text-sm text-left text-black pl-2"
+                                />
+                                    <div className="flex justify-center">
+                                  <input
+                                    type="checkbox"
+                                    checked={Number(row?.vat) === 1 }
+                                    readOnly
+                                  />
+                                </div>
+                                
+                                </>
+                                )
+                                  
+                                }
+                              </div>
+                            ))}
+
+                          
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                   {numIndex === 4 && (
+                    <div className="standarddisblock mb-5">
+                      {/* MAIN CATEGORY HEADER */}
+                      <div className="bg-gray-50 px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
+                        {item.fees_category}
                       </div>
-                    )}
+
+                      {item.sub_categories.map((sub, sIndex) => (
+                        <div key={sIndex}>
+                          {/* SUB CATEGORY HEADER */}
+                          <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-gray-800 text-sm uppercase tracking-wide">
+                            {sub.sub_category}
+                          </div>
+
+                          {leasedisbursementFeesError && (
+                            <p className="text-red-500 px-3">
+                              {leasedisbursementFeesError}
+                            </p>
+                          )}
+
+                          {/* RESPONSIVE WRAPPER */}
+                          <div className=" w-full">
+                            <table className="min-w-max w-full text-xs font-semibold text-gray-600 table-fixed">
+                              <thead className="bg-gray-100">
+                                <tr className="">
+                                  <th className="px-2 py-2 text-center w-1/3">
+                                    Leasehold Service
+                                  </th>
+                                  <th className="px-2 py-2 text-center w-1/3">
+                                    Fee Type
+                                  </th>
+                                  <th className="px-2 py-2 text-center w-1/3">
+                                      Vat
+                                    </th>
+
+                                  {/* <th className="px-3 py-2 text-center w-1/4">Paid To</th> */}
+                                  
+                                </tr>
+                              </thead>
+
+                              <tbody>
+                                {pricingList
+                                  .find((x) => x.fees_category_id === numIndex)
+                                  .price_list.map((row, i) => (
+                                    <tr key={i} className="">
+                                      {/* LEASEHOLD SERVICE SELECT */}
+                                      <td className="pl-2 py-2 text-center">
+                                        {!row.isOthers ? (
+                                     
+                                           <div className="font text-black ">
+                                    <label  
+                                    readOnly
+                                      key={leaseholdDisbursementList?.[i]?.id}
+                                      value={leaseholdDisbursementList?.[i]?.id}
+                                      className="cols-span-1 text-sm tabledata"
+                                    >
+                                      {leaseholdDisbursementList[i]?.fee_type}
+                                    </label>
+                                  </div>
+                                        ) : (
+                                          <input
+                                            type="text"
+                                            placeholder="Enter other supplement"
+                                            value={row.type}
+                                           readOnly
+                                            className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full text-black"
+                                          />
+                                        )}
+                                      </td>
+
+                                      {/* COST */}
+                                      <td className="pl-2 py-2 text-center">
+                                        <input
+                                          type="text"
+                                          placeholder="Fee Cost"
+                                  defaultValue={row.fee_amount}
+                                         readOnly
+                                          className="poundtransform border border-gray-400 rounded py-0.5 text-sm w-full "
+                                        />
+                                      </td>
+                                      <td className="pl-2 py-2 text-center">
+                                        <div className="flex justify-center">
+                                        <input
+                                          type="checkbox"
+                                          checked={Number(row?.vat) === 1 }
+                                         readOnly
+                                        />
+                                      </div>
+                                      </td>
+
+                                      {/* PAID TO */}
+
+                                      {/* ACTION BUTTONS */}
+                                     
+                                    </tr>
+                                  ))}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                     {numIndex === 5 && (
                       <div className="addtional mb-5">
                         <div className="bg-gray-50 border-b px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
