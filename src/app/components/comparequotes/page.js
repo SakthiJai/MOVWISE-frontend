@@ -40,6 +40,8 @@ function ComparequotesContent() {
   const [viewquotes, showviewquotes] = useState(false);
   const [instructloader,setinstructloader]=useState(false);
   const [quoteid,setquoteid]=useState("");
+  const [loader, setLoader] = useState(false);
+
   const [instructpayload,setinstructpayload]=useState({
     "ref_no":"",
     "servicetype":"",
@@ -53,6 +55,7 @@ function ComparequotesContent() {
   const [total, settotal] = useState(0);
   const [giftvalue,setgiftvalue]=useState(0);
 const [conveyancerid,setconveyancerid]=useState(0);
+let call = false;
 const CircularProgress = ({ progress, label }) => {
   const radius = 16;
   const stroke = 4;
@@ -366,8 +369,11 @@ function handleInstructFromCard(
   setdropdownshow(true);
   
   // Wait 600ms for React to render pdfRef, then send mail
-  setTimeout(() => {
-    handleInstruct(
+setLoader(true); // show loader
+
+setTimeout(async () => {
+  try {
+    await handleInstruct(
       companyName,
       guest_id,
       conveyancer_id,
@@ -377,7 +383,11 @@ function handleInstructFromCard(
       refno,
       pdfRef
     );
-  }, 600);
+  } finally {
+    setLoader(false); // hide loader
+  }
+}, 2000);
+
 }
 
 async function handleInstruct(
@@ -1005,6 +1015,8 @@ function handlefilterchange(selectedoption = []) {
                                 <u>Price Breakdown</u>
                               )}
                             </button>
+                          
+
                           </div>
                           <div
                             className="w-7 h-7 flex items-center justify-center bg-white border border-gray-300 rounded-md shadow-sm cursor-pointer"
@@ -1090,8 +1102,11 @@ function handlefilterchange(selectedoption = []) {
 
                             <button
                               className="px-3 py-1.5 bg-[#4A7C59] text-white text-sm rounded-full hover:bg-[#3b6248]"
-                             onClick={() =>
-                                handleInstructFromCard(
+                             onClick={() =>{
+                            
+                              setTimeout(() => {
+                                  toggleDropdown(quote.conveying_details.conveying_id);
+                                         handleInstructFromCard(
                                   quote.conveying_details.company_name,
                                   quote.guest_id,
                                   quote.conveying_details.conveying_id,
@@ -1101,6 +1116,11 @@ function handlefilterchange(selectedoption = []) {
                                   quote.service_details[0].quote_ref_number,
                                   quote
                                 )
+                              }, 2000);
+                                
+                            
+                             }
+                               
                                 
                              }
                             >
@@ -1114,6 +1134,11 @@ function handlefilterchange(selectedoption = []) {
                            }
 
                             </button>
+                              {loading && (
+                              <div className="loader">
+                                Sending mail...
+                              </div>
+                            )}
                           </div>
                         </div>
 
