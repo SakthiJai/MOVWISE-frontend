@@ -1256,7 +1256,7 @@ export default function Purchase() {
 
                 <div className="flex flex-col h-full">
                   <label htmlFor="addition_applicable" className="block text-sm font-medium text-gray-700 mb-1">
-                    Select the addition if applicable to your purchase<span className="text-red-500">*</span>
+                    Select the addition if applicable to your purchase
                   </label>
                   <div className="relative mt-auto">
                     <Select

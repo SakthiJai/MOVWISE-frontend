@@ -268,7 +268,7 @@ const handleChange = (name,value) => {
     console.log("check")
     setbuytolet_readonlyfield(true);
     formData.buy_to_let="No"
-  } 
+  }
   else{
     setbuytolet_readonlyfield(false);
   }
@@ -424,23 +424,33 @@ if (!formData.purchase_country) {
   
   const handleContinue = (e) => {
     e.preventDefault();
-  
-    if (validate()) {
+    const isValid = validate();
+    
+    if (isValid) {
       console.log("✅ Valid form data:", formData);
-                  localStorage.setItem("service", JSON.stringify(3));
-
+      localStorage.setItem("service", JSON.stringify(3));
       localStorage.setItem("getquote", JSON.stringify(formData));
-      if(localStorage.getItem("user")){
-            formData.user_id=localStorage.getItem("user");
-            localStorage.setItem("getquote", JSON.stringify(formData));
-            router.push("/components/comparequotes");
-          }
-          else{
-          setModalopen(true)
-          }
+      
+      if (localStorage.getItem("user")) {
+        const updatedFormData = {
+          ...formData,
+          user_id: localStorage.getItem("user")
+        };
+        localStorage.setItem("getquote", JSON.stringify(updatedFormData));
+        router.push("/components/comparequotes");
+      }
+      else {
+        setModalopen(true);
+      }
     }
-     else {
+    else {
       console.log("❌ Validation failed:", errors);
+      const firstErrorKey = Object.keys(errors)[0];
+      const element = document.getElementById(firstErrorKey);
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
+        element.focus();
+      }
     }
   };
 
@@ -837,22 +847,22 @@ console.log(e);
                         <Home  className="w-7 h-7 text-[#1E5C3B]" />SALES DETAILS
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                           <div className="">
+                           <div className="" id="sales_stages">
                                                            <label className="block text-sm font-medium text-gray-700 mb-1">
                                                                What stages are you at? <span className="text-red-500">*</span>
                                                            </label>
                                                                        <Select
-  options={stageOptions}
-  styles={selectStyles}
-  value={stageOptions.find(
-    (opt) => opt.value === formData.sales_stages
-  )}
-  onChange={(selected) =>
-    handleChange("sales_stages", selected?.value || "")
-  }
-  isSearchable={false}
-  placeholder="Not Applicable"
-/>
+                                                              options={stageOptions}
+                                                              styles={selectStyles}
+                                                              value={stageOptions.find(
+                                                                (opt) => opt.value === formData.sales_stages
+                                                              )}
+                                                              onChange={(selected) =>
+                                                                handleChange("sales_stages", selected?.value || "")
+                                                              }
+                                                              isSearchable={false}
+                                                              placeholder="Not Applicable"
+                                                            />
                                            {/* Dropdown icon */}
                                                          <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                                            errors.sales_stages ? "text-red-500 opacity-100" : "opacity-0"
@@ -865,7 +875,7 @@ console.log(e);
 
 
                         {/* 1. Property Address (Inline Input) */}
-                       <div className="flex flex-col h-full">
+                       <div className="flex flex-col h-full"  id="sales_country">
                         <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
                          Property address:<span className="text-red-500">*</span>
                          </label>
@@ -904,7 +914,7 @@ console.log(e);
 
                         {/* 2. Agreed SALES Price (Inline Input with Prefix) */}
                         <div className="flex flex-col h-full">
-                            <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
+                            <label htmlFor="sales_price" className="block text-sm font-medium text-gray-700 mb-1">
                             Agreed Sales price:<span className="text-red-500">*</span>
                             </label>
                             <div className="relative">
@@ -964,7 +974,7 @@ console.log(e);
 
                     
                         {/* 4. Leasehold or Freehold (Inline Select) */}
-                        <div className="flex flex-col h-full">
+                        <div className="flex flex-col h-full" id="tenure">
   <label className="block text-sm font-medium text-gray-700 mb-1">
     Leasehold or Freehold?<span className="text-red-500">*</span>
   </label>
@@ -996,7 +1006,7 @@ console.log(e);
 </div>
 
                         </div>
-                       <div className="flex flex-col h-full">
+                       <div className="flex flex-col h-full" id="sales_property_type">
   <label className="block text-sm font-medium text-gray-700 mb-1">
     Property Type:<span className="text-red-500">*</span>
   </label>
@@ -1041,7 +1051,7 @@ console.log(e);
                         < CoinsIcon  className="w-7 h-7 text-yellow-400" /> SALES FINANCE
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
+                    <div id="sales_shared_ownership">
                         <label
                           htmlFor="sales_shared_ownership"
                           className="block text-[14px] text-[#6A7682] font-medium mb-2"
@@ -1106,7 +1116,7 @@ console.log(e);
                              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                            
                                   {/* 1. Property Address (Inline Input) */}
-                <div className="flex flex-col h-full">
+                <div className="flex flex-col h-full"  id="purchase_country">
                         <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
                          Property address:<span className="text-red-500">*</span>
                          </label>
@@ -1178,7 +1188,7 @@ console.log(e);
 </div>
 
                     {/* 3. Number of Bedrooms (Inline Select) */}
-<div className="flex flex-col h-full">
+<div className="flex flex-col h-full"  id="no_of_bedrooms">
   <label className="block text-sm font-medium text-gray-700 mb-1">
     Number of Bedrooms:<span className="text-red-500">*</span>
   </label>
@@ -1214,7 +1224,7 @@ console.log(e);
 
 {/* 4. Leasehold or Freehold (Inline Select) */}
 <div className="flex flex-col gap-6">
-  <div className="flex flex-col h-full">
+  <div className="flex flex-col h-full" id="leasehold_or_free">
     <label className="block text-sm font-medium text-gray-700 mb-1">
       Leasehold or Freehold?<span className="text-red-500">*</span>
     </label>
@@ -1295,7 +1305,7 @@ console.log(e);
     </div>
       </div>
      <div>
-<div>
+ <div id="property_type">
   <label className="block text-sm font-medium text-gray-700 mb-1">
     Property Type:<span className="text-red-500">*</span>
   </label>
@@ -1389,7 +1399,7 @@ console.log(e);
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
 
                   {/* purchase mode */}
-                    <div className="flex flex-col h-full">
+                    <div className="flex flex-col h-full" id="purchase_mode">
                                                    <label htmlFor="b2l" className="block text-sm font-medium text-gray-700 mb-1">
                                                     Purchase mode<span className="text-red-500">*</span>
                                                    </label>
@@ -1418,7 +1428,7 @@ console.log(e);
                       </p>
                                                  </div>
                   {/* 6. Buy to Let? (Inline Select) */}
-                  <div className="flex flex-col h-full">
+                  <div className="flex flex-col h-full" id="buy_to_let">
   <label
     htmlFor="buy_to_let"
     className="block text-sm font-medium text-gray-700 mb-1"
@@ -1498,7 +1508,7 @@ console.log(e);
     <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
     </div>
                  
-               <div className="flex flex-col h-full">
+               <div className="flex flex-col h-full" id="lenders">
           <label className="block text-sm font-semibold text-gray-800 mb-2">
             Select Lenders <span className="text-red-500">*</span>
           </label>
@@ -1641,7 +1651,7 @@ console.log(e);
     
     <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
     </div>
-<div>
+ <div id="languages">
         <label className="block text-sm font-semibold text-gray-800 mb-1">
           Prefer solicitor in your first language? <span className="text-red-500">*</span>
         </label>
@@ -1674,7 +1684,7 @@ console.log(e);
       </div>
                 
     {formData.buy_to_let === "personal" && (
-  <div >
+  <div  id="need_hmo">
     <label className="block text-sm font-medium text-gray-700 mb-1">
       Need HMO Support
     </label>

@@ -99,7 +99,7 @@ const [lang, setLang] = useState ([
   
     const [selectedLenders, setSelectedLenders] = useState([]);
     const [loginformshow,setloginformshow]=useState(false)
-   
+     const errorRefs = useRef({});
 
   
 
@@ -281,6 +281,17 @@ const handleChange = (name, value) => {
 if(!formData.buy_to_let){
   newErrors.buy_to_let="please select buy_to_let"
 }
+    const errorOrder = ["address", "country", "property_values", "no_of_bedrooms", "leasehold_or_free", "property_type", "buy_to_let", "lenders", "preferLanguage", "languages", "addition_applicable"];
+    for (const field of errorOrder) {
+      if (newErrors[field]) {
+        const refKey = (field === "country") ? "address" : (field === "preferLanguage") ? "languages" : field;
+        const element = errorRefs.current[refKey];
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "center" });
+          break;
+        }
+      }
+    }
     setErrors(newErrors);
     console.log(errors)
 
@@ -504,7 +515,7 @@ const getIconForType = (type) => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
 
                                  {/* 1. Property Address (Inline Input) */}
-                       <div className="flex flex-col h-full">
+                       <div className="flex flex-col h-full" ref={(el) => (errorRefs.current["address"] = el)}>
                         <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
                          Property address:<span className="text-red-500">*</span>
                          </label>
@@ -579,7 +590,7 @@ const getIconForType = (type) => {
                     />
 
 
-                        <div className="flex flex-col h-full">
+                        <div className="flex flex-col h-full"  ref={(el) => (errorRefs.current["property_values"] = el)}>
                             <label htmlFor="price" className="block text-sm font-medium text-gray-700 mb-1">
                             Property value:<span className="text-red-500">*</span>
                             </label>
@@ -611,7 +622,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                         </div>
 
                         {/* 3. Number of Bedrooms (Inline Select) */}
-                        <div className="flex flex-col h-full">
+                        <div className="flex flex-col h-full"  ref={(el) => (errorRefs.current["no_of_bedrooms"] = el)}>
                             <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Number of Bedrooms:<span className="text-red-500">*</span>
                             </label>
@@ -643,7 +654,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                         {/* 4. Leasehold or Freehold (Inline Select) */}
                         <div className="flex flex-col gap-6">
                             {/* Leasehold / Freehold Section */}
-                            <div className="flex flex-col h-full">
+                            <div className="flex flex-col h-full" ref={(el) => (errorRefs.current["leasehold_or_free"] = el)}>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                 Leasehold or Freehold?<span className="text-red-500">*</span>
                                 </label>
@@ -672,6 +683,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                                 </div>
                             </div>
                         </div>
+                        <div  ref={(el) => (errorRefs.current["property_type"] = el)}>
                         <label className="block text-sm font-medium text-gray-700 mb-1 ">
                             Property Type:<span className="text-red-500">*</span>
                             </label>
@@ -711,6 +723,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
   {errors.property_type || "placeholder"} {/* placeholder keeps same height */}
 </p>
 </div>
+</div>
 
                         
                         </div>
@@ -723,7 +736,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
 
                   {/* 6. Buy to Let? (Inline Select) */}
-                  <div className="flex flex-col h-full">
+                  <div className="flex flex-col h-full"  ref={(el) => (errorRefs.current["buy_to_let"] = el)}>
                     <label htmlFor="b2l" className="block text-sm font-medium text-gray-700 mb-1">
                       Buy to Let?<span className="text-red-500">*</span>
                     </label>
@@ -848,7 +861,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
     <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
     </div>
                  
-               <div className="flex flex-col h-full">
+               <div className="flex flex-col h-full"  ref={(el) => (errorRefs.current["lenders"] = el)}>
           <label className="block text-sm font-semibold text-gray-800 mb-2">
             Select Lenders <span className="text-red-500">*</span>
           </label>
@@ -874,7 +887,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
         
         </div>
     
-          <div>
+          <div ref={(el) => (errorRefs.current["languages"] = el)}>
         <label className="block text-sm font-semibold text-gray-800 mb-1">
           Prefer solicitor in your first language? <span className="text-red-500">*</span>
         </label>
@@ -905,9 +918,9 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
   {errors.preferLanguage}
 </p>
       </div>
-       <div className="flex flex-col h-full">
+       <div className="flex flex-col h-full"  ref={(el) => (errorRefs.current["addition_applicable"] = el)}>
                                  <label htmlFor="addition_applicable" className="block text-sm font-medium text-gray-700 mb-1">
-                                 Select the addition if applicable to your remortgage <span className="text-red-500">*</span>
+                                 Select the addition if applicable to your remortgage
                                  </label>
                              <div className="relative mt-auto">
                <Select
@@ -924,12 +937,12 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
                       placeholder="Not Applicable"
                       isSearchable={false}
                     />     
-               
+                
              </div>
      <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
        errors.addition_applicable ? "text-red-500 opacity-100" : "opacity-0"
     }`}>
-      {errors.addition_applicable || "placeholder"} {/* placeholder keeps same height */}
+      {errors.addition_applicable || "placeholder"} 
     </p>
                                </div> 
     

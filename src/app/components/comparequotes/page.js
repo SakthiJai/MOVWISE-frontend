@@ -23,8 +23,89 @@ import Select from 'react-select';
 import { useSearchParams } from "next/navigation";
 import { toPng } from "html-to-image";
 
+// Reusable component for fees table
+const FeesTable = ({ quote, label = "Sales" }) => {
+  return (
+    <div className="border-t border-gray-200 pt-6 flex justify-end">
+      <table className="border-collapse text-black font">
+        <thead>
+          <tr className="border-b border-gray-300 text-left grid grid-cols-3 w-full gap-5">
+            <th className="text-sm font-semibold">Type</th>
+            <th className="text-sm font-semibold">Fee Amount</th>
+            <th className="text-sm font-semibold">VAT</th>
+          </tr>
+        </thead>
+        <tbody>
+          {/* Legal Fees */}
+          <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+            <td className="text-sm font-bold">Legal Fees</td>
+            <td className="text-sm font-semibold text-emerald-600">{formatGBP(quote.legal_fees)}</td>
+            <td className="text-sm text-emerald-600 font-semibold">{formatGBP(quote.vat)}</td>
+          </tr>
+          
+          {/* Supplements */}
+          <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+            <td className="text-sm">Supplements</td>
+            <td className="text-sm">{formatGBP(quote.supplements)}</td>
+            <td className="text-sm">{formatGBP(quote.supplementsvat)}</td>
+          </tr>
 
+          {/* Disbursements */}
+          <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+            <td className="text-sm">Disbursements</td>
+            <td className="text-sm">{formatGBP(quote.disbursements)}</td>
+            <td className="text-sm">{formatGBP(quote.disbursementsvat)}</td>
+          </tr>
 
+          {/* TOTAL */}
+          <tr className="grid grid-cols-3 w-full gap-5 border-t border-gray-300 bg-gray-50">
+            <td className="text-sm font-semibold">Total</td>
+            <td className="text-sm font-semibold text-emerald-600">
+              {formatGBP(
+                Number(quote.supplements || 0) +
+                Number(quote.disbursements || 0) +
+                Number(quote.legal_fees || 0)
+              )}
+            </td>
+            <td className="text-sm font-semibold text-emerald-600">
+              {formatGBP(Number(quote.disbursementsvat) + Number(quote.supplementsvat) + Number(quote.vat))}
+            </td>
+          </tr>
+
+          {/* Country-Based Taxes */}
+          {quote.service_details && quote.service_details[0]?.service_type == 2 && (
+            <>
+              {(quote.service_details[0].country === "England" ||
+                quote.service_details[0].country === "Northern Ireland") && (
+                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+                  <td className="text-sm font-semibold">Stamp Duty</td>
+                  <td className="text-sm">{formatGBP(quote.stamp_duty)}</td>
+                  <td className="text-sm">-</td>
+                </tr>
+              )}
+
+              {quote.service_details[0].country === "Scotland" && (
+                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+                  <td className="text-sm font-semibold">LBTT</td>
+                  <td className="text-sm">{formatGBP(quote.lbtt)}</td>
+                  <td className="text-sm">-</td>
+                </tr>
+              )}
+
+              {quote.service_details[0].country === "Wales" && (
+                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+                  <td className="text-sm font-semibold">LLT</td>
+                  <td className="text-sm">{formatGBP(quote.llt)}</td>
+                  <td className="text-sm">-</td>
+                </tr>
+              )}
+            </>
+          )}
+        </tbody>
+      </table>
+    </div>
+  );
+};
 
 function ComparequotesContent() {
   const searchParams = useSearchParams();
@@ -1139,10 +1220,175 @@ function handlefilterchange(selectedoption = []) {
                             )}
                           </div>
                         </div>
+                        {dropdownOpenId === quote.conveying_details.conveying_id &&
+  dropdownshow && (
+    <>
+      {view_data.service_details.length > 1 && (
+        <>
+          {/* Sales Section */} 
+          <div className="pt-2 border-t border-gray-200"> 
+            <h2 className="text-right mr-40 font-semibold text-emerald-600">Sales</h2>
+                  <div className=" pt-2 flex justify-end" >
+      <table className="border-collapse text-black font">
+        <thead>
+          <tr className="border-b border-gray-300 text-left grid grid-cols-3 w-full gap-5">
+            <th className="text-sm font-semibold">Type</th>
+            <th className="text-sm font-semibold">Fee Amount</th>
+            <th className="text-sm font-semibold">VAT</th>
+          </tr>
+        </thead>
+        <tbody>
+          {/* Legal Fees */}
+          <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+            <td className="text-sm font-bold">Legal Fees</td>
+            <td className="text-sm font-semibold text-emerald-600">{formatGBP(quote.service_details[0].taxInfo.legal_fees)}</td>
+            <td className="text-sm text-emerald-600 font-semibold">{formatGBP(quote.service_details[0].taxInfo.vat)}</td>
+          </tr>
+          
+          {/* Supplements */}
+          <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+            <td className="text-sm">Supplements</td>
+            <td className="text-sm">{formatGBP(quote.service_details[0].taxInfo.supplements)}</td>
+            <td className="text-sm">{formatGBP(quote.service_details[0].taxInfo.supplementsvat)}</td>
+          </tr>
 
-                        {/* Description + Price Breakdown */}
-                       {(dropdownOpenId === quote.conveying_details.conveying_id && dropdownshow) && (
-                          <div className="border-t border-gray-200 pt-6 flex justify-end">
+          {/* Disbursements */}
+          <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+            <td className="text-sm">Disbursements</td>
+            <td className="text-sm">{formatGBP(quote.service_details[0].taxInfo.disbursements)}</td>
+            <td className="text-sm">{formatGBP(quote.service_details[0].taxInfo.disbursementsvat)}</td>
+          </tr>
+
+          {/* TOTAL */}
+          <tr className="grid grid-cols-3 w-full gap-5 border-t border-gray-300 bg-gray-50">
+            <td className="text-sm font-semibold">Total</td>
+            <td className="text-sm font-semibold text-emerald-600">
+              {formatGBP(
+               quote.service_details[0].taxInfo.total
+              )}
+            </td>
+            <td className="text-sm font-semibold text-emerald-600">
+              {formatGBP( quote.service_details[0].taxInfo.vat)}
+            </td>
+          </tr>
+
+          {/* Country-Based Taxes */}
+          {quote.service_details && quote.service_details[0]?.service_type == 2 && (
+            <>
+              {(quote.service_details[0].country === "England" ||
+                quote.service_details[0].country === "Northern Ireland") && (
+                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+                  <td className="text-sm font-semibold">Stamp Duty</td>
+                  <td className="text-sm">{formatGBP(quote.stamp_duty)}</td>
+                  <td className="text-sm">-</td>
+                </tr>
+              )}
+
+              {quote.service_details[0].country === "Scotland" && (
+                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+                  <td className="text-sm font-semibold">LBTT</td>
+                  <td className="text-sm">{formatGBP(quote.lbtt)}</td>
+                  <td className="text-sm">-</td>
+                </tr>
+              )}
+
+              {quote.service_details[0].country === "Wales" && (
+                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+                  <td className="text-sm font-semibold">LLT</td>
+                  <td className="text-sm">{formatGBP(quote.llt)}</td>
+                  <td className="text-sm">-</td>
+                </tr>
+              )}
+            </>
+          )}
+        </tbody>
+      </table>
+    </div>
+    </div>
+          
+          {/* Purchase Section */}
+           <div className="pt-2 border-t border-gray-200"> <h2 className="text-right mr-40 font-semibold text-emerald-600">Purchase</h2>
+                  <div className=" pt-2 flex justify-end" >
+                  
+      <table className="border-collapse text-black font">
+        <thead>
+          <tr className="border-b border-gray-300  grid grid-cols-3 w-full gap-5">
+            <th className="text-sm font-semibold">Type</th>
+            <th className="text-sm font-semibold">Fee Amount</th>
+            <th className="text-sm font-semibold">VAT</th>
+          </tr>
+        </thead>
+        <tbody>
+          {/* Legal Fees */}
+          <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+            <td className="text-sm font-bold">Legal Fees</td>
+            <td className="text-sm font-semibold text-emerald-600">{formatGBP(quote.service_details[1].taxInfo.legal_fees)}</td>
+            <td className="text-sm text-emerald-600 font-semibold">{formatGBP(quote.service_details[1].taxInfo.vat)}</td>
+          </tr>
+          
+          {/* Supplements */}
+          <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+            <td className="text-sm">Supplements</td>
+            <td className="text-sm">{formatGBP(quote.service_details[1].taxInfo.supplements)}</td>
+            <td className="text-sm">{formatGBP(quote.service_details[1].taxInfo.supplementsvat)}</td>
+          </tr>
+
+          {/* Disbursements */}
+          <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+            <td className="text-sm">Disbursements</td>
+            <td className="text-sm">{formatGBP(quote.service_details[1].taxInfo.disbursements)}</td>
+            <td className="text-sm">{formatGBP(quote.service_details[1].taxInfo.disbursementsvat)}</td>
+          </tr>
+
+          {/* TOTAL */}
+          <tr className="grid grid-cols-3 w-full gap-5 border-t border-gray-300 bg-gray-50">
+            <td className="text-sm font-semibold">Total</td>
+            <td className="text-sm font-semibold text-emerald-600">
+              {formatGBP(quote.service_details[1].taxInfo.total)}
+            </td>
+            <td className="text-sm font-semibold text-emerald-600">
+              {formatGBP(quote.service_details[1].taxInfo.vat)}
+            </td>
+          </tr>
+
+          {/* Country-Based Taxes */}
+          {quote.service_details && quote.service_details[0]?.service_type == 2 && (
+            <>
+              {(quote.service_details[0].country === "England" ||
+                quote.service_details[0].country === "Northern Ireland") && (
+                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+                  <td className="text-sm font-semibold">Stamp Duty</td>
+                  <td className="text-sm">{formatGBP(quote.stamp_duty)}</td>
+                  <td className="text-sm">-</td>
+                </tr>
+              )}
+
+              {quote.service_details[0].country === "Scotland" && (
+                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+                  <td className="text-sm font-semibold">LBTT</td>
+                  <td className="text-sm">{formatGBP(quote.lbtt)}</td>
+                  <td className="text-sm">-</td>
+                </tr>
+              )}
+
+              {quote.service_details[0].country === "Wales" && (
+                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+                  <td className="text-sm font-semibold">LLT</td>
+                  <td className="text-sm">{formatGBP(quote.llt)}</td>
+                  <td className="text-sm">-</td>
+                </tr>
+              )}
+            </>
+          )}
+        </tbody>
+      </table>
+    </div></div>
+        </>
+      )}
+      
+      {view_data.service_details.length === 1 && (
+        <>
+ <div className="border-t border-gray-200 pt-6 flex justify-end">
                            <table className=" border-collapse text-black font">
                               <thead>
                                 <tr className="border-b border-gray-300 text-left grid grid-cols-3 w-full gap-5">
@@ -1182,7 +1428,7 @@ function handlefilterchange(selectedoption = []) {
   {/* TOTAL — Border ONLY ABOVE */}
   <tr className="grid grid-cols-3 w-full gap-5 border-t border-gray-300 bg-gray-50">
     <td className="text-sm font-semibold">Total</td>
-    <td className="text-sm font-semibold text-emerald-600">£
+    <td className="text-sm font-semibold text-emerald-600">
 {formatGBP(
   Number(quote.supplements || 0) +
   Number(quote.disbursements || 0) +
@@ -1223,7 +1469,15 @@ function handlefilterchange(selectedoption = []) {
 
                             </table>
                           </div>
-                        )}
+        </>
+      )}
+    </>
+  )}
+
+
+
+                        {/* Description + Price Breakdown */}
+                   
                        
                       
                         {cardid === quote.conveying_details.conveying_id && viewquotes && (

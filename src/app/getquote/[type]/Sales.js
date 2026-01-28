@@ -16,7 +16,7 @@ export default function Sales() {
   const stageOptions = [
   { value: "Just researching / budgeting", label: "Just researching / budgeting" },
   { value: "Have received an offer", label: "Have received an offer" },
-  { value: "Sale agreed", label: "Sale agreed" },
+  { value: "Sale agreed", label: "Sale agreed" }
 ];
 const sharedOwnershipOptions = [
   { value: "Yes (housing association)", label: "Yes (housing association)" },
@@ -99,7 +99,7 @@ const lender_languagestyles = {
     color: "#111827",
   }),
 };
-
+  const formFieldRefs = useRef({});
    const [addresskey,setaddresskey]=useState("");
   const [showAddressLines, setShowAddressLines] = useState(false);
       const [selectedLanguage, setSelectedLanguage] = useState([]);
@@ -249,9 +249,9 @@ const handleSubmit = (e) => {
   if (!selectedLenders || selectedLenders.length === 0 && formData.existing_mortgage==1) {
   newErrors.lenders = "Please select at least one lender";
 }
-/*if(!formData.addition_applicable){
-      newErrors.addition_applicable="please select addition_applicable"
-    }*/
+// if(!formData.addition_applicable){
+//       newErrors.addition_applicable="please select addition_applicable"
+//     }
 
  
   /*if (!formData.sales_address.trim()) {
@@ -278,6 +278,30 @@ const handleSubmit = (e) => {
     if (!formData.shared_ownership) {
     newErrors.shared_ownership = "Please select a ownership";
   }
+ const errorOrder = [
+      "sales_stages",
+      "sales_country",
+      "address",
+      "sales_price",
+      "sales_no_of_bedrooms",
+      "sales_leasehold_or_free",
+      "sales_property_type",
+      "shared_ownership",
+      "existing_mortgage",
+      "preferLanguage",
+      "lenders",
+      "addition_applicable"
+    ];
+    for (const field of errorOrder) {
+      if (newErrors[field] || (field === "sales_country" && newErrors.sales_country) || (field === "address" && newErrors.address)) {
+        const refKey = (field === "sales_country" || field === "address") ? "sales_address" : field;
+        const element = formFieldRefs.current[refKey];
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth", block: "center" });
+          break;
+        }
+      }
+    }
 
 
    setErrors(newErrors);
@@ -308,9 +332,7 @@ const handleSubmit = (e) => {
     }
 
   };
-
-
-
+   
 
 const handleContinue = (e) => {
   e.preventDefault();
@@ -540,7 +562,7 @@ useEffect(() => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
 
                          {/* whay stages are you at? */}
-                            <div className="">
+                            <div className="" ref={(el) => { formFieldRefs.current['sales_stages'] = el; }}>
                                 <label className="block text-sm font-medium text-gray-700 mb-1">
                                     What stages are you at? <span className="text-red-500">*</span>
                                 </label>
@@ -570,7 +592,7 @@ useEffect(() => {
         />
                                 </div>
  {/* 1. Property Address */}
-                       <div className="flex flex-col h-full">
+                       <div className="flex flex-col h-full"  ref={(el) => { formFieldRefs.current['sales_address'] = el; }}>
                         <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
                          Property address:<span className="text-red-500">*</span>
                          </label>
@@ -648,7 +670,7 @@ useEffect(() => {
 
 
                         {/* 2. Agreed SALES Price (Inline Input with Prefix) */}
-                        <div className="flex flex-col h-full">
+                        <div className="flex flex-col h-full"  ref={(el) => { formFieldRefs.current['sales_price'] = el; }}>
                             <label htmlFor="sales_price" className="block text-sm font-medium text-gray-700 mb-1">
                             Agreed Sales price:<span className="text-red-500">*</span>
                             </label>
@@ -679,7 +701,7 @@ useEffect(() => {
                        </div>
 
                         {/* 3. Number of no_of_bedrooms (Inline Select) */}
-                       <div className="flex flex-col h-full">
+                       <div className="flex flex-col h-full" ref={(el) => { formFieldRefs.current['sales_no_of_bedrooms'] = el; }}>
   <label className="block text-sm font-medium text-gray-700 mb-1">
     Number of Bedrooms:<span className="text-red-500">*</span>
   </label>
@@ -722,7 +744,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
     Leasehold or Freehold?<span className="text-red-500">*</span>
   </label>
 
-  <div className="grid grid-cols-2 gap-3 mt-auto">
+  <div className="grid grid-cols-2 gap-3 mt-auto" ref={(el) => { formFieldRefs.current['sales_leasehold_or_free'] = el; }}>
     {sales_leasehold_or_freeOptions.map((opt) => (
       <button
         key={opt}
@@ -758,7 +780,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
     Property Type:<span className="text-red-500">*</span>
   </label>
 
-  <div className="grid grid-cols-2 md:flex md:flex-wrap gap-4 md:gap-9">
+  <div className="grid grid-cols-2 md:flex md:flex-wrap gap-4 md:gap-9" ref={(el) => { formFieldRefs.current['sales_property_type'] = el; }}>
   {property_typeOptions.map((opt) => (
     <button
       key={opt.label}
@@ -801,8 +823,8 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                         <h2 className="text-xl font-bold text-gray-900 border-b-2 border-[#1E5C3B] pb-2 flex items-center gap-2">
                         < Coins  className="w-7 h-7 text-yellow-400" /> SALES FINANCE
                         </h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6" >
+                    <div ref={(el) => { formFieldRefs.current['shared_ownership'] = el; }}>
                         <label
                           htmlFor="shared_ownership"
                           className="block text-[14px] text-[#6A7682] font-medium mb-2"
@@ -836,7 +858,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                     
 
                     {/* Existing Mortgage */}
-                   <div className="flex flex-col h-full">
+                   <div className="flex flex-col h-full"  ref={(el) => { formFieldRefs.current['existing_mortgage'] = el; }} >
   <label className="block text-sm font-medium text-gray-700 mb-1">
     Existing mortgage to redeem?
   </label>
@@ -894,7 +916,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
     {/* Prefer solicitor in your first language */}
     <div className="space-y-4">
-        <div>
+        <div  ref={(el) => { formFieldRefs.current['preferLanguage'] = el; }}>
             <label className="block text-sm font-semibold text-gray-800 mb-1">
                 Prefer solicitor in your first language? <span className="text-red-500">*</span>
             </label>
@@ -921,7 +943,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
     </div>
 
     {/* Select Lenders */}
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full" ref={(el) => { formFieldRefs.current['lenders'] = el; }}>
         <label className="block text-sm font-semibold text-gray-800 mb-1 rounded-lg focus:ring-2 focus:ring-[#1E5C3B]">
             Select Lenders <span className="text-red-500">*</span>
         </label>
@@ -952,9 +974,9 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
     </div>
 
     {/* Select the addition if applicable */}
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full" ref={(el) => { formFieldRefs.current['addition_applicable'] = el; }}>
         <label htmlFor="addition_applicable" className="block text-sm font-medium text-gray-700 mb-1">
-            Select the addition if applicable to your sale<span className="text-red-500">*</span>
+            Select the addition if applicable to your sale
         </label>
         <div className="relative mt-auto">
             <Select
