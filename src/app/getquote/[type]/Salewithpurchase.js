@@ -268,7 +268,7 @@ const handleChange = (name,value) => {
     console.log("check")
     setbuytolet_readonlyfield(true);
     formData.buy_to_let="No"
-  }
+  } 
   else{
     setbuytolet_readonlyfield(false);
   }

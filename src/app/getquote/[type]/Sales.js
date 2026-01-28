@@ -23,7 +23,7 @@ const sharedOwnershipOptions = [
   { value: "Yes (Help To Buy)", label: "Yes (Help To Buy)" },
   { value: "No", label: "No" },
 ];
-    const addition_applicable = [
+    const addition_applicable = [ 
   { label: "Islamic Mortgage", value: "Islamic Mortgage" },
   { label: "Equity Transfer", value: "Equity Transfer" },
   { label: "Expats / Overseas Client", value: "Expats / Overseas Client" }

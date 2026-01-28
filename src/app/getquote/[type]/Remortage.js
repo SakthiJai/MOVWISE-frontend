@@ -931,7 +931,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
     }`}>
       {errors.addition_applicable || "placeholder"} {/* placeholder keeps same height */}
     </p>
-                               </div>
+                               </div> 
     
     </div></div>
           
