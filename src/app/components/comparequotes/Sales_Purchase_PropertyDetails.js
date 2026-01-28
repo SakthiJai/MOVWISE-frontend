@@ -108,12 +108,12 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId ,se
                                           Languages
                                         </span>
                                         <span>
-  {
-    language.find(
-      (l) => l.id == servicData ?.languages
-    )?.language_name || "--"
-  }
-</span>
+                                          {
+                                            language.find(
+                                              (l) => l.id == servicData ?.languages
+                                            )?.language_name || "--"
+                                          }
+                                        </span>
                                       </div>
                                        <div className="flex">
                                         <span className="font-semibold w-40 text-left">
