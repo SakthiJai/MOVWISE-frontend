@@ -232,15 +232,17 @@ export default function SalesPropertyDetails({
                         <td className="p-2 text-start text-emerald-600 font-bold">Total </td>
 
                         <td className="p-2 text-right text-emerald-600 ">
-                          <span>
-                            {" "}
-                           £ {servicData.taxInfo?.total|| formatGBP(
-                              Number(quote.supplements || 0) +
-                                Number(quote.disbursements || 0) +
-                                Number(quote.legal_fees || 0)
-                            ) }
-                            
-                          </span>
+                        <span>
+                           {" "}
+                           {formatGBP(
+                             servicData?.taxInfo?.total ??
+                               (
+                                 Number(quote.supplements || 0) +
+                                 Number(quote.disbursements || 0) +
+                                 Number(quote.legal_fees || 0)
+                               )
+                           )}
+                         </span>
                         </td>
                         <td className="p-2 text-right text-emerald-600">
                           <span> 

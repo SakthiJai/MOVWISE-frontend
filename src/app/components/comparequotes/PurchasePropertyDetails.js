@@ -92,39 +92,39 @@ export default function PurchasePropertyDetails({
               <td className="p-2 text-left font_size_13px">{servicData?.property_type || "--"}</td>
             </tr>
             <tr className=" border-gray-200">
-              <td className="p-2 font-semibold w-40 text-left">High Raise Support</td>
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">High Raise Support</td>
               <td className="p-2 text-left font_size_13px">{servicData?.purchase_high_raise_support == 0 ? "No" : "Yes"}</td>
             </tr>
             <tr className=" border-gray-200">
-              <td className="p-2 font-semibold w-40 text-left">Purchase Mode</td>
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">Purchase Mode</td>
               <td className="p-2 text-left font_size_13px">{servicData?.purchase_mode || "--"}</td>
             </tr>
             <tr className=" border-gray-200">
-              <td className="p-2 font-semibold w-40 text-left">Buy To Let</td>
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">Buy To Let</td>
               <td className="p-2 text-left font_size_13px">{servicData?.buy_to_let || "--"}</td>
             </tr>
             <tr className=" border-gray-200">
-              <td className="p-2 font-semibold w-40 text-left">Obtaining Mortgage</td>
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">Obtaining Mortgage</td>
               <td className="p-2 text-left font_size_13px">{servicData?.obtaining_mortgage == 0 ? "No" : "Yes"}</td>
             </tr>
             <tr className=" border-gray-200">
-              <td className="p-2 font-semibold w-40 text-left">Gift Deposit</td>
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">Gift Deposit</td>
               <td className="p-2 text-left font_size_13px">
                 {servicData?.gift_deposit != null ? `${servicData.gift_deposit} Gift Deposit` : "--"}
               </td>
             </tr>
             <tr className="border-gray-200">
-              <td className="p-2 font-semibold w-40 text-left">Languages</td>
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">Languages</td>
               <td className="p-2 text-left font_size_13px">
                 {language.find((l) => l.id == servicData?.languages)?.language_name || "--"}
               </td>
             </tr>
             <tr className=" border-gray-200">
-              <td className="p-2 font-semibold w-40 text-left">LTA ISA</td>
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">LTA ISA</td>
               <td className="p-2 text-left font_size_13px">{servicData?.purchase_lifetime_isa == 0 ? "No" : "Yes"}</td>
             </tr>
             <tr>
-              <td className="p-2 font-semibold w-40 text-left">HMO Support</td>
+              <td className="p-2 font-semibold w-40 text-left font_size_13px">HMO Support</td>
               <td className="p-2 text-left font_size_13px">{servicData?.purchase_need_hmo == 0 ? "No" : "Yes"}</td>
             </tr>
           </tbody>
@@ -239,11 +239,18 @@ export default function PurchasePropertyDetails({
                                           <td className="p-2 text-start text-emerald-600 font-bold text-lg">Total </td>
                   
                                           <td className="p-2 text-right text-emerald-600 font-bold text-base">
-                                            <span>
-                                              {" "}
-                                            
-                                             £ {servicData.taxInfo?.total|| formatGBP( Number(quote.supplements || 0) + Number(quote.disbursements || 0) + Number(quote.legal_fees || 0) ) }
-                                            </span>
+                                          <span>
+                                            {" "}
+  {formatGBP(
+    servicData?.taxInfo?.total ??
+      (
+        Number(quote.supplements || 0) +
+        Number(quote.disbursements || 0) +
+        Number(quote.legal_fees || 0)
+      )
+  )}
+</span>
+
                                           </td>
                                           <td className="p-2 text-right text-emerald-600 font-bold text-base">
                                             <span>  {formatGBP( servicData?.taxInfo?.vat||quote.total_vat)}</span>
@@ -252,13 +259,46 @@ export default function PurchasePropertyDetails({
                                           {/* <td className="p-2 text-right text-emerald-600 font_size_13px" > {formatGBP(Number(item.vat))}</td> */}
                                         </tr>
 
-                    {item.service_details[0].service_type == 2 && (
-                      <>
+                 <>
+                    {quote.service_details.length > 1 && (
+                       <>
+                        {(quote.service_details[1].country === "England" ||
+                          quote.service_details[1].country ===
+                            "Northern Ireland") && (
+                          <tr className="border-b border-gray-200 font pt-1">
+                            <td className="p-2 text-start font-semibold">Stamp Duty</td>
+                            <td className="p-2 text-right">
+                              {formatGBP(item.stamp_duty)}
+                            </td>
+                            <td></td>
+                          </tr>
+                        )}
+
+                        {item.service_details[1].country == "Scotland" && (
+                          <tr className="border-b border-gray-200 font pt-1">
+                            <td className="p-2 font-semibold">LBTT</td>
+                            <td className="p-2 text-right">{formatGBP(item.lbtt)}</td>
+                            <td></td>
+                          </tr>
+                        )}
+
+                        {item.service_details[1].country == "Wales" && (
+                          <tr className="border-b border-gray-200 font pt-1">
+                            <td className="p-2 font-semibold">LLT</td>
+                            <td className="p-2 text-right">{formatGBP(item.llt)}</td>
+                            <td></td>
+                          </tr>
+                        )}
+                      </>
+                    )}
+                    
+                    {quote.service_details.length === 1 && (
+                         <>
                         {(quote.service_details[0].country === "England" ||
                           quote.service_details[0].country ===
                             "Northern Ireland") && (
-                          <tr className="border-b border-gray-200">
-                            <td className="p-2 text-start">Stamp Duty</td>
+                          <tr className="border-b border-gray-200 font pt-1">
+                            <td className="p-2 text-start font-semibold">Stamp Duty</td>
                             <td className="p-2 text-right">
                               {formatGBP(item.stamp_duty)}
                             </td>
@@ -267,22 +307,24 @@ export default function PurchasePropertyDetails({
                         )}
 
                         {item.service_details[0].country == "Scotland" && (
-                          <tr className="border-b border-gray-200">
-                            <td className="p-2">LBTT</td>
+                          <tr className="border-b border-gray-200 font pt-1">
+                            <td className="p-2 font-semibold">LBTT</td>
                             <td className="p-2 text-right">{formatGBP(item.lbtt)}</td>
                             <td></td>
                           </tr>
                         )}
 
                         {item.service_details[0].country == "Wales" && (
-                          <tr className="border-b border-gray-200">
-                            <td className="p-2">LLT</td>
+                          <tr className="border-b border-gray-200 font pt-1">
+                            <td className="p-2 font-semibold">LLT</td>
                             <td className="p-2 text-right">{formatGBP(item.llt)}</td>
                             <td></td>
                           </tr>
                         )}
                       </>
                     )}
+                  </>
+                 
                   </React.Fragment>
                 ))}
             </tbody>

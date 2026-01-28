@@ -1352,34 +1352,33 @@ function handlefilterchange(selectedoption = []) {
           </tr>
 
           {/* Country-Based Taxes */}
-          {quote.service_details && quote.service_details[0]?.service_type == 2 && (
             <>
-              {(quote.service_details[0].country === "England" ||
-                quote.service_details[0].country === "Northern Ireland") && (
-                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+              {(quote.service_details[1].country === "England" ||
+                quote.service_details[1].country === "Northern Ireland") && (
+                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200 pt-2">
                   <td className="text-sm font-semibold">Stamp Duty</td>
                   <td className="text-sm">{formatGBP(quote.stamp_duty)}</td>
                   <td className="text-sm">-</td>
                 </tr>
               )}
 
-              {quote.service_details[0].country === "Scotland" && (
-                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+              {quote.service_details[1].country === "Scotland" && (
+                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200 pt-2">
                   <td className="text-sm font-semibold">LBTT</td>
                   <td className="text-sm">{formatGBP(quote.lbtt)}</td>
                   <td className="text-sm">-</td>
                 </tr>
               )}
 
-              {quote.service_details[0].country === "Wales" && (
-                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+              {quote.service_details[1].country === "Wales" && (
+                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200 pt-2">
                   <td className="text-sm font-semibold">LLT</td>
                   <td className="text-sm">{formatGBP(quote.llt)}</td>
                   <td className="text-sm">-</td>
                 </tr>
               )}
             </>
-          )}
+        
         </tbody>
       </table>
     </div></div>
@@ -1441,7 +1440,7 @@ function handlefilterchange(selectedoption = []) {
     <>
       {(quote.service_details[0].country === "England" ||
         quote.service_details[0].country === "Northern Ireland") && (
-        <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+        <tr className="grid grid-cols-3 w-full gap-5 border-gray-200 pt-2">
           <td className="text-sm font-semibold ">Stamp Duty</td>
           <td className="text-sm ">{formatGBP(quote.stamp_duty)}</td>
           <td className="text-sm">-</td>
@@ -1449,7 +1448,7 @@ function handlefilterchange(selectedoption = []) {
       )}
 
       {quote.service_details[0].country === "Scotland" && (
-        <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
+        <tr className="grid grid-cols-3 w-full gap-5  border-gray-200 pt-2">
           <td className="text-sm font-semibold "> LBTT</td>
           <td className="text-sm ">{formatGBP(quote.lbtt)}</td>
           <td className="text-sm ">-</td>
@@ -1457,7 +1456,7 @@ function handlefilterchange(selectedoption = []) {
       )}
 
       {quote.service_details[0].country === "Wales" && (
-        <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
+        <tr className="grid grid-cols-3 w-full gap-5  border-gray-200 pt-2">
           <td className="text-sm font-semibold">LLT</td>
           <td className="text-sm ">{formatGBP(quote.llt)}</td>
           <td className="text-sm ">-</td>
