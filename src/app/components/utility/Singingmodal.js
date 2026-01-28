@@ -266,7 +266,7 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
   const isEmptyQuote = quoteData ? true : false;
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 md:p-4">
-      <div className="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-4xl h-auto max-h-[90vh] md:max-h-none grid grid-cols-1 md:grid-cols-[35%_65%] animate-scale-in relative">
+      <div className="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-4xl h-auto max-h-[90vh] md:max-h-none grid grid-cols-1 md:grid-cols-[35%_65%] animate-scale-in relative mt-[60px] overflow-y-auto md:overflow-visible">
         <button
           onClick={closeModal}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold leading-none"
@@ -319,7 +319,7 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
               <button
-                className="inline-flex items-center justify-center h-[40px] md:h-[44px] px-4 md:px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition text-sm md:text-base"
+                className="inline-flex items-center text-white justify-center h-[40px] md:h-[44px] px-4 md:px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition text-sm md:text-base"
                 onClick={() => {
                   setloginformshow(true);
                   setlogintype("user");
@@ -336,16 +336,16 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
                   setLoginError(false);
                   setTermsAccepted(false);
                 }}
-                className="inline-flex items-center justify-center h-[40px] md:h-[44px] px-4 md:px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition text-sm md:text-base"
+                className="inline-flex items-center text-white justify-center h-[40px] md:h-[44px] px-4 md:px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition text-sm md:text-base"
               >
                 Guest User
               </button>
             </div>
 
-            <div className="grid grid-cols-1 gap-4 md:gap-6 mt-4 md:mt-5 mx-auto">
+            <div className="w-full text-center sm:grid  sm:grid-cols-2 gap-4 md:gap-6 mt-4 md:mt-5 ">
               {partnerloginshow && (
                 <button
-                  className="inline-flex items-center justify-center h-[40px] md:h-[44px] px-4 md:px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition text-sm md:text-base"
+                  className="w-full text-white sm:w-1/2 inline-flex items-center col-span-2 mx-auto justify-center mx-auto h-[40px] md:h-[44px] px-4 md:px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition text-sm md:text-base"
                   onClick={() => {
                     setloginformshow(true);
                     setlogintype("partner");
@@ -769,3 +769,5 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
     </div>
   );
 }
+
+
