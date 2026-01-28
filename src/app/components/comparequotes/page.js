@@ -1145,9 +1145,19 @@ function handlefilterchange(selectedoption = []) {
                               </span>
                             </div>
  <div className="flex gap-10 mt-3">
-        <CircularProgress progress={91} label="Recomended" />
-        <CircularProgress progress={90} label="SRA" />
-        <CircularProgress progress={90} label="Reliable " />
+      <CircularProgress
+  progress={quote?.badges?.recommended ?? 80}
+  label="Recommended"
+/>
+<CircularProgress
+  progress={quote?.badges?.sra ?? 90}
+  label="SRA"
+/>
+<CircularProgress
+  progress={quote?.badges?.reliable ?? 85}
+  label="Reliable"
+/>
+
       </div>
                             {/* <p className="text-sm mt-1">
                               <span className="font-bold text-[#4A7C59]">
