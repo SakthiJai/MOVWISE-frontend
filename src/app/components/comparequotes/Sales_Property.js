@@ -153,10 +153,10 @@ export default function SalesPropertyDetails({
                     <tr className="border-b border-gray-200 font_size_13px">
                       <td className="p-2 text-sm  text-start font_size_13px text-emerald-600 font-bold">{`Legal Fees`}</td>
                       <td className="p-2 text-sm text-right  font_size_13px text-emerald-600 font-bold">
-                        {formatGBP(item.legal_fees)}
+                        {formatGBP( servicData?.taxInfo?.legal_fees||item.legal_fees)}
                       </td>
                       <td className="p-2 text-sm text-right font_size_13px text-emerald-600 font-bold">
-                        {formatGBP(item.vat)}
+                          {formatGBP( servicData?.taxInfo?.vat||item.vat)}
                       </td>
                     </tr>
 
@@ -195,6 +195,7 @@ export default function SalesPropertyDetails({
                                 </td>
                                 <td className="p-2 text-right text-sm font_size_13px">
                                   {formatGBP(Number(fee.vat))}
+                                
                                 </td>
                               </tr>
                             ) : (
@@ -233,15 +234,17 @@ export default function SalesPropertyDetails({
                         <td className="p-2 text-right text-emerald-600 ">
                           <span>
                             {" "}
-                            {formatGBP(
+                           £ {servicData.taxInfo?.total|| formatGBP(
                               Number(quote.supplements || 0) +
                                 Number(quote.disbursements || 0) +
                                 Number(quote.legal_fees || 0)
-                            )}
+                            ) }
+                            
                           </span>
                         </td>
                         <td className="p-2 text-right text-emerald-600">
-                          <span> {formatGBP(quote.total_vat)}</span>
+                          <span> 
+                            {formatGBP( servicData?.taxInfo?.vat||quote.total_vat)}</span>
                         </td>
 
                         {/* <td className="p-2 text-right text-emerald-600 font_size_13px" > {formatGBP(Number(item.vat))}</td> */}

@@ -1117,11 +1117,9 @@ function handlefilterchange(selectedoption = []) {
                                   quote
                                 )
                               }, 2000);
-                                
-                            
+
                              }
-                               
-                                
+
                              }
                             >
                               {(quoteid==quote.conveying_details.conveyancer_id||quoteid==quote.quote_id)?<>
@@ -1184,7 +1182,7 @@ function handlefilterchange(selectedoption = []) {
   {/* TOTAL — Border ONLY ABOVE */}
   <tr className="grid grid-cols-3 w-full gap-5 border-t border-gray-300 bg-gray-50">
     <td className="text-sm font-semibold">Total</td>
-    <td className="text-sm font-semibold text-emerald-600">
+    <td className="text-sm font-semibold text-emerald-600">£
 {formatGBP(
   Number(quote.supplements || 0) +
   Number(quote.disbursements || 0) +
