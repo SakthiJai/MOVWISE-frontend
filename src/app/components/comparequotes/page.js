@@ -25,6 +25,8 @@ import { toPng } from "html-to-image";
 
 // Reusable component for fees table
 const FeesTable = ({ quote, label = "Sales" }) => {
+ 
+
   return (
     <div className="border-t border-gray-200 pt-6 flex justify-end">
       <table className="border-collapse text-black font">
@@ -119,10 +121,10 @@ function ComparequotesContent() {
   const [view_data, setview_data] = useState({});
   const [quoteData, setquoteData] = useState([]);
   const [viewquotes, showviewquotes] = useState(false);
-  const [instructloader,setinstructloader]=useState(false);
+
   const [quoteid,setquoteid]=useState("");
   const [loader, setLoader] = useState(false);
-
+ const [instructloader, setinstructloader] = useState(false);
   const [instructpayload,setinstructpayload]=useState({
     "ref_no":"",
     "servicetype":"",
@@ -1087,7 +1089,7 @@ function handlefilterchange(selectedoption = []) {
   Number(quote.legal_fees || 0)
 )}                            </p>
                             <button
-                              className="text-green-700 text-sm font-medium hover:underline"
+                              className="text-green-700 text-sm font-medium hover:underline cursor-pointer"
                               onClick={() => toggleDropdown(quote.conveying_details.conveying_id)}
                             >
                               {dropdownOpenId === quote.quote_id ? (
@@ -1134,31 +1136,40 @@ function handlefilterchange(selectedoption = []) {
                             <div className="flex items-center">
                               <Rating
                                 initialValue={
-                                  quote.conveying_details?.rating ?? 0
+                                  quote.conveying_details.ratings || 0
                                 } // dynamic rating from API
                                 readonly
                                 size={20}
                                 allowFraction
                               />
                                <span className="pl-2 font-bold text-[#4A7C59]">
-                                {quote.conveying_details?.rating ?? 0} out of 5
+                                {quote.conveying_details.ratings || 0} out of 5
                               </span>
                             </div>
- <div className="flex gap-10 mt-3">
-      <CircularProgress
-  progress={quote?.badges?.recommended ?? 80}
-  label="Recommended"
-/>
-<CircularProgress
-  progress={quote?.badges?.sra ?? 90}
-  label="SRA"
-/>
-<CircularProgress
-  progress={quote?.badges?.reliable ?? 85}
-  label="Reliable"
-/>
+<div className="flex gap-8 mt-3">
+  <div className="relative flex flex-col items-center cursor-pointer group">
+    {/* Tooltip */}
+    <span className="absolute -top-6 text-xs bg-black text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+      Recommended
+    </span>
+    <CircularProgress progress={quote.conveying_details.recomended || 80} />
+  </div>
 
-      </div>
+  <div className="relative flex flex-col items-center cursor-pointer group">
+    <span className="absolute -top-6 text-xs bg-black text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+      SRA
+    </span>
+    <CircularProgress progress={quote.conveying_details.sra || 90} />
+  </div>
+
+  <div className="relative flex flex-col items-center cursor-pointer group">
+    <span className="absolute -top-6 text-xs bg-black text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+      Reliable
+    </span>
+    <CircularProgress progress={quote.conveying_details.reliable || 85} />
+  </div>
+</div>
+
                             {/* <p className="text-sm mt-1">
                               <span className="font-bold text-[#4A7C59]">
                                 {quote.conveying_details?.rating ?? 0} out of 5
@@ -1192,7 +1203,11 @@ function handlefilterchange(selectedoption = []) {
                            
 
                             <button
-                              className="px-3 py-1.5 bg-[#4A7C59] text-white text-sm rounded-full hover:bg-[#3b6248]"
+                               disabled={instructloader}
+                              className={`px-3 py-1.5 rounded-full text-sm cursor-pointer
+                                ${instructloader
+                                  ? "bg-[#4A7C59]/70 cursor-not-allowed"
+                                  : "bg-[#4A7C59] hover:bg-[#3b6248] text-white"}`}
                              onClick={() =>{
                             
                               setTimeout(() => {
@@ -1213,21 +1228,9 @@ function handlefilterchange(selectedoption = []) {
 
                              }
                             >
-                              {(quoteid==quote.conveying_details.conveyancer_id||quoteid==quote.quote_id)?<>
-                                                     <div className="flex items-center gap-2">
-  <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-  <span>{instructloader ? "Instructing..." : "Instruct"}</span>
-</div>
-                              </>:"Instruct"
-
-                           }
-
+                              {instructloader ? "Processing..." : "Instruct"}
                             </button>
-                              {loading && (
-                              <div className="loader">
-                                Sending mail...
-                              </div>
-                            )}
+                             
                           </div>
                         </div>
                         {dropdownOpenId === quote.conveying_details.conveying_id &&
@@ -1516,10 +1519,13 @@ function handlefilterchange(selectedoption = []) {
 
   {/* Right side buttons */}
   <div className="col-span-3 flex justify-end gap-4">
-   <button
-  className="border px-4 py-2 rounded text-emerald-600 text-sm"
+<button
+  disabled={instructloader}
+  className={`border px-4 py-2 rounded text-sm cursor-pointer
+    ${instructloader 
+      ? "opacity-50 cursor-not-allowed" 
+      : "text-emerald-600"}`}
   onClick={() => {
-    // Add small delay to ensure pdfRef is fully rendered
     setTimeout(() => {
       handleInstruct(
         quote.conveying_details.company_name,
@@ -1534,14 +1540,24 @@ function handlefilterchange(selectedoption = []) {
     }, 100);
   }}
 >
-  Instruct
+  {instructloader ? "Processing..." : "Instruct"}
 </button>
+
 
     {/* <button className="border px-4 py-2 rounded text-emerald-600 text-sm" onClick={generatePDF}>
       Download
     </button> */}
   </div>
 </div>
+{instructloader && (
+<div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/5 backdrop-blur-sm">
+  <div className="h-9 w-9 animate-spin rounded-full border-4 border-emerald-700 border-t-transparent"></div>
+  <div className="mt-1 text-gray-600">
+    Processing...
+  </div>
+</div>
+
+)}
 
 
                                 {/* ---------- MAIN CONTAINER ---------- */}
@@ -1562,29 +1578,22 @@ function handlefilterchange(selectedoption = []) {
                                     <tbody>
                                       {/* Company Logo Row */}
                                       <tr>
-                                        <td colSpan="2" className="p-4">
-                                          {quote.conveying_details.logo ? (
-  <img
-    width={100}
-    height={60}
-    src={quote.conveying_details.logo}
-    alt={quote.company_name || "company logo"}
-    crossOrigin="anonymous"  // ✅ add this
-  />
-) : (
-  <img
-    width={70}
-    height={60}
-    src="https://cdn-icons-png.flaticon.com/512/295/295128.png"
-    alt={quote.company_name || "company logo"}
-    className="object-contain"
-    crossOrigin="anonymous"  // ✅ add this
-  />
-)}
-                                                <h3 className="font-semibold font text-left mt-2 text-gray-800">
-                            {quote.conveying_details.company_name}
-                          </h3>
-                                        </td>
+                                        <td colSpan="2" className="p-4 text-left"> 
+                                          {view_data?.appsetting_details?.logo ? (
+                            <img
+                              width={140}
+                              height={100}
+                              src={view_data?.appsetting_details?.logo}
+                              alt={quote.company_name || "company logo"}
+                            />
+                          ) : (
+                             <span className="text-[34px] col-span-2 me-1 p-2 leading-none font-extrabold text-[#1E5C3B] tracking-tight">
+                                                {view_data?.appsetting_details?.company_name || "MovWise"}
+                                              </span> 
+                          )}
+                                          
+                                             </td>
+                                               
                                         <td>
                                     
                                         </td>
@@ -1599,9 +1608,13 @@ function handlefilterchange(selectedoption = []) {
                                       <tr className=" border-gray-200">
                                         {/* Contact Details Column */}
                                         <td className="p-1  border-gray-200 align-top w-1/2">
-                                          <div className="bg-gray-50 p-5 mb-3 rounded pb-8 ">
-                                            <h4 className="font-semibold text-emerald-600 mb-3">Contact Details</h4>
+                                          <div className="bg-gray-50 p-3 rounded ">
+                                            <h4 className="font-semibold text-emerald-600 mb-3">Conveyancer Details</h4>
                                             <div className="space-y-2">
+                                              <div className="flex">
+                                                <span className="font-semibold  text-sm"> Name:</span>
+                                                <span className="text-sm"> {quote.conveying_details.company_name || "N/A"}</span>
+                                              </div>
                                               <div className="flex">
                                                 <span className="font-semibold  text-sm">Phone :</span>
                                                 <span className="text-sm">{view_data?.appsetting_details?.phone_number || "N/A"}</span>
@@ -1626,7 +1639,7 @@ function handlefilterchange(selectedoption = []) {
                                         {/* User Details Column */}
                                         <td className="p-1 align-top w-1/2">
                                           <div className="bg-gray-50 p-3 rounded">
-                                            <h4 className="font-semibold text-emerald-600 mb-3">User Details</h4>
+                                            <h4 className="font-semibold text-emerald-600 mb-3">Customer Details</h4>
                                             <div className="space-y-2">
                                               <div className="flex">
                                                 <span className="font-semibold  text-sm">Name :</span>

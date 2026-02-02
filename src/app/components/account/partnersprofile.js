@@ -15,6 +15,7 @@ import Myprofile from "../profile/Myprofile"
 import Quotepricebreakdown from "./Quotepricebreakdown"
 import { API_BASE_URL } from "../../constants/config";
 
+
 const Partnersprofile = () => {
    
  const getStatusLabel = (status) => {
@@ -138,6 +139,7 @@ const getServiceTypeLabel = (type) => {
     languages: [],
     sra_clc_number:"",
     service_id:[],
+    regions:[],
     notes:"",
       lender: [], 
   });
@@ -271,10 +273,11 @@ console.log(formData)
         email: details.data.email || "",
         website: details.data.website || "",
         sra_clc_number: String(details.data.sra_clc_number) || "",
-       
+       service_id:details.data.service_id|| [],
+       regions: details.data.regions || [],
         languages: details.data.languages || [],
         company_id:Number(user),
-      logo:null
+      logo:details.data.logo || "",
 
       });
       if (details.data.logo) {
@@ -283,6 +286,7 @@ console.log(formData)
     }
 console.log(details.data?.service_id)
     if(details.data?.service_id?.length){
+      setFormData((prev)=>({...prev,service_id:details.data.service_id}))
       const selected = serviceoptions.filter((opt)=>(details.data.service_id.includes(opt.id)))
       setSelectedServices(selected)
     }
@@ -594,6 +598,8 @@ console.log(formData)
   const [selectedServices, setSelectedServices] = useState([]);
 
   const togglesercice = (opt) => {
+    console.log(opt);
+    
     setSelectedServices((prev) => {
       const exists = prev.some((item) => item.value === opt.value);
 

@@ -5,14 +5,16 @@ import { CircleCheckBig, TicketCheck } from "lucide-react";
 export default function Page() {
   return (
     <div>
-        <Navbar></Navbar>
+       <div className='bg-white shadow-md sticky top-0 font p-4 z-50'>
+            <Navbar />
+            </div>
 
  
 
 
 
 
-   <section className="py-16 bg-white font">
+   <section className="py-16 bg-white font mt-8">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 p-8 rounded-xl border border-emerald-300 bg-emerald-50 shadow-lg">
               <h2 className="text-2xl font-bold text-emerald-800 mb-4">Thank you for your quote submission to Movwise.
 </h2>
