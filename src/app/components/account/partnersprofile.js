@@ -358,6 +358,7 @@ console.log(formData)
   // Error & Image states
   const [errors, setErrors] = useState({});
   const [image, setImage] = useState("");
+  const [imageerror,setimageError]=useState("");
 
   // ✅ Unified handleChange function
   const handleChange = (e) => {
@@ -465,7 +466,7 @@ console.log(formData)
       newErrors.phone_number = "Phone number must be at least 10 digits";
     } else if (formData.phone_number.length > 12) {
       newErrors.phone_number = "Phone number cannot exceed 12 digits";
-    }
+    } 
 
     setErrors(newErrors);
     console.log(errors);
@@ -484,24 +485,61 @@ console.log(formData)
   };
 
   // Handle image upload
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result;
-        setImage(base64String); // ✅ for preview
+const handleImageChange = (e) => {
+  const file = e.target.files[0];
+  setimageError("");
 
-        // ✅ also set inside form data
-        setFormData((prev) => ({
-          ...prev,
-          logo: base64String + "deva", // <-- your required key
-        }));
-      };
+  if (!file) return;
 
-      reader.readAsDataURL(file);
+  const MAX_SIZE = 2 * 1024 * 1024; // 2MB
+
+  // 1️⃣ File size validation
+  if (file.size > MAX_SIZE) {
+    setimageError("File size exceeds 2MB limit");
+    e.target.value = "";
+    return;
+  }
+
+  // 2️⃣ Image dimension validation
+  const img = new Image();
+  const objectUrl = URL.createObjectURL(file);
+
+  img.onload = () => {
+    if (img.width !== 125 || img.height !== 125) {
+      setimageError("Image must be exactly 125 × 125 pixels");
+      e.target.value = "";
+      URL.revokeObjectURL(objectUrl);
+      return;
     }
+
+    // ✅ ALL validations passed → NOW read image
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64String = reader.result;
+
+      // preview
+      setImage(base64String);
+
+      // form data
+      setFormData((prev) => ({
+        ...prev,
+        logo: base64String + "deva",
+      }));
+    };
+
+    reader.readAsDataURL(file);
+    URL.revokeObjectURL(objectUrl);
   };
+
+  img.onerror = () => {
+    setimageError("Invalid image file");
+    e.target.value = "";
+    URL.revokeObjectURL(objectUrl);
+  };
+
+  img.src = objectUrl;
+};
+
 
   // Handle Continue button click
   const handleContinue = () => {
@@ -551,6 +589,9 @@ console.log(formData)
     } else if (formData.sra_clc_number.trim().length < 3) {
       newErrors.sra_clc_number = "Enter a valid SRA / CLC Number";
     }
+
+   
+
 
   
 
@@ -963,6 +1004,11 @@ console.log(formData)
                           onChange={handleImageChange}
                           className="hidden"
                         />
+                        {imageerror && (
+                          <p className="text-red-500 text-[12px] mt-1">
+                            {imageerror}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>

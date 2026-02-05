@@ -1136,14 +1136,14 @@ function handlefilterchange(selectedoption = []) {
                             <div className="flex items-center">
                               <Rating
                                 initialValue={
-                                  quote.conveying_details.ratings || 0
+                                  quote.conveying_details.ratings || 4
                                 } // dynamic rating from API
                                 readonly
                                 size={20}
                                 allowFraction
                               />
                                <span className="pl-2 font-bold text-[#4A7C59]">
-                                {quote.conveying_details.ratings || 0} out of 5
+                                {quote.conveying_details.ratings || 4} out of 5
                               </span>
                             </div>
 <div className="flex gap-8 mt-3">
@@ -1639,7 +1639,7 @@ function handlefilterchange(selectedoption = []) {
                                         {/* User Details Column */}
                                         <td className="p-1 align-top w-1/2">
                                           <div className="bg-gray-50 p-3 rounded">
-                                            <h4 className="font-semibold text-emerald-600 mb-3">Customer Details</h4>
+                                            <h4 className="font-semibold text-emerald-600 mb-3">Client Details</h4>
                                             <div className="space-y-2">
                                               <div className="flex">
                                                 <span className="font-semibold  text-sm">Name :</span>
