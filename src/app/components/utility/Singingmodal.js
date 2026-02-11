@@ -162,11 +162,16 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
             router.push("/components/comparequotes");
           } else {
             closeModal();
-            router.push("/#quote_type");
+              if(logintype=="partner"){
+            router.push("/components/account/");
+          }
+          else{
+            router.push("/components/profile/");
+        }
           }
           //router.push("/components/comparequotes");
         } else {
-          router.push("/#quote_type");
+          router.push("/components/profile/");
         }
       }
       else if (loginResponse.status === false) {
@@ -264,6 +269,8 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
 
   const quoteData = localStorage.getItem("service");
   const isEmptyQuote = quoteData ? true : false;
+
+
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 md:p-4">
       <div className="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-4xl h-auto max-h-[90vh] md:max-h-none grid grid-cols-1 md:grid-cols-[35%_65%] animate-scale-in relative mt-[60px] overflow-y-auto md:overflow-visible">
@@ -502,12 +509,14 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
               </div>
               {/* Submit Button */}
               <button
+            
                 type="submit"
                 disabled={!termsAccepted}
                 className={`w-full font-semibold py-2 md:py-3 rounded-lg transition-all duration-300 shadow-md text-sm md:text-base ${termsAccepted
                     ? "bg-[#1E5C3B] text-white hover:bg-green-700 transform hover:scale-105"
                     : "bg-gray-400 text-gray-200 cursor-not-allowed"
                   }`}
+                
               >
                 Login
               </button>

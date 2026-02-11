@@ -187,7 +187,7 @@ export default function SalesPropertyDetails({
                                     {fee.fee_type ===
                                     "Gifted Deposit Supplement"
                                       ? `${fee.fee_type} (${giftvalue})`
-                                      : fee.fee_type}
+                                      : fee.fee_type || fee.others}
                                   </div>
                                 </td>
                                 <td className="p-2 text-right text-sm font_size_13px">

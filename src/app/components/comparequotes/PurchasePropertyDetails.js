@@ -196,7 +196,7 @@ export default function PurchasePropertyDetails({
                                     {fee.fee_type ===
                                     "Gifted Deposit Supplement"
                                       ? `${fee.fee_type} (${servicData.gift_deposit})`
-                                      : fee.fee_type}
+                                      : fee.fee_type || fee.others}
                                   </div>
                                 </td>
                                 <td className="p-2 text-right text-sm font_size_13px">

@@ -205,7 +205,7 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                                              {
                                                         fee.fee_type === "Gifted Deposit Supplement"
                                                           ? `${fee.fee_type} (${giftvalue})`
-                                                          : fee.fee_type
+                                                          : fee.fee_type || fee.others
                                                       }
                                                       
                                                             </div></td>
