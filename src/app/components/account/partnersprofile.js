@@ -156,7 +156,7 @@ const getServiceTypeLabel = (type) => {
 
   const fetchlanguages = async () => {
     try {
-      const languages = await getData(API_ENDPOINTS.languages);
+      const languages = await getData(API_ENDPOINTS.languagelist);
       const region = await getData(API_ENDPOINTS.region);
       let regiondata =  region.users.map((item) => ({
             label: item.region_name,

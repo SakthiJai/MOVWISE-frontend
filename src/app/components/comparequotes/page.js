@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState,useRef, Suspense } from "react";
+import React, { useEffect, useState, useRef, Suspense } from "react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
 import DOMPurify from "dompurify";
@@ -25,7 +25,7 @@ import { toPng } from "html-to-image";
 
 // Reusable component for fees table
 const FeesTable = ({ quote, label = "Sales" }) => {
- 
+
 
   return (
     <div className="border-t border-gray-200 pt-6 flex justify-end">
@@ -44,7 +44,7 @@ const FeesTable = ({ quote, label = "Sales" }) => {
             <td className="text-sm font-semibold text-emerald-600">{formatGBP(quote.legal_fees)}</td>
             <td className="text-sm text-emerald-600 font-semibold">{formatGBP(quote.vat)}</td>
           </tr>
-          
+
           {/* Supplements */}
           <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
             <td className="text-sm">Supplements</td>
@@ -79,12 +79,12 @@ const FeesTable = ({ quote, label = "Sales" }) => {
             <>
               {(quote.service_details[0].country === "England" ||
                 quote.service_details[0].country === "Northern Ireland") && (
-                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
-                  <td className="text-sm font-semibold">Stamp Duty</td>
-                  <td className="text-sm">{formatGBP(quote.stamp_duty)}</td>
-                  <td className="text-sm">-</td>
-                </tr>
-              )}
+                  <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+                    <td className="text-sm font-semibold">Stamp Duty</td>
+                    <td className="text-sm">{formatGBP(quote.stamp_duty)}</td>
+                    <td className="text-sm">-</td>
+                  </tr>
+                )}
 
               {quote.service_details[0].country === "Scotland" && (
                 <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
@@ -122,79 +122,79 @@ function ComparequotesContent() {
   const [quoteData, setquoteData] = useState([]);
   const [viewquotes, showviewquotes] = useState(false);
 
-  const [quoteid,setquoteid]=useState("");
+  const [quoteid, setquoteid] = useState("");
   const [loader, setLoader] = useState(false);
- const [instructloader, setinstructloader] = useState(false);
-  const [instructpayload,setinstructpayload]=useState({
-    "ref_no":"",
-    "servicetype":"",
-    "quoteid":"",
+  const [instructloader, setinstructloader] = useState(false);
+  const [instructpayload, setinstructpayload] = useState({
+    "ref_no": "",
+    "servicetype": "",
+    "quoteid": "",
   })
-  const [cardid,setcardid]=useState();
-  const [cardshow,setcardshown]=useState(false);
-  const [vattax,setvattax]=useState(0);
-  const [dropdownshow,setdropdownshow]=useState(false);
+  const [cardid, setcardid] = useState();
+  const [cardshow, setcardshown] = useState(false);
+  const [vattax, setvattax] = useState(0);
+  const [dropdownshow, setdropdownshow] = useState(false);
   const [loading, setLoading] = useState(false);
   const [total, settotal] = useState(0);
-  const [giftvalue,setgiftvalue]=useState(0);
-const [conveyancerid,setconveyancerid]=useState(0);
-let call = false;
-const CircularProgress = ({ progress, label }) => {
-  const radius = 16;
-  const stroke = 4;
-	const size = radius * 2 + stroke; // 36
-  const circumference = 2 * Math.PI * radius;
+  const [giftvalue, setgiftvalue] = useState(0);
+  const [conveyancerid, setconveyancerid] = useState(0);
+  let call = false;
+  const CircularProgress = ({ progress, label }) => {
+    const radius = 16;
+    const stroke = 4;
+    const size = radius * 2 + stroke; // 36
+    const circumference = 2 * Math.PI * radius;
 
-  const offset = circumference - (progress / 100) * circumference;
+    const offset = circumference - (progress / 100) * circumference;
 
-  return (
-    <div className="flex items-center">
-      <div className="relative w-10 h-10">
-        <svg
-          width={size}
-          height={size}
-          viewBox={`0 0 ${size} ${size}`}
-          className="-rotate-90"
-          aria-label={`${label} progress`}
-        >
-          <circle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            stroke="#e6e6e6"
-            strokeWidth={stroke}
-            fill="transparent"
-          />
-          <circle
-            cx={size / 2}
-            cy={size / 2}
-            r={radius}
-            stroke="#16a34a"
-            strokeWidth={stroke}
-            fill="transparent"
-            strokeLinecap="round"
-            strokeDasharray={circumference}
-            strokeDashoffset={offset}
-            style={{ transition: "stroke-dashoffset 0.35s" }}
-          />
-        </svg>
+    return (
+      <div className="flex items-center">
+        <div className="relative w-10 h-10">
+          <svg
+            width={size}
+            height={size}
+            viewBox={`0 0 ${size} ${size}`}
+            className="-rotate-90"
+            aria-label={`${label} progress`}
+          >
+            <circle
+              cx={size / 2}
+              cy={size / 2}
+              r={radius}
+              stroke="#e6e6e6"
+              strokeWidth={stroke}
+              fill="transparent"
+            />
+            <circle
+              cx={size / 2}
+              cy={size / 2}
+              r={radius}
+              stroke="#16a34a"
+              strokeWidth={stroke}
+              fill="transparent"
+              strokeLinecap="round"
+              strokeDasharray={circumference}
+              strokeDashoffset={offset}
+              style={{ transition: "stroke-dashoffset 0.35s" }}
+            />
+          </svg>
 
-        {/* Centered text */}
-        <div className="absolute text-[10px] inset-0 flex items-center justify-center font-bold text-green-800 text-sm select-none">
-          {progress}%
+          {/* Centered text */}
+          <div className="absolute text-[10px] inset-0 flex items-center justify-center font-bold text-green-800 text-sm select-none">
+            {progress}%
+          </div>
         </div>
+
+        <div className="text-gray-700 text-sm">{label}</div>
       </div>
-
-      <div className="text-gray-700 text-sm">{label}</div>
-    </div>
-  );
-};
+    );
+  };
 
 
 
 
 
-  const [filteroption, setfilteroption] = useState( [
+  const [filteroption, setfilteroption] = useState([
     {
       value: "Rating",
       label: "Rating",
@@ -208,7 +208,7 @@ const CircularProgress = ({ progress, label }) => {
       label: "Price",
     },
   ])
-const[filterselected,setfilterselected]=useState([])
+  const [filterselected, setfilterselected] = useState([])
 
   // Track which card dropdown is open (by quote_id)
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
@@ -223,8 +223,8 @@ const[filterselected,setfilterselected]=useState([])
   // Toggle dropdown for a particular quote card
   function toggleDropdown(id) {
     showviewquotes(true);
-    quoteData.forEach((elememt)=>{
-      if(elememt.conveying_details.conveying_id==id){
+    quoteData.forEach((elememt) => {
+      if (elememt.conveying_details.conveying_id == id) {
         setview_data(elememt)
       }
     })
@@ -232,69 +232,68 @@ const[filterselected,setfilterselected]=useState([])
     setcardshown(!cardshow);
     //view_data
     console.log(quoteData);
-    
-  fetchtaxdetails(id);
+
+    fetchtaxdetails(id);
   }
 
-function handleprice()
-{
-console.log(companydata)
+  function handleprice() {
+    console.log(companydata)
 
-}
+  }
 
-const generatePDF = async () => {
-  try {
-    if (!pdfRef.current) {
-      Swal.fire('Error', 'PDF element not found', 'error');
-      return;
-    }
+  const generatePDF = async () => {
+    try {
+      if (!pdfRef.current) {
+        Swal.fire('Error', 'PDF element not found', 'error');
+        return;
+      }
 
-    // Create a temporary wrapper to capture the content with clean styles
-    const wrapper = document.createElement('div');
-    wrapper.style.position = 'absolute';
-    wrapper.style.left = '-9999px';
-    wrapper.style.top = '0';
-    wrapper.style.width = '800px';
-    wrapper.style.backgroundColor = 'white';
-    wrapper.style.padding = '15px';
-    wrapper.style.fontFamily = 'Arial, sans-serif';
-    wrapper.style.lineHeight = '1.4';
+      // Create a temporary wrapper to capture the content with clean styles
+      const wrapper = document.createElement('div');
+      wrapper.style.position = 'absolute';
+      wrapper.style.left = '-9999px';
+      wrapper.style.top = '0';
+      wrapper.style.width = '800px';
+      wrapper.style.backgroundColor = 'white';
+      wrapper.style.padding = '15px';
+      wrapper.style.fontFamily = 'Arial, sans-serif';
+      wrapper.style.lineHeight = '1.4';
 
-    // Clone the pdfRef content
-    const cloned = pdfRef.current.cloneNode(true);
-    
-    // Remove/fix problematic styles
-    const removeProblematicStyles = (element) => {
-      const allElements = element.querySelectorAll('*');
-      allElements.forEach(el => {
-        // Remove Tailwind classes that might have complex colors
-        el.className = '';
-        // Set basic text properties
-        el.style.fontFamily = 'Arial, sans-serif';
-        el.style.color = '#000';
-        el.style.fontSize = '11px';
-        el.style.margin = '0';
-      });
-    };
+      // Clone the pdfRef content
+      const cloned = pdfRef.current.cloneNode(true);
 
-    removeProblematicStyles(cloned);
-    wrapper.appendChild(cloned);
-    document.body.appendChild(wrapper);
+      // Remove/fix problematic styles
+      const removeProblematicStyles = (element) => {
+        const allElements = element.querySelectorAll('*');
+        allElements.forEach(el => {
+          // Remove Tailwind classes that might have complex colors
+          el.className = '';
+          // Set basic text properties
+          el.style.fontFamily = 'Arial, sans-serif';
+          el.style.color = '#000';
+          el.style.fontSize = '11px';
+          el.style.margin = '0';
+        });
+      };
 
-    // Capture with html2canvas
-    const canvas = await html2canvas(wrapper, {
-      scale: 1.5,
-      useCORS: true,
-      allowTaint: true,
-      backgroundColor: '#ffffff',
-      logging: false,
-      imageTimeout: 10000,
-      windowHeight: wrapper.scrollHeight,
-      windowWidth: 800,
-      onclone: (clonedDocument) => {
-        // Ensure styles are applied to cloned document
-        const style = clonedDocument.createElement('style');
-        style.textContent = `
+      removeProblematicStyles(cloned);
+      wrapper.appendChild(cloned);
+      document.body.appendChild(wrapper);
+
+      // Capture with html2canvas
+      const canvas = await html2canvas(wrapper, {
+        scale: 1.5,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        imageTimeout: 10000,
+        windowHeight: wrapper.scrollHeight,
+        windowWidth: 800,
+        onclone: (clonedDocument) => {
+          // Ensure styles are applied to cloned document
+          const style = clonedDocument.createElement('style');
+          style.textContent = `
           * { margin: 0; padding: 0; }
           body { font-family: Arial, sans-serif; color: #000; background: white; font-size: 11px; line-height: 1.4; }
           div, p, span { color: #000 !important; background-color: transparent !important; }
@@ -304,628 +303,597 @@ const generatePDF = async () => {
           th { background-color: #f5f5f5 !important; }
           h3, h4 { font-size: 13px; margin: 8px 0 4px 0; }
         `;
-        clonedDocument.head.appendChild(style);
+          clonedDocument.head.appendChild(style);
+        }
+      });
+
+      document.body.removeChild(wrapper);
+
+      // Check if canvas has valid data
+      if (!canvas || canvas.width === 0 || canvas.height === 0) {
+        throw new Error('Canvas rendering failed - empty canvas');
       }
-    });
 
-    document.body.removeChild(wrapper);
+      const imgData = canvas.toDataURL('image/png');
 
-    // Check if canvas has valid data
-    if (!canvas || canvas.width === 0 || canvas.height === 0) {
-      throw new Error('Canvas rendering failed - empty canvas');
-    }
+      if (!imgData || imgData === 'data:image/png;base64,') {
+        throw new Error('Failed to generate image data from canvas');
+      }
 
-    const imgData = canvas.toDataURL('image/png');
-    
-    if (!imgData || imgData === 'data:image/png;base64,') {
-      throw new Error('Failed to generate image data from canvas');
-    }
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+        compress: true,
+      });
 
-    const pdf = new jsPDF({
-      orientation: 'portrait',
-      unit: 'mm',
-      format: 'a4',
-      compress: true,
-    });
+      const margin = 10; // 10mm margins
+      const imgWidth = 210 - (margin * 2); // A4 width minus margins
+      const pageHeight = 297 - (margin * 2); // A4 height minus margins
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      let heightLeft = imgHeight;
+      let position = margin;
 
-    const margin = 10; // 10mm margins
-    const imgWidth = 210 - (margin * 2); // A4 width minus margins
-    const pageHeight = 297 - (margin * 2); // A4 height minus margins
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    let heightLeft = imgHeight;
-    let position = margin;
-
-    // Add first page
-    pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
-    heightLeft -= pageHeight;
-
-    // Add additional pages if needed
-    while (heightLeft > 0) {
-      position = heightLeft - imgHeight + margin;
-      pdf.addPage();
+      // Add first page
       pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
       heightLeft -= pageHeight;
+
+      // Add additional pages if needed
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight + margin;
+        pdf.addPage();
+        pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      // Save PDF
+      const currentRef = ref || 'quote';
+      pdf.save(`${currentRef}.pdf`);
+      Swal.fire('Success', 'PDF downloaded successfully!', 'success');
+    } catch (error) {
+      console.error('PDF generation error:', error);
+      Swal.fire('Error', `Failed to generate PDF: ${error.message}`, 'error');
     }
-
-    // Save PDF
-    const currentRef = ref || 'quote';
-    pdf.save(`${currentRef}.pdf`);
-    Swal.fire('Success', 'PDF downloaded successfully!', 'success');
-  } catch (error) {
-    console.error('PDF generation error:', error);
-    Swal.fire('Error', `Failed to generate PDF: ${error.message}`, 'error');
-  }
-};
-  // On instruct button, show popup modal with message
-//   function handleInstruct( companyName,guest_id, conveyancer_id, quote_id, user_id, tax_info_quote_id, refno,pdfRef)
-//    {
-
-//  setinstructloader(true);
-//  const popupHtml = pdfRef?.current?.outerHTML;
-//   if (!popupHtml) {
-//     setinstructloader(false);
-//     console.error("Popup HTML not found");
-//     return;
-//   }
-//     console.log(
-//       companyName,
-//       guest_id,
-//       conveyancer_id,
-//       quote_id,
-//       user_id,
-//       tax_info_quote_id,
-//       refno
-//     );
-
-//     let servicetype = localStorage.getItem("service");
-
-//     if(quote_id==undefined || quote_id==null || quote_id==" "){
-//       setquoteid(tax_info_quote_id);
-// let instructpayloadtemp={
-//    ref_no: refno,
-//     servicetype: servicetype,
-//     quoteid: tax_info_quote_id,
-//     popup_html: popupHtml   
-// }
-
-//       setconveyancerid(conveyancer_id)
-//       instructquote(instructpayloadtemp)
-//       console.log(instructpayload);
-//     }
-
-//     else{
-//       let instructpayloadtemp={
-//    ref_no: refno,
-//     servicetype: servicetype,
-//     quoteid: quote_id,
-//     popup_html: popupHtml
-// }
-//       setquoteid(quote_id);
-//       setconveyancerid(conveyancer_id)
-   
-//         console.log(instructpayload);
-
-//  instructquote(instructpayloadtemp)
-//     }
-
-    
-
-    
-//    }
-
-//   async function instructquote(instructpayload){
-//       try{
-// const instruct = await postData(API_ENDPOINTS.instruct , instructpayload);
-// console.log(instruct)
-
-// if(instruct){
-//   setinstructloader(false);
-// router.push(`/Instruct?id=${quoteid}`);
-//   console.log(instructloader);
-// }
-//       }
-//       catch(e){
-//         console.log(e);
-//       }
-    
-    
-   
-//     console.log(popupData);
-//   }
-
-// Step 1: Opens modal and waits for pdfRef to render
-function handleInstructFromCard(
-  companyName,
-  guest_id,
-  conveyancer_id,
-  quote_id,
-  user_id,
-  tax_info_quote_id,
-  refno,
-  quote
-) {
-  // Open the modal first
-  showviewquotes(true);
-  setcardid(conveyancer_id);
-  setcardshown(true);
-  setview_data(quote);
-  setdropdownshow(true);
+  };
   
-  // Wait 600ms for React to render pdfRef, then send mail
-setLoader(true); // show loader
+  function handleInstructFromCard(
+    companyName,
+    guest_id,
+    conveyancer_id,
+    quote_id,
+    user_id,
+    tax_info_quote_id,
+    refno,
+    quote
+  ) {
+    // Open the modal first
+    showviewquotes(true);
+    setcardid(conveyancer_id);
+    setcardshown(true);
+    setview_data(quote);
+    setdropdownshow(true);
 
-setTimeout(async () => {
-  try {
-    await handleInstruct(
-      companyName,
-      guest_id,
-      conveyancer_id,
-      quote_id,
-      user_id,
-      tax_info_quote_id,
-      refno,
-      pdfRef
-    );
-  } finally {
-    setLoader(false); // hide loader
+    // Wait 600ms for React to render pdfRef, then send mail
+    setLoader(true); // show loader
+
+    setTimeout(async () => {
+      try {
+        await handleInstruct(
+          companyName,
+          guest_id,
+          conveyancer_id,
+          quote_id,
+          user_id,
+          tax_info_quote_id,
+          refno,
+          pdfRef
+        );
+      } finally {
+        setLoader(false); // hide loader
+      }
+    }, 2000);
+
   }
-}, 2000);
 
-}
+  async function handleInstruct(
+    companyName,
+    guest_id,
+    conveyancer_id,
+    quote_id,
+    user_id,
+    tax_info_quote_id,
+    refno,
+    pdfRef
+  ) {
+    setinstructloader(true);
 
-async function handleInstruct(
-  companyName,
-  guest_id,
-  conveyancer_id,
-  quote_id,
-  user_id,
-  tax_info_quote_id,
-  refno,
-  pdfRef
-) {
-  setinstructloader(true);
-
-  try {
-    console.log("🚀 [handleInstruct] Starting");
-    console.log("Parameters received:", {
-      companyName,
-      guest_id,
-      conveyancer_id,
-      quote_id,
-      user_id,
-      tax_info_quote_id,
-      refno,
-      pdfRefExists: !!pdfRef,
-      pdfRefCurrentExists: !!pdfRef?.current
-    });
-
-    // STEP 4.1: Convert popup HTML to image
-    console.log("📸 [handleInstruct] Calling capturePopupImage...");
-    let image;
     try {
-      image = await capturePopupImage(pdfRef);
-      console.log("✅ [handleInstruct] Image captured successfully");
-    } catch (captureError) {
-      console.error("❌ [handleInstruct] Failed to capture image:", captureError);
-      image = null;
-    }
+      console.log("🚀 [handleInstruct] Starting");
+      console.log("Parameters received:", {
+        companyName,
+        guest_id,
+        conveyancer_id,
+        quote_id,
+        user_id,
+        tax_info_quote_id,
+        refno,
+        pdfRefExists: !!pdfRef,
+        pdfRefCurrentExists: !!pdfRef?.current
+      });
 
-    // STEP 4.2: Prepare payload
-    let servicetype = localStorage.getItem("service");
-    let finalQuoteId = quote_id || tax_info_quote_id;
+      // STEP 4.1: Convert popup HTML to image
+      console.log("📸 [handleInstruct] Calling capturePopupImage...");
+      let image;
+      try {
+        image = await capturePopupImage(pdfRef);
+        console.log("✅ [handleInstruct] Image captured successfully");
+      } catch (captureError) {
+        console.error("❌ [handleInstruct] Failed to capture image:", captureError);
+        image = null;
+      }
 
-    let instructpayload = {
-      ref_no: refno,
-      servicetype: servicetype,
-      quoteid: finalQuoteId,
-      popup_image: image, // ✅ send base64 image
-    };
+      // STEP 4.2: Prepare payload
+      let servicetype = localStorage.getItem("service");
+      let finalQuoteId = quote_id || tax_info_quote_id;
 
-    console.log("📋 [handleInstruct] Payload prepared:", {
-      ref_no: instructpayload.ref_no,
-      servicetype: instructpayload.servicetype,
-      quoteid: instructpayload.quoteid,
-      popup_image: instructpayload.popup_image ? "✅ Present (" + instructpayload.popup_image.length + " chars)" : "❌ NULL"
-    });
+      let instructpayload = {
+        ref_no: refno,
+        servicetype: servicetype,
+        quoteid: finalQuoteId,
+        popup_image: image, // ✅ send base64 image
+      };
 
-    // STEP 4.3: Call your backend API
-    instructquote(instructpayload);
+      console.log("📋 [handleInstruct] Payload prepared:", {
+        ref_no: instructpayload.ref_no,
+        servicetype: instructpayload.servicetype,
+        quoteid: instructpayload.quoteid,
+        popup_image: instructpayload.popup_image ? "✅ Present (" + instructpayload.popup_image.length + " chars)" : "❌ NULL"
+      });
 
-  } catch (error) {
-    console.error("❌ [handleInstruct] Failed:", error);
-    setinstructloader(false);
-  }
-}
+      // STEP 4.3: Call your backend API
+      instructquote(instructpayload);
 
-
-async function capturePopupImage(pdfRef) {
-  try {
-    console.log("🔍 [capturePopupImage] Starting...");
-    console.log("pdfRef exists?", !!pdfRef);
-    console.log("pdfRef.current exists?", !!pdfRef?.current);
-
-    if (!pdfRef?.current) {
-      console.error("❌ pdfRef.current is null");
-      throw new Error("Popup not rendered");
-    }
-
-    const element = pdfRef.current;
-    console.log("✅ Element found:", {
-      tag: element.tagName,
-      id: element.id,
-      visible: element.offsetHeight > 0 && element.offsetWidth > 0,
-      height: element.offsetHeight,
-      width: element.offsetWidth
-    });
-
-    // Check if element has content
-    if (element.offsetHeight === 0 || element.offsetWidth === 0) {
-      console.error("❌ Element has zero dimensions");
-      throw new Error("Element not visible");
-    }
-
-    console.log("🎨 Calling toPng...");
-    const imageData = await toPng(element, {
-      backgroundColor: "#ffffff",
-      pixelRatio: 2,
-      cacheBust: true,
-      quality: 0.95,
-    });
-
-    console.log("✅ Image generated successfully, size:", imageData.length);
-    return imageData;
-  } catch (error) {
-    console.error("❌ [capturePopupImage] Error:", error.message);
-    console.error("Full error:", error);
-    throw error;
-  }
-}
-
-async function instructquote(instructpayload) {
-  try {
-    const instruct = await postData(API_ENDPOINTS.instruct, instructpayload);
-    console.log("API Response:", instruct);
-
-    if (instruct) {
+    } catch (error) {
+      console.error("❌ [handleInstruct] Failed:", error);
       setinstructloader(false);
-
-      // Step 4: Redirect using payload ID, not state
-      router.push(`/Instruct?id=${instructpayload.quoteid}`);
     }
-  } catch (e) {
-    setinstructloader(false);
-    console.error("API error:", e);
   }
-}
+
+
+  async function capturePopupImage(pdfRef) {
+    try {
+      console.log("🔍 [capturePopupImage] Starting...");
+      console.log("pdfRef exists?", !!pdfRef);
+      console.log("pdfRef.current exists?", !!pdfRef?.current);
+
+      if (!pdfRef?.current) {
+        console.error("❌ pdfRef.current is null");
+        throw new Error("Popup not rendered");
+      }
+
+      const element = pdfRef.current;
+      console.log("✅ Element found:", {
+        tag: element.tagName,
+        id: element.id,
+        visible: element.offsetHeight > 0 && element.offsetWidth > 0,
+        height: element.offsetHeight,
+        width: element.offsetWidth
+      });
+
+      // Check if element has content
+      if (element.offsetHeight === 0 || element.offsetWidth === 0) {
+        console.error("❌ Element has zero dimensions");
+        throw new Error("Element not visible");
+      }
+
+      console.log("🎨 Calling toPng...");
+      const imageData = await toPng(element, {
+        backgroundColor: "#ffffff",
+        pixelRatio: 2,
+        cacheBust: true,
+        quality: 0.95,
+      });
+
+      console.log("✅ Image generated successfully, size:", imageData.length);
+      return imageData;
+    } catch (error) {
+      console.error("❌ [capturePopupImage] Error:", error.message);
+      console.error("Full error:", error);
+      throw error;
+    }
+  }
+
+  async function instructquote(instructpayload) {
+    try {
+      const instruct = await postData(API_ENDPOINTS.instruct, instructpayload);
+      console.log("API Response:", instruct);
+
+      if (instruct) {
+        setinstructloader(false);
+
+        // Step 4: Redirect using payload ID, not state
+        router.push(`/Instruct?id=${instructpayload.quoteid}`);
+      }
+    } catch (e) {
+      setinstructloader(false);
+      console.error("API error:", e);
+    }
+  }
 
   const router = useRouter();
-useEffect(() => {
-  if (hasCalledService.current) return;
-  hasCalledService.current = true;
+  useEffect(() => {
+    if (hasCalledService.current) return;
+    hasCalledService.current = true;
 
-  async function qutesdata(formData) {
-    try {
-      let refNumberExist = query_ref_no || localStorage.getItem("ref_no");
-      console.log("Using ref number:", query_ref_no);
-      if(!refNumberExist || refNumberExist=="" || refNumberExist.trim()==""){
-      const response = await postData(API_ENDPOINTS.services, formData);
-      console.log("✅ service API Response:", response?.service?.quote_ref_number);
+    async function qutesdata(formData) {
+      try {
+        let refNumberExist = query_ref_no || localStorage.getItem("ref_no");
+        console.log("Using ref number:", query_ref_no);
+        if (!refNumberExist || refNumberExist == "" || refNumberExist.trim() == "") {
+          const response = await postData(API_ENDPOINTS.services, formData);
+          console.log("✅ service API Response:", response?.service?.quote_ref_number);
 
-      localStorage.setItem("ref_no", response?.service?.quote_ref_number);
+          localStorage.setItem("ref_no", response?.service?.quote_ref_number);
 
-      if (response.code === 200) {
-        refNumberExist = response?.service?.quote_ref_number
-        setref(response?.service?.quote_ref_number);
-        setquotefound(true);
-      } else {
-        setquotefound(false);
-        return;
-      }
-    }
-    else
-    {
-       setref(refNumberExist);
-       setquotefound(true);
-    }
+          if (response.code === 200) {
+            refNumberExist = response?.service?.quote_ref_number
+            setref(response?.service?.quote_ref_number);
+            setquotefound(true);
+          } else {
+            setquotefound(false);
+            return;
+          }
+        }
+        else {
+          setref(refNumberExist);
+          setquotefound(true);
+        }
 
-      setLoading(true);
+        setLoading(true);
 
-      const quoteResponse = await getData(
-        `${API_ENDPOINTS.quotesfilter}/${refNumberExist}`
-      );
+        const quoteResponse = await getData(
+          `${API_ENDPOINTS.quotesfilter}/${refNumberExist}`
+        );
 
-      if (quoteResponse?.status === false) {
-        setcompanydata([]);
+        if (quoteResponse?.status === false) {
+          setcompanydata([]);
+          setLoading(false);
+          return;
+        }
+
+        setview_data(quoteResponse.data[0]);
+        setquoteData(quoteResponse.data);
+
+        const formatted = quoteResponse.data.map((item) => ({
+          ...item,
+          conveying_details: {
+            ...item.conveying_details,
+            logo: item.conveying_details.logo
+              ? `${item.conveying_details.logo}`
+              : null,
+          },
+        }));
+
+        setcompanydata(formatted);
         setLoading(false);
-        return;
+        // localStorage.removeItem("getquote");
+      } catch (error) {
+        console.error("❌ API Error:", error);
+        setLoading(false);
       }
-
-      setview_data(quoteResponse.data[0]);
-      setquoteData(quoteResponse.data);
-
-      const formatted = quoteResponse.data.map((item) => ({
-        ...item,
-        conveying_details: {
-          ...item.conveying_details,
-          logo: item.conveying_details.logo
-            ? `${item.conveying_details.logo}`
-            : null,
-        },
-      }));
-
-      setcompanydata(formatted);
-      setLoading(false);
-      // localStorage.removeItem("getquote");
-    } catch (error) {
-      console.error("❌ API Error:", error);
-      setLoading(false);
     }
-  }
 
-  const storedQuote = localStorage.getItem("getquote");
-  const serviceType = localStorage.getItem("service");
+    const storedQuote = localStorage.getItem("getquote");
+    const serviceType = localStorage.getItem("service");
 
-  if (storedQuote && serviceType) {
-    const parsedData = JSON.parse(storedQuote);
-    parsedData.service_type = serviceType;
-    parsedData.user_id = Number(localStorage.getItem("user"));
+    if (storedQuote && serviceType) {
+      const parsedData = JSON.parse(storedQuote);
+      parsedData.service_type = serviceType;
+      parsedData.user_id = Number(localStorage.getItem("user"));
 
       setLoading(true);
-    qutesdata(parsedData);
-   
-  }
-  else if(query_ref_no.length>0)
-    {
+      qutesdata(parsedData);
+
+    }
+    else if (query_ref_no.length > 0) {
       setLoading(true);
       console.log("Using ref number:", query_ref_no);
       qutesdata(null);
-      }
-}, []);
+    }
+  }, []);
+  //const searchParams = useSearchParams();
 
+const hasAutoInstructed = useRef(false);
 
-function toggleDropdowncard(id) {
-  console.log(id)
-   if (dropdownOpenId === id) {
-    // toggle same card
-    setDropdownOpenId(prev => !prev);
-  } else {
-    // open new card
-    setDropdownOpenId(id);
-    setdropdownshow(true);
+useEffect(() => {
+  const quoteId = searchParams.get("quote_id");
+  const customerId = searchParams.get("customer_id");
+  const conveyingId = searchParams.get("conveying_id");
+
+  if (
+    quoteId &&
+    customerId &&
+    conveyingId &&
+    quoteData?.length > 0 &&
+    !hasAutoInstructed.current
+  ) {
+    const selectedQuote = quoteData.find(q => q.quote_id == quoteId);
+
+    if (selectedQuote) {
+      console.log("✅ Auto instruct triggered from email");
+      hasAutoInstructed.current = true;
+
+      // Show modal first
+      showviewquotes(true);
+      setcardshown(true);
+      setview_data(selectedQuote);
+
+      // Wait a bit for React to render modal
+      setTimeout(() => {
+        // Toggle dropdown like the button
+        toggleDropdown(selectedQuote.conveying_details.conveying_id);
+
+        // Then instruct
+        handleInstructFromCard(
+          selectedQuote.conveying_details.company_name,
+          selectedQuote.guest_id,
+          selectedQuote.conveying_details.conveying_id,
+          selectedQuote.quote_id,
+          selectedQuote.customer_details.customer_id,
+          selectedQuote?.service_details[0]?.taxInfo?.quote_id,
+          selectedQuote.service_details[0].quote_ref_number,
+          selectedQuote
+        );
+      }, 300); // 300ms is usually enough, adjust if needed
+    }
   }
-  
-}
+}, [searchParams, quoteData]);
 
 
 
-function fetchtaxdetails(id){
-
-let selectedquote=companydata.filter((item)=>item.conveying_details.conveying_id==id);
-console.log(selectedquote)
-console.log(selectedquote[0].conveying_details.taxDetails);
-setgiftvalue(selectedquote[0].service_details[0].gift_deposit);
-console.log(giftvalue);
-let grouped;
-let grouped2;
-let sum=0
-console.log(Object.keys(selectedquote[0].conveying_details.taxDetails).length)
-if(selectedquote[0].conveying_details.taxDetails && selectedquote[0].conveying_details.taxDetails[0]?.length){
- grouped = selectedquote[0].conveying_details.taxDetails[0].reduce(
-  (acc, item) => {
-    const key = item.fees_category;
-    let total = 'total'
-    if (!acc[key]) {
-      acc[key] = {
-    items: [],
-    total: 0,
-    vat:0,
-     [`${key}${total}`]:0,
-      };
+  function toggleDropdowncard(id) {
+    console.log(id)
+    if (dropdownOpenId === id) {
+      // toggle same card
+      setDropdownOpenId(prev => !prev);
+    } else {
+      // open new card
+      setDropdownOpenId(id);
+      setdropdownshow(true);
     }
 
-    // ✅ push every item
-    acc[key].items.push(item);
+  }
 
-    // ✅ calculate total
-  acc[key].total += Number(item.fee_amount) || 0;
-    acc[key].vat += Number(item.vat) || 0;
 
-    return acc;
-  },
-  {}
-);
-}
-if(selectedquote[0].conveying_details.taxDetails && selectedquote[0].conveying_details.taxDetails[1]?.length){
- grouped2 = selectedquote[0].conveying_details.taxDetails[1].reduce(
-  (acc, item) => {
-    const key = item.fees_category;
-    let total = 'total'
-    if (!acc[key]) {
-      acc[key] = {
-    items: [],
-    total: 0,
-    vat:0,
-     [`${key}${total}`]:0,
-      };
+
+  function fetchtaxdetails(id) {
+
+    let selectedquote = companydata.filter((item) => item.conveying_details.conveying_id == id);
+    console.log(selectedquote)
+    console.log(selectedquote[0].conveying_details.taxDetails);
+    setgiftvalue(selectedquote[0].service_details[0].gift_deposit);
+    console.log(giftvalue);
+    let grouped;
+    let grouped2;
+    let sum = 0
+    console.log(Object.keys(selectedquote[0].conveying_details.taxDetails).length)
+    if (selectedquote[0].conveying_details.taxDetails && selectedquote[0].conveying_details.taxDetails[0]?.length) {
+      grouped = selectedquote[0].conveying_details.taxDetails[0].reduce(
+        (acc, item) => {
+          const key = item.fees_category;
+          let total = 'total'
+          if (!acc[key]) {
+            acc[key] = {
+              items: [],
+              total: 0,
+              vat: 0,
+              [`${key}${total}`]: 0,
+            };
+          }
+
+          // ✅ push every item
+          acc[key].items.push(item);
+
+          // ✅ calculate total
+          acc[key].total += Number(item.fee_amount) || 0;
+          acc[key].vat += Number(item.vat) || 0;
+
+          return acc;
+        },
+        {}
+      );
+    }
+    if (selectedquote[0].conveying_details.taxDetails && selectedquote[0].conveying_details.taxDetails[1]?.length) {
+      grouped2 = selectedquote[0].conveying_details.taxDetails[1].reduce(
+        (acc, item) => {
+          const key = item.fees_category;
+          let total = 'total'
+          if (!acc[key]) {
+            acc[key] = {
+              items: [],
+              total: 0,
+              vat: 0,
+              [`${key}${total}`]: 0,
+            };
+          }
+
+          // ✅ push every item
+          acc[key].items.push(item);
+
+          // ✅ calculate total
+          acc[key].total += Number(item.fee_amount) || 0;
+          acc[key].vat += Number(item.vat) || 0;
+
+          return acc;
+        },
+        {}
+      );
     }
 
-    // ✅ push every item
-    acc[key].items.push(item);
 
-    // ✅ calculate total
-  acc[key].total += Number(item.fee_amount) || 0;
-  acc[key].vat += Number(item.vat) || 0;
-
-    return acc;
-  },
-  {}
-);
-}
-
-
-console.log( "grouped",grouped);
+    console.log("grouped", grouped);
 
 
 
-console.log(grouped2);
+    console.log(grouped2);
 
-  settaxDetails(grouped);
-  settaxDetails2(grouped2);
+    settaxDetails(grouped);
+    settaxDetails2(grouped2);
 
-  const totalTaxVat = selectedquote[0].conveying_details.taxDetails[0].reduce((sum, item) => {
-    
-      sum+=Number(item.vat)
-    
-   return sum;
-}, 0);
+    const totalTaxVat = selectedquote[0].conveying_details.taxDetails[0].reduce((sum, item) => {
 
-const totalamount = selectedquote[0].conveying_details.taxDetails[0].reduce((sum, item) => {
-    if(item.fee_amount>0){
-      sum+=Number(item.fee_amount)
-    }
-   return sum;
-}, 0);
+      sum += Number(item.vat)
 
-console.log("Total VAT:", totalamount);
+      return sum;
+    }, 0);
 
-console.log("Total VAT:", totalTaxVat);
-setvattax(totalTaxVat);
-settotal(totalamount)
-
-}
-
-function handlefilterchange(selectedoption = []) {
-  setfilterselected(selectedoption);
-
-  if (!companydata || !Array.isArray(companydata)) return;
-
-  let sorted = [...companydata];
-
-  // If more than 2 options, sort by first and second as a combination
-  if (selectedoption.length > 1) {
-    const first = selectedoption[0]?.value;
-    const second = selectedoption[1]?.value;
-    sorted.sort((a, b) => {
-      let result = 0;
-      // First sort
-      if (first === "Rating") {
-        result = (b.conveying_details?.rating ?? 0) - (a.conveying_details?.rating ?? 0);
-      } else if (first === "Price") {
-        const aPrice = Number(a.supplements || 0) + Number(a.disbursements || 0) + Number(a.legal_fees || 0);
-        const bPrice = Number(b.supplements || 0) + Number(b.disbursements || 0) + Number(b.legal_fees || 0);
-        result = aPrice - bPrice;
-      } else if (first === "Language") {
-        const aLang = a.conveying_details?.language || "";
-        const bLang = b.conveying_details?.language || "";
-        result = aLang.localeCompare(bLang);
+    const totalamount = selectedquote[0].conveying_details.taxDetails[0].reduce((sum, item) => {
+      if (item.fee_amount > 0) {
+        sum += Number(item.fee_amount)
       }
-      // If equal, use second sort
-      if (result === 0 && second) {
-        if (second === "Rating") {
+      return sum;
+    }, 0);
+
+    console.log("Total VAT:", totalamount);
+
+    console.log("Total VAT:", totalTaxVat);
+    setvattax(totalTaxVat);
+    settotal(totalamount)
+
+  }
+
+  function handlefilterchange(selectedoption = []) {
+    setfilterselected(selectedoption);
+
+    if (!companydata || !Array.isArray(companydata)) return;
+
+    let sorted = [...companydata];
+
+    // If more than 2 options, sort by first and second as a combination
+    if (selectedoption.length > 1) {
+      const first = selectedoption[0]?.value;
+      const second = selectedoption[1]?.value;
+      sorted.sort((a, b) => {
+        let result = 0;
+        // First sort
+        if (first === "Rating") {
           result = (b.conveying_details?.rating ?? 0) - (a.conveying_details?.rating ?? 0);
-        } else if (second === "Price") {
+        } else if (first === "Price") {
           const aPrice = Number(a.supplements || 0) + Number(a.disbursements || 0) + Number(a.legal_fees || 0);
           const bPrice = Number(b.supplements || 0) + Number(b.disbursements || 0) + Number(b.legal_fees || 0);
           result = aPrice - bPrice;
-        } else if (second === "Language") {
+        } else if (first === "Language") {
           const aLang = a.conveying_details?.language || "";
           const bLang = b.conveying_details?.language || "";
           result = aLang.localeCompare(bLang);
         }
+        // If equal, use second sort
+        if (result === 0 && second) {
+          if (second === "Rating") {
+            result = (b.conveying_details?.rating ?? 0) - (a.conveying_details?.rating ?? 0);
+          } else if (second === "Price") {
+            const aPrice = Number(a.supplements || 0) + Number(a.disbursements || 0) + Number(a.legal_fees || 0);
+            const bPrice = Number(b.supplements || 0) + Number(b.disbursements || 0) + Number(b.legal_fees || 0);
+            result = aPrice - bPrice;
+          } else if (second === "Language") {
+            const aLang = a.conveying_details?.language || "";
+            const bLang = b.conveying_details?.language || "";
+            result = aLang.localeCompare(bLang);
+          }
+        }
+        return result;
+      });
+    } else if (selectedoption.length === 1) {
+      // Only one sort
+      const first = selectedoption[0]?.value;
+      if (first === "Rating") {
+        sorted.sort((a, b) => (b.conveying_details?.rating ?? 0) - (a.conveying_details?.rating ?? 0));
+      } else if (first === "Price") {
+        sorted.sort((a, b) => {
+          const aPrice = Number(a.supplements || 0) + Number(a.disbursements || 0) + Number(a.legal_fees || 0);
+          const bPrice = Number(b.supplements || 0) + Number(b.disbursements || 0) + Number(b.legal_fees || 0);
+          return aPrice - bPrice;
+        });
+      } else if (first === "Language") {
+        sorted.sort((a, b) => {
+          const aLang = a.conveying_details?.languages || "";
+          const bLang = b.conveying_details?.languages || "";
+          return aLang.localeCompare(bLang);
+        });
       }
-      return result;
-    });
-  } else if (selectedoption.length === 1) {
-    // Only one sort
-    const first = selectedoption[0]?.value;
-    if (first === "Rating") {
-      sorted.sort((a, b) => (b.conveying_details?.rating ?? 0) - (a.conveying_details?.rating ?? 0));
-    } else if (first === "Price") {
-      sorted.sort((a, b) => {
-        const aPrice = Number(a.supplements || 0) + Number(a.disbursements || 0) + Number(a.legal_fees || 0);
-        const bPrice = Number(b.supplements || 0) + Number(b.disbursements || 0) + Number(b.legal_fees || 0);
-        return aPrice - bPrice;
-      });
-    } else if (first === "Language") {
-      sorted.sort((a, b) => {
-        const aLang = a.conveying_details?.languages || "";
-        const bLang = b.conveying_details?.languages || "";
-        return aLang.localeCompare(bLang);
-      });
     }
-  }
 
-  setcompanydata(sorted);
-}
+    setcompanydata(sorted);
+  }
 
   return (
     <div className=" bg-white antialiased font ">
-   
-            <div className='bg-white shadow-md sticky top-0 p-4 z-50'>
-            <Navbar />
-            </div>
-     
+
+      <div className='bg-white shadow-md sticky top-0 p-4 z-50'>
+        <Navbar />
+      </div>
+
 
       {/* <main className="mx-auto max-w-[1200px] pt-10 px-4 lg:px-0 mb-10">
         KEY CHANGE: The main layout switches from a single column (default) to a two-column grid on 'lg' screens. */}
-        {/* <div className="grid lg:grid-cols-[400px_1fr] gap-8 lg:gap-12"> */}
-          {/* Left rail: stepper panel (Sidebar) */}
-          {/* KEY CHANGE: Removed w-[400px] from here. It now spans the full width on small screens and is controlled by the grid on 'lg'. */}
-         
-               <main className="mx-auto max-w-[1200px] pt-2 px-4 lg:px-0 mb-5 mt-20">
-                   <div className="flex flex-col lg:flex-row gap-8">
-                       <aside className="hidden lg:block z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-1/2 lg:h-[80vh] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white lg:top-22" style={{height : "88.5%"}}>
-                         <div className="p-6 h-full flex flex-col justify-around ">
-                                 {/* Step 1 */}
-                                 <div className="flex items-start">
-                                   <div className="relative mr-4">
-                                     <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
-                                       <Check size={18} />
-                                     </div>
-                                     <div className="absolute left-[19px] top-[40px] w-[2px] h-[510%] bg-[#CFE3CF]" />
-                                   </div>
-                                   <div>
-                                     <div className="text-xs font-semibold text-[#1E1E1E]">STEP 1</div>
-                                     <div className="text-lg font-extrabold text-[#1E1E1E]">Property Details</div>
-                                     <div className="text-xs text-[#2D7C57] mt-1">Completed</div>
-                                   </div>
-                                 </div>
-                   
-                                 {/* Step 2 (Current) */}
-                                 <div className="flex items-start mt-6">
-                                   <div className="relative mr-4">
-                                     <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
-                                       <Check size={18} />
-                                     </div>
-                                     <div className="absolute left-[19px] top-[40px] w-[2px] h-[510%] bg-[#CFE3CF]" />
-                                   </div>
-                                   <div>
-                                     <div className="text-xs font-semibold text-[#1E1E1E]">STEP 2</div>
-                                     <div className="text-lg font-extrabold text-[#1E1E1E]">Personal Details</div>
-                                     <div className="text-xs text-[#2D7C57] mt-1">Completed</div>
-                                   </div>
-                                 </div>
-                   
-                                 {/* Step 3 */}
-                                 <div className="flex items-start mt-6">
-                                   <div className="relative mr-4">
-                                     <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
-                                       <Check size={18} />
-                                     </div>
+      {/* <div className="grid lg:grid-cols-[400px_1fr] gap-8 lg:gap-12"> */}
+      {/* Left rail: stepper panel (Sidebar) */}
+      {/* KEY CHANGE: Removed w-[400px] from here. It now spans the full width on small screens and is controlled by the grid on 'lg'. */}
 
-                                   </div>
-                                   <div>
-                                     <div className="text-xs font-semibold text-[#1E1E1E]">STEP 3</div>
-                                     <div className="text-lg font-extrabold text-[#1E1E1E]">Compare Quotes</div>
-                                      <div className="text-xs text-[#2D7C57] mt-1">Completed</div>
-                                   </div>
-                                 </div>
-                               </div>
+      <main className="mx-auto max-w-[1200px] pt-2 px-4 lg:px-0 mb-5 mt-20">
+        <div className="flex flex-col lg:flex-row gap-8">
+          <aside className="hidden lg:block z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-1/2 lg:h-[80vh] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white lg:top-22" style={{ height: "88.5%" }}>
+            <div className="p-6 h-full flex flex-col justify-around ">
+              {/* Step 1 */}
+              <div className="flex items-start">
+                <div className="relative mr-4">
+                  <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
+                    <Check size={18} />
+                  </div>
+                  <div className="absolute left-[19px] top-[40px] w-[2px] h-[510%] bg-[#CFE3CF]" />
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-[#1E1E1E]">STEP 1</div>
+                  <div className="text-lg font-extrabold text-[#1E1E1E]">Property Details</div>
+                  <div className="text-xs text-[#2D7C57] mt-1">Completed</div>
+                </div>
+              </div>
+
+              {/* Step 2 (Current) */}
+              <div className="flex items-start mt-6">
+                <div className="relative mr-4">
+                  <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
+                    <Check size={18} />
+                  </div>
+                  <div className="absolute left-[19px] top-[40px] w-[2px] h-[510%] bg-[#CFE3CF]" />
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-[#1E1E1E]">STEP 2</div>
+                  <div className="text-lg font-extrabold text-[#1E1E1E]">Personal Details</div>
+                  <div className="text-xs text-[#2D7C57] mt-1">Completed</div>
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="flex items-start mt-6">
+                <div className="relative mr-4">
+                  <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
+                    <Check size={18} />
+                  </div>
+
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-[#1E1E1E]">STEP 3</div>
+                  <div className="text-lg font-extrabold text-[#1E1E1E]">Compare Quotes</div>
+                  <div className="text-xs text-[#2D7C57] mt-1">Completed</div>
+                </div>
+              </div>
+            </div>
           </aside>
 
           {/* Right section (Main Content) */}
           {/* KEY CHANGE: Removed col-start-2. The natural flow of the grid handles the stacking on mobile and placement on 'lg' */}
-           <section className=" ">
+          <section className=" ">
             <div className="overflow-auto space-y-6 pr-2 rounded-[18px] border border-[#f2eded] shadow-[0_6px_24px_rgba(16,24,40,0.04)] bg-white  lg:h-[690px] flex-1 p-4 sm:p-8 lg:p-10 lg:ml-83">
               <div className="p-4 sm:p-8">
                 <nav
@@ -954,99 +922,99 @@ function handlefilterchange(selectedoption = []) {
                   firms providing the quotes but absolutely no one else.
                 </p>
 
-       
 
-<div className="">
 
-  <Select
-    options={filteroption}
-    instanceId="filter-select"
-    isMulti
-    value={filterselected}
-    onChange={handlefilterchange}
-    placeholder="Sort by..."
-    className="text-black w-85 ml-auto"
-    styles={{
-      control: (base, state) => ({
-        ...base,
-        minHeight: 44,
-        height: 44,
-        fontSize: 16,
-        fontFamily: 'Outfit, Arial, sans-serif',
-        borderColor: state.isFocused ? '#1E5C3B' : base.borderColor,
-        boxShadow: state.isFocused ? '0 0 0 1.5px #1E5C3B' : base.boxShadow,
-        '&:hover': {
-          borderColor: '#1E5C3B',
-        },
-      }),
-      valueContainer: (base) => ({
-        ...base,
-        height: 44,
-        padding: '0 8px',
-        fontSize: 16,
-        fontFamily: 'Outfit, Arial, sans-serif',
-      }),
-      input: (base) => ({
-        ...base,
-        margin: 0,
-        fontSize: 16,
-        fontFamily: 'Outfit, Arial, sans-serif',
-      }),
-      option: (base, state) => ({
-        ...base,
-        fontSize: 16,
-        fontFamily: 'Outfit, Arial, sans-serif',
-        backgroundColor: state.isSelected || state.isFocused ? '#F6CE53' : base.backgroundColor,
-        color: state.isSelected || state.isFocused ? '#111' : base.color,
-        '&:hover': {
-          backgroundColor: '#F6CE53',
-          color: '#111',
-        },
-      }),
-      multiValue: (base) => ({
-        ...base,
-        fontSize: 16,
-        fontFamily: 'Outfit, Arial, sans-serif',
-        backgroundColor: '#1E5C3B',
-        color: '#fff',
-      }),
-      multiValueLabel: (base) => ({
-        ...base,
-        color: '#fff',
-        fontFamily: 'Outfit, Arial, sans-serif',
-        fontWeight: 700,
-      }),
-      multiValueRemove: (base) => ({
-        ...base,
-        color: '#fff',
-        ':hover': {
-          backgroundColor: '#16472F',
-          color: '#fff',
-        },
-      }),
-    }}
-  />
-</div>
+                <div className="">
+
+                  <Select
+                    options={filteroption}
+                    instanceId="filter-select"
+                    isMulti
+                    value={filterselected}
+                    onChange={handlefilterchange}
+                    placeholder="Sort by..."
+                    className="text-black w-85 ml-auto"
+                    styles={{
+                      control: (base, state) => ({
+                        ...base,
+                        minHeight: 44,
+                        height: 44,
+                        fontSize: 16,
+                        fontFamily: 'Outfit, Arial, sans-serif',
+                        borderColor: state.isFocused ? '#1E5C3B' : base.borderColor,
+                        boxShadow: state.isFocused ? '0 0 0 1.5px #1E5C3B' : base.boxShadow,
+                        '&:hover': {
+                          borderColor: '#1E5C3B',
+                        },
+                      }),
+                      valueContainer: (base) => ({
+                        ...base,
+                        height: 44,
+                        padding: '0 8px',
+                        fontSize: 16,
+                        fontFamily: 'Outfit, Arial, sans-serif',
+                      }),
+                      input: (base) => ({
+                        ...base,
+                        margin: 0,
+                        fontSize: 16,
+                        fontFamily: 'Outfit, Arial, sans-serif',
+                      }),
+                      option: (base, state) => ({
+                        ...base,
+                        fontSize: 16,
+                        fontFamily: 'Outfit, Arial, sans-serif',
+                        backgroundColor: state.isSelected || state.isFocused ? '#F6CE53' : base.backgroundColor,
+                        color: state.isSelected || state.isFocused ? '#111' : base.color,
+                        '&:hover': {
+                          backgroundColor: '#F6CE53',
+                          color: '#111',
+                        },
+                      }),
+                      multiValue: (base) => ({
+                        ...base,
+                        fontSize: 16,
+                        fontFamily: 'Outfit, Arial, sans-serif',
+                        backgroundColor: '#1E5C3B',
+                        color: '#fff',
+                      }),
+                      multiValueLabel: (base) => ({
+                        ...base,
+                        color: '#fff',
+                        fontFamily: 'Outfit, Arial, sans-serif',
+                        fontWeight: 700,
+                      }),
+                      multiValueRemove: (base) => ({
+                        ...base,
+                        color: '#fff',
+                        ':hover': {
+                          backgroundColor: '#16472F',
+                          color: '#fff',
+                        },
+                      }),
+                    }}
+                  />
+                </div>
 
 
 
                 <div className="mt-8 space-y-6">
-                {loading && (
-                  <div className="flex flex-col justify-center items-center py-6">
-                    <div className="h-8 w-8 border-2 border-[#4A7C59] border-t-transparent rounded-full animate-spin"></div>
-                    <div className="mt-2.5 text-gray-500">
-                      Your quotes are loading...
+                  {loading && (
+                    <div className="flex flex-col justify-center items-center py-6">
+                      <div className="h-8 w-8 border-2 border-[#4A7C59] border-t-transparent rounded-full animate-spin"></div>
+                      <div className="mt-2.5 text-gray-500">
+                        Your quotes are loading...
+                      </div>
                     </div>
-                  </div>
-                )}
-                   {/* SHOW MESSAGE HERE */}
-                {companydata?.length === 0 && (
-                  <div className="text-center py-10">
-                    <p className=" text-[14px] text-[#6B7280]">
-                      No quotes found for your property details
-                    </p>
-                  </div>
-                )}
+                  )}
+                  {/* SHOW MESSAGE HERE */}
+                  {companydata?.length === 0 && (
+                    <div className="text-center py-10">
+                      <p className=" text-[14px] text-[#6B7280]">
+                        No quotes found for your property details
+                      </p>
+                    </div>
+                  )}
                   {companydata?.map((quote, index) => (
                     <div
                       key={index}
@@ -1054,9 +1022,8 @@ function handlefilterchange(selectedoption = []) {
                     >
                       {/* Card Header */}
                       <div
-                        className={`flex flex-col sm:flex-row items-center justify-between   ${
-                          index % 2 === 0 ? "bg-green-50" : "bg-red-50"
-                        }  mx-2 mt-2 rounded-2xl p-4 sm:px-8 sm:py-5`}
+                        className={`flex flex-col sm:flex-row items-center justify-between   ${index % 2 === 0 ? "bg-green-50" : "bg-red-50"
+                          }  mx-2 mt-2 rounded-2xl p-4 sm:px-8 sm:py-5`}
                       >
                         <div className="flex items-center gap-5 mb-3 sm:mb-0">
                           {quote.conveying_details.logo ? (
@@ -1065,7 +1032,7 @@ function handlefilterchange(selectedoption = []) {
                               height={40}
                               src={quote.conveying_details.logo}
                               alt={quote.company_name || "company logo"}
-                              // <- controls visible size
+                            // <- controls visible size
                             />
                           ) : (
                             <Image
@@ -1083,11 +1050,11 @@ function handlefilterchange(selectedoption = []) {
                         <div className="flex items-center gap-4">
                           <div className="text-right">
                             <p className="text-xl font-bold text-gray-900">
-{formatGBP(
-  Number(quote.supplements || 0) +
-  Number(quote.disbursements || 0) +
-  Number(quote.legal_fees || 0)
-)}                            </p>
+                              {formatGBP(
+                                Number(quote.supplements || 0) +
+                                Number(quote.disbursements || 0) +
+                                Number(quote.legal_fees || 0)
+                              )}                            </p>
                             <button
                               className="text-green-700 text-sm font-medium hover:underline cursor-pointer"
                               onClick={() => toggleDropdown(quote.conveying_details.conveying_id)}
@@ -1098,7 +1065,7 @@ function handlefilterchange(selectedoption = []) {
                                 <u>Price Breakdown</u>
                               )}
                             </button>
-                          
+
 
                           </div>
                           <div
@@ -1111,11 +1078,10 @@ function handlefilterchange(selectedoption = []) {
                               viewBox="0 0 24 24"
                               strokeWidth="1.5"
                               stroke="currentColor"
-                              className={`w-4 h-4 text-gray-600 transform transition-transform duration-200 ${
-                                dropdownOpenId === quote.conveying_details.conveying_id
-                                  ? "rotate-180"
-                                  : ""
-                              }`}
+                              className={`w-4 h-4 text-gray-600 transform transition-transform duration-200 ${dropdownOpenId === quote.conveying_details.conveying_id
+                                ? "rotate-180"
+                                : ""
+                                }`}
                             >
                               <path
                                 strokeLinecap="round"
@@ -1142,33 +1108,33 @@ function handlefilterchange(selectedoption = []) {
                                 size={20}
                                 allowFraction
                               />
-                               <span className="pl-2 font-bold text-[#4A7C59]">
+                              <span className="pl-2 font-bold text-[#4A7C59]">
                                 {quote.conveying_details.ratings || 4} out of 5
                               </span>
                             </div>
-<div className="flex gap-8 mt-3">
-  <div className="relative flex flex-col items-center cursor-pointer group">
-    {/* Tooltip */}
-    <span className="absolute -top-6 text-xs bg-black text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-      Recommended
-    </span>
-    <CircularProgress progress={quote.conveying_details.recomended || 80} />
-  </div>
+                            <div className="flex gap-8 mt-3">
+                              <div className="relative flex flex-col items-center cursor-pointer group">
+                                {/* Tooltip */}
+                                <span className="absolute -top-6 text-xs bg-black text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                                  Recommended
+                                </span>
+                                <CircularProgress progress={quote.conveying_details.recomended || 80} />
+                              </div>
 
-  <div className="relative flex flex-col items-center cursor-pointer group">
-    <span className="absolute -top-6 text-xs bg-black text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-      SRA
-    </span>
-    <CircularProgress progress={quote.conveying_details.sra || 90} />
-  </div>
+                              <div className="relative flex flex-col items-center cursor-pointer group">
+                                <span className="absolute -top-6 text-xs bg-black text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                                  SRA
+                                </span>
+                                <CircularProgress progress={quote.conveying_details.sra || 90} />
+                              </div>
 
-  <div className="relative flex flex-col items-center cursor-pointer group">
-    <span className="absolute -top-6 text-xs bg-black text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-      Reliable
-    </span>
-    <CircularProgress progress={quote.conveying_details.reliable || 85} />
-  </div>
-</div>
+                              <div className="relative flex flex-col items-center cursor-pointer group">
+                                <span className="absolute -top-6 text-xs bg-black text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
+                                  Reliable
+                                </span>
+                                <CircularProgress progress={quote.conveying_details.reliable || 85} />
+                              </div>
+                            </div>
 
                             {/* <p className="text-sm mt-1">
                               <span className="font-bold text-[#4A7C59]">
@@ -1190,379 +1156,388 @@ function handlefilterchange(selectedoption = []) {
                                 
                               )}
                             </p> */}
-                            
+
                           </div>
 
                           {/* Middle: Features - Static placeholder */}
                           <ul className="text-xs text-gray-700 space-y-2 font-normal text-[12px] list-none pl-4">
-                         
+
                           </ul>
 
                           {/* Right: Buttons */}
                           <div className="flex flex-row gap-2 justify-start lg:col-start-3 lg:justify-end">
-                           
+
 
                             <button
-                               disabled={instructloader}
+                              disabled={instructloader}
                               className={`px-3 py-1.5 rounded-full text-sm cursor-pointer
                                 ${instructloader
                                   ? "bg-[#4A7C59]/70 cursor-not-allowed"
                                   : "bg-[#4A7C59] hover:bg-[#3b6248] text-white"}`}
-                             onClick={() =>{
-                            
-                              setTimeout(() => {
+                              onClick={() => {
+
+                                setTimeout(() => {
                                   toggleDropdown(quote.conveying_details.conveying_id);
-                                         handleInstructFromCard(
-                                  quote.conveying_details.company_name,
-                                  quote.guest_id,
-                                  quote.conveying_details.conveying_id,
-                                  quote.quote_id ,
-                                  quote.customer_details.customer_id,
-                                  quote?.service_details[0]?.taxInfo?.quote_id,
-                                  quote.service_details[0].quote_ref_number,
-                                  quote
-                                )
-                              }, 2000);
+                                  handleInstructFromCard(
+                                    quote.conveying_details.company_name,
+                                    quote.guest_id,
+                                    quote.conveying_details.conveying_id,
+                                    quote.quote_id,
+                                    quote.customer_details.customer_id,
+                                    quote?.service_details[0]?.taxInfo?.quote_id,
+                                    quote.service_details[0].quote_ref_number,
+                                    quote
+                                  )
+                                }, 2000);
 
-                             }
+                              }
 
-                             }
+                              }
                             >
                               {instructloader ? "Processing..." : "Instruct"}
                             </button>
-                             
+
                           </div>
                         </div>
                         {dropdownOpenId === quote.conveying_details.conveying_id &&
-  dropdownshow && (
-    <>
-      {view_data.service_details.length > 1 && (
-        <>
-          {/* Sales Section */} 
-          <div className="pt-2 border-t border-gray-200"> 
-            <h2 className="text-right mr-40 font-semibold text-emerald-600">Sales</h2>
-                  <div className=" pt-2 flex justify-end" >
-      <table className="border-collapse text-black font">
-        <thead>
-          <tr className="border-b border-gray-300 text-left grid grid-cols-3 w-full gap-5">
-            <th className="text-sm font-semibold">Type</th>
-            <th className="text-sm font-semibold">Fee Amount</th>
-            <th className="text-sm font-semibold">VAT</th>
-          </tr>
-        </thead>
-        <tbody>
-          {/* Legal Fees */}
-          <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
-            <td className="text-sm font-bold">Legal Fees</td>
-            <td className="text-sm font-semibold text-emerald-600">{formatGBP(quote.service_details[0].taxInfo.legal_fees)}</td>
-            <td className="text-sm text-emerald-600 font-semibold">{formatGBP(quote.service_details[0].taxInfo.vat)}</td>
-          </tr>
-          
-          {/* Supplements */}
-          <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
-            <td className="text-sm">Supplements</td>
-            <td className="text-sm">{formatGBP(quote.service_details[0].taxInfo.supplements)}</td>
-            <td className="text-sm">{formatGBP(quote.service_details[0].taxInfo.supplementsvat)}</td>
-          </tr>
+                          dropdownshow && (
+                            <>
+                              {view_data.service_details.length > 1 && (
+                                <>
+                                  {/* Sales Section */}
+                                  <div className="pt-2 border-t border-gray-200">
+                                    <h2 className="text-right mr-40 font-semibold text-emerald-600">Sales</h2>
+                                    <div className=" pt-2 flex justify-end" >
+                                      <table className="border-collapse text-black font">
+                                        <thead>
+                                          <tr className="border-b border-gray-300 text-left grid grid-cols-3 w-full gap-5">
+                                            <th className="text-sm font-semibold">Type</th>
+                                            <th className="text-sm font-semibold">Fee Amount</th>
+                                            <th className="text-sm font-semibold">VAT</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          {/* Legal Fees */}
+                                          <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+                                            <td className="text-sm font-bold">Legal Fees</td>
+                                            <td className="text-sm font-semibold text-emerald-600">{formatGBP(quote.service_details[0].taxInfo.legal_fees)}</td>
+                                            <td className="text-sm text-emerald-600 font-semibold">{formatGBP(quote.service_details[0].taxInfo.vat)}</td>
+                                          </tr>
 
-          {/* Disbursements */}
-          <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
-            <td className="text-sm">Disbursements</td>
-            <td className="text-sm">{formatGBP(quote.service_details[0].taxInfo.disbursements)}</td>
-            <td className="text-sm">{formatGBP(quote.service_details[0].taxInfo.disbursementsvat)}</td>
-          </tr>
+                                          {/* Supplements */}
+                                          <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+                                            <td className="text-sm">Supplements</td>
+                                            <td className="text-sm">{formatGBP(quote.service_details[0].taxInfo.supplements)}</td>
+                                            <td className="text-sm">{formatGBP(quote.service_details[0].taxInfo.supplementsvat)}</td>
+                                          </tr>
 
-          {/* TOTAL */}
-          <tr className="grid grid-cols-3 w-full gap-5 border-t border-gray-300 bg-gray-50">
-            <td className="text-sm font-semibold">Total</td>
-            <td className="text-sm font-semibold text-emerald-600">
-              {formatGBP(
-               quote.service_details[0].taxInfo.total
-              )}
-            </td>
-            <td className="text-sm font-semibold text-emerald-600">
-              {formatGBP( quote.service_details[0].taxInfo.vat)}
-            </td>
-          </tr>
+                                          {/* Disbursements */}
+                                          <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+                                            <td className="text-sm">Disbursements</td>
+                                            <td className="text-sm">{formatGBP(quote.service_details[0].taxInfo.disbursements)}</td>
+                                            <td className="text-sm">{formatGBP(quote.service_details[0].taxInfo.disbursementsvat)}</td>
+                                          </tr>
 
-          {/* Country-Based Taxes */}
-          {quote.service_details && quote.service_details[0]?.service_type == 2 && (
-            <>
-              {(quote.service_details[0].country === "England" ||
-                quote.service_details[0].country === "Northern Ireland") && (
-                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
-                  <td className="text-sm font-semibold">Stamp Duty</td>
-                  <td className="text-sm">{formatGBP(quote.stamp_duty)}</td>
-                  <td className="text-sm">-</td>
-                </tr>
-              )}
+                                          {/* TOTAL */}
+                                          <tr className="grid grid-cols-3 w-full gap-5 border-t border-gray-300 bg-gray-50">
+                                            <td className="text-sm font-semibold">Total</td>
+                                            <td className="text-sm font-semibold text-emerald-600">
+                                              {formatGBP(
+                                                quote.service_details[0].taxInfo.total
+                                              )}
+                                            </td>
+                                            <td className="text-sm font-semibold text-emerald-600">
+                                              {formatGBP(quote.service_details[0].taxInfo.vat)}
+                                            </td>
+                                          </tr>
 
-              {quote.service_details[0].country === "Scotland" && (
-                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
-                  <td className="text-sm font-semibold">LBTT</td>
-                  <td className="text-sm">{formatGBP(quote.lbtt)}</td>
-                  <td className="text-sm">-</td>
-                </tr>
-              )}
+                                          {/* Country-Based Taxes */}
+                                          {quote.service_details && quote.service_details[0]?.service_type == 2 && (
+                                            <>
+                                              {(quote.service_details[0].country === "England" ||
+                                                quote.service_details[0].country === "Northern Ireland") && (
+                                                  <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+                                                    <td className="text-sm font-semibold">Stamp Duty</td>
+                                                    <td className="text-sm">{formatGBP(quote.stamp_duty)}</td>
+                                                    <td className="text-sm">-</td>
+                                                  </tr>
+                                                )}
 
-              {quote.service_details[0].country === "Wales" && (
-                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
-                  <td className="text-sm font-semibold">LLT</td>
-                  <td className="text-sm">{formatGBP(quote.llt)}</td>
-                  <td className="text-sm">-</td>
-                </tr>
-              )}
-            </>
-          )}
-        </tbody>
-      </table>
-    </div>
-    </div>
-          
-          {/* Purchase Section */}
-           <div className="pt-2 border-t border-gray-200"> <h2 className="text-right mr-40 font-semibold text-emerald-600">Purchase</h2>
-                  <div className=" pt-2 flex justify-end" >
-                  
-      <table className="border-collapse text-black font">
-        <thead>
-          <tr className="border-b border-gray-300  grid grid-cols-3 w-full gap-5">
-            <th className="text-sm font-semibold">Type</th>
-            <th className="text-sm font-semibold">Fee Amount</th>
-            <th className="text-sm font-semibold">VAT</th>
-          </tr>
-        </thead>
-        <tbody>
-          {/* Legal Fees */}
-          <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
-            <td className="text-sm font-bold">Legal Fees</td>
-            <td className="text-sm font-semibold text-emerald-600">{formatGBP(quote.service_details[1].taxInfo.legal_fees)}</td>
-            <td className="text-sm text-emerald-600 font-semibold">{formatGBP(quote.service_details[1].taxInfo.vat)}</td>
-          </tr>
-          
-          {/* Supplements */}
-          <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
-            <td className="text-sm">Supplements</td>
-            <td className="text-sm">{formatGBP(quote.service_details[1].taxInfo.supplements)}</td>
-            <td className="text-sm">{formatGBP(quote.service_details[1].taxInfo.supplementsvat)}</td>
-          </tr>
+                                              {quote.service_details[0].country === "Scotland" && (
+                                                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+                                                  <td className="text-sm font-semibold">LBTT</td>
+                                                  <td className="text-sm">{formatGBP(quote.lbtt)}</td>
+                                                  <td className="text-sm">-</td>
+                                                </tr>
+                                              )}
 
-          {/* Disbursements */}
-          <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
-            <td className="text-sm">Disbursements</td>
-            <td className="text-sm">{formatGBP(quote.service_details[1].taxInfo.disbursements)}</td>
-            <td className="text-sm">{formatGBP(quote.service_details[1].taxInfo.disbursementsvat)}</td>
-          </tr>
+                                              {quote.service_details[0].country === "Wales" && (
+                                                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+                                                  <td className="text-sm font-semibold">LLT</td>
+                                                  <td className="text-sm">{formatGBP(quote.llt)}</td>
+                                                  <td className="text-sm">-</td>
+                                                </tr>
+                                              )}
+                                            </>
+                                          )}
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                  </div>
 
-          {/* TOTAL */}
-          <tr className="grid grid-cols-3 w-full gap-5 border-t border-gray-300 bg-gray-50">
-            <td className="text-sm font-semibold">Total</td>
-            <td className="text-sm font-semibold text-emerald-600">
-              {formatGBP(quote.service_details[1].taxInfo.total)}
-            </td>
-            <td className="text-sm font-semibold text-emerald-600">
-              {formatGBP(quote.service_details[1].taxInfo.vat)}
-            </td>
-          </tr>
+                                  {/* Purchase Section */}
+                                  <div className="pt-2 border-t border-gray-200"> <h2 className="text-right mr-40 font-semibold text-emerald-600">Purchase</h2>
+                                    <div className=" pt-2 flex justify-end" >
 
-          {/* Country-Based Taxes */}
-            <>
-              {(quote.service_details[1].country === "England" ||
-                quote.service_details[1].country === "Northern Ireland") && (
-                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200 pt-2">
-                  <td className="text-sm font-semibold">Stamp Duty</td>
-                  <td className="text-sm">{formatGBP(quote.stamp_duty)}</td>
-                  <td className="text-sm">-</td>
-                </tr>
-              )}
+                                      <table className="border-collapse text-black font">
+                                        <thead>
+                                          <tr className="border-b border-gray-300  grid grid-cols-3 w-full gap-5">
+                                            <th className="text-sm font-semibold">Type</th>
+                                            <th className="text-sm font-semibold">Fee Amount</th>
+                                            <th className="text-sm font-semibold">VAT</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          {/* Legal Fees */}
+                                          <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+                                            <td className="text-sm font-bold">Legal Fees</td>
+                                            <td className="text-sm font-semibold text-emerald-600">{formatGBP(quote.service_details[1].taxInfo.legal_fees)}</td>
+                                            <td className="text-sm text-emerald-600 font-semibold">{formatGBP(quote.service_details[1].taxInfo.vat)}</td>
+                                          </tr>
 
-              {quote.service_details[1].country === "Scotland" && (
-                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200 pt-2">
-                  <td className="text-sm font-semibold">LBTT</td>
-                  <td className="text-sm">{formatGBP(quote.lbtt)}</td>
-                  <td className="text-sm">-</td>
-                </tr>
-              )}
+                                          {/* Supplements */}
+                                          <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+                                            <td className="text-sm">Supplements</td>
+                                            <td className="text-sm">{formatGBP(quote.service_details[1].taxInfo.supplements)}</td>
+                                            <td className="text-sm">{formatGBP(quote.service_details[1].taxInfo.supplementsvat)}</td>
+                                          </tr>
 
-              {quote.service_details[1].country === "Wales" && (
-                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200 pt-2">
-                  <td className="text-sm font-semibold">LLT</td>
-                  <td className="text-sm">{formatGBP(quote.llt)}</td>
-                  <td className="text-sm">-</td>
-                </tr>
-              )}
-            </>
-        
-        </tbody>
-      </table>
-    </div></div>
-        </>
-      )}
-      
-      {view_data.service_details.length === 1 && (
-        <>
- <div className="border-t border-gray-200 pt-6 flex justify-end">
-                           <table className=" border-collapse text-black font">
-                              <thead>
-                                <tr className="border-b border-gray-300 text-left grid grid-cols-3 w-full gap-5">
-                                  <th className=" text-sm font-semibold  ">Type</th>
-                                  <th className="text-sm font-semibold  ">Fee Amount</th>
-                                  <th className="text-sm font-semibold ">VAT</th>
-                                </tr>
-                              </thead>
-                          
-                          <tbody>
+                                          {/* Disbursements */}
+                                          <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+                                            <td className="text-sm">Disbursements</td>
+                                            <td className="text-sm">{formatGBP(quote.service_details[1].taxInfo.disbursements)}</td>
+                                            <td className="text-sm">{formatGBP(quote.service_details[1].taxInfo.disbursementsvat)}</td>
+                                          </tr>
 
-  {/* Legal Fees */}
-  <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
-    <td className="text-sm font-bold">Legal Fees</td>
-    <td className="text-sm font-semibold text-emerald-600">{formatGBP(quote.legal_fees)}</td>
-    <td className="text-sm text-emerald-600 font-semibold">{formatGBP(quote.vat)}</td>
-  </tr>
-    <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
-    <td className="text-sm ">Supplements</td>
-    <td className="text-sm ">{formatGBP(quote.supplements)}</td>
-    <td className="text-sm ">  {formatGBP(quote.supplementsvat)}
-</td>
-  </tr>
+                                          {/* TOTAL */}
+                                          <tr className="grid grid-cols-3 w-full gap-5 border-t border-gray-300 bg-gray-50">
+                                            <td className="text-sm font-semibold">Total</td>
+                                            <td className="text-sm font-semibold text-emerald-600">
+                                              {formatGBP(quote.service_details[1].taxInfo.total)}
+                                            </td>
+                                            <td className="text-sm font-semibold text-emerald-600">
+                                              {formatGBP(quote.service_details[1].taxInfo.vat)}
+                                            </td>
+                                          </tr>
 
-  {/* Disbursements */}
-  <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
-    <td className="text-sm ">Disbursements</td>
-    <td className="text-sm ">{formatGBP(quote.disbursements)}</td>
-    <td className="text-sm ">
-      {formatGBP(quote.disbursementsvat)}
-    </td>
-  </tr>
+                                          {/* Country-Based Taxes */}
+                                          <>
+                                            {(quote.service_details[1].country === "England" ||
+                                              quote.service_details[1].country === "Northern Ireland") && (
+                                                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200 pt-2">
+                                                  <td className="text-sm font-semibold">Stamp Duty</td>
+                                                  <td className="text-sm">{formatGBP(quote.stamp_duty)}</td>
+                                                  <td className="text-sm">-</td>
+                                                </tr>
+                                              )}
 
-  {/* Country-Based Taxes (Optional Rows) */}
- 
+                                            {quote.service_details[1].country === "Scotland" && (
+                                              <tr className="grid grid-cols-3 w-full gap-5 border-gray-200 pt-2">
+                                                <td className="text-sm font-semibold">LBTT</td>
+                                                <td className="text-sm">{formatGBP(quote.lbtt)}</td>
+                                                <td className="text-sm">-</td>
+                                              </tr>
+                                            )}
 
-  {/* TOTAL — Border ONLY ABOVE */}
-  <tr className="grid grid-cols-3 w-full gap-5 border-t border-gray-300 bg-gray-50">
-    <td className="text-sm font-semibold">Total</td>
-    <td className="text-sm font-semibold text-emerald-600">
-{formatGBP(
-  Number(quote.supplements || 0) +
-  Number(quote.disbursements || 0) +
-  Number(quote.legal_fees || 0)
-)}
-    </td>
-    <td className="text-sm font-semibold text-emerald-600">{formatGBP(Number(quote.disbursementsvat)+Number(quote.supplementsvat)+Number(quote.vat))}</td>
-  </tr>
- {quote.service_details[0].service_type == 2 && (
-    <>
-      {(quote.service_details[0].country === "England" ||
-        quote.service_details[0].country === "Northern Ireland") && (
-        <tr className="grid grid-cols-3 w-full gap-5 border-gray-200 pt-2">
-          <td className="text-sm font-semibold ">Stamp Duty</td>
-          <td className="text-sm ">{formatGBP(quote.stamp_duty)}</td>
-          <td className="text-sm">-</td>
-        </tr>
-      )}
+                                            {quote.service_details[1].country === "Wales" && (
+                                              <tr className="grid grid-cols-3 w-full gap-5 border-gray-200 pt-2">
+                                                <td className="text-sm font-semibold">LLT</td>
+                                                <td className="text-sm">{formatGBP(quote.llt)}</td>
+                                                <td className="text-sm">-</td>
+                                              </tr>
+                                            )}
+                                          </>
 
-      {quote.service_details[0].country === "Scotland" && (
-        <tr className="grid grid-cols-3 w-full gap-5  border-gray-200 pt-2">
-          <td className="text-sm font-semibold "> LBTT</td>
-          <td className="text-sm ">{formatGBP(quote.lbtt)}</td>
-          <td className="text-sm ">-</td>
-        </tr>
-      )}
+                                        </tbody>
+                                      </table>
+                                    </div></div>
+                                </>
+                              )}
 
-      {quote.service_details[0].country === "Wales" && (
-        <tr className="grid grid-cols-3 w-full gap-5  border-gray-200 pt-2">
-          <td className="text-sm font-semibold">LLT</td>
-          <td className="text-sm ">{formatGBP(quote.llt)}</td>
-          <td className="text-sm ">-</td>
-        </tr>
-      )}
-    </>
-  )}
-</tbody>
+                              {view_data.service_details.length === 1 && (
+                                <>
+                                  <div className="border-t border-gray-200 pt-6 flex justify-end">
+                                    <table className=" border-collapse text-black font">
+                                      <thead>
+                                        <tr className="border-b border-gray-300 text-left grid grid-cols-3 w-full gap-5">
+                                          <th className=" text-sm font-semibold  ">Type</th>
+                                          <th className="text-sm font-semibold  ">Fee Amount</th>
+                                          <th className="text-sm font-semibold ">VAT</th>
+                                        </tr>
+                                      </thead>
 
-                            </table>
-                          </div>
-        </>
-      )}
-    </>
-  )}
+                                      <tbody>
+
+                                        {/* Legal Fees */}
+                                        <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
+                                          <td className="text-sm font-bold">Legal Fees</td>
+                                          <td className="text-sm font-semibold text-emerald-600">{formatGBP(quote.legal_fees)}</td>
+                                          <td className="text-sm text-emerald-600 font-semibold">{formatGBP(quote.vat)}</td>
+                                        </tr>
+                                        <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
+                                          <td className="text-sm ">Supplements</td>
+                                          <td className="text-sm ">{formatGBP(quote.supplements)}</td>
+                                          <td className="text-sm ">  {formatGBP(quote.supplementsvat)}
+                                          </td>
+                                        </tr>
+
+                                        {/* Disbursements */}
+                                        <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
+                                          <td className="text-sm ">Disbursements</td>
+                                          <td className="text-sm ">{formatGBP(quote.disbursements)}</td>
+                                          <td className="text-sm ">
+                                            {formatGBP(quote.disbursementsvat)}
+                                          </td>
+                                        </tr>
+
+                                        {/* Country-Based Taxes (Optional Rows) */}
+
+
+                                        {/* TOTAL — Border ONLY ABOVE */}
+                                        <tr className="grid grid-cols-3 w-full gap-5 border-t border-gray-300 bg-gray-50">
+                                          <td className="text-sm font-semibold">Total</td>
+                                          <td className="text-sm font-semibold text-emerald-600">
+                                            {formatGBP(
+                                              Number(quote.supplements || 0) +
+                                              Number(quote.disbursements || 0) +
+                                              Number(quote.legal_fees || 0)
+                                            )}
+                                          </td>
+                                          <td className="text-sm font-semibold text-emerald-600">{formatGBP(Number(quote.disbursementsvat) + Number(quote.supplementsvat) + Number(quote.vat))}</td>
+                                        </tr>
+                                        {quote.service_details[0].service_type == 2 && (
+                                          <>
+                                            {(quote.service_details[0].country === "England" ||
+                                              quote.service_details[0].country === "Northern Ireland") && (
+                                                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200 pt-2">
+                                                  <td className="text-sm font-semibold ">Stamp Duty</td>
+                                                  <td className="text-sm ">{formatGBP(quote.stamp_duty)}</td>
+                                                  <td className="text-sm">-</td>
+                                                </tr>
+                                              )}
+
+                                            {quote.service_details[0].country === "Scotland" && (
+                                              <tr className="grid grid-cols-3 w-full gap-5  border-gray-200 pt-2">
+                                                <td className="text-sm font-semibold "> LBTT</td>
+                                                <td className="text-sm ">{formatGBP(quote.lbtt)}</td>
+                                                <td className="text-sm ">-</td>
+                                              </tr>
+                                            )}
+
+                                            {quote.service_details[0].country === "Wales" && (
+                                              <tr className="grid grid-cols-3 w-full gap-5  border-gray-200 pt-2">
+                                                <td className="text-sm font-semibold">LLT</td>
+                                                <td className="text-sm ">{formatGBP(quote.llt)}</td>
+                                                <td className="text-sm ">-</td>
+                                              </tr>
+                                            )}
+                                          </>
+                                        )}
+                                      </tbody>
+
+                                    </table>
+                                  </div>
+                                </>
+                              )}
+                            </>
+                          )}
 
 
 
                         {/* Description + Price Breakdown */}
-                   
-                       
-                      
+
+
+
                         {cardid === quote.conveying_details.conveying_id && viewquotes && (
                           <div className="fixed inset-0  z-50 flex items-center justify-center  top-10  animate-fadeIn">
                             <div className="bg-white h-[200px] rounded-2xl  w-[90%] min-h-screen overflow-y-auto text-center shadow-2xl border border-green-200 animate-popIn">
-                              <div className="absolute top-3 right-32 ">
+                             <div className="absolute  right-4 md:top-3 md:right-32">
                                 <button
-                                  className="text-4xl text-gray-700"
+                                  className="text-3xl md:text-4xl text-gray-700 p-2 md:p-0"
                                   onClick={() => showviewquotes(false)}
                                 >
                                   ×
                                 </button>
                               </div>
+
+
                               <div className="font-family min-h-screen p-5  text-black">
                                 {/* ---------- TOP BUTTONS ---------- */}
-                               <div className="grid grid-cols-12 items-center m-6 px-4">
-  <button
-    className="border px-4 py-2 rounded text-emerald-600 text-sm"
-    onClick={() => showviewquotes(false)}
-  >
-    Back
-  </button>
+                                <div className="grid grid-cols-12 items-center m-3 md:m-6 px-2 md:px-4">
+                                      {/* Back button - Left */}
+                                      <div className="col-span-4 md:col-span-1 flex justify-start">
+                                        <button
+                                          className="border px-2 py-1.5 md:px-4 md:py-2 rounded text-emerald-600 text-xs sm:text-sm"
+                                          onClick={() => showviewquotes(false)}
+                                        >
+                                          Back
+                                        </button>
+                                      </div>
 
-  <span className="text-[34px] col-span-8 me-1 p-2 leading-none font-extrabold text-[#1E5C3B] tracking-tight">
-    {view_data?.appsetting_details?.company_name || "MovWise"}
-  </span>
+                                      {/* Center Title */}
+                                      <div className="col-span-4 md:col-span-8 flex justify-center">
+                                        <span className="text-[18px] sm:text-[22px] md:text-[34px] p-1 md:p-2 leading-tight md:leading-none font-extrabold text-[#1E5C3B] tracking-tight text-center truncate max-w-full">
+                                          {view_data?.appsetting_details?.company_name || "MovWise"}
+                                        </span>
+                                      </div>
 
-  {/* Right side buttons */}
-  <div className="col-span-3 flex justify-end gap-4">
-<button
-  disabled={instructloader}
-  className={`border px-4 py-2 rounded text-sm cursor-pointer
-    ${instructloader 
-      ? "opacity-50 cursor-not-allowed" 
-      : "text-emerald-600"}`}
-  onClick={() => {
-    setTimeout(() => {
-      handleInstruct(
-        quote.conveying_details.company_name,
-        quote.guest_id,
-        quote.conveying_details.conveying_id,
-        quote.quote_id,
-        quote.customer_details.customer_id,
-        quote?.service_details[0]?.taxInfo?.quote_id,
-        quote.service_details[0].quote_ref_number,
-        pdfRef
-      );
-    }, 100);
-  }}
->
-  {instructloader ? "Processing..." : "Instruct"}
-</button>
-
-
-    {/* <button className="border px-4 py-2 rounded text-emerald-600 text-sm" onClick={generatePDF}>
+                                      {/* Instruct button - Right */}
+                                      <div className="col-span-4 md:col-span-3 flex justify-end">
+                                        <button
+                                          disabled={instructloader}
+                                          className={`border px-2 py-1.5 md:px-4 md:py-2 rounded text-xs sm:text-sm cursor-pointer
+                                            ${
+                                              instructloader
+                                                ? "opacity-50 cursor-not-allowed"
+                                                : "text-emerald-600"
+                                            }`}
+                                          onClick={() => {
+                                            setTimeout(() => {
+                                              handleInstruct(
+                                                quote.conveying_details.company_name,
+                                                quote.guest_id,
+                                                quote.conveying_details.conveying_id,
+                                                quote.quote_id,
+                                                quote.customer_details.customer_id,
+                                                quote?.service_details[0]?.taxInfo?.quote_id,
+                                                quote.service_details[0].quote_ref_number,
+                                                pdfRef
+                                              );
+                                            }, 100);
+                                          }}
+                                        >
+                                          {instructloader ? "Processing..." : "Instruct"}
+                                        </button>
+                                         {/* <button className="border px-4 py-2 rounded text-emerald-600 text-sm" onClick={generatePDF}>
       Download
     </button> */}
-  </div>
-</div>
-{instructloader && (
-<div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/5 backdrop-blur-sm">
-  <div className="h-9 w-9 animate-spin rounded-full border-4 border-emerald-700 border-t-transparent"></div>
-  <div className="mt-1 text-gray-600">
-    Processing...
-  </div>
-</div>
+                                      </div>
+                                    </div>
 
-)}
+                                {instructloader && (
+                                  <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/5 backdrop-blur-sm">
+                                    <div className="h-9 w-9 animate-spin rounded-full border-4 border-emerald-700 border-t-transparent"></div>
+                                    <div className="mt-1 text-gray-600">
+                                      Processing...
+                                    </div>
+                                  </div>
+
+                                )}
 
 
                                 {/* ---------- MAIN CONTAINER ---------- */}
-                               <div ref={pdfRef}  id ="quote-popup" className="border  rounded-lg bg-white shadow px-6 py-2 mb-2 space-y-2 quotes" style={{
-                                  backgroundColor: 'white', 
+                                <div ref={pdfRef} id="quote-popup" className="border  rounded-lg bg-white shadow px-6 py-2 mb-2 space-y-2 quotes" style={{
+                                  backgroundColor: 'white',
                                   color: 'black',
                                   padding: '24px',
                                   border: '1px solid #e5e7eb',
@@ -1578,58 +1553,59 @@ function handlefilterchange(selectedoption = []) {
                                     <tbody>
                                       {/* Company Logo Row */}
                                       <tr>
-                                        <td colSpan="2" className="p-4 text-left"> 
-                                          {view_data?.appsetting_details?.logo ? (
-                            <img
-                              width={140}
-                              height={100}
-                              src={view_data?.appsetting_details?.logo}
-                              alt={quote.company_name || "company logo"}
-                            />
-                          ) : (
-                             <span className="text-[34px] col-span-2 me-1 p-2 leading-none font-extrabold text-[#1E5C3B] tracking-tight">
-                                                {view_data?.appsetting_details?.company_name || "MovWise"}
-                                              </span> 
-                          )}
-                                          
-                                             </td>
-                                               
+                                        <td colSpan="2" className="p-4 text-left md:text-left text-center">
+                                      {view_data?.appsetting_details?.logo ? (
+                                        <img
+                                          width={140}
+                                          height={100}
+                                          src={view_data?.appsetting_details?.logo}
+                                          alt={quote.company_name || "company logo"}
+                                          className="mx-auto md:mx-0"
+                                        />
+                                      ) : (
+                                        <span className="block text-[22px] sm:text-[28px] md:text-[34px] me-1 p-2 leading-tight md:leading-none font-extrabold text-[#1E5C3B] tracking-tight text-center md:text-left">
+                                          {view_data?.appsetting_details?.company_name || "MovWise"}
+                                        </span>
+                                      )}
+                                    </td>
+
+
                                         <td>
-                                    
+
                                         </td>
-                                           {/* <td colSpan="2" className="p-3"> 
+                                        {/* <td colSpan="2" className="p-3"> 
                                              <span className="text-[34px] col-span-2 me-1 p-2 leading-none font-extrabold text-[#1E5C3B] tracking-tight">
                                                 {view_data?.appsetting_details?.company_name || "MovWise"}
                                               </span> 
                                              </td> */}
                                       </tr>
-                                  
+
                                       {/* Contact Details and User Details in Single Row */}
-                                      <tr className=" border-gray-200">
+                                      <tr className="border-gray-200 block md:table-row">
                                         {/* Contact Details Column */}
-                                        <td className="p-1  border-gray-200 align-top w-1/2">
-                                          <div className="bg-gray-50 p-3 rounded ">
+                                        <td className="p-1 border-gray-200 align-top w-full md:w-1/2 block md:table-cell">
+                                          <div className="bg-gray-50 p-3 rounded">
                                             <h4 className="font-semibold text-emerald-600 mb-3">Conveyancer Details</h4>
                                             <div className="space-y-2">
-                                              <div className="flex">
-                                                <span className="font-semibold  text-sm"> Name:</span>
-                                                <span className="text-sm"> {quote.conveying_details.company_name || "N/A"}</span>
+                                              <div className="flex flex-wrap gap-x-1">
+                                                <span className="font-semibold text-sm">Name:</span>
+                                                <span className="text-sm">{quote.conveying_details.company_name || "N/A"}</span>
                                               </div>
-                                              <div className="flex">
-                                                <span className="font-semibold  text-sm">Phone :</span>
+                                              <div className="flex flex-wrap gap-x-1">
+                                                <span className="font-semibold text-sm">Phone:</span>
                                                 <span className="text-sm">{view_data?.appsetting_details?.phone_number || "N/A"}</span>
                                               </div>
-                                              <div className="flex">
-                                                <span className="font-semibold  text-sm">Email :</span>
+                                              <div className="flex flex-wrap gap-x-1">
+                                                <span className="font-semibold text-sm">Email:</span>
                                                 <a
                                                   href={`mailto:${view_data?.appsetting_details?.email}`}
-                                                  className="text-emerald-600 text-sm"
+                                                  className="text-emerald-600 text-sm break-all"
                                                 >
                                                   {view_data?.appsetting_details?.email}
                                                 </a>
                                               </div>
-                                              <div className="flex">
-                                                <span className="font-semibold  text-sm">Quote Ref :</span>
+                                              <div className="flex flex-wrap gap-x-1">
+                                                <span className="font-semibold text-sm">Quote Ref:</span>
                                                 <span className="text-sm">{quote.service_details[0].quote_ref_id || "--"}</span>
                                               </div>
                                             </div>
@@ -1637,30 +1613,33 @@ function handlefilterchange(selectedoption = []) {
                                         </td>
 
                                         {/* User Details Column */}
-                                        <td className="p-1 align-top w-1/2">
+                                        <td className="p-1 align-top w-full md:w-1/2 block md:table-cell mt-2 md:mt-0">
                                           <div className="bg-gray-50 p-3 rounded">
                                             <h4 className="font-semibold text-emerald-600 mb-3">Client Details</h4>
                                             <div className="space-y-2">
-                                              <div className="flex">
-                                                <span className="font-semibold  text-sm">Name :</span>
-                                                <span className="text-sm">{quote?.customer_details?.first_name} {quote?.customer_details?.last_name}</span>
+                                              <div className="flex flex-wrap gap-x-1">
+                                                <span className="font-semibold text-sm">Name:</span>
+                                                <span className="text-sm">
+                                                  {quote?.customer_details?.first_name} {quote?.customer_details?.last_name}
+                                                </span>
                                               </div>
-                                              <div className="flex">
-                                                <span className="font-semibold  text-sm">Email :</span>
-                                                <span className="text-sm">{quote?.customer_details?.email || "--"}</span>
-                                               </div>
-                                              <div className="flex">
-                                                <span className="font-semibold  text-sm">Phone :</span>
+                                              <div className="flex flex-wrap gap-x-1">
+                                                <span className="font-semibold text-sm">Email:</span>
+                                                <span className="text-sm break-all">{quote?.customer_details?.email || "--"}</span>
+                                              </div>
+                                              <div className="flex flex-wrap gap-x-1">
+                                                <span className="font-semibold text-sm">Phone:</span>
                                                 <span className="text-sm">{quote?.customer_details?.phone_number || "--"}</span>
                                               </div>
-                                              <div className="flex">
-                                                <span className="font-semibold  text-sm">Address :</span>
+                                              <div className="flex flex-wrap gap-x-1">
+                                                <span className="font-semibold text-sm">Address:</span>
                                                 <span className="text-sm">{quote?.service_details[0]?.address || "--"}</span>
                                               </div>
                                             </div>
                                           </div>
                                         </td>
                                       </tr>
+
                                     </tbody>
                                   </table>
 
@@ -1668,67 +1647,67 @@ function handlefilterchange(selectedoption = []) {
 
                                   <div className="grid grid-cols-1 font gap-6">
                                     <div className="">
-                                    
+
 
                                       {view_data.service_details.length == 1 && (<>
-                                    {(view_data.service_details[0].service_type == 1 ) && <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails}  giftvalue={giftvalue} />  }
-                                   {(view_data.service_details[0].service_type == 2 ) && <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails}  giftvalue={giftvalue}  />}   
-                                   {(view_data.service_details[0].service_type == 4 ) && <RemortagePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails}  giftvalue={giftvalue}  />}  </>
-                                      )} 
+                                        {(view_data.service_details[0].service_type == 1) && <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} />}
+                                        {(view_data.service_details[0].service_type == 2) && <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} />}
+                                        {(view_data.service_details[0].service_type == 4) && <RemortagePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} />}  </>
+                                      )}
                                       {view_data.service_details.length > 1 && (<>
-                                  <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails}  giftvalue={giftvalue} /> <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[1]} companydata={companydata} cardid={cardid} taxDetails={taxDetails2} giftvalue={giftvalue} /></>)}   
-                                     
+                                        <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} /> <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[1]} companydata={companydata} cardid={cardid} taxDetails={taxDetails2} giftvalue={giftvalue} handleprice={handleprice} /></>)}
+
                                     </div>
 
-                                   
-                                    
+
+
                                   </div>
 
                                   {/* ---------- FEES SECTION ---------- */}
                                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                     <div className="">
-                                       </div>
-                                
-                                   </div>
-                                   
+                                    </div>
+
+                                  </div>
+
 
                                   <div className="  w-full"></div>
 
                                   {/* ---------- NOTES ---------- */}
                                   <div className="font">
-  <h4>Notes</h4>
+                                    <h4>Notes</h4>
 
-  {quote?.conveying_details?.notes ? (
-    <div
-      className="text-xs mt-4 font  text-start"
-      dangerouslySetInnerHTML={{
-        __html: DOMPurify.sanitize(quote.conveying_details.notes),
-      }}
-    />
-  ) : (
-    <p className="text-xs mt-4">
-      No notes provided by the firm.
-    </p>
-  )}
-</div>
+                                    {quote?.conveying_details?.notes ? (
+                                      <div
+                                        className="text-xs mt-4 font  text-start"
+                                        dangerouslySetInnerHTML={{
+                                          __html: DOMPurify.sanitize(quote.conveying_details.notes),
+                                        }}
+                                      />
+                                    ) : (
+                                      <p className="text-xs mt-4">
+                                        No notes provided by the firm.
+                                      </p>
+                                    )}
+                                  </div>
 
                                 </div>
                               </div>
                             </div>
                           </div>
                         )}
-                        
+
                       </div>
-                      
+
                     </div>
-                    
+
                   ))}
-                   <p></p>
+                  <p></p>
                 </div>
 
 
 
-                
+
               </div>
             </div>
 
@@ -1736,17 +1715,17 @@ function handlefilterchange(selectedoption = []) {
           </section>
 
 
-         
+
 
           {/* Popup Modal for Instruct */}
-         
-       </div>
+
+        </div>
       </main>
-      
-  
-  <footer className="fixed bottom-0 font  left-0 w-full text-center text-gray-700 text-sm py-2 z-50 bg-white p-1">
-  © {new Date().getFullYear()} MovWise. All rights reserved.
-</footer>
+
+
+      <footer className="fixed bottom-0 font  left-0 w-full text-center text-gray-700 text-sm py-2 z-50 bg-white p-1">
+        © {new Date().getFullYear()} MovWise. All rights reserved.
+      </footer>
     </div>
   );
 }
