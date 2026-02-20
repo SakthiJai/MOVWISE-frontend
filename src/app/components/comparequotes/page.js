@@ -355,153 +355,45 @@ function ComparequotesContent() {
       Swal.fire('Error', `Failed to generate PDF: ${error.message}`, 'error');
     }
   };
-  
+
   function handleInstructFromCard(
-    companyName,
-    guest_id,
-    conveyancer_id,
-    quote_id,
-    user_id,
-    tax_info_quote_id,
-    refno,
-    quote
+  companyName,
+  guest_id,
+  conveyancer_id,
+  quote_id,
+  user_id,
+  tax_info_quote_id,
+  refno,
+  quote
+) {
+  showviewquotes(true);
+  setcardid(conveyancer_id);
+  setcardshown(true);
+  setview_data(quote);
+  setdropdownshow(true);
+
+  setinstructloader(true);
+}
+const hasSentHtml = useRef(false);
+
+useEffect(() => {
+  if (
+    viewquotes &&
+    instructloader &&
+    pdfRef?.current &&
+    view_data &&
+    !hasSentHtml.current
   ) {
-    // Open the modal first
-    showviewquotes(true);
-    setcardid(conveyancer_id);
-    setcardshown(true);
-    setview_data(quote);
-    setdropdownshow(true);
-
-    // Wait 600ms for React to render pdfRef, then send mail
-    setLoader(true); // show loader
-
-    setTimeout(async () => {
-      try {
-        await handleInstruct(
-          companyName,
-          guest_id,
-          conveyancer_id,
-          quote_id,
-          user_id,
-          tax_info_quote_id,
-          refno,
-          pdfRef
-        );
-      } finally {
-        setLoader(false); // hide loader
-      }
-    }, 2000);
-
+    hasSentHtml.current = true;
+    sendHtmlToBackend();
   }
-
-  async function handleInstruct(
-    companyName,
-    guest_id,
-    conveyancer_id,
-    quote_id,
-    user_id,
-    tax_info_quote_id,
-    refno,
-    pdfRef
-  ) {
-    setinstructloader(true);
-
-    try {
-      console.log("🚀 [handleInstruct] Starting");
-      console.log("Parameters received:", {
-        companyName,
-        guest_id,
-        conveyancer_id,
-        quote_id,
-        user_id,
-        tax_info_quote_id,
-        refno,
-        pdfRefExists: !!pdfRef,
-        pdfRefCurrentExists: !!pdfRef?.current
-      });
-
-      // STEP 4.1: Convert popup HTML to image
-      console.log("📸 [handleInstruct] Calling capturePopupImage...");
-      let image;
-      try {
-        image = await capturePopupImage(pdfRef);
-        console.log("✅ [handleInstruct] Image captured successfully");
-      } catch (captureError) {
-        console.error("❌ [handleInstruct] Failed to capture image:", captureError);
-        image = null;
-      }
-
-      // STEP 4.2: Prepare payload
-      let servicetype = localStorage.getItem("service");
-      let finalQuoteId = quote_id || tax_info_quote_id;
-
-      let instructpayload = {
-        ref_no: refno,
-        servicetype: servicetype,
-        quoteid: finalQuoteId,
-        popup_image: image, // ✅ send base64 image
-      };
-
-      console.log("📋 [handleInstruct] Payload prepared:", {
-        ref_no: instructpayload.ref_no,
-        servicetype: instructpayload.servicetype,
-        quoteid: instructpayload.quoteid,
-        popup_image: instructpayload.popup_image ? "✅ Present (" + instructpayload.popup_image.length + " chars)" : "❌ NULL"
-      });
-
-      // STEP 4.3: Call your backend API
-      instructquote(instructpayload);
-
-    } catch (error) {
-      console.error("❌ [handleInstruct] Failed:", error);
-      setinstructloader(false);
-    }
+}, [viewquotes, instructloader, view_data]);
+useEffect(() => {
+  if (!viewquotes) {
+    hasSentHtml.current = false;
   }
+}, [viewquotes]);
 
-
-  async function capturePopupImage(pdfRef) {
-    try {
-      console.log("🔍 [capturePopupImage] Starting...");
-      console.log("pdfRef exists?", !!pdfRef);
-      console.log("pdfRef.current exists?", !!pdfRef?.current);
-
-      if (!pdfRef?.current) {
-        console.error("❌ pdfRef.current is null");
-        throw new Error("Popup not rendered");
-      }
-
-      const element = pdfRef.current;
-      console.log("✅ Element found:", {
-        tag: element.tagName,
-        id: element.id,
-        visible: element.offsetHeight > 0 && element.offsetWidth > 0,
-        height: element.offsetHeight,
-        width: element.offsetWidth
-      });
-
-      // Check if element has content
-      if (element.offsetHeight === 0 || element.offsetWidth === 0) {
-        console.error("❌ Element has zero dimensions");
-        throw new Error("Element not visible");
-      }
-
-      console.log("🎨 Calling toPng...");
-      const imageData = await toPng(element, {
-        backgroundColor: "#ffffff",
-        pixelRatio: 2,
-        cacheBust: true,
-        quality: 0.95,
-      });
-
-      console.log("✅ Image generated successfully, size:", imageData.length);
-      return imageData;
-    } catch (error) {
-      console.error("❌ [capturePopupImage] Error:", error.message);
-      console.error("Full error:", error);
-      throw error;
-    }
-  }
 
   async function instructquote(instructpayload) {
     try {
@@ -519,6 +411,36 @@ function ComparequotesContent() {
       console.error("API error:", e);
     }
   }
+
+  async function sendHtmlToBackend() {
+  try {
+    if (!pdfRef?.current) return;
+
+    // Remove scroll restrictions before capture
+    pdfRef.current.style.maxHeight = "none";
+    pdfRef.current.style.overflow = "visible";
+    pdfRef.current.style.height = "auto";
+
+    const htmlContent = pdfRef.current.outerHTML;
+
+    let servicetype = localStorage.getItem("service");
+
+    const payload = {
+      ref_no: view_data?.service_details?.[0]?.quote_ref_number,
+      servicetype: servicetype,
+      quoteid: view_data?.quote_id,
+      popup_html: htmlContent,   // ✅ IMPORTANT
+    };
+
+    await instructquote(payload);
+
+  } catch (error) {
+    console.error("Error sending HTML:", error);
+  } finally {
+    setinstructloader(false);
+  }
+}
+
 
   const router = useRouter();
   useEffect(() => {
@@ -627,24 +549,19 @@ useEffect(() => {
       showviewquotes(true);
       setcardshown(true);
       setview_data(selectedQuote);
+      toggleDropdown(selectedQuote.conveying_details.conveying_id);
 
-      // Wait a bit for React to render modal
-      setTimeout(() => {
-        // Toggle dropdown like the button
-        toggleDropdown(selectedQuote.conveying_details.conveying_id);
+handleInstructFromCard(
+  selectedQuote.conveying_details.company_name,
+  selectedQuote.guest_id,
+  selectedQuote.conveying_details.conveying_id,
+  selectedQuote.quote_id,
+  selectedQuote.customer_details.customer_id,
+  selectedQuote?.service_details[0]?.taxInfo?.quote_id,
+  selectedQuote.service_details[0].quote_ref_number,
+  selectedQuote
+);
 
-        // Then instruct
-        handleInstructFromCard(
-          selectedQuote.conveying_details.company_name,
-          selectedQuote.guest_id,
-          selectedQuote.conveying_details.conveying_id,
-          selectedQuote.quote_id,
-          selectedQuote.customer_details.customer_id,
-          selectedQuote?.service_details[0]?.taxInfo?.quote_id,
-          selectedQuote.service_details[0].quote_ref_number,
-          selectedQuote
-        );
-      }, 300); // 300ms is usually enough, adjust if needed
     }
   }
 }, [searchParams, quoteData]);
@@ -1176,8 +1093,8 @@ useEffect(() => {
                                   : "bg-[#4A7C59] hover:bg-[#3b6248] text-white"}`}
                               onClick={() => {
 
-                                setTimeout(() => {
-                                  toggleDropdown(quote.conveying_details.conveying_id);
+                                 toggleDropdown(quote.conveying_details.conveying_id);
+
                                   handleInstructFromCard(
                                     quote.conveying_details.company_name,
                                     quote.guest_id,
@@ -1187,8 +1104,7 @@ useEffect(() => {
                                     quote?.service_details[0]?.taxInfo?.quote_id,
                                     quote.service_details[0].quote_ref_number,
                                     quote
-                                  )
-                                }, 2000);
+                                  );
 
                               }
 
@@ -1501,20 +1417,19 @@ useEffect(() => {
                                                 ? "opacity-50 cursor-not-allowed"
                                                 : "text-emerald-600"
                                             }`}
-                                          onClick={() => {
-                                            setTimeout(() => {
-                                              handleInstruct(
-                                                quote.conveying_details.company_name,
-                                                quote.guest_id,
-                                                quote.conveying_details.conveying_id,
-                                                quote.quote_id,
-                                                quote.customer_details.customer_id,
-                                                quote?.service_details[0]?.taxInfo?.quote_id,
-                                                quote.service_details[0].quote_ref_number,
-                                                pdfRef
-                                              );
-                                            }, 100);
-                                          }}
+                                                onClick={() => {
+                                                  handleInstructFromCard(
+                                                    quote.conveying_details.company_name,
+                                                    quote.guest_id,
+                                                    quote.conveying_details.conveying_id,
+                                                    quote.quote_id,
+                                                    quote.customer_details.customer_id,
+                                                    quote?.service_details[0]?.taxInfo?.quote_id,
+                                                    quote.service_details[0].quote_ref_number,
+                                                    quote
+                                                  );
+                                                }}
+
                                         >
                                           {instructloader ? "Processing..." : "Instruct"}
                                         </button>
@@ -1583,7 +1498,7 @@ useEffect(() => {
                                       {/* Contact Details and User Details in Single Row */}
                                       <tr className="border-gray-200 block md:table-row">
                                         {/* Contact Details Column */}
-                                        <td className="p-1 border-gray-200 align-top w-full md:w-1/2 block md:table-cell">
+                                        <td className="p-1 border-gray-200 align-top w-full md:w-1/2 sm:w block md:table-cell">
                                           <div className="bg-gray-50 p-3 rounded">
                                             <h4 className="font-semibold text-emerald-600 mb-3">Conveyancer Details</h4>
                                             <div className="space-y-2">

@@ -70,7 +70,7 @@ export default function PurchasePropertyDetails({
         </div>
 
         <div className="overflow-x-auto md:overflow-visible">
-          <table className="w-full border-collapse min-w-[360px] md:min-w-0">
+          <table className="w-full border-collapse ">
             <tbody>
               {[
                 ["Stages", servicData?.stages],
@@ -89,14 +89,23 @@ export default function PurchasePropertyDetails({
                 ["LTA ISA", servicData?.purchase_lifetime_isa == 0 ? "No" : "Yes"],
                 ["HMO Support", servicData?.purchase_need_hmo == 0 ? "No" : "Yes"],
               ].map(([label, value], i) => (
-                <tr key={i} className="border-gray-200 block md:table-row mb-2 md:mb-0">
-                  <td className="p-2 font-semibold w-full md:w-40 text-left font_size_13px block md:table-cell">
-                    {label}
-                  </td>
-                  <td className="p-2 text-left font_size_13px block md:table-cell break-words">
-                    {value || "--"}
-                  </td>
-                </tr>
+                // <tr key={i} className="border-gray-200 block md:table-row mb-2 md:mb-0">
+                //   <td className="p-2 md:px-1 md:py-1 font-semibold w-full md:w-40 text-left font_size_13px block md:table-cell">
+
+                //     {label}
+                //   </td>
+                //   <td className="p-2 text-left font_size_13px block md:table-cell break-words">
+                //     {value || "--"}
+                //   </td>
+                // </tr>
+                 <tr key={i} className="border-b border-gray-200">
+      <td className="p-1 text-sm">
+        <div className="flex flex-wrap gap-x-2">
+          <span className="font-semibold">{label}:</span>
+          <span>{value || "--"}</span>
+        </div>
+      </td>
+    </tr>
               ))}
             </tbody>
           </table>
@@ -104,7 +113,7 @@ export default function PurchasePropertyDetails({
       </div>
 
       {/* Right Column */}
-      <div className="font_size_13px">
+     <div className="font_size_13px mt-6 md:mt-0">
         <div className="font p-3">
           <h3
             className="text-lg text-start text-emerald-600 font-semibold mb-3 cursor-pointer"
