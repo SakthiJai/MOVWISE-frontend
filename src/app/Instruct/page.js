@@ -37,7 +37,7 @@ We appreciate your interest in Movwise services and remain committed to providin
               </ul>
 
               <p className="text-xl font-semibold text-emerald-800 border-t border-emerald-200 pt-4 mt-4">
-             A small price for complete peace of mind — especially when every property detail matters.
+             Movwise-Trusted Partner price for complete peace of mind — especially when every property detail matters.
               </p>
           </div>
       </section>

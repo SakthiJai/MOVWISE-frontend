@@ -54,9 +54,11 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
     const errors = {};
 
     if (!guestformsdata.firstname?.trim()) {
-      errors.firstname = "first name is required";
+      errors.firstname = "First name is required";
     }
-
+  if(!guestformsdata.lastname?.trim()){
+    errors.lastname="Last name is Required";
+  }
     if (!guestformsdata.guest_email) {
       errors.guest_email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestformsdata.guest_email)) {
@@ -624,11 +626,11 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
                   First Name
                 </label>
                 <input
-                  id="Name"
-                  name="guest_name"
+                  id="firstname"
+                  name="firstname"
                   type="text"
 
-                  placeholder="Enter your Name"
+                  placeholder="Enter your First Name"
                   value={guestformsdata.firstname || ""}
                   onChange={(e) =>
                     handleguestformchange("firstname", e.target.value)
@@ -640,6 +642,7 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
                   <p className="text-red-500 text-xs mt-1">{formErrors.firstname}</p>
                 )}
               </div>
+              <div className="mb-3 md:mb-4">
               <label
                 htmlFor="Name"
                 className="block text-sm font-semibold text-gray-700 mb-2"
@@ -647,18 +650,24 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
                 Last Name
               </label>
               <input
-                id="Name"
-                name="guest_name"
+                id="lastname"
+                name="lastname"
                 type="text"
 
-                placeholder="Enter your Name"
+                placeholder="Enter your Last Name"
                 value={guestformsdata.lastname || ""}
                 onChange={(e) =>
                   handleguestformchange("lastname", e.target.value)
                 }
-                autoComplete="current-password"
+                autoComplete="family-name"
                 className="block w-full h-[40px] md:h-[44px] mb-3 md:mb-4 rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
               />
+              {formErrors.lastname && (
+                <p className="text-red-500 text-xs mt-1">
+                  {formErrors.lastname}
+                </p>
+              )}
+              </div>
               <div className="mb-4 md:mb-5">
                 <label
                   htmlFor="email"

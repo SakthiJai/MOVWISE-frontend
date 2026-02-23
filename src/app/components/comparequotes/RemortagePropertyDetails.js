@@ -17,18 +17,18 @@ import Footer from "../../parts/Footer/footer";
 import SalesPurchasePropertyDetails from "./Sales_Purchase_PropertyDetails";
 import Select from 'react-select';
 
-export default function RemortagePropertyDetails({quote, servicData,companydata,cardid,taxDetails,giftvalue }) {
-    const [language, setlanguage] = useState([]);
-    async function fetchapi() {
-      try {
-        const res = await getData(API_ENDPOINTS.languages);
-        const language = res.users;
-        console.log(language);
-        setlanguage(language);
-      } catch (e) {
-        console.log(e);
-      }
-    }
+export default function RemortagePropertyDetails({quote, servicData,companydata,cardid,taxDetails,giftvalue,language }) {
+    // const [language, setlanguage] = useState([]);
+    // async function fetchapi() {
+    //   try {
+    //     const res = await getData(API_ENDPOINTS.languages);
+    //     const language = res.users;
+    //     console.log(language);
+    //     setlanguage(language);
+    //   } catch (e) {
+    //     console.log(e);
+    //   }
+    // }
 
   return (
       <div className="grid grid-cols-[0.5fr_1fr] p-1 border font  rounded-lg bg-white shadow px-6 py-2 mb-2 space-y-2 quotes  font_size_13px"  style={{

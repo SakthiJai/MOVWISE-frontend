@@ -25,31 +25,32 @@ export default function SalesPropertyDetails({
   cardid,
   taxDetails,
   giftvalue,
+  language
   
 }) {
-  const [language, setlanguage] = useState([]);
-  console.log("sales");
-  console.log(quote,
-  servicData,
-  companydata,
-  cardid,
-  taxDetails,
-  giftvalue,)
+  // const [language, setlanguage] = useState([]);
+  // console.log("sales");
+  // console.log(quote,
+  // servicData,
+  // companydata,
+  // cardid,
+  // taxDetails,
+  // giftvalue,)
 
-  async function fetchapi() {
-    try {
-      const res = await getData(API_ENDPOINTS.languages);
-      const language = res.users;
-      console.log(taxDetails);
-      setlanguage(language);
-    } catch (e) {
-      console.log(e);
-    }
-  }
+  // async function fetchapi() {
+  //   try {
+  //     const res = await getData(API_ENDPOINTS.languages);
+  //     const language = res.users;
+  //     console.log(taxDetails);
+  //     setlanguage(language);
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // }
 
-  useEffect(() => {
-    fetchapi();
-  }, []);
+  // useEffect(() => {
+  //   fetchapi();
+  // }, []);
 
   return (
     <div className="grid grid-cols-[0.5fr_1fr] p-1 border font  rounded-lg bg-white shadow px-6 py-2 mb-2 space-y-2 quotes  font_size_13px"  style={{

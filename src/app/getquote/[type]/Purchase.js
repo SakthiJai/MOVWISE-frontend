@@ -271,7 +271,7 @@ export default function Purchase() {
 
   const [highRaiseSupport, setHighRaiseSupport] = useState("");
 
-
+//fff
   const [query, setQuery] = useState("");
   const fetchPropertyTypes = async () => {
     localStorage.removeItem("getquote");
@@ -605,34 +605,64 @@ export default function Purchase() {
                 <LocationSearch
                   ref={purchaseRef}
                   readOnly={showAddressLines}
+                  // onSelectAddress={async (selected) => {
+                  //   if (!selected) return;
+                  //   // Clear address error immediately when selecting
+                  //   //  if (errors.address) {
+                  //   //   setErrors((prev) => ({ ...prev, address: "" }));
+                  //   //   }
+                  //   // Update formData with selected suggestion
+                  //   setFormData((prev) => ({
+                  //     ...prev,
+                  //     selectedId: selected.id,
+                  //     address: selected.suggestion,
+                  //   }));
+                  //   // Fetch full address details
+                  //   console.log(purchaseRef);
+                  //   const details = purchaseRef.current?.onSelectAddressFullDetails?.();
+                  //   if (details) {
+                  //     setFormData((prev) => ({
+                  //       ...prev,
+                  //       town_city: details.post_town || details.admin_district || "",
+                  //       country: details.country || "",
+                  //     }));
+                  //   } else {
+                  //     setErrors((prev) => ({
+                  //       ...prev,
+                  //       address: "Failed to fetch full address details.",
+                  //     }));
+                  //   }
+                  // }}
                   onSelectAddress={async (selected) => {
-                    if (!selected) return;
-                    // Clear address error immediately when selecting
-                    //  if (errors.address) {
-                    //   setErrors((prev) => ({ ...prev, address: "" }));
-                    //   }
-                    // Update formData with selected suggestion
+                  if (!selected) return;
+
+                  const details = purchaseRef.current?.onSelectAddressFullDetails?.();
+
+                  if (details) {
+                    // Build full postcode correctly
+                    const fullPostcode = details.postcode || "";
+
+                    // If suggestion already contains postcode, don't duplicate
+                    const fullAddress = selected.suggestion.includes(fullPostcode)
+                      ? selected.suggestion
+                      : `${selected.suggestion} ${fullPostcode}`;
+
                     setFormData((prev) => ({
                       ...prev,
                       selectedId: selected.id,
-                      address: selected.suggestion,
+                      address: fullAddress,                 // ✅ FULL ADDRESS STORED
+                      postcode: fullPostcode,               // ✅ store separately (recommended)
+                      town_city: details.post_town || details.admin_district || "",
+                      country: details.country || "",
                     }));
-                    // Fetch full address details
-                    console.log(purchaseRef);
-                    const details = purchaseRef.current?.onSelectAddressFullDetails?.();
-                    if (details) {
-                      setFormData((prev) => ({
-                        ...prev,
-                        town_city: details.post_town || details.admin_district || "",
-                        country: details.country || "",
-                      }));
-                    } else {
-                      setErrors((prev) => ({
-                        ...prev,
-                        address: "Failed to fetch full address details.",
-                      }));
-                    }
-                  }}
+
+                  } else {
+                    setErrors((prev) => ({
+                      ...prev,
+                      address: "Failed to fetch full address details.",
+                    }));
+                  }
+                }}
                   onInputChange={() => {
                     // Clear the error immediately when user types
                     if (errors.address) {

@@ -139,58 +139,56 @@ function ComparequotesContent() {
   const [giftvalue, setgiftvalue] = useState(0);
   const [conveyancerid, setconveyancerid] = useState(0);
   let call = false;
-  const CircularProgress = ({ progress, label }) => {
-    const radius = 16;
-    const stroke = 4;
-    const size = radius * 2 + stroke; // 36
-    const circumference = 2 * Math.PI * radius;
 
-    const offset = circumference - (progress / 100) * circumference;
+const CircularProgress = ({ progress }) => {
+  const radius = 16;
+  const stroke = 4;
+  const size = radius * 2 + stroke; // 36
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (progress / 100) * circumference;
 
-    return (
-      <div className="flex items-center">
-        <div className="relative w-10 h-10">
-          <svg
-            width={size}
-            height={size}
-            viewBox={`0 0 ${size} ${size}`}
-            className="-rotate-90"
-            aria-label={`${label} progress`}
-          >
-            <circle
-              cx={size / 2}
-              cy={size / 2}
-              r={radius}
-              stroke="#e6e6e6"
-              strokeWidth={stroke}
-              fill="transparent"
-            />
-            <circle
-              cx={size / 2}
-              cy={size / 2}
-              r={radius}
-              stroke="#16a34a"
-              strokeWidth={stroke}
-              fill="transparent"
-              strokeLinecap="round"
-              strokeDasharray={circumference}
-              strokeDashoffset={offset}
-              style={{ transition: "stroke-dashoffset 0.35s" }}
-            />
-          </svg>
+  return (
+    <div className="flex flex-col items-center">
+      <div className="relative w-10 h-10">
+        <svg
+          width={size}
+          height={size}
+          viewBox={`0 0 ${size} ${size}`}
+          className="-rotate-90"
+        >
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            stroke="#e6e6e6"
+            strokeWidth={stroke}
+            fill="transparent"
+          />
+          <circle
+            cx={size / 2}
+            cy={size / 2}
+            r={radius}
+            stroke="#3b6248"
+            strokeWidth={stroke}
+            fill="transparent"
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            style={{ transition: "stroke-dashoffset 0.35s" }}
+          />
+        </svg>
 
-          {/* Centered text */}
-          <div className="absolute text-[10px] inset-0 flex items-center justify-center font-bold text-green-800 text-sm select-none">
-            {progress}%
-          </div>
+        {/* Centered text */}
+        <div
+          className="absolute inset-0 flex items-center justify-center select-none"
+          style={{ fontSize: "9px", fontWeight: "700", lineHeight: 1 }}
+        >
+          {progress}%
         </div>
-
-        <div className="text-gray-700 text-sm">{label}</div>
       </div>
-    );
-  };
-
-
+    </div>
+  );
+};
 
 
 
@@ -235,6 +233,19 @@ function ComparequotesContent() {
 
     fetchtaxdetails(id);
   }
+  const [language, setLanguage] = useState([]);
+
+useEffect(() => {
+  async function fetchLanguages() {
+    try {
+      const res = await getData(API_ENDPOINTS.languagelist);
+      setLanguage(res.users || []);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  fetchLanguages();
+}, []);
 
   function handleprice() {
     console.log(companydata)
@@ -382,12 +393,13 @@ useEffect(() => {
     instructloader &&
     pdfRef?.current &&
     view_data &&
+    language?.length > 0 && 
     !hasSentHtml.current
   ) {
     hasSentHtml.current = true;
     sendHtmlToBackend();
   }
-}, [viewquotes, instructloader, view_data]);
+}, [viewquotes, instructloader, view_data,language]);
 useEffect(() => {
   if (!viewquotes) {
     hasSentHtml.current = false;
@@ -1029,29 +1041,33 @@ handleInstructFromCard(
                                 {quote.conveying_details.ratings || 4} out of 5
                               </span>
                             </div>
-                            <div className="flex gap-8 mt-3">
-                              <div className="relative flex flex-col items-center cursor-pointer group">
-                                {/* Tooltip */}
-                                <span className="absolute -top-6 text-xs bg-black text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                                  Recommended
-                                </span>
-                                <CircularProgress progress={quote.conveying_details.recomended || 80} />
-                              </div>
-
-                              <div className="relative flex flex-col items-center cursor-pointer group">
-                                <span className="absolute -top-6 text-xs bg-black text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                                  SRA
-                                </span>
-                                <CircularProgress progress={quote.conveying_details.sra || 90} />
-                              </div>
-
-                              <div className="relative flex flex-col items-center cursor-pointer group">
-                                <span className="absolute -top-6 text-xs bg-black text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                                  Reliable
-                                </span>
-                                <CircularProgress progress={quote.conveying_details.reliable || 85} />
-                              </div>
+                           <div className="flex gap-4 mt-3">
+  
+                            {/* Recommended */}
+                            <div className="flex flex-col items-center">
+                              <CircularProgress progress={quote.conveying_details.recomended || 80} />
+                              <span className="mt-1 bg-[#3b6248] text-white text-[10px] px-2 py-0.5 rounded-md">
+                                Recommended
+                              </span>
                             </div>
+
+                            {/* SRA */}
+                            <div className="flex flex-col items-center">
+                              <CircularProgress progress={quote.conveying_details.sra || 90} />
+                              <span className="mt-1 bg-[#3b6248] text-white text-[10px] px-2 py-0.5 rounded-md">
+                                SRA
+                              </span>
+                            </div>
+
+                            {/* Reliable */}
+                            <div className="flex flex-col items-center">
+                              <CircularProgress progress={quote.conveying_details.reliable || 85} />
+                              <span className="mt-1 bg-[#3b6248] text-white text-[10px] px-2 py-0.5 rounded-md">
+                                Reliable
+                              </span>
+                            </div>
+
+                          </div>
 
                             {/* <p className="text-sm mt-1">
                               <span className="font-bold text-[#4A7C59]">
@@ -1090,7 +1106,9 @@ handleInstructFromCard(
                               className={`px-3 py-1.5 rounded-full text-sm cursor-pointer
                                 ${instructloader
                                   ? "bg-[#4A7C59]/70 cursor-not-allowed"
-                                  : "bg-[#4A7C59] hover:bg-[#3b6248] text-white"}`}
+                                  : "bg-[#4A7C59] hover:bg-[#3b6248] text-white"}
+                                      mx-auto  // This will center the button horizontally
+                                      block md:inline-block  // Ensures it is block on mobile and inline-block on desktop`}
                               onClick={() => {
 
                                  toggleDropdown(quote.conveying_details.conveying_id);
@@ -1403,7 +1421,13 @@ handleInstructFromCard(
                                       {/* Center Title */}
                                       <div className="col-span-4 md:col-span-8 flex justify-center">
                                         <span className="text-[18px] sm:text-[22px] md:text-[34px] p-1 md:p-2 leading-tight md:leading-none font-extrabold text-[#1E5C3B] tracking-tight text-center truncate max-w-full">
-                                          {view_data?.appsetting_details?.company_name || "MovWise"}
+                                          <img
+                                          width={140}
+                                          height={100}
+                                          src={view_data?.appsetting_details?.logo}
+                                          alt={quote.company_name || "company logo"}
+                                          className="mx-auto md:mx-0"
+                                        />
                                         </span>
                                       </div>
 
@@ -1565,9 +1589,9 @@ handleInstructFromCard(
 
 
                                       {view_data.service_details.length == 1 && (<>
-                                        {(view_data.service_details[0].service_type == 1) && <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} />}
-                                        {(view_data.service_details[0].service_type == 2) && <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} />}
-                                        {(view_data.service_details[0].service_type == 4) && <RemortagePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} />}  </>
+                                        {(view_data.service_details[0].service_type == 1) && <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} />}
+                                        {(view_data.service_details[0].service_type == 2) && <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} />}
+                                        {(view_data.service_details[0].service_type == 4) && <RemortagePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language}/>}  </>
                                       )}
                                       {view_data.service_details.length > 1 && (<>
                                         <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} /> <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[1]} companydata={companydata} cardid={cardid} taxDetails={taxDetails2} giftvalue={giftvalue} handleprice={handleprice} /></>)}
