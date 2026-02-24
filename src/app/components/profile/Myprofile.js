@@ -59,17 +59,19 @@ const Myprofile = () => {
 useEffect(() => {
   if (localStorage.getItem("logintype")) {
     let user_type = localStorage.getItem("logintype")
-    setlogintype(user_type);
+      setlogintype(user_type);
 
-    fetchapi();
-  }
-}, []);  
+      fetchapi();
+    }
+  }, []);  
 
-  useEffect(() => {
-  if (selectedQuoteId && childRef.current) {
-    childRef.current.refreshCard();
-  }
-}, [selectedQuoteId]);
+    useEffect(() => {
+    if (selectedQuoteId && childRef.current) {
+      childRef.current.refreshCard();
+    }
+  }, [selectedQuoteId]);
+
+
 
 
 
@@ -363,7 +365,7 @@ let response = await postData(
        <div className="mt-3">
         
   <img
-    src={preview || user.logo}
+    src={preview || user.logo||null}
       
     className="w-32 h-32 object-cover rounded-full border text-center text-gray-400"
   />

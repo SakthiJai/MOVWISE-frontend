@@ -10,7 +10,7 @@ import SalesPurchasePropertyDetails from "../comparequotes/Sales_Purchase_Proper
 import RemortagePropertyDetails from "../comparequotes/RemortagePropertyDetails";
 
 const PriceBreakdownCard = forwardRef(({ companydetails, quoteId,quoteUser }, ref) => {
-  
+  console.log("companydetails",companydetails);
 
   const [logintype,setlogintype]=useState()
   const [feeCategory, setfeeCategory] = useState({});
@@ -21,39 +21,107 @@ const router = useRouter();
   
 const timers = useRef({});
  
- 
+ const [view_data, setview_data] = useState({service_details: []});
 
-   useEffect(() => {
+//    useEffect(() => {
 
     
-     if(localStorage.getItem("logintype")){
-     setlogintype(localStorage.getItem("logintype"));
-     console.log(companydetails)
-     const grouped = companydetails[0].taxDetails.reduce((acc, item) => {
-  if (!acc[item.fees_category]) {
-    acc[item.fees_category] = [];
+//      if(localStorage.getItem("logintype")){
+//      setlogintype(localStorage.getItem("logintype"));
+//      console.log(companydetails)
+//      const grouped = companydetails[0].taxDetails.reduce((acc, item) => {
+//   if (!acc[item.fees_category]) {
+//     acc[item.fees_category] = [];
+//   }
+//   acc[item.fees_category].push(item);
+//   return acc;
+// }, {});
+// settaxDetails(grouped);
+// console.log("Grouped Tax Details:", grouped);
+// let selectedquote=companydetails.filter((item)=>item.quote_id==quoteId);
+// console.log("seleceted:",selectedquote);
+
+//  const totalTaxVat = companydetails[0].taxDetails.reduce((sum, item) => {
+//     if(item.vat==1){
+//       sum+=Number(item.fee_amount*0.2)
+//     }
+//    return sum;
+// }, 0);
+
+// console.log("Total VAT:", totalTaxVat);
+// setvattax(totalTaxVat);
+ 
+//      }
+    
+//   }, []);
+ useEffect(() => {
+  if (!companydetails || !quoteId) return;
+
+  const loginTypeFromStorage = localStorage.getItem("logintype");
+  if (loginTypeFromStorage) {
+    setlogintype(loginTypeFromStorage);
   }
-  acc[item.fees_category].push(item);
-  return acc;
-}, {});
-settaxDetails(grouped);
-console.log("Grouped Tax Details:", grouped);
-let selectedquote=companydetails.filter((item)=>item.quote_id==quoteId);
-console.log("seleceted:",selectedquote);
 
- const totalTaxVat = companydetails[0].taxDetails.reduce((sum, item) => {
-    if(item.vat==1){
-      sum+=Number(item.fee_amount*0.2)
+  // ✅ Find the selected quote based on property_id
+  const selected = companydetails.find(
+    (item) => item.property_id == quoteId
+  );
+
+  if (!selected) return;
+
+  console.log("Selected Quote:", selected);
+
+  // ✅ Group tax details safely
+  const grouped = (selected.taxDetails || []).reduce((acc, item) => {
+    if (!acc[item.fees_category]) {
+      acc[item.fees_category] = [];
     }
-   return sum;
-}, 0);
+    acc[item.fees_category].push(item);
+    return acc;
+  }, {});
 
-console.log("Total VAT:", totalTaxVat);
-setvattax(totalTaxVat);
- 
-     }
-    
-  }, []);
+  settaxDetails(grouped);
+  console.log("Grouped Tax Details:", grouped);
+
+  // ✅ Calculate total VAT safely
+  const totalTaxVat = (selected.taxDetails || []).reduce((sum, item) => {
+    if (item.vat == 1) {
+      sum += Number(item.fee_amount) * 0.2;
+    }
+    return sum;
+  }, 0);
+
+  setvattax(totalTaxVat);
+  console.log("Total VAT:", totalTaxVat);
+
+}, [companydetails, quoteId]);
+
+useEffect(() => {
+  if (!quoteId) return;
+
+  async function fetchQuoteDetails() {
+    try {
+      setlogintype(localStorage.getItem("logintype"));
+
+      const refNumber = localStorage.getItem("ref_no"); 
+      if (!refNumber) return;
+
+      const quoteResponse = await getData(
+        `${API_ENDPOINTS.quotesfilter}/${refNumber}`
+      );
+
+      if (quoteResponse?.status === false) return;
+
+      setview_data(quoteResponse.data[0]);
+      
+
+    } catch (error) {
+      console.error("❌ API Error:", error);
+    }
+  }
+
+  fetchQuoteDetails();
+}, [quoteId]);
 
 
   const [activeIndex, setActiveIndex] = useState();
@@ -146,13 +214,12 @@ setvattax(totalTaxVat);
                       </p>
                       </div>
                       <div>
-                          {(item.service_type == 3 ) && <SalesPropertyDetails quote={item}  page="profile"/>}   
-                          {(item.service_type== 2 ) && <PurchasePropertyDetails quote={item}  page="profile"/>}   
-                          {(item.service_type == 1 ) && <SalesPurchasePropertyDetails quote={item}  page="profile"/>}   
-                          {(item.service_type == 4 ) && <RemortagePropertyDetails quote={item}  page="profile"/>}  
-                                                         
+                          {(item.service_type == 3 ) && <SalesPropertyDetails quote={item}  page="profile" servicData={view_data.service_details[0]} />}   
+                          {(item.service_type== 2 ) && <PurchasePropertyDetails quote={item}  page="profile" hide={true}  servicData={view_data.service_details[0]}  />}   
+                          {(item.service_type == 1 ) && <SalesPurchasePropertyDetails quote={item}  page="profile" servicData={view_data.service_details[0]}/>}   
+                          {(item.service_type == 4 ) && <RemortagePropertyDetails quote={item}  page="profile" servicData={view_data.service_details[0]}/>}  
                         </div>
-                     
+
                     </div>
                   )
               )}
@@ -173,87 +240,85 @@ setvattax(totalTaxVat);
     </thead>
 
     <tbody>
-      {companydetails
-        .filter((item) => item.property_id == quoteId)
-        .map((item, index) => (
-          <React.Fragment key={index}>
-          
-            <tr className="border-b border-gray-200">
-              <td className="p-2 break-words font-semibold ">{`Legal Fees`}</td>
-              <td className="p-2 text-right ">{formatGBP(item.legal_fees)}</td>
-              <td className="p-2 text-right">
-                -
-              </td>
-            </tr>
+  {companydetails
+    .filter((item) => item.property_id == quoteId)
+    .map((item, index) => {
+      const taxVAT = Object.values(taxDetails || {}).flatMap((items) =>
+        items.map((fee) => Number(fee.vat) || 0)
+      );
+      const totalVAT = Number(item.vat || 0) + taxVAT.reduce((a, b) => a + b, 0);
 
-        
-            {Object.entries(taxDetails || {}).map(([category, items]) => (
-              <React.Fragment key={category}>
-                {/* Category Row */}
-                <tr className="bg-gray-50 border-b border-gray-300">
-                  <td className="p-2 font-semibold" colSpan={3}>
-                    {category}
-                  </td>
-                </tr>
+      return (
+        <React.Fragment key={index}>
+          <tr className="border-b border-gray-200">
+            <td className="p-2 break-words font-semibold ">Legal Fees</td>
+            <td className="p-2 text-right ">{formatGBP(item.legal_fees)}</td>
+            <td className="p-2 text-right ">{formatGBP(item.vat)}</td>
+          </tr>
 
-                {items?.map((fee, i) =>  Number(fee.fee_amount) > 0 ? (
+          {Object.entries(taxDetails || {}).map(([category, items]) => (
+            <React.Fragment key={category}>
+              {/* Category Row */}
+              <tr className="bg-gray-50 border-b border-gray-300">
+                <td className="p-2 font-semibold" colSpan={3}>
+                  {category}
+                </td>
+              </tr>
+
+              {items?.map((fee, i) =>
+                Number(fee.fee_amount) > 0 ? (
                   <tr key={i} className="border-b border-gray-200 ">
-                    <td className="p-2 break-words "> <div className="ml-4"> {/* margin-left works here */}
-        {fee.fee_type}
-      </div></td>
-                    <td className="p-2 text-right">
-                      {formatGBP(fee.fee_amount)}
+                    <td className="p-2 break-words ">
+                      <div className="ml-4">{fee.fee_type || fee.others}</div>
                     </td>
-                    <td className="p-2 text-right text-sm">{(fee.vat==1?formatGBP(fee.fee_amount*0.2):"")}</td>
+                    <td className="p-2 text-right">{formatGBP(fee.fee_amount)}</td>
+                    <td className="p-2 text-right text-sm">{formatGBP(fee.vat)}</td>
                   </tr>
-                ):"")}
-              </React.Fragment>
-            ))}
+                ) : null
+              )}
+            </React.Fragment>
+          ))}
 
-            {/* Country-specific taxes */}
-            
+          {/* TOTAL */}
+          <tr className="bg-gray-100 font-semibold text-gray-800">
+            <td className="p-2">Total</td>
+            <td className="p-2 text-right text-indigo-600">
+              {formatGBP(item.total)}
+            </td>
+            <td className="p-2 text-right text-indigo-600">{formatGBP(totalVAT)}</td>
+          </tr>
 
-            {/* TOTAL */}
-            <tr className="bg-gray-100 font-semibold text-gray-800">
-              <td className="p-2">Total </td>
-              <td className="p-2 text-right text-indigo-600">
-                {formatGBP(item.total)}
-               
-              </td>
-                                        <td className="p-2 text-right text-indigo-600" > {formatGBP(vattax)}</td>
-            </tr>
-            {item.service_type == 2 && (
-              <>
-                {item.purchase_country == "England" && (
-                  <tr className="border-b border-gray-200">
-                    <td className="p-2">Stamp Duty</td>
-                    <td className="p-2 text-right">
-                      {formatGBP(item.stamp_duty)}
-                    </td>
-                    <td></td>
-                  </tr>
-                )}
+          {item.service_type == 2 && (
+            <>
+              {item.purchase_country == "England" && (
+                <tr className="border-b border-gray-200">
+                  <td className="p-2">Stamp Duty</td>
+                  <td className="p-2 text-right">{formatGBP(item.stamp_duty)}</td>
+                  <td></td>
+                </tr>
+              )}
 
-                {item.purchase_country == "Scotland" && (
-                  <tr className="border-b border-gray-200">
-                    <td className="p-2">LLT</td>
-                    <td className="p-2 text-right">{formatGBP(item.llt)}</td>
-                    <td></td>
-                  </tr>
-                )}
+              {item.purchase_country == "Scotland" && (
+                <tr className="border-b border-gray-200">
+                  <td className="p-2">LLT</td>
+                  <td className="p-2 text-right">{formatGBP(item.llt)}</td>
+                  <td></td>
+                </tr>
+              )}
 
-                {item.purchase_country == "Wales" && (
-                  <tr className="border-b border-gray-200">
-                    <td className="p-2">LBTT</td>
-                    <td className="p-2 text-right">{formatGBP(item.lbtt)}</td>
-                    <td></td>
-                  </tr>
-                )}
-              </>
-            )}
-          </React.Fragment>
-        ))}
-    </tbody>
+              {item.purchase_country == "Wales" && (
+                <tr className="border-b border-gray-200">
+                  <td className="p-2">LBTT</td>
+                  <td className="p-2 text-right">{formatGBP(item.lbtt)}</td>
+                  <td></td>
+                </tr>
+              )}
+            </>
+          )}
+        </React.Fragment>
+      );
+    })}
+</tbody>
   </table>
 </div>
 

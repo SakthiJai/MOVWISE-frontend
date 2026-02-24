@@ -24,7 +24,8 @@ export default function PurchasePropertyDetails({
   taxDetails,
   giftvalue,
   handleprice,
- language
+ language,
+ hide
 }) {
   // const [language, setlanguage] = useState([]);
   // async function fetchapi() {
@@ -86,7 +87,7 @@ export default function PurchasePropertyDetails({
                   ["Buy To Let", servicData?.buy_to_let],
                   ["Obtaining Mortgage", servicData?.obtaining_mortgage == 0 ? "No" : "Yes"],
                   ["Gift Deposit", servicData?.gift_deposit != null ? `${servicData.gift_deposit} Gift Deposit` : "--"],
-                  ["Languages", language.find((l) => l.id == servicData?.languages)?.language_name || "--"],
+                  ["Languages", language?.find((l) => l.id == servicData?.languages)?.language_name || "--"],
                   ["LTA ISA", servicData?.purchase_lifetime_isa == 0 ? "No" : "Yes"],
                   ["HMO Support", servicData?.purchase_need_hmo == 0 ? "No" : "Yes"],
                 ].map(([label, value], i) => (
@@ -114,6 +115,7 @@ export default function PurchasePropertyDetails({
         </div>
 
         {/* Right Column */}
+        {!hide &&(
       <div className=" font_size_13px mt-6 md:mt-0">
           <div className="font p-3">
             <h3
@@ -281,6 +283,7 @@ export default function PurchasePropertyDetails({
             </div>
           </div>
         </div>
+        )}
       </div>
   );
 

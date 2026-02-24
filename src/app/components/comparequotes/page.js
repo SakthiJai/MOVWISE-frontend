@@ -1047,7 +1047,7 @@ handleInstructFromCard(
                             <div className="flex flex-col items-center">
                               <CircularProgress progress={quote.conveying_details.recomended || 80} />
                               <span className="mt-1 bg-[#3b6248] text-white text-[10px] px-2 py-0.5 rounded-md">
-                                Recommended
+                                Rated
                               </span>
                             </div>
 
@@ -1055,7 +1055,7 @@ handleInstructFromCard(
                             <div className="flex flex-col items-center">
                               <CircularProgress progress={quote.conveying_details.sra || 90} />
                               <span className="mt-1 bg-[#3b6248] text-white text-[10px] px-2 py-0.5 rounded-md">
-                                SRA
+                                Regulated
                               </span>
                             </div>
 

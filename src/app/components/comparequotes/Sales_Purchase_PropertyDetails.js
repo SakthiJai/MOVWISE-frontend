@@ -3,26 +3,26 @@ import { useEffect, useState } from "react";
 // PropertyDetails.js
 export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId ,servicData }) {
 
-    const [language,setlanguage]=useState([])
-    async function fetchapi(){
-      try{
-    const res = await getData(API_ENDPOINTS.languages);
-    const language = res.users
-    console.log(language);
-    setlanguage(language)
+    // const [language,setlanguage]=useState([])
+    // async function fetchapi(){
+    //   try{
+    // const res = await getData(API_ENDPOINTS.languages);
+    // const language = res.users
+    // console.log(language);
+    // setlanguage(language)
   
-      }
-      catch(e){
-        console.log(e);
-      }
+    //   }
+    //   catch(e){
+    //     console.log(e);
+    //   }
   
-    }
+    // }
   
-    useEffect(()=>{
-      fetchapi()
+    // useEffect(()=>{
+    //   fetchapi()
   
       
-    },[])
+    // },[])
 
   return (
     <div className=" text-sm">
