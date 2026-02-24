@@ -1662,9 +1662,9 @@ handleInstructFromCard(
       </main>
 
 
-      <footer className="fixed bottom-0 font  left-0 w-full text-center text-gray-700 text-sm py-2 z-50 bg-white p-1">
-        © {new Date().getFullYear()} MovWise. All rights reserved.
-      </footer>
+     <div className=" pb-4 text-center text-gray-700 text-sm">
+          <p>&copy; {new Date().getFullYear()} MovWise. All rights reserved.</p>
+        </div>
     </div>
   );
 }

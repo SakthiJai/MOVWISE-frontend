@@ -634,35 +634,35 @@ export default function Purchase() {
                   //   }
                   // }}
                   onSelectAddress={async (selected) => {
-                  if (!selected) return;
+                    if (!selected) return;
 
-                  const details = purchaseRef.current?.onSelectAddressFullDetails?.();
+                    const details = purchaseRef.current?.onSelectAddressFullDetails?.();
 
-                  if (details) {
-                    // Build full postcode correctly
-                    const fullPostcode = details.postcode || "";
+                    if (details) {
+                      // Build full postcode correctly
+                      const fullPostcode = details.postcode || "";
 
-                    // If suggestion already contains postcode, don't duplicate
-                    const fullAddress = selected.suggestion.includes(fullPostcode)
-                      ? selected.suggestion
-                      : `${selected.suggestion} ${fullPostcode}`;
+                      // If suggestion already contains postcode, don't duplicate
+                      const fullAddress = selected.suggestion.includes(fullPostcode)
+                        ? selected.suggestion
+                        : `${selected.suggestion} ${fullPostcode}`;
 
-                    setFormData((prev) => ({
-                      ...prev,
-                      selectedId: selected.id,
-                      address: fullAddress,                 // ✅ FULL ADDRESS STORED
-                      postcode: fullPostcode,               // ✅ store separately (recommended)
-                      town_city: details.post_town || details.admin_district || "",
-                      country: details.country || "",
-                    }));
+                      setFormData((prev) => ({
+                        ...prev,
+                        selectedId: selected.id,
+                        address: fullAddress,                 // ✅ FULL ADDRESS STORED
+                        postcode: fullPostcode,               // ✅ store separately (recommended)
+                        town_city: details.post_town || details.admin_district || "",
+                        country: details.country || "",
+                      }));
 
-                  } else {
-                    setErrors((prev) => ({
-                      ...prev,
-                      address: "Failed to fetch full address details.",
-                    }));
-                  }
-                }}
+                    } else {
+                      setErrors((prev) => ({
+                        ...prev,
+                        address: "Failed to fetch full address details.",
+                      }));
+                    }
+                  }}
                   onInputChange={() => {
                     // Clear the error immediately when user types
                     if (errors.address) {
