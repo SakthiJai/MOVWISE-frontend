@@ -1475,7 +1475,7 @@ handleInstructFromCard(
 
 
                                 {/* ---------- MAIN CONTAINER ---------- */}
-                                <div ref={pdfRef} id="quote-popup" className="border  rounded-lg bg-white shadow px-6 py-2 mb-2 space-y-2 quotes" style={{
+                                  <div ref={pdfRef} id="quote-popup" className="quote-mobile border  rounded-lg bg-white shadow px-6 py-2 mb-2 space-y-2 quotes" style={{
                                   backgroundColor: 'white',
                                   color: 'black',
                                   padding: '24px',
@@ -1520,7 +1520,7 @@ handleInstructFromCard(
                                       </tr>
 
                                       {/* Contact Details and User Details in Single Row */}
-                                      <tr className="border-gray-200 block md:table-row">
+                                 <tr className="border-gray-200 block md:table-row">
                                         {/* Contact Details Column */}
                                         <td className="p-1 border-gray-200 align-top w-full md:w-1/2 sm:w block md:table-cell">
                                           <div className="bg-gray-50 p-3 rounded">
@@ -1614,6 +1614,138 @@ handleInstructFromCard(
 
                                   {/* ---------- NOTES ---------- */}
                                   <div className="font">
+                                    <h4>Notes</h4>
+
+                                    {quote?.conveying_details?.notes ? (
+                                      <div
+                                        className="text-xs mt-4 font  text-start"
+                                        dangerouslySetInnerHTML={{
+                                          __html: DOMPurify.sanitize(quote.conveying_details.notes),
+                                        }}
+                                      />
+                                    ) : (
+                                      <p className="text-xs mt-4">
+                                        No notes provided by the firm.
+                                      </p>
+                                    )}
+                                  </div>
+
+                                </div>
+                                <div ref={pdfRef} id="quote-popup" className=" quote-desktop border  rounded-lg bg-white shadow px-6 py-2 mb-2 space-y-2 quotes" style={{
+                                  backgroundColor: 'white',
+                                  color: 'black',
+                                  padding: '24px',
+                                  border: '1px solid #e5e7eb',
+                                  borderRadius: '8px',
+                                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                                  fontFamily: 'Arial, sans-serif',
+                                  lineHeight: '1.6',
+                                  maxWidth: '100%',
+                                  overflow: 'auto'
+                                }}>
+                                  {/* ---------- COMPANY LOGO + RATING ---------- */}
+                                  <table className="w-full font  border-collapse mb-6">
+                                    <tbody>
+                                      {/* Company Logo Row */}
+                                      <tr>
+                                        <td colSpan="2" className="p-4 text-left md:text-left text-center">
+                                      {view_data?.appsetting_details?.logo ? (
+                                        <img
+                                          width={140}
+                                          height={100}
+                                          src={view_data?.appsetting_details?.logo}
+                                          alt={quote.company_name || "company logo"}
+                                          className="mx-auto md:mx-0"
+                                        />
+                                      ) : (
+                                        <span className="block text-[22px] sm:text-[28px] md:text-[34px] me-1 p-2 leading-tight md:leading-none font-extrabold text-[#1E5C3B] tracking-tight text-center md:text-left">
+                                          {view_data?.appsetting_details?.company_name || "MovWise"}
+                                        </span>
+                                      )}
+                                    </td>
+
+
+                                        <td>
+
+                                        </td>
+                                        {/* <td colSpan="2" className="p-3"> 
+                                             <span className="text-[34px] col-span-2 me-1 p-2 leading-none font-extrabold text-[#1E5C3B] tracking-tight">
+                                                {view_data?.appsetting_details?.company_name || "MovWise"}
+                                              </span> 
+                                             </td> */}
+                                      </tr>
+
+                                      {/* Contact Details and User Details in Single Row */}
+                                      <tr>
+                                        <td style={{ width: "50%", verticalAlign: "top", padding: "10px" }}>
+                                          <div style={{ backgroundColor: "#f9fafb", padding: "12px", borderRadius: "6px" }}>
+                                            <h4 style={{ color: "#059669", marginBottom: "12px", textAlign: "center" }}>
+                                              Conveyancer Details
+                                            </h4>
+
+                                            <div style={{ fontSize: "13px", lineHeight: "1.6",textAlign: "left" }}>
+                                              <div><strong>Name:</strong> {quote.conveying_details.company_name || "N/A"}</div>
+                                              <div><strong>Phone:</strong> {view_data?.appsetting_details?.phone_number || "N/A"}</div>
+                                              <div><strong>Email:</strong> {view_data?.appsetting_details?.email || "N/A"}</div>
+                                              <div><strong>Quote Ref:</strong> {quote.service_details[0].quote_ref_id || "--"}</div>
+                                            </div>
+                                          </div>
+                                        </td>
+
+                                        <td style={{ width: "50%", verticalAlign: "top", padding: "10px" }}>
+                                          <div style={{ backgroundColor: "#f9fafb", padding: "12px", borderRadius: "6px" }}>
+                                            <h4 style={{ color: "#059669", marginBottom: "12px",textAlign: "center" }}>
+                                              Client Details
+                                            </h4>
+
+                                            <div style={{ fontSize: "13px", lineHeight: "1.6",textAlign: "left" }}>
+                                              <div>
+                                                <strong>Name:</strong> {quote?.customer_details?.first_name} {quote?.customer_details?.last_name}
+                                              </div>
+                                              <div><strong>Email:</strong> {quote?.customer_details?.email || "--"}</div>
+                                              <div><strong>Phone:</strong> {quote?.customer_details?.phone_number || "--"}</div>
+                                              <div><strong>Address:</strong> {quote?.service_details[0]?.address || "--"}</div>
+                                            </div>
+                                          </div>
+                                        </td>
+                                      </tr>
+
+                                    </tbody>
+                                  </table>
+
+                                  {/* ---------- YOUR DETAILS ---------- */}
+
+                                  <div className="grid grid-cols-1 font gap-6">
+                                    <div className="">
+
+
+                                      {view_data.service_details.length == 1 && (<>
+                                        {(view_data.service_details[0].service_type == 1) && <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} />}
+                                        {(view_data.service_details[0].service_type == 2) && <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} />}
+                                        {(view_data.service_details[0].service_type == 4) && <RemortagePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language}/>}  </>
+                                      )}
+                                      {view_data.service_details.length > 1 && (<>
+                                        <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} /> <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[1]} companydata={companydata} cardid={cardid} taxDetails={taxDetails2} giftvalue={giftvalue} handleprice={handleprice} /></>)}
+
+                                    </div>
+
+
+
+                                  </div>
+
+                                  {/* ---------- FEES SECTION ---------- */}
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="">
+                                    </div>
+
+                                  </div>
+
+
+                                  <div className="  w-full"></div>
+
+                                  {/* ---------- NOTES ---------- */}
+                                  <div className="font pdf-page-break"
+                                   style={{ pageBreakBefore: "always" }}>
                                     <h4>Notes</h4>
 
                                     {quote?.conveying_details?.notes ? (

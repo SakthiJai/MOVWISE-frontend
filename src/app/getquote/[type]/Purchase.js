@@ -38,6 +38,7 @@ export default function Purchase() {
     { label: "Home Moving", value: "HomeMoving" }
   ];
   const addition_applicable = [
+   {label:  "Not Applicable" , value: "" },
     { label: "Islamic Mortgage", value: "Islamic Mortgage" },
     { label: "Equity Transfer", value: "Equity Transfer" },
     { label: "Expats / Overseas Client", value: "Expats / Overseas Client" }

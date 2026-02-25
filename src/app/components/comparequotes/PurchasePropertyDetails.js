@@ -64,7 +64,7 @@ export default function PurchasePropertyDetails({
         </h5>
 
         {/* Left Column */}
-        <div className="py-2 font text-sm">
+        {/* <div className="py-2 font text-sm">
           <div className="text-start">
             <h3 className="text-lg font-semibold text-emerald-600">
               Purchase Property Details
@@ -112,11 +112,72 @@ export default function PurchasePropertyDetails({
               </tbody>
             </table>
           </div>
-        </div>
+        </div> */}
+        <div className="py-2 font text-sm">
+  <div className="text-start">
+    <h3 className="text-lg font-semibold text-emerald-600">
+      Purchase Property Details
+    </h3>
+  </div>
+
+  <div className="py-6">
+    <table
+      className="w-full"
+      style={{
+        tableLayout: "fixed",
+        borderCollapse: "collapse"
+      }}
+    >
+      <tbody>
+        {[
+          ["Stages", servicData?.stages],
+          ["Town City", servicData?.town_city],
+          ["Country", servicData?.country],
+          ["Purchase Price", `£${servicData?.purchase_price || "--"}`],
+          ["No Of Bedrooms", servicData?.no_of_bedrooms],
+          ["Leasehold Or Free", servicData?.leasehold_or_free],
+          ["Property Type", servicData?.property_type],
+          ["High Raise Support", servicData?.purchase_high_raise_support == 0 ? "No" : "Yes"],
+          ["Purchase Mode", servicData?.purchase_mode],
+          ["Buy To Let", servicData?.buy_to_let],
+          ["Obtaining Mortgage", servicData?.obtaining_mortgage == 0 ? "No" : "Yes"],
+          ["Gift Deposit", servicData?.gift_deposit != null ? `${servicData.gift_deposit} Gift Deposit` : "--"],
+          ["Languages", language?.find((l) => l.id == servicData?.languages)?.language_name || "--"],
+          ["LTA ISA", servicData?.purchase_lifetime_isa == 0 ? "No" : "Yes"],
+          ["HMO Support", servicData?.purchase_need_hmo == 0 ? "No" : "Yes"],
+        ].map(([label, value], i) => (
+          <tr key={i}>
+            {/* Label Column */}
+            <td
+              style={{
+                width: "220px",
+                fontWeight: "600",
+                padding: "6px 10px 6px 0",
+                verticalAlign: "top",textAlign: "left"
+              }}
+            >
+              {label}:
+            </td>
+
+            {/* Value Column */}
+            <td
+              style={{
+                padding: "6px 0",
+                wordBreak: "break-word",textAlign: "left"
+              }}
+            >
+              {value || "--"}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
 
         {/* Right Column */}
         {!hide &&(
-      <div className=" font_size_13px mt-6 md:mt-0">
+      <div className=" font_size_13px mt-6 md:mt-0"  style={{ pageBreakBefore: "always" }}>
           <div className="font p-3">
             <h3
               className="text-lg text-start text-emerald-600 font-semibold mb-3 cursor-pointer"
@@ -285,6 +346,7 @@ export default function PurchasePropertyDetails({
         </div>
         )}
       </div>
+      
   );
 
 }

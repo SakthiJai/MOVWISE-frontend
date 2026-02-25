@@ -323,3 +323,67 @@ font-size: small;
 .font_size_13px{
   font-size: 13px !important;
 }
+
+/* Desktop version: show on larger screens only */
+.quote-desktop {
+  display: block; /* default */
+}
+
+.quote-mobile {
+  display: none; /* hidden by default */
+}
+
+/* On small screens (mobile) */
+@media (max-width: 768px) {
+  .quote-desktop {
+    display: none; /* hide desktop version */
+  }
+
+  /* akash */
+  
+ /* @media (max-width: 600px) {
+  .py-6 {
+    background-color: green;
+
+  }
+} */
+@media (max-width: 600px) {
+  /* Target your table inside the py-6 container */
+  .py-6 table td {
+    padding-top: 2px !important;   
+    padding-bottom: 2px !important; 
+    padding-left: 4px !important;   
+    padding-right: 4px !important;  
+    vertical-align: middle;          
+    font-size: 0.75rem;              /* reduced font size */
+  }
+
+  /* Narrow the label column so data is closer */
+  .py-6 table td:first-child {
+    width: 120px !important;
+    padding-right: 6px !important;  
+    font-weight: 600;
+  }
+
+  /* Make sure value column fits nicely */
+  .py-6 table td:last-child {
+    padding-left: 2px !important;
+  }
+}
+
+  .quote-mobile {
+    display: block; /* show mobile version */
+  }
+}
+@media print {
+  .pdf-page-break {
+    page-break-before: always;
+    break-before: page;
+  }
+}
+/* @media print {
+  .pdf-page-break {
+    page-break-before: always;
+    break-before: page;
+  }
+} */
