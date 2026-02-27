@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { CircleUserRound, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
-const Navbar = ({ originalstyle = false }) => {
+const Navbar = ({ originalstyle = false ,hide=true}) => {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -44,13 +44,16 @@ const Navbar = ({ originalstyle = false }) => {
       </Link>
 
       {/* DESKTOP NAV */}
+    
       <nav className="hidden md:flex items-center text-[16px] text-[#1D2630] justify-end">
-        {links.map((link) => {
+        {links.map((link,index) => {
           const isActive =
             pathname === link.href || pathname.startsWith(link.href + "/");
 
           return (
-            <Link
+            <span key={index}>
+              {hide && 
+               <Link
               key={link.href}
               href={link.href}
               className={`px-4 font-medium font-outfit relative transition-all duration-200 ${
@@ -60,16 +63,20 @@ const Navbar = ({ originalstyle = false }) => {
               }`}
             >
               {link.name}
-            </Link>
+            </Link> }
+            </span>
+          
+      
           );
         })}
 
-        <Link
+  {hide && 
+    <Link
           href="/#quote_type"
           className="ml-6 inline-flex items-center justify-center h-[44px] px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition"
         >
           Get Quote
-        </Link>
+        </Link> }    
       </nav>
 
       {/* DESKTOP PROFILE */}
@@ -101,7 +108,7 @@ const Navbar = ({ originalstyle = false }) => {
                   </li>
                 )}
 
-                <li className="hover:bg-yellow-400 text-black">
+                {/* <li className="hover:bg-yellow-400 text-black">
                   <Link
                     className="block p-2 text-black"
                     href="/"
@@ -110,9 +117,18 @@ const Navbar = ({ originalstyle = false }) => {
                       window.location.reload();
                     }}
                   >
-                    Sign out
+                    Sign outtt
                   </Link>
-                </li>
+                </li> */}
+               <Link
+                  href="/"
+                  className="block p-2 text-black"
+                  onClick={() => {
+                    localStorage.clear();
+                  }}
+                >
+                  Sign out
+                </Link>
               </ul>
             </div>
           )}

@@ -168,7 +168,8 @@ const CircularProgress = ({ progress }) => {
             cx={size / 2}
             cy={size / 2}
             r={radius}
-            stroke="#3b6248"
+             className="stroke-green-700"
+           // strokeWidth={stroke}
             strokeWidth={stroke}
             fill="transparent"
             strokeLinecap="round"
@@ -1037,32 +1038,32 @@ handleInstructFromCard(
                                 size={20}
                                 allowFraction
                               />
-                              <span className="pl-2 font-bold text-[#4A7C59]">
+                              <span className="pl-2 font-bold text-green-700">
                                 {quote.conveying_details.ratings || 4} out of 5
                               </span>
                             </div>
-                           <div className="flex gap-4 mt-3">
+                           <div className="flex gap-4 mt-3 text-green-700">
   
                             {/* Recommended */}
-                            <div className="flex flex-col items-center">
+                            <div className="flex flex-col items-center text-green-700">
                               <CircularProgress progress={quote.conveying_details.recomended || 80} />
-                              <span className="mt-1 bg-[#3b6248] text-white text-[10px] px-2 py-0.5 rounded-md">
+                              <span className="mt-1 bg-green-700 text-white text-[10px] px-2 py-0.5 rounded-md">
                                 Rated
                               </span>
                             </div>
 
                             {/* SRA */}
-                            <div className="flex flex-col items-center">
+                            <div className="flex flex-col items-center text-green-700">
                               <CircularProgress progress={quote.conveying_details.sra || 90} />
-                              <span className="mt-1 bg-[#3b6248] text-white text-[10px] px-2 py-0.5 rounded-md">
+                              <span className="mt-1 bg-green-700 text-white text-[10px] px-2 py-0.5 rounded-md">
                                 Regulated
                               </span>
                             </div>
 
                             {/* Reliable */}
-                            <div className="flex flex-col items-center">
+                            <div className="flex flex-col items-center text-green-700">
                               <CircularProgress progress={quote.conveying_details.reliable || 85} />
-                              <span className="mt-1 bg-[#3b6248] text-white text-[10px] px-2 py-0.5 rounded-md">
+                              <span className="mt-1 bg-green-700 text-white text-[10px] px-2 py-0.5 rounded-md">
                                 Reliable
                               </span>
                             </div>

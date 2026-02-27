@@ -386,123 +386,220 @@ let response = await postData(
  
 
   // Content for the 'MY Quotes' section (Unchanged)
-  const QuotesContent = () => (
+//   const QuotesContent = () => (
     
-    <div className="p-6 bg-white shadow-lg rounded-xl min-h-[300px] font h-[500px] overflow-auto" >
-      <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Requested Quote List </h2>
-     <div className="overflow-x-auto">
-  <table className="min-w-full  table-auto">
-    <thead>
-      <tr className="bg-gray-100 text-left text-black">
-        <th className="p-3 border font-semibold">S.No</th>
-        <th className="p-3 border font-semibold">Service</th>
-        <th className="p-3 border font-semibold">Property Location</th>
-        <th className="p-3 border font-semibold">Property Price</th>
-        <th className="p-3 border font-semibold"> {localStorage.getItem("logintype") == "user" ? "Conveyancer Name" : "Customer Name"}</th>
-        <th className="p-3 border font-semibold">Status</th>
-        <th className="p-3 border font-semibold">View</th>
-      </tr>
-    </thead>
+//     <div className="p-6 bg-white shadow-lg rounded-xl min-h-[300px] font h-[500px] overflow-auto" >
+//       <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Requested Quote List </h2>
+//      <div className="overflow-x-auto">
+//   <table className="min-w-full  table-auto">
+//     <thead>
+//       <tr className="bg-gray-100 text-left text-black">
+//         <th className="p-3 border font-semibold">S.No</th>
+//         <th className="p-3 border font-semibold">Service</th>
+//         <th className="p-3 border font-semibold">Property Location</th>
+//         <th className="p-3 border font-semibold">Property Price</th>
+//         <th className="p-3 border font-semibold"> {localStorage.getItem("logintype") == "user" ? "Conveyancer Name" : "Customer Name"}</th>
+//         <th className="p-3 border font-semibold">Status</th>
+//         <th className="p-3 border font-semibold">View</th>
+//       </tr>
+//     </thead>
 
     
 
-    <tbody>
-      {company.map((quote, index) => (
-    <React.Fragment key={index}> 
-           {((quote.status>1) && (localStorage.getItem("logintype")=="partner")) &&(
-<tr
-          key={index}
-          className="hover:bg-gray-50 transition duration-150 text-black"
-        >
-          <td className="p-3 ">{index + 1}</td>
-          <td className="p-3 ">{getServiceTypeLabel(quote.service_type)}</td>
+//     <tbody>
+//       {company.map((quote, index) => (
+//     <React.Fragment key={index}> 
+//            {((quote.status>1) && (localStorage.getItem("logintype")=="partner")) &&(
+// <tr
+//           key={index}
+//           className="hover:bg-gray-50 transition duration-150 text-black"
+//         >
+//           <td className="p-3 ">{index + 1}</td>
+//           <td className="p-3 ">{getServiceTypeLabel(quote.service_type)}</td>
 
-          <td className="p-3 ">
-            {quote.service_type == 2
-              ? quote.purchase_country
-              : quote.sales_country}
-          </td>
+//           <td className="p-3 ">
+//             {quote.service_type == 2
+//               ? quote.purchase_country
+//               : quote.sales_country}
+//           </td>
             
-          <td className="p-3 ">£ {quote.purchase_price}</td>
-          <td className="p-3 "> {loginType === "user" ? quote.company_name : quoteUser[0].first_name + quoteUser[0].last_name} {}</td>
+//           <td className="p-3 ">£ {quote.purchase_price}</td>
+//           <td className="p-3 "> {loginType === "user" ? quote.company_name : quoteUser[0].first_name + quoteUser[0].last_name} {}</td>
 
-          <td className="p-3 ">
-            <StatusButton
-            status={ getStatusLabel(quote.status)}
-            />
-          </td>
+//           <td className="p-3 ">
+//             <StatusButton
+//             status={ getStatusLabel(quote.status)}
+//             />
+//           </td>
 
-          <td className="p-3  text-center ">
-       <button onClick={()=>{handlecom_detailsopen(quote.property_id)}} className='bg-blue-100 text-blue-800 px-3  py-1 text-xs font-semibold rounded-full'>
-              View
-            </button>
-          </td>
-        </tr>
-        )}
-        </React.Fragment>
+//           <td className="p-3  text-center ">
+//        <button onClick={()=>{handlecom_detailsopen(quote.property_id)}} className='bg-blue-100 text-blue-800 px-3  py-1 text-xs font-semibold rounded-full'>
+//               View
+//             </button>
+//           </td>
+//         </tr>
+//         )}
+//         </React.Fragment>
 
 
 
         
         
         
-      ))}
-     {company.map((quote, index) => (
-    <React.Fragment key={index}> 
-           {((quote.status>0) && (localStorage.getItem("logintype")=="user")) &&(
-<tr
-          key={index}
-          className="hover:bg-gray-50 transition duration-150 text-black"
-        >
-          <td className="p-3 ">{index + 1}</td>
-          <td className="p-3 ">{getServiceTypeLabel(quote.service_type)}</td>
+//       ))}
+//      {company.map((quote, index) => (
+//     <React.Fragment key={index}> 
+//            {((quote.status>0) && (localStorage.getItem("logintype")=="user")) &&(
+// <tr
+//           key={index}
+//           className="hover:bg-gray-50 transition duration-150 text-black"
+//         >
+//           <td className="p-3 ">{index + 1}</td>
+//           <td className="p-3 ">{getServiceTypeLabel(quote.service_type)}</td>
 
-          <td className="p-3 ">
-            {quote.service_type == 2
-              ? quote.purchase_country
-              : quote.sales_country}
-          </td>
+//           <td className="p-3 ">
+//             {quote.service_type == 2
+//               ? quote.purchase_country
+//               : quote.sales_country}
+//           </td>
             
-          <td className="p-3 ">£ {quote.purchase_price}</td>
-          <td className="p-3 "> {loginType === "user" ? quote.company_name : quoteUser[0].first_name + quoteUser[0].last_name} {}</td>
+//           <td className="p-3 ">£ {quote.purchase_price}</td>
+//           <td className="p-3 "> {loginType === "user" ? quote.company_name : quoteUser[0].first_name + quoteUser[0].last_name} {}</td>
 
-          <td className="p-3 ">
-            <StatusButton
-            status={ getStatusLabel(quote.status)}
-            />
-          </td>
+//           <td className="p-3 ">
+//             <StatusButton
+//             status={ getStatusLabel(quote.status)}
+//             />
+//           </td>
 
-          <td className="p-3  text-center ">
-                          <button onClick={()=>{handlecom_detailsopen(quote.property_id)}} className='bg-blue-100 text-blue-800 px-3  py-1 text-xs font-semibold rounded-full'>
+//           <td className="p-3  text-center ">
+//                           <button onClick={()=>{handlecom_detailsopen(quote.property_id)}} className='bg-blue-100 text-blue-800 px-3  py-1 text-xs font-semibold rounded-full'>
 
            
             
-              View
-            </button>
-          </td>
-        </tr>
-        )}
-        </React.Fragment>
+//               View
+//             </button>
+//           </td>
+//         </tr>
+//         )}
+//         </React.Fragment>
         
         
         
-      ))}
-    </tbody>
-  </table>
-</div>
+//       ))}
+//     </tbody>
+//   </table>
+// </div>
 
+//     </div>
+//   );
+  const QuotesContent = () => {
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const recordsPerPage = 10;
+
+  // Calculate pagination indexes
+  const indexOfLastRecord = currentPage * recordsPerPage;
+  const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
+
+  // Slice the company array to only show current page records
+  const currentRecords = company.slice(indexOfFirstRecord, indexOfLastRecord);
+
+  const totalPages = Math.ceil(company.length / recordsPerPage);
+
+  return (
+    <div className="p-6 bg-white shadow-lg rounded-xl min-h-[300px] font h-[500px] overflow-auto">
+      <h2 className="text-3xl font-bold mb-6 text-gray-800 border-b pb-2">Requested Quote List </h2>
+      <div className="overflow-x-auto">
+        <table className="min-w-full table-auto">
+          <thead>
+            <tr className="bg-gray-100 text-left text-black">
+              <th className="p-3 border font-semibold">S.No</th>
+              <th className="p-3 border font-semibold">Service</th>
+              <th className="p-3 border font-semibold">Property Location</th>
+              <th className="p-3 border font-semibold">Property Price</th>
+              <th className="p-3 border font-semibold">
+                {localStorage.getItem("logintype") === "user" ? "Conveyancer Name" : "Customer Name"}
+              </th>
+              <th className="p-3 border font-semibold">Status</th>
+              <th className="p-3 border font-semibold">View</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            {currentRecords.map((quote, index) => (
+              <React.Fragment key={index}>
+                {((quote.status > 1 && localStorage.getItem("logintype") === "partner") ||
+                  (quote.status > 0 && localStorage.getItem("logintype") === "user")) && (
+                  <tr className="hover:bg-gray-50 transition duration-150 text-black">
+                    <td className="p-3">{indexOfFirstRecord + index + 1}</td>
+                    <td className="p-3">{getServiceTypeLabel(quote.service_type)}</td>
+                    <td className="p-3">
+                      {quote.service_type === 2 ? quote.purchase_country : quote.sales_country}
+                    </td>
+                    <td className="p-3">£ {quote.purchase_price}</td>
+                    <td className="p-3">
+                      {loginType === "user"
+                        ? quote.company_name
+                        : quoteUser[0].first_name + " " + quoteUser[0].last_name}
+                    </td>
+                    <td className="p-3">
+                      <StatusButton status={getStatusLabel(quote.status)} />
+                    </td>
+                    <td className="p-3 text-center">
+                      <button
+                        onClick={() => handlecom_detailsopen(quote.property_id)}
+                        className="bg-blue-100 text-blue-800 px-3 py-1 text-xs font-semibold rounded-full"
+                      >
+                        View
+                      </button>
+                    </td>
+                  </tr>
+                )}
+              </React.Fragment>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Pagination Controls */}
+      <div className="flex justify-center mt-4 space-x-2">
+        <button
+          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+          className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
+
+        {Array.from({ length: totalPages }, (_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrentPage(i + 1)}
+            className={`px-3 py-1 rounded ${
+              currentPage === i + 1 ? "bg-green-600 text-white" : "bg-gray-200 hover:bg-gray-300"
+            }`}
+          >
+            {i + 1}
+          </button>
+        ))}
+
+        <button
+          onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+          className="px-3 py-1 bg-gray-200 rounded hover:bg-gray-300"
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
+};
   
-  
-
-
-
   return (
     // 1. GRID CONTAINER: Establishes the grid layout
     <div className='min-h-screen  '>
       <div className="bg-white shadow-md sticky top-0 p-4 font">
-        <Navbar originalstyle={true} />
+        <Navbar originalstyle={true} hide={false} />
       </div>
       <div className='mx-auto px-4 lg:px-16  grid grid-cols-1 md:grid-cols-4  gap-8 govt_by_scheme mt-30 mb-10'>
 

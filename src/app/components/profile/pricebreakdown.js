@@ -6,6 +6,7 @@ import { API_ENDPOINTS, getData } from "../../auth/API/api";
 import { formatGBP } from "../utility/poundconverter";
 import SalesPropertyDetails from "../comparequotes/Sales_Property";
 import PurchasePropertyDetails from "../comparequotes/PurchasePropertyDetails";
+import PurchasePropertyprofile from "../comparequotes/purchasepropertyprofile";
 import SalesPurchasePropertyDetails from "../comparequotes/Sales_Purchase_PropertyDetails";
 import RemortagePropertyDetails from "../comparequotes/RemortagePropertyDetails";
 
@@ -215,7 +216,7 @@ useEffect(() => {
                       </div>
                       <div>
                           {(item.service_type == 3 ) && <SalesPropertyDetails quote={item}  page="profile" servicData={view_data.service_details[0]} />}   
-                          {(item.service_type== 2 ) && <PurchasePropertyDetails quote={item}  page="profile" hide={true}  servicData={view_data.service_details[0]}  />}   
+                          {(item.service_type== 2 ) && <PurchasePropertyprofile quote={item}  page="profile" hide={true}  servicData={view_data.service_details[0]}  />}   
                           {(item.service_type == 1 ) && <SalesPurchasePropertyDetails quote={item}  page="profile" servicData={view_data.service_details[0]}/>}   
                           {(item.service_type == 4 ) && <RemortagePropertyDetails quote={item}  page="profile" servicData={view_data.service_details[0]}/>}  
                         </div>
