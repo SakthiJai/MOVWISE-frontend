@@ -20,6 +20,8 @@ const Myprofile = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [Image,setImage]=useState("");
     const [imageerror, setimageerror] = useState("");
+
+    let quote_ref_number="";
   
 
   const [user,setuser]=useState({
@@ -48,6 +50,8 @@ const Myprofile = () => {
   const[servicedetails,setservicedetails]=useState([]);
   const [selectedQuoteId, setSelectedQuoteId] = useState(null);
  ;
+
+ let r_no = ""
 
 
   const [preview, setPreview] = useState(false);
@@ -122,10 +126,12 @@ logo:userprofile[0].logo,
     // Note: The original logic is correct, ensuring `val` is compared properly.
     setshow(val === 1); 
   }
-  function handlecom_detailsopen(property_id){
+  function handlecom_detailsopen(property){
+    let property_id = property.property_id;
     setSelectedQuoteId(property_id)
-    console.log(selectedQuoteId)
+    console.log("property",property);
     setShowPopup(true)
+    quote_ref_number=property.quote_ref_number;
      
 
     console.log("<>selectedQuoteId",selectedQuoteId);
@@ -547,7 +553,7 @@ let response = await postData(
                     </td>
                     <td className="p-3 text-center">
                       <button
-                        onClick={() => handlecom_detailsopen(quote.property_id)}
+                        onClick={() => handlecom_detailsopen(quote)}
                         className="bg-blue-100 text-blue-800 px-3 py-1 text-xs font-semibold rounded-full"
                       >
                         View
@@ -662,6 +668,7 @@ let response = await postData(
           companydetails={company}
           quoteId={selectedQuoteId}
           ref={childRef}
+          quote_ref_number={quote_ref_number}
         />
       </div>
 

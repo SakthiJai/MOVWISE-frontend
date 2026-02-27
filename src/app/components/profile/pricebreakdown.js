@@ -10,7 +10,11 @@ import PurchasePropertyprofile from "../comparequotes/purchasepropertyprofile";
 import SalesPurchasePropertyDetails from "../comparequotes/Sales_Purchase_PropertyDetails";
 import RemortagePropertyDetails from "../comparequotes/RemortagePropertyDetails";
 
-const PriceBreakdownCard = forwardRef(({ companydetails, quoteId,quoteUser }, ref) => {
+const PriceBreakdownCard = forwardRef(({ companydetails, quoteId,quoteUser,quote_ref_number }, ref) => {
+
+  let ref_number =" ";
+  console.log(quote_ref_number)
+
   console.log("companydetails",companydetails);
 
   const [logintype,setlogintype]=useState()
@@ -104,11 +108,12 @@ useEffect(() => {
     try {
       setlogintype(localStorage.getItem("logintype"));
 
-      const refNumber = localStorage.getItem("ref_no"); 
-      if (!refNumber) return;
+      // const refNumber = localStorage.getItem("ref_no"); 
+
+      if (!ref_number) return;
 
       const quoteResponse = await getData(
-        `${API_ENDPOINTS.quotesfilter}/${refNumber}`
+        `${API_ENDPOINTS.quotesfilter}/${ref_number}`
       );
 
       if (quoteResponse?.status === false) return;
@@ -191,7 +196,15 @@ useEffect(() => {
             <div className="p-4 bg-indigo-50 rounded-lg border-l-4 border-indigo-600">
              
               {companydetails?.map(
-                (item, index) =>
+                
+                (item, index) =>{
+                  if(quoteId == item.property_id){
+                    ref_number = item.quote_ref_number;
+                    console.log("ref_number",ref_number);
+                  }
+
+
+              return(
                   quoteId == item.property_id && (
                     <div key={index} className="text-sm space-y-1 text-black grid grid-cols-2">
                       <div>
@@ -223,6 +236,9 @@ useEffect(() => {
 
                     </div>
                   )
+              )
+                
+                    }
               )}
             </div>
 
