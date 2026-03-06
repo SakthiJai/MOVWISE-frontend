@@ -10,12 +10,12 @@ import PurchasePropertyprofile from "../comparequotes/purchasepropertyprofile";
 import SalesPurchasePropertyDetails from "../comparequotes/Sales_Purchase_PropertyDetails";
 import RemortagePropertyDetails from "../comparequotes/RemortagePropertyDetails";
 
-const PriceBreakdownCard = forwardRef(({ companydetails, quoteId,quoteUser,quote_ref_number }, ref) => {
+const PriceBreakdownCard = forwardRef(({  companydetails, quoteId,quoteUser,quote_ref_number }, ref) => {
 
   let ref_number =" ";
   console.log(quote_ref_number)
 
-  console.log("companydetails",companydetails);
+  console.log("companydetails",companydetails,quoteId);
 
   const [logintype,setlogintype]=useState()
   const [feeCategory, setfeeCategory] = useState({});
@@ -69,7 +69,7 @@ const timers = useRef({});
 
   // ✅ Find the selected quote based on property_id
   const selected = companydetails.find(
-    (item) => item.property_id == quoteId
+    (item) => item.quote_id == quoteId
   );
 
   if (!selected) return;
@@ -134,7 +134,7 @@ useEffect(() => {
 
   useImperativeHandle(ref, () => ({
     refreshCard() {
-  const match = companydetails.find(item => item.property_id == quoteId);
+  const match = companydetails.find(item => item.quote_id == quoteId);
     if (match) {
       setActiveIndex(match.status||1);
       console.log("Status Updated:", match.status);
@@ -184,7 +184,7 @@ useEffect(() => {
 
   return (
     <div className="h-[500px] overflow-auto ">
-      
+     
       <div className="p-6 bg-white  rounded-xl min-h-[300px] font">
         <h2 className="text-2xl font-extrabold text-gray-900 mb-6 border-b pb-2">
           Quote Details
@@ -198,14 +198,14 @@ useEffect(() => {
               {companydetails?.map(
                 
                 (item, index) =>{
-                  if(quoteId == item.property_id){
+                  if(quoteId == item.quote_id){
                     ref_number = item.quote_ref_number;
                     console.log("ref_number",ref_number);
                   }
 
 
               return(
-                  quoteId == item.property_id && (
+                  quoteId == item.quote_id && (
                     <div key={index} className="text-sm space-y-1 text-black grid grid-cols-2">
                       <div>
                          <h3 className="text-lg font-semibold text-indigo-800 mb-2">
@@ -258,7 +258,7 @@ useEffect(() => {
 
     <tbody>
   {companydetails
-    .filter((item) => item.property_id == quoteId)
+    .filter((item) => item.quote_id == quoteId)
     .map((item, index) => {
       const taxVAT = Object.values(taxDetails || {}).flatMap((items) =>
         items.map((fee) => Number(fee.vat) || 0)

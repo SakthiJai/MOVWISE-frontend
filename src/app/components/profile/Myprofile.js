@@ -127,8 +127,9 @@ logo:userprofile[0].logo,
     setshow(val === 1); 
   }
   function handlecom_detailsopen(property){
-    let property_id = property.property_id;
-    setSelectedQuoteId(property_id)
+    console.log("property",property); 
+    let quote_id = property.quote_id;
+    setSelectedQuoteId(quote_id)
     console.log("property",property);
     setShowPopup(true)
     quote_ref_number=property.quote_ref_number;
