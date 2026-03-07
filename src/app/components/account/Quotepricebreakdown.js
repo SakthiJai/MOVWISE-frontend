@@ -2,16 +2,46 @@
 
 import { useRouter } from "next/navigation";
 import React, { forwardRef, useEffect, useRef, useState,useImperativeHandle } from "react";
-import { API_ENDPOINTS, getData } from "../../auth/API/api";
+import { API_ENDPOINTS, getData,postData } from "../../auth/API/api";
 import { formatGBP } from "../utility/poundconverter";
 import SalesPropertyDetails from "../comparequotes/Sales_Property";
 import PurchasePropertyDetails from "../comparequotes/PurchasePropertyDetails";
+import PurchasePropertyprofile from "../comparequotes/purchasepropertyprofile";
 import SalesPurchasePropertyDetails from "../comparequotes/Sales_Purchase_PropertyDetails";
 import RemortagePropertyDetails from "../comparequotes/RemortagePropertyDetails";
 
-const PriceBreakdownCard = forwardRef(({ companydetails, quoteId,quoteUser }, ref) => {
-  
+const PriceBreakdownCard = forwardRef(({  companydetails, quoteId,quoteUser,quote_ref_number }, ref) => {
 
+  let selectedcompany_quote_id= companydetails?.find((item)=>item.quote_id==quoteId);
+
+  const handlestatus = async () => {
+
+  const data = {
+    conveyancer_notes: notes,
+    status: status,
+    quote_id:selectedcompany_quote_id.quote_id,
+  };
+
+  console.log("Sending Data:", data);
+
+  try {
+  
+    const response = await postData(API_ENDPOINTS.statusupdate, data);
+    console.log("API Response:", response);
+
+  } catch (error) {
+    console.log("API Error:", error);
+  }
+};
+
+console.log('refno ', quote_ref_number)
+  let ref_number =quote_ref_number;
+  console.log(quote_ref_number)
+  console.log(quote_ref_number)
+
+  console.log("companydetails",companydetails,quoteId);
+const [notes, setNotes] = useState("");
+const [status, setStatus] = useState("");
   const [logintype,setlogintype]=useState()
   const [feeCategory, setfeeCategory] = useState({});
   const [taxDetails, settaxDetails] = useState();
@@ -21,29 +51,31 @@ const router = useRouter();
   
 const timers = useRef({});
  
- 
+ const [view_data, setview_data] = useState({service_details: []});
 
-   useEffect(() => {
+ useEffect(()=>{
+console.log(view_data);
+ },[view_data])
+
+//    useEffect(() => {
 
     
-     if(localStorage.getItem("logintype")){
-     setlogintype(localStorage.getItem("logintype"));
-     console.log(companydetails)
-//      const grouped = companydetails?.[0].taxDetails?.reduce((acc, item) => {
+//      if(localStorage.getItem("logintype")){
+//      setlogintype(localStorage.getItem("logintype"));
+//      console.log(companydetails)
+//      const grouped = companydetails[0].taxDetails.reduce((acc, item) => {
 //   if (!acc[item.fees_category]) {
 //     acc[item.fees_category] = [];
 //   }
 //   acc[item.fees_category].push(item);
 //   return acc;
 // }, {});
-
 // settaxDetails(grouped);
-
 // console.log("Grouped Tax Details:", grouped);
-let selectedquote=companydetails?.filter((item)=>item.quote_id==quoteId);
-console.log("seleceted:",selectedquote);
+// let selectedquote=companydetails.filter((item)=>item.quote_id==quoteId);
+// console.log("seleceted:",selectedquote);
 
-//  const totalTaxVat = companydetails?.[0].taxDetails?.reduce((sum, item) => {
+//  const totalTaxVat = companydetails[0].taxDetails.reduce((sum, item) => {
 //     if(item.vat==1){
 //       sum+=Number(item.fee_amount*0.2)
 //     }
@@ -53,21 +85,92 @@ console.log("seleceted:",selectedquote);
 // console.log("Total VAT:", totalTaxVat);
 // setvattax(totalTaxVat);
  
-     }
+//      }
     
-  }, []);
+//   }, []);
+ useEffect(() => {
+  if (!companydetails || !quoteId) return;
+
+  const loginTypeFromStorage = localStorage.getItem("logintype");
+  if (loginTypeFromStorage) {
+    setlogintype(loginTypeFromStorage);
+  }
+
+  // ✅ Find the selected quote based on property_id
+  const selected = companydetails.find(
+    (item) => item.quote_id == quoteId
+  );
+
+  if (!selected) return;
+
+  console.log("Selected Quote:", selected);
+
+  // ✅ Group tax details safely
+  const grouped = (selected.taxDetails || []).reduce((acc, item) => {
+    if (!acc[item.fees_category]) {
+      acc[item.fees_category] = [];
+    }
+    acc[item.fees_category].push(item);
+    return acc;
+  }, {});
+
+  settaxDetails(grouped);
+  console.log("Grouped Tax Details:", grouped);
+
+  // ✅ Calculate total VAT safely
+  const totalTaxVat = (selected.taxDetails || []).reduce((sum, item) => {
+    if (item.vat == 1) {
+      sum += Number(item.fee_amount) * 0.2;
+    }
+    return sum;
+  }, 0);
+
+  setvattax(totalTaxVat);
+  console.log("Total VAT:", totalTaxVat);
+
+}, [companydetails, quoteId]);
+
+useEffect(() => {
+  if (!quoteId) return;
+
+  async function fetchQuoteDetails() {
+    try {
+      setlogintype(localStorage.getItem("logintype"));
+
+      // const refNumber = localStorage.getItem("ref_no"); 
+
+      if (!ref_number){
+        console.log('check');
+        return;
+      } 
+
+      const quoteResponse = await getData(
+        `${API_ENDPOINTS.quotesfilter}/${ref_number}`
+      );
+
+      if (quoteResponse?.status === false) return;
+
+      setview_data(quoteResponse.data[0]);
+      
+
+    } catch (error) {
+      console.error("❌ API Error:", error);
+    }
+  }
+
+  fetchQuoteDetails();
+}, [quoteId]);
 
 
-  const [activeIndex, setActiveIndex] = useState(2);
+  const [activeIndex, setActiveIndex] = useState();
 
   useImperativeHandle(ref, () => ({
     refreshCard() {
-  // const match = companydetails?.find(item => item.property_id == quoteId);
-    // if (match) {
-    //   setActiveIndex(match.status||1);
-    //   console.log("Status Updated:", match.status);
-    // }
-    setActiveIndex(companydetails.status)
+  const match = companydetails.find(item => item.quote_id == quoteId);
+    if (match) {
+      setActiveIndex(match.status||1);
+      console.log("Status Updated:", match.status);
+    }
       console.log("Child function called! quoteId =", quoteId);
       console.log("status:",activeIndex)
     }
@@ -93,11 +196,11 @@ console.log("seleceted:",selectedquote);
     case 3:
       return "Admin Approved";
     case 4:
-      return "You have accepted";
+      return "Approved";
     case 5:
-      return "Quote is under progress";
+      return "Rejected by Admin";
     case 6:
-      return "Rejected by you";
+      return "On Hold";
     case 7:
       return "Quote is about to completed";
     default:
@@ -113,7 +216,7 @@ console.log("seleceted:",selectedquote);
 
   return (
     <div className="h-[500px] overflow-auto ">
-      
+     
       <div className="p-6 bg-white  rounded-xl min-h-[300px] font">
         <h2 className="text-2xl font-extrabold text-gray-900 mb-6 border-b pb-2">
           Quote Details
@@ -125,8 +228,16 @@ console.log("seleceted:",selectedquote);
             <div className="p-4 bg-indigo-50 rounded-lg border-l-4 border-indigo-600">
              
               {companydetails?.map(
-                (item, index) =>
-                  quoteId == item.property_id && (
+                
+                (item, index) =>{
+                  if(quoteId == item.quote_id){
+                    ref_number = item.quote_ref_number;
+                    console.log("ref_number",ref_number);
+                  }
+
+
+              return(
+                  quoteId == item.quote_id && (
                     <div key={index} className="text-sm space-y-1 text-black grid grid-cols-2">
                       <div>
                          <h3 className="text-lg font-semibold text-indigo-800 mb-2">
@@ -149,19 +260,21 @@ console.log("seleceted:",selectedquote);
                       </p>
                       </div>
                       <div>
-                          {(item.service_type == 3 ) && <SalesPropertyDetails quote={item}  page="profile"/>}   
-                          {(item.service_type== 2 ) && <PurchasePropertyDetails quote={item}  page="profile"/>}   
-                          {(item.service_type == 1 ) && <SalesPurchasePropertyDetails quote={item}  page="profile"/>}   
-                          {(item.service_type == 4 ) && <RemortagePropertyDetails quote={item}  page="profile"/>}  
-                                                         
+                          {(item.service_type == 3 ) && <SalesPropertyDetails quote={item}  page="profile" servicData={view_data.service_details[0]} />}   
+                          {(item.service_type== 2 ) && <PurchasePropertyprofile quote={item}  page="profile" hide={true}  servicData={view_data.service_details[0]}  />}   
+                          {(item.service_type == 1 ) && <SalesPurchasePropertyDetails quote={item}  page="profile" servicData={view_data.service_details[0]}/>}   
+                          {(item.service_type == 4 ) && <RemortagePropertyDetails quote={item}  page="profile" servicData={view_data.service_details[0]}/>}  
                         </div>
-                     
+
                     </div>
                   )
+              )
+                
+                    }
               )}
             </div>
 
-            {/* <div className="mt-4 p-3">
+            <div className="mt-4 p-3">
   <h3 className="text-lg font-semibold text-gray-800 mb-3">
     Cost Breakdown
   </h3>
@@ -176,100 +289,114 @@ console.log("seleceted:",selectedquote);
     </thead>
 
     <tbody>
-      {companydetails?.filter((item) => item.property_id == quoteId)
-        .map((item, index) => (
-          <React.Fragment key={index}>
-          
-            <tr className="border-b border-gray-200">
-              <td className="p-2 break-words font-semibold ">{`Legal Fees`}</td>
-              <td className="p-2 text-right ">{formatGBP(item.legal_fees)}</td>
-              <td className="p-2 text-right">
-                -
-              </td>
-            </tr>
+  {companydetails
+    .filter((item) => item.quote_id == quoteId)
+    .map((item, index) => {
+      const taxVAT = Object.values(taxDetails || {}).flatMap((items) =>
+        items.map((fee) => Number(fee.vat) || 0)
+      );
+      const totalVAT = Number(item.vat || 0) + taxVAT.reduce((a, b) => a + b, 0);
 
-        
-            {Object.entries(taxDetails || {}).map(([category, items]) => (
-              <React.Fragment key={category}>
-               
-                <tr className="bg-gray-50 border-b border-gray-300">
-                  <td className="p-2 font-semibold" colSpan={3}>
-                    {category}
-                  </td>
-                </tr>
+      return (
+        <React.Fragment key={index}>
+          <tr className="border-b border-gray-200">
+            <td className="p-2 break-words font-semibold ">Legal Fees</td>
+            <td className="p-2 text-right ">{formatGBP(item.legal_fees)}</td>
+            <td className="p-2 text-right ">{formatGBP(item.vat)}</td>
+          </tr>
 
-                {items?.map((fee, i) =>  Number(fee.fee_amount) > 0 ? (
+          {Object.entries(taxDetails || {}).map(([category, items]) => (
+            <React.Fragment key={category}>
+              {/* Category Row */}
+              <tr className="bg-gray-50 border-b border-gray-300">
+                <td className="p-2 font-semibold" colSpan={3}>
+                  {category}
+                </td>
+              </tr>
+
+              {items?.map((fee, i) =>
+                Number(fee.fee_amount) > 0 ? (
                   <tr key={i} className="border-b border-gray-200 ">
-                    <td className="p-2 break-words "> <div className="ml-4"> 
-        {fee.fee_type}
-      </div></td>
-                    <td className="p-2 text-right">
-                      {formatGBP(fee.fee_amount)}
+                    <td className="p-2 break-words ">
+                      <div className="ml-4">{fee.fee_type || fee.others}</div>
                     </td>
-                    <td className="p-2 text-right text-sm">{(fee.vat==1?formatGBP(fee.fee_amount*0.2):"")}</td>
+                    <td className="p-2 text-right">{formatGBP(fee.fee_amount)}</td>
+                    <td className="p-2 text-right text-sm">{formatGBP(fee.vat)}</td>
                   </tr>
-                ):"")}
-              </React.Fragment>
-            ))} 
+                ) : null
+              )}
+            </React.Fragment>
+          ))}
 
-          
-            <tr className="bg-gray-100 font-semibold text-gray-800">
-              <td className="p-2">Total </td>
-              <td className="p-2 text-right text-indigo-600">
-                {formatGBP(item.total)}
-               
-              </td>
-                                        <td className="p-2 text-right text-indigo-600" > {formatGBP(vattax)}</td>
-            </tr>
-            {item.service_type == 2 && (
-              <>
-                {item.purchase_country == "England" && (
-                  <tr className="border-b border-gray-200">
-                    <td className="p-2">Stamp Duty</td>
-                    <td className="p-2 text-right">
-                      {formatGBP(item.stamp_duty)}
-                    </td>
-                    <td></td>
-                  </tr>
-                )}
+          {/* TOTAL */}
+          <tr className="bg-gray-100 font-semibold text-gray-800">
+            <td className="p-2">Total</td>
+            <td className="p-2 text-right text-indigo-600">
+              {formatGBP(item.total)}
+            </td>
+            <td className="p-2 text-right text-indigo-600">{formatGBP(totalVAT)}</td>
+          </tr>
 
-                {item.purchase_country == "Scotland" && (
-                  <tr className="border-b border-gray-200">
-                    <td className="p-2">LLT</td>
-                    <td className="p-2 text-right">{formatGBP(item.llt)}</td>
-                    <td></td>
-                  </tr>
-                )}
+          {item.service_type == 2 && (
+            <>
+              {item.purchase_country == "England" && (
+                <tr className="border-b border-gray-200">
+                  <td className="p-2">Stamp Duty</td>
+                  <td className="p-2 text-right">{formatGBP(item.stamp_duty)}</td>
+                  <td></td>
+                </tr>
+              )}
 
-                {item.purchase_country == "Wales" && (
-                  <tr className="border-b border-gray-200">
-                    <td className="p-2">LBTT</td>
-                    <td className="p-2 text-right">{formatGBP(item.lbtt)}</td>
-                    <td></td>
-                  </tr>
-                )}
-              </>
-            )}
-          </React.Fragment>
-        ))}
-    </tbody>
+              {item.purchase_country == "Scotland" && (
+                <tr className="border-b border-gray-200">
+                  <td className="p-2">LLT</td>
+                  <td className="p-2 text-right">{formatGBP(item.llt)}</td>
+                  <td></td>
+                </tr>
+              )}
+
+              {item.purchase_country == "Wales" && (
+                <tr className="border-b border-gray-200">
+                  <td className="p-2">LBTT</td>
+                  <td className="p-2 text-right">{formatGBP(item.lbtt)}</td>
+                  <td></td>
+                </tr>
+              )}
+            </>
+          )}
+        </React.Fragment>
+      );
+    })}
+</tbody>
   </table>
-</div> */}
-<div className="flex items-center gap-3 w-full">
+ <div className="flex items-center gap-3 w-full mt-4">
+
   <textarea
     placeholder="Enter Your Notes"
     className="text-black placeholder-black border rounded px-3 py-2 resize-none w-1/2 h-[44px]"
+    value={notes}
+    onChange={(e) => setNotes(e.target.value)}
   />
 
-  <input
-    type="text"
-    placeholder="Enter your Status"
-    className="text-black placeholder-black border rounded px-3 py-2 w-1/3 h-[44px]"
-  />
+ <select
+    className="text-black border rounded px-3 py-2 w-1/3 h-[44px]"
+    value={status}
+    onChange={(e) => setStatus(e.target.value)}
+  >
+    <option value="">Select Status</option>
+    <option value="4">Accepted</option>
+    <option value="5">Rejected</option>
+    <option value="6">On Hold</option>
+  </select>
 
-  <button className="bg-emerald-600 text-white px-5 h-[44px] rounded hover:bg-emerald-700">
+  <button
+    className="bg-emerald-600 text-white px-5 h-[44px] rounded hover:bg-emerald-700"
+    onClick={handlestatus}
+  >
     Update
   </button>
+
+</div>
 </div>
 
           </div>

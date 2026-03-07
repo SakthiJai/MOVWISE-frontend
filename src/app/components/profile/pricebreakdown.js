@@ -157,18 +157,18 @@ useEffect(() => {
     { level: 6, label: "Achievement", x:356, y: 900 ,status: 'Done'}
   ];
   
-  const getStatusLabel = (status) => {
+   const getStatusLabel = (status) => {
   switch (status) {
     case 2:
-      return "Customer Requested";
+      return "Quote Instructed";
     case 3:
       return "Admin Approved";
     case 4:
-      return "You have accepted";
+      return "Approved";
     case 5:
-      return "Quote is under progress";
+      return "Rejected by Admin";
     case 6:
-      return "Rejected by you";
+      return "On Hold";
     case 7:
       return "Quote is about to completed";
     default:

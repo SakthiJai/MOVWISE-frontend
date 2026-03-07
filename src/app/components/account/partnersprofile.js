@@ -17,6 +17,8 @@ import { API_BASE_URL } from "../../constants/config";
 
 
 const Partnersprofile = () => {
+  const [QuoteRefNumber,setQuoteRefNumber]=useState();
+  let quote_ref_number=""
    
  const getStatusLabel = (status) => {
   switch (status) {
@@ -36,7 +38,7 @@ const Partnersprofile = () => {
       return "Unknown";
   }
 };
-
+const [showPriceBreakdown, setShowPriceBreakdown] = useState(false);
 const getServiceTypeLabel = (type) => {
   switch (type) {
     case 1:
@@ -58,7 +60,7 @@ const getServiceTypeLabel = (type) => {
   const [logintype, setlogintype] = useState();
     const [selectedlender, setselectedLender] = useState([]);
   
-  const [showpricebreakdown, setshowpricebreakdown] = useState();
+  // const [showpricebreakdown, setshowpricebreakdown] = useState();
     const [lender, setLender] = useState([]);
       const[quoteUser,setquoteUser]=useState({});
       const[companyitems,setcompanyitems]=useState()
@@ -121,10 +123,17 @@ const getServiceTypeLabel = (type) => {
     }
   }, []);
 
-  function handlecom_detailsopen(property_id){
-    setSelectedQuoteId(property_id)
-    console.log("<>selectedQuoteId",selectedQuoteId);
-  }
+function handlecom_detailsopen(quote){
+  console.log(quote);
+  let property_id = quote.quote_id;
+  setSelectedQuoteId(property_id)
+  console.log("<>selectedQuoteId",property_id);
+  setShowPriceBreakdown(true);
+  quote_ref_number=quote.quote_ref_number;
+  console.log("quote_ref_number",quote_ref_number);
+  setQuoteRefNumber(quote.quote_ref_number);
+
+}
 
   const [lang, setLang] = useState([]);
 
@@ -669,7 +678,7 @@ const handleImageChange = (e) => {
   function handlechangepage(val) {
     // Toggle: if val is 1, set show to 1; if val is 2, set show to 2
     // If show is already 1 and val is 1, set to 2 (toggle), vice versa
-    setshow(show === val ? (val === 1 ? 2 : 1) : val);
+    setshow(val);
   }
 
   // Helper component to render the status button with dynamic colors (Unchanged)
@@ -706,6 +715,7 @@ const handleImageChange = (e) => {
        <tr className="bg-gray-100 text-left text-black">
          <th className="p-3 border font-semibold">S.No</th>
          <th className="p-3 border font-semibold">Service</th>
+         <th className="p-3 border font-semibold">Quotes Date</th>
          <th className="p-3 border font-semibold">Property Location</th>
          <th className="p-3 border font-semibold">Property Price</th>
          <th className="p-3 border font-semibold"> {localStorage.getItem("logintype") == "user" ? "Conveyancer Name" : "Customer Name"}</th>
@@ -717,21 +727,25 @@ const handleImageChange = (e) => {
      
  
      <tbody>
-       {companyitems?.map((quote, index) => (
+    { companyitems?.map((quote, index) => (
         
      <React.Fragment key={index}> 
             {((quote.status>1) && (localStorage.getItem("logintype")=="partner")) &&(
+
  <tr
            key={index}
            className="hover:bg-gray-50 transition duration-150 text-black"
          >
            <td className="p-3 ">{index + 1}</td>
+           
            <td className="p-3 ">{getServiceTypeLabel(quote.service_type)}</td>
+            <td className="p-3 ">{quote.created_at}</td>
+           
  
            <td className="p-3 ">
-             {quote.service_type == 2
-               ? quote.purchase_country
-               : quote.sales_country}
+             {quote.service_type == 1
+               ? quote.sales_country
+               : quote.country}
            </td>
              
            <td className="p-3 ">£ {quote.purchase_price}</td>
@@ -744,7 +758,7 @@ const handleImageChange = (e) => {
            </td>
  
            <td className="p-3  text-center ">
-                           <button onClick={()=>{handlecom_detailsopen(quote.property_id)}} className='bg-blue-100 text-blue-800 px-3  py-1 text-xs font-semibold rounded-full'>
+                           <button onClick={()=>{handlecom_detailsopen(quote)}} className='bg-blue-100 text-blue-800 px-3  py-1 text-xs font-semibold rounded-full'>
  
             
              
@@ -761,7 +775,8 @@ const handleImageChange = (e) => {
          
          
        ))}
-      {company.map((quote, index) => (
+    
+      {/* {company.map((quote, index) => (
      <React.Fragment key={index}> 
             {((quote.status>0) && (localStorage.getItem("logintype")=="user")) &&(
  <tr
@@ -800,7 +815,7 @@ const handleImageChange = (e) => {
          
          
          
-       ))}
+       ))} */}
      </tbody>
    </table>
  </div>
@@ -855,6 +870,7 @@ const handleImageChange = (e) => {
 
      console.log(userprofile)
      console.log(companydetails)
+      console.log(items_c)
    
      setuser({
       first_name:userprofile[0].first_name,
@@ -1248,7 +1264,7 @@ const handleImageChange = (e) => {
     // 1. GRID CONTAINER: Establishes the grid layout
     <div className="min-h-screen  ">
       <div className="bg-white shadow-md sticky top-0 p-4 font">
-        <Navbar originalstyle={true} />
+        <Navbar originalstyle={true} hide={false}/>
       </div>
       <div className="mx-auto px-4 lg:px-16  grid grid-cols-1 md:grid-cols-4  gap-8 govt_by_scheme mt-30 mb-10">
         {/* 2. ASIDE/SIDEBAR: Spans 1 column. Styled for a menu look. */}
@@ -1261,7 +1277,7 @@ const handleImageChange = (e) => {
             <span
               onClick={() => handlechangepage(1)}
               className={`cursor-pointer w-full text-center md:text-left px-4 py-2 text-md font-medium rounded-lg transition-colors duration-200 ${
-                show
+               show === 1 
                   ? "bg-green-600 text-white shadow-md"
                   : "text-gray-600 hover:bg-gray-100"
               }`}
@@ -1271,7 +1287,7 @@ const handleImageChange = (e) => {
             <span
               onClick={() => handlechangepage(2)}
               className={`cursor-pointer w-full text-center md:text-left px-4 py-2 text-md font-medium rounded-lg transition-colors duration-200 ${
-                !show
+                show === 2
                   ? "bg-green-600 text-white shadow-md"
                   : "text-gray-600 hover:bg-gray-100"
               }`}
@@ -1281,7 +1297,7 @@ const handleImageChange = (e) => {
              <span
               onClick={() => handlechangepage(3)}
               className={`cursor-pointer w-full text-center md:text-left px-4 py-2 text-md font-medium rounded-lg transition-colors duration-200 ${
-                !show
+                show === 3
                   ? "bg-green-600 text-white shadow-md"
                   : "text-gray-600 hover:bg-gray-100"
               }`}
@@ -1304,14 +1320,39 @@ const handleImageChange = (e) => {
                 <div className="mt-5">
                   {show == 3 && (<div>
                  <QuotesContent/>
-                 <div className="mt-5">
-                  <Quotepricebreakdown companydetails={companyitems}
-          quoteId={selectedQuoteId}
-          />
-                  </div>
+               
                     </div>)}
                 </div>
+             {showPriceBreakdown && (
+  <div
+  className="fixed inset-0 bg-black/40 flex justify-center items-center z-50 p-4"
+  onClick={() => setShowPriceBreakdown(false)} // click outside closes
+>
+  <div
+    className="bg-white rounded-xl shadow-xl w-full h-[550px] p-6 relative overflow-hidden"
+    onClick={(e) => e.stopPropagation()} // prevent closing when clicking inside
+  >
+    {/* Close Button */}
+    <button
+      onClick={() => setShowPriceBreakdown(false)}
+      className="absolute top-3 right-3 text-gray-600 hover:text-black text-xl"
+    >
+      ✖
+    </button>
+
+    {/* Popup Content */}
+    <Quotepricebreakdown
+      companydetails={companyitems || []}
+      quoteId={selectedQuoteId}
+      quote_ref_number={QuoteRefNumber}
+
+    />
+  </div>
+</div>
+)}
+                 
               </div>
+            
             </div>
           </main>
         </section>
