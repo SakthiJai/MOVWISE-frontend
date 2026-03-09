@@ -26,14 +26,12 @@ const Partnersprofile = () => {
       return "Customer Requested";
     case 3:
       return "Admin Approved";
-    case 4:
-      return "You have accepted";
-    case 5:
-      return "Quote is under progress";
     case 6:
-      return "Rejected by you";
+      return "Conveyancer Approved";
     case 7:
-      return "Quote is about to completed";
+      return "Conveyancer Rejected";
+    case 8:
+      return "Conveyancer On-Hold";
     default:
       return "Unknown";
   }
@@ -727,95 +725,43 @@ const handleImageChange = (e) => {
      
  
      <tbody>
-    { companyitems?.map((quote, index) => (
-        
-     <React.Fragment key={index}> 
-            {((quote.status>1) && (localStorage.getItem("logintype")=="partner")) &&(
-
- <tr
-           key={index}
-           className="hover:bg-gray-50 transition duration-150 text-black"
-         >
-           <td className="p-3 ">{index + 1}</td>
-           
-           <td className="p-3 ">{getServiceTypeLabel(quote.service_type)}</td>
-            <td className="p-3 ">{quote.created_at}</td>
-           
- 
-           <td className="p-3 ">
-             {quote.service_type == 1
-               ? quote.sales_country
-               : quote.country}
-           </td>
-             
-           <td className="p-3 ">£ {quote.purchase_price}</td>
-           <td className="p-3 "> {loginType === "user" ? quote.company_name : quoteUser[0].first_name + quoteUser[0].last_name} {}</td>
- 
-           <td className="p-3 ">
-             <StatusButton
-             status={ getStatusLabel(quote.status)}
-             />
-           </td>
- 
-           <td className="p-3  text-center ">
-                           <button onClick={()=>{handlecom_detailsopen(quote)}} className='bg-blue-100 text-blue-800 px-3  py-1 text-xs font-semibold rounded-full'>
- 
-            
-             
-               View
-             </button>
-           </td>
+       {companyitems && companyitems.length > 0 ? (
+         companyitems.map((quote, index) => (
+           <React.Fragment key={index}>
+             {((quote.status > 1) && (localStorage.getItem("logintype") == "partner")) && (
+               <tr
+                 key={index}
+                 className="hover:bg-gray-50 transition duration-150 text-black"
+               >
+                 <td className="p-3 ">{index + 1}</td>
+                 <td className="p-3 ">{getServiceTypeLabel(quote.service_type)}</td>
+                 <td className="p-3 ">{quote.created_at}</td>
+                 <td className="p-3 ">
+                   {quote.service_type == 1
+                     ? quote.sales_country
+                     : quote.country}
+                 </td>
+                 <td className="p-3 ">£ {quote.purchase_price}</td>
+                 <td className="p-3 "> {loginType === "user" ? quote.company_name : quoteUser[0].first_name + quoteUser[0].last_name} {}</td>
+                 <td className="p-3 ">
+                   <StatusButton
+                     status={getStatusLabel(quote.status)}
+                   />
+                 </td>
+                 <td className="p-3  text-center ">
+                   <button onClick={() => { handlecom_detailsopen(quote) }} className='bg-blue-100 text-blue-800 px-3  py-1 text-xs font-semibold rounded-full'>
+                     View
+                   </button>
+                 </td>
+               </tr>
+             )}
+           </React.Fragment>
+         ))
+       ) : (
+         <tr>
+           <td colSpan="8" className="text-center p-3 text-gray-500">No records found</td>
          </tr>
-         )}
-         </React.Fragment>
- 
- 
- 
-         
-         
-         
-       ))}
-    
-      {/* {company.map((quote, index) => (
-     <React.Fragment key={index}> 
-            {((quote.status>0) && (localStorage.getItem("logintype")=="user")) &&(
- <tr
-           key={index}
-           className="hover:bg-gray-50 transition duration-150 text-black"
-         >
-           <td className="p-3 ">{index + 1}</td>
-           <td className="p-3 ">{getServiceTypeLabel(quote.service_type)}</td>
- 
-           <td className="p-3 ">
-             {quote.service_type == 2
-               ? quote.purchase_country
-               : quote.sales_country}
-           </td>
-             
-           <td className="p-3 ">£ {quote.purchase_price}</td>
-           <td className="p-3 "> {loginType === "user" ? quote.company_name : quoteUser[0].first_name + quoteUser[0].last_name} {}</td>
- 
-           <td className="p-3 ">
-             <StatusButton
-             status={ getStatusLabel(quote.status)}
-             />
-           </td>
- 
-           <td className="p-3  text-center ">
-                           <button onClick={()=>{handlecom_detailsopen(quote.property_id)}} className='bg-blue-100 text-blue-800 px-3  py-1 text-xs font-semibold rounded-full'>
- 
-            
-             
-               View
-             </button>
-           </td>
-         </tr>
-         )}
-         </React.Fragment>
-         
-         
-         
-       ))} */}
+       )}
      </tbody>
    </table>
  </div>

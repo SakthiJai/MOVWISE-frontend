@@ -414,9 +414,15 @@ useEffect(() => {
       console.log("API Response:", instruct);
 
       if (instruct) {
+        // clear loader before navigating so UI updates quickly
         setinstructloader(false);
 
-        // Step 4: Redirect using payload ID, not state
+        // fire-and-forget email request
+        postData(API_ENDPOINTS.sendinstructmail, instructpayload)
+          .then((resp) => console.log("sendinstructmail response", resp))
+          .catch((err) => console.error("sendinstructmail error", err));
+
+        // navigate immediately without waiting for mail
         router.push(`/Instruct?id=${instructpayload.quoteid}`);
       }
     } catch (e) {

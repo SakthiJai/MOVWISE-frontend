@@ -195,14 +195,12 @@ useEffect(() => {
       return "Customer Requested";
     case 3:
       return "Admin Approved";
-    case 4:
-      return "Approved";
-    case 5:
-      return "Rejected by Admin";
     case 6:
-      return "On Hold";
+      return "Conveyancer Approved";
     case 7:
-      return "Quote is about to completed";
+      return "Conveyancer Rejected";
+    case 8:
+      return "Conveyancer On-Hold";
     default:
       return "Unknown";
   }
@@ -384,9 +382,9 @@ useEffect(() => {
     onChange={(e) => setStatus(e.target.value)}
   >
     <option value="">Select Status</option>
-    <option value="4">Accepted</option>
-    <option value="5">Rejected</option>
-    <option value="6">On Hold</option>
+    <option value="6">Accepted</option>
+    <option value="7">Rejected</option>
+    <option value="8">On Hold</option>
   </select>
 
   <button
