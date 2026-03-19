@@ -187,7 +187,7 @@ const [loginformdata, setloginformdata] = useState({
     setLoading(true); 
     console.log("Selected service type:", type);
     console.log("Selected service id:", id);
-    if (id === 5) {
+    if (id === 5 || id === 4 || id === 3 || id === 1) {
   setLoading(false);
   setShowPopup(true);
   return;
