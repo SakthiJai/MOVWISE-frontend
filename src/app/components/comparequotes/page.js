@@ -218,6 +218,8 @@ const CircularProgress = ({ progress }) => {
   });
   const [taxDetails, settaxDetails] = useState();
   const [taxDetails2, settaxDetails2] = useState();
+  const [pendingDownload, setPendingDownload] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState(false);
 
   // Toggle dropdown for a particular quote card
   function toggleDropdown(id) {
@@ -285,6 +287,12 @@ useEffect(() => {
           el.style.color = '#000';
           el.style.fontSize = '11px';
           el.style.margin = '0';
+          // Flatten UI blocks to plain printable content
+          el.style.background = 'transparent';
+          el.style.backgroundColor = 'transparent';
+          el.style.border = 'none';
+          el.style.boxShadow = 'none';
+          el.style.borderRadius = '0';
         });
       };
 
@@ -311,8 +319,8 @@ useEffect(() => {
           div, p, span { color: #000 !important; background-color: transparent !important; }
           table { border-collapse: collapse; width: 100%; margin: 5px 0; }
           tr { page-break-inside: avoid; }
-          th, td { border: 1px solid #ddd; padding: 4px; font-size: 11px; }
-          th { background-color: #f5f5f5 !important; }
+          th, td { border: none !important; padding: 2px 4px; font-size: 11px; }
+          th { background-color: transparent !important; }
           h3, h4 { font-size: 13px; margin: 8px 0 4px 0; }
         `;
           clonedDocument.head.appendChild(style);
@@ -365,8 +373,49 @@ useEffect(() => {
     } catch (error) {
       console.error('PDF generation error:', error);
       Swal.fire('Error', `Failed to generate PDF: ${error.message}`, 'error');
+    } finally {
+      setPdfLoading(false);
     }
   };
+
+  function handleDownloadFromCard(quote) {
+    // Ensure the selected quote content is mounted in the popup before export.
+    setPdfLoading(true);
+    setview_data(quote);
+    setcardid(quote?.conveying_details?.conveying_id);
+    setcardshown(true);
+    setdropdownshow(true);
+    showviewquotes(true);
+    fetchtaxdetails(quote?.conveying_details?.conveying_id);
+    setPendingDownload(true);
+  }
+
+  useEffect(() => {
+    if (!pendingDownload) return;
+
+    let attempts = 0;
+    const maxAttempts = 20;
+
+    const tryGenerate = async () => {
+      if (pdfRef?.current) {
+        await generatePDF();
+        setPendingDownload(false);
+        return;
+      }
+
+      attempts += 1;
+      if (attempts >= maxAttempts) {
+        setPendingDownload(false);
+        setPdfLoading(false);
+        Swal.fire('Error', 'PDF element not found', 'error');
+        return;
+      }
+
+      setTimeout(tryGenerate, 100);
+    };
+
+    tryGenerate();
+  }, [pendingDownload]);
 
   function handleInstructFromCard(
   companyName,
@@ -765,6 +814,13 @@ handleInstructFromCard(
   return (
     <div className=" bg-white antialiased font ">
 
+      {pdfLoading && (
+        <div className="fixed inset-0 z-[80] flex flex-col items-center justify-center bg-black/10 backdrop-blur-sm">
+          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[#4A7C59] border-t-transparent"></div>
+          <p className="mt-3 text-sm font-medium text-gray-700">Preparing your PDF...</p>
+        </div>
+      )}
+
       <div className='bg-white shadow-md sticky top-0 p-4 z-50'>
         <Navbar />
       </div>
@@ -1107,7 +1163,17 @@ handleInstructFromCard(
                           {/* Right: Buttons */}
                           <div className="flex flex-row gap-2 justify-start lg:col-start-3 lg:justify-end">
 
-
+                          <button
+                            disabled={pdfLoading || pendingDownload}
+                            className={`px-3 py-1.5 rounded-full text-sm cursor-pointer
+                              ${pdfLoading || pendingDownload
+                                ? "bg-[#4A7C59]/70 cursor-not-allowed"
+                                : "bg-[#4A7C59] hover:bg-[#3b6248] text-white"}
+                              mx-auto block md:inline-block`}
+                            onClick={() => handleDownloadFromCard(quote)}
+                          >
+                            {pdfLoading || pendingDownload ? "Downloading..." : "Download"}
+                          </button>
                             <button
                               disabled={instructloader}
                               className={`px-3 py-1.5 rounded-full text-sm cursor-pointer
