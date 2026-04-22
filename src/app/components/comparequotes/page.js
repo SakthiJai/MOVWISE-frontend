@@ -262,83 +262,9 @@ useEffect(() => {
         return;
       }
 
-      // Create a temporary wrapper to capture the content with clean styles
-      const wrapper = document.createElement('div');
-      wrapper.style.position = 'absolute';
-      wrapper.style.left = '-9999px';
-      wrapper.style.top = '0';
-      wrapper.style.width = '800px';
-      wrapper.style.backgroundColor = 'white';
-      wrapper.style.padding = '15px';
-      wrapper.style.fontFamily = 'Arial, sans-serif';
-      wrapper.style.lineHeight = '1.4';
-
-      // Clone the pdfRef content
-      const cloned = pdfRef.current.cloneNode(true);
-
-      // Remove/fix problematic styles
-      const removeProblematicStyles = (element) => {
-        const allElements = element.querySelectorAll('*');
-        allElements.forEach(el => {
-          // Remove Tailwind classes that might have complex colors
-          el.className = '';
-          // Set basic text properties
-          el.style.fontFamily = 'Arial, sans-serif';
-          el.style.color = '#000';
-          el.style.fontSize = '11px';
-          el.style.margin = '0';
-          // Flatten UI blocks to plain printable content
-          el.style.background = 'transparent';
-          el.style.backgroundColor = 'transparent';
-          el.style.border = 'none';
-          el.style.boxShadow = 'none';
-          el.style.borderRadius = '0';
-        });
-      };
-
-      removeProblematicStyles(cloned);
-      wrapper.appendChild(cloned);
-      document.body.appendChild(wrapper);
-
-      // Capture with html2canvas
-      const canvas = await html2canvas(wrapper, {
-        scale: 1.5,
-        useCORS: true,
-        allowTaint: true,
-        backgroundColor: '#ffffff',
-        logging: false,
-        imageTimeout: 10000,
-        windowHeight: wrapper.scrollHeight,
-        windowWidth: 800,
-        onclone: (clonedDocument) => {
-          // Ensure styles are applied to cloned document
-          const style = clonedDocument.createElement('style');
-          style.textContent = `
-          * { margin: 0; padding: 0; }
-          body { font-family: Arial, sans-serif; color: #000; background: white; font-size: 11px; line-height: 1.4; }
-          div, p, span { color: #000 !important; background-color: transparent !important; }
-          table { border-collapse: collapse; width: 100%; margin: 5px 0; }
-          tr { page-break-inside: avoid; }
-          th, td { border: none !important; padding: 2px 4px; font-size: 11px; }
-          th { background-color: transparent !important; }
-          h3, h4 { font-size: 13px; margin: 8px 0 4px 0; }
-        `;
-          clonedDocument.head.appendChild(style);
-        }
-      });
-
-      document.body.removeChild(wrapper);
-
-      // Check if canvas has valid data
-      if (!canvas || canvas.width === 0 || canvas.height === 0) {
-        throw new Error('Canvas rendering failed - empty canvas');
-      }
-
-      const imgData = canvas.toDataURL('image/png');
-
-      if (!imgData || imgData === 'data:image/png;base64,') {
-        throw new Error('Failed to generate image data from canvas');
-      }
+      const margin = 10;
+      const imgWidth = 210 - margin * 2;
+      const pageHeight = 297 - margin * 2;
 
       const pdf = new jsPDF({
         orientation: 'portrait',
@@ -347,26 +273,218 @@ useEffect(() => {
         compress: true,
       });
 
-      const margin = 10; // 10mm margins
-      const imgWidth = 210 - (margin * 2); // A4 width minus margins
-      const pageHeight = 297 - (margin * 2); // A4 height minus margins
-      const imgHeight = (canvas.height * imgWidth) / canvas.width;
-      let heightLeft = imgHeight;
-      let position = margin;
+      // Helper: clone pdfRef, apply PDF-mode swaps, strip Tailwind classes
+      const buildClone = (hideNotes) => {
+        const cloned = pdfRef.current.cloneNode(true);
 
-      // Add first page
-      pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
-      heightLeft -= pageHeight;
+        // Swap UI table → condensed sentence
+        cloned.querySelectorAll('.purchase-ui-details').forEach(el => { el.style.display = 'none'; });
+        cloned.querySelectorAll('.purchase-pdf-summary').forEach(el => { el.style.display = 'block'; });
 
-      // Add additional pages if needed
-      while (heightLeft > 0) {
-        position = heightLeft - imgHeight + margin;
-        pdf.addPage();
-        pdf.addImage(imgData, 'PNG', margin, position, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
+        // Handle notes section
+        const notesEl = cloned.querySelector('.pdf-notes-section');
+        if (notesEl) {
+          notesEl.style.display = hideNotes ? 'none' : 'block';
+        }
+
+        const feeCells = cloned.querySelectorAll('.pdf-fee-table th, .pdf-fee-table td');
+        const feeRows = cloned.querySelectorAll('.pdf-fee-table tr');
+        feeRows.forEach(row => row.setAttribute('data-pdf-fee-row', '1'));
+
+        const headingTags = new Set(['H1', 'H2', 'H3', 'H4', 'H5', 'H6']);
+        const cellTags = new Set(['TD', 'TH']);
+        cloned.querySelectorAll('*').forEach(el => {
+          el.className = '';
+          el.style.fontFamily = 'Arial, sans-serif';
+          el.style.color = headingTags.has(el.tagName) ? '#059669' : '#000';
+          el.style.fontSize = '11px';
+          el.style.margin = '0';
+          el.style.background = 'transparent';
+          el.style.backgroundColor = 'transparent';
+          el.style.border = 'none';
+          el.style.boxShadow = 'none';
+          el.style.borderRadius = '0';
+          el.style.overflow = 'visible';
+          el.style.maxHeight = 'none';
+          // Give table cells generous padding so columns don't run together
+          if (cellTags.has(el.tagName)) {
+            el.style.padding = '6px 16px 6px 4px';
+            el.style.whiteSpace = 'nowrap';
+          }
+          if (el.tagName === 'IMG') {
+            el.style.display = 'block';
+            el.style.visibility = 'visible';
+            el.style.opacity = '1';
+            el.style.objectFit = 'contain';
+          }
+        });
+
+        // Increase fee breakdown row height in PDF output
+        feeRows.forEach(row => {
+          row.style.lineHeight = '1.45';
+        });
+        feeCells.forEach(cell => {
+          cell.style.fontSize = '11px';
+          cell.style.padding = '6px 10px';
+          cell.style.lineHeight = '1.45';
+        });
+        return cloned;
+      };
+
+      const canvasOptions = {
+        scale: 1.5,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+        imageTimeout: 10000,
+        windowWidth: 800,
+      };
+
+      const waitForImages = async (container) => {
+        const images = Array.from(container.querySelectorAll('img'));
+        await Promise.all(
+          images.map((img) =>
+            new Promise((resolve) => {
+              img.crossOrigin = 'anonymous';
+              img.loading = 'eager';
+              img.decoding = 'sync';
+
+              if (img.complete && img.naturalWidth > 0) {
+                resolve();
+                return;
+              }
+
+              const done = () => resolve();
+              img.addEventListener('load', done, { once: true });
+              img.addEventListener('error', done, { once: true });
+              setTimeout(done, 2500);
+            })
+          )
+        );
+      };
+
+      // --- Capture main content (notes hidden) ---
+      const mainWrapper = document.createElement('div');
+      mainWrapper.style.cssText = 'position:absolute;left:-9999px;top:0;width:800px;background:white;padding:15px;font-family:Arial,sans-serif;line-height:1.4;';
+      const mainClone = buildClone(true);
+      mainClone.style.overflow = 'visible';
+      mainClone.style.maxHeight = 'none';
+      mainWrapper.appendChild(mainClone);
+      document.body.appendChild(mainWrapper);
+      await waitForImages(mainWrapper);
+
+      // Collect safe page break points at the end of fee table rows.
+      const canvasScale = Number(canvasOptions.scale || 1);
+      const cloneTop = mainClone.getBoundingClientRect().top;
+      const rowBreakPointsPx = Array.from(mainClone.querySelectorAll('[data-pdf-fee-row="1"]'))
+        .map((row) => {
+          const rowRect = row.getBoundingClientRect();
+          return Math.round((rowRect.bottom - cloneTop) * canvasScale);
+        })
+        .filter((point, idx, arr) => point > 0 && arr.indexOf(point) === idx)
+        .sort((a, b) => a - b);
+
+      const mainCanvas = await html2canvas(mainWrapper, { ...canvasOptions, windowHeight: mainWrapper.scrollHeight });
+      document.body.removeChild(mainWrapper);
+
+      if (!mainCanvas || mainCanvas.width === 0) throw new Error('Canvas rendering failed');
+
+      // Slice the canvas into real page chunks to avoid duplicate rows between pages.
+      const pageHeightPx = Math.floor((pageHeight * mainCanvas.width) / imgWidth);
+      let renderedHeightPx = 0;
+      let firstPage = true;
+
+      while (renderedHeightPx < mainCanvas.height) {
+        const remainingPx = mainCanvas.height - renderedHeightPx;
+        let sliceHeightPx = Math.min(pageHeightPx, remainingPx);
+
+        // Prefer cutting at row boundaries so text does not split across pages.
+        const targetCutPx = renderedHeightPx + sliceHeightPx;
+        const minCutPx = renderedHeightPx + 20;
+        const candidateBreaks = rowBreakPointsPx.filter(
+          (point) => point <= targetCutPx && point > minCutPx
+        );
+        const maxBacktrackPx = 120 * canvasScale;
+        if (
+          candidateBreaks.length > 0 &&
+          remainingPx > pageHeightPx &&
+          targetCutPx - candidateBreaks[candidateBreaks.length - 1] <= maxBacktrackPx
+        ) {
+          const bestCutPx = candidateBreaks[candidateBreaks.length - 1];
+          sliceHeightPx = bestCutPx - renderedHeightPx;
+        }
+
+        const pageCanvas = document.createElement('canvas');
+        pageCanvas.width = mainCanvas.width;
+        pageCanvas.height = sliceHeightPx;
+
+        const pageCtx = pageCanvas.getContext('2d');
+        if (!pageCtx) {
+          throw new Error('Failed to create canvas context for PDF page slicing');
+        }
+
+        pageCtx.drawImage(
+          mainCanvas,
+          0,
+          renderedHeightPx,
+          mainCanvas.width,
+          sliceHeightPx,
+          0,
+          0,
+          mainCanvas.width,
+          sliceHeightPx
+        );
+
+        const pageImgData = pageCanvas.toDataURL('image/png');
+        const renderedHeightMm = (sliceHeightPx * imgWidth) / mainCanvas.width;
+
+        if (!firstPage) {
+          pdf.addPage();
+        }
+        pdf.addImage(pageImgData, 'PNG', margin, margin, imgWidth, renderedHeightMm);
+
+        firstPage = false;
+        renderedHeightPx += sliceHeightPx;
       }
 
-      // Save PDF
+      // --- Capture notes on a separate page ---
+      const notesWrapper = document.createElement('div');
+      notesWrapper.style.cssText = 'position:absolute;left:-9999px;top:0;width:800px;background:white;padding:15px;font-family:Arial,sans-serif;line-height:1.4;';
+      const notesOnlyClone = pdfRef.current.cloneNode(true);
+      // Keep only the notes element
+      const notesEl = notesOnlyClone.querySelector('.pdf-notes-section');
+      notesWrapper.innerHTML = '';
+      if (notesEl) {
+        const headingTags = new Set(['H1', 'H2', 'H3', 'H4', 'H5', 'H6']);
+        notesEl.querySelectorAll('*').forEach(el => {
+          el.className = '';
+          el.style.fontFamily = 'Arial, sans-serif';
+          el.style.color = headingTags.has(el.tagName) ? '#059669' : '#000';
+          el.style.fontSize = '11px';
+          el.style.margin = '0';
+          el.style.background = 'transparent';
+          el.style.backgroundColor = 'transparent';
+          el.style.border = 'none';
+          el.style.boxShadow = 'none';
+          el.style.borderRadius = '0';
+        });
+        notesEl.style.display = 'block';
+        notesEl.style.pageBreakBefore = 'unset';
+        notesWrapper.appendChild(notesEl);
+      }
+      document.body.appendChild(notesWrapper);
+      await waitForImages(notesWrapper);
+      const notesCanvas = await html2canvas(notesWrapper, { ...canvasOptions, windowHeight: notesWrapper.scrollHeight });
+      document.body.removeChild(notesWrapper);
+
+      if (notesCanvas && notesCanvas.width > 0 && notesCanvas.height > 0) {
+        pdf.addPage();
+        const notesImgData = notesCanvas.toDataURL('image/png');
+        const notesImgHeight = (notesCanvas.height * imgWidth) / notesCanvas.width;
+        pdf.addImage(notesImgData, 'PNG', margin, margin, imgWidth, notesImgHeight);
+      }
+
       const currentRef = ref || 'quote';
       pdf.save(`${currentRef}.pdf`);
       Swal.fire('Success', 'PDF downloaded successfully!', 'success');
@@ -489,7 +607,12 @@ useEffect(() => {
     pdfRef.current.style.overflow = "visible";
     pdfRef.current.style.height = "auto";
 
-    const htmlContent = pdfRef.current.outerHTML;
+    // Clone DOM and inject PDF-mode styles so instruct email shows condensed sentence
+    const instructClone = pdfRef.current.cloneNode(true);
+    const instructStyle = document.createElement('style');
+    instructStyle.textContent = '.purchase-ui-details { display: none !important; } .purchase-pdf-summary { display: block !important; } .pdf-fee-table { font-size: 10.5px !important; line-height: 1.3 !important; } .pdf-fee-table th, .pdf-fee-table td { padding: 4px 8px !important; line-height: 1.3 !important; }';
+    instructClone.prepend(instructStyle);
+    const htmlContent = instructClone.outerHTML;
 
     let servicetype = localStorage.getItem("service");
 
@@ -1817,7 +1940,7 @@ handleInstructFromCard(
                                   <div className="  w-full"></div>
 
                                   {/* ---------- NOTES ---------- */}
-                                  <div className="font pdf-page-break"
+                                  <div className="font pdf-notes-section"
                                    style={{ pageBreakBefore: "always" }}>
                                     <h4>Notes</h4>
 
@@ -1881,3 +2004,6 @@ export default function Comparequotes() {
     </React.Suspense>
   );
 }
+// ttgvggvgvgvgccgcgcgcgcgcgcgcgc
+//nhnfrnnr
+//hrfrjngktkmg

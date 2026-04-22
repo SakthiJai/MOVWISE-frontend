@@ -120,7 +120,8 @@ export default function PurchasePropertyDetails({
     </h3>
   </div>
 
-  <div className="py-6">
+  {/* UI only: full details table */}
+  <div className="purchase-ui-details py-6">
     <table
       className="w-full"
       style={{
@@ -147,23 +148,20 @@ export default function PurchasePropertyDetails({
           ["HMO Support", servicData?.purchase_need_hmo == 0 ? "No" : "Yes"],
         ].map(([label, value], i) => (
           <tr key={i}>
-            {/* Label Column */}
             <td
               style={{
                 width: "220px",
                 fontWeight: "600",
                 padding: "6px 10px 6px 0",
-                verticalAlign: "top",textAlign: "left"
+                verticalAlign: "top", textAlign: "left"
               }}
             >
               {label}:
             </td>
-
-            {/* Value Column */}
             <td
               style={{
                 padding: "6px 0",
-                wordBreak: "break-word",textAlign: "left"
+                wordBreak: "break-word", textAlign: "left"
               }}
             >
               {value || "--"}
@@ -172,6 +170,26 @@ export default function PurchasePropertyDetails({
         ))}
       </tbody>
     </table>
+  </div>
+
+  {/* PDF only: condensed sentence — hidden in UI */}
+  <div className="purchase-pdf-summary" style={{ display: "none", padding: "12px 0" }}>
+    <p style={{ fontSize: "13px", lineHeight: "1.8" }}>
+      I have made an offer in <strong>{servicData?.country || "--"}</strong>,{" "}
+      purchase price <strong>£{servicData?.purchase_price || "--"}</strong>,{" "}
+      <strong>{servicData?.leasehold_or_free || "--"}</strong>,{" "}
+      purchase mode: <strong>{servicData?.purchase_mode || "--"}</strong>
+      {(servicData?.obtaining_mortgage == 1 || servicData?.obtaining_mortgage === true) && (
+        <>, obtaining mortgage: <strong>Yes</strong></>
+      )}
+      {servicData?.gift_deposit != null && servicData?.gift_deposit !== "" && Number(servicData?.gift_deposit) !== 0 && (
+        <>, <strong>{servicData.gift_deposit}</strong> gift deposited</>
+      )}
+      {language?.find((l) => l.id == servicData?.languages)?.language_name && (
+        <>, language: <strong>{language.find((l) => l.id == servicData?.languages).language_name}</strong></>
+      )}
+      .
+    </p>
   </div>
 </div>
 
@@ -187,7 +205,7 @@ export default function PurchasePropertyDetails({
             </h3>
 
             <div className="overflow-x-auto md:overflow-visible">
-              <table className="w-full border-collapse text-black font min-w-[520px] md:min-w-0">
+              <table className="pdf-fee-table w-full border-collapse text-black font min-w-[520px] md:min-w-0">
                 <thead>
                   <tr className="border-b border-gray-300 text-left">
                     <th className="p-2 w-1/2">Type</th>

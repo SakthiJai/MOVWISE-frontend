@@ -165,7 +165,7 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                                                                     Fee Breakdown
                                                                                   </h3>
                                                                                 
-                                                                                  <table className="w-full border-collapse text-black font">
+                                                                                  <table className="pdf-fee-table w-full border-collapse text-black font">
                                                                                     <thead>
                                                                                       <tr className="border-b border-gray-300 text-left">
                                                                                         <th className="p-2 w-1/2">Type</th>
