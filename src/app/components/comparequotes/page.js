@@ -237,6 +237,7 @@ const CircularProgress = ({ progress }) => {
     fetchtaxdetails(id);
   }
   const [language, setLanguage] = useState([]);
+  const [lenders, setLenders] = useState([]);
 
 useEffect(() => {
   async function fetchLanguages() {
@@ -248,6 +249,18 @@ useEffect(() => {
     }
   }
   fetchLanguages();
+}, []);
+
+useEffect(() => {
+  async function fetchLenders() {
+    try {
+      const res = await getData(API_ENDPOINTS.lenders);
+      setLenders(res.users || []);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  fetchLenders();
 }, []);
 
   function handleprice() {
@@ -1786,11 +1799,11 @@ handleInstructFromCard(
 
                                       {view_data.service_details.length == 1 && (<>
                                         {(view_data.service_details[0].service_type == 1) && <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} />}
-                                        {(view_data.service_details[0].service_type == 2) && <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} />}
+                                        {(view_data.service_details[0].service_type == 2) && <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} lenders={lenders} />}
                                         {(view_data.service_details[0].service_type == 4) && <RemortagePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language}/>}  </>
                                       )}
                                       {view_data.service_details.length > 1 && (<>
-                                        <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} /> <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[1]} companydata={companydata} cardid={cardid} taxDetails={taxDetails2} giftvalue={giftvalue} handleprice={handleprice} /></>)}
+                                        <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} /> <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[1]} companydata={companydata} cardid={cardid} taxDetails={taxDetails2} giftvalue={giftvalue} handleprice={handleprice} lenders={lenders} /></>)}
 
                                     </div>
 
@@ -1917,11 +1930,11 @@ handleInstructFromCard(
 
                                       {view_data.service_details.length == 1 && (<>
                                         {(view_data.service_details[0].service_type == 1) && <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} />}
-                                        {(view_data.service_details[0].service_type == 2) && <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} />}
+                                        {(view_data.service_details[0].service_type == 2) && <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} lenders={lenders} />}
                                         {(view_data.service_details[0].service_type == 4) && <RemortagePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language}/>}  </>
                                       )}
                                       {view_data.service_details.length > 1 && (<>
-                                        <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} /> <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[1]} companydata={companydata} cardid={cardid} taxDetails={taxDetails2} giftvalue={giftvalue} handleprice={handleprice} /></>)}
+                                        <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} /> <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[1]} companydata={companydata} cardid={cardid} taxDetails={taxDetails2} giftvalue={giftvalue} handleprice={handleprice} lenders={lenders} /></>)}
 
                                     </div>
 

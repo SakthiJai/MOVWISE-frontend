@@ -25,6 +25,7 @@ export default function PurchasePropertyDetails({
   giftvalue,
   handleprice,
  language,
+ lenders,
  hide
 }) {
   // const [language, setlanguage] = useState([]);
@@ -141,7 +142,19 @@ export default function PurchasePropertyDetails({
           ["High Raise Support", servicData?.purchase_high_raise_support == 0 ? "No" : "Yes"],
           ["Purchase Mode", servicData?.purchase_mode],
           ["Buy To Let", servicData?.buy_to_let],
-          ["Obtaining Mortgage", servicData?.obtaining_mortgage == 0 ? "No" : "Yes"],
+         [
+  "Obtaining Mortgage",
+  servicData?.obtaining_mortgage === 0
+    ? "No"
+    : servicData?.lenders?.length
+      ? servicData.lenders
+          .map((id) =>
+            lenders?.find((l) => l.id === id)?.lenders_name
+          )
+          .filter(Boolean)
+          .join(", ")
+      : "--"
+],
           ["Gift Deposit", servicData?.gift_deposit != null ? `${servicData.gift_deposit} Gift Deposit` : "--"],
           ["Languages", language?.find((l) => l.id == servicData?.languages)?.language_name || "--"],
           ["LTA ISA", servicData?.purchase_lifetime_isa == 0 ? "No" : "Yes"],
