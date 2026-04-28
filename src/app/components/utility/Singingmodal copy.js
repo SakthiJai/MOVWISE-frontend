@@ -292,8 +292,43 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
               Making property transactions simple, secure, and smart.
             </p>
           </div>
-<button
-                className="mt-6 md:mt-8 mx-auto bg-white text-[#1E5C3B] font-semibold px-6 md:px-8 py-2 md:py-3 rounded-full hover:bg-gray-100 transition-all duration-300 shadow-lg transform hover:scale-105 text-sm md:text-base"
+
+          <Link
+            href="/components/personaldetails"
+            className="mt-6 md:mt-8 mx-auto bg-white text-[#1E5C3B] font-semibold px-6 md:px-8 py-2 md:py-3 rounded-full hover:bg-gray-100 transition-all duration-300 shadow-lg transform hover:scale-105 text-sm md:text-base"
+          >
+            Sign Up
+          </Link>
+        </div>
+
+        {/* RIGHT SIDE (Content Section - 65%) */}
+        {!loginformshow && !guestformshow && (
+          <div className="relative p-4 md:p-8 flex flex-col justify-center text-center md:text-left">
+            {/* Close Button */}
+            <button
+              onClick={closeModal}
+              className="absolute top-2 right-2 md:top-4 md:right-4 text-gray-400 hover:text-gray-700 text-lg md:text-xl font-bold leading-none"
+            >
+              X
+            </button>
+
+
+            <div className="text-gray-600 mb-6 md:mb-8 leading-relaxed text-sm md:text-base px-2 md:px-0">
+              {isEmptyQuote ? (
+                <>
+                  You’re about to submit your <b>Property Details</b>. Would you
+                  like to continue as a <b>logged-in user</b> or a <b>guest user</b>?
+                </>
+              ) : (
+                <><h2 className="text-lg md:text-2xl font-bold text-[#1E5C3B] mb-4 md:mb-6 text-center">Access your account or Register a new one to proceed.</h2></>
+
+              )}
+            </div>
+
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
+              <button
+                className="inline-flex items-center text-white justify-center h-[40px] md:h-[44px] px-4 md:px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition text-sm md:text-base"
                 onClick={() => {
                   setloginformshow(true);
                   setlogintype("user");
@@ -303,194 +338,34 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
               >
                 Sign In
               </button>
-        </div>
 
-        {/* RIGHT SIDE (Content Section - 65%) */}
-        {!loginformshow && !guestformshow && (
-          <div className="flex justify-center items-center min-h-[60vh] md:min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-4 md:p-6">
-            <form
-              noValidate
-              onSubmit={(e) => {
-                e.preventDefault();
-                setLoginError("");
-                if (validateGuestForm()) {
-                  createguestuser();
-                }
-              }}
-              className="bg-white w-full max-w-md p-6 md:p-8 rounded-2xl shadow-lg border border-gray-200"
-            >
-              <h2 className="text-lg md:text-xl font-bold text-[#1E5C3B] mb-4 md:mb-6 text-center">
-                Guest Users Please Fill Below Details
-              </h2>
-
-              {loginError && (
-                <p className="text-red-600 text-sm font-medium text-center mb-4">
-                  {loginError}
-                </p>
-              )}
-              <div className="mb-3 md:mb-4">
-                <label
-                  htmlFor="Name"
-                  className="block text-sm font-semibold text-gray-700 mb-2"
-                >
-                  First Name
-                </label>
-                <input
-                  id="firstname"
-                  name="firstname"
-                  type="text"
-
-                  placeholder="Enter your First Name"
-                  value={guestformsdata.firstname || ""}
-                  onChange={(e) =>
-                    handleguestformchange("firstname", e.target.value)
-                  }
-                  autoComplete="current-password"
-                  className="block w-full h-[40px] md:h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
-                />
-                {formErrors.firstname && (
-                  <p className="text-red-500 text-xs mt-1">{formErrors.firstname}</p>
-                )}
-              </div>
-              <div className="mb-3 md:mb-4">
-              <label
-                htmlFor="Name"
-                className="block text-sm font-semibold text-gray-700 mb-2"
-              >
-                Last Name
-              </label>
-              <input
-                id="lastname"
-                name="lastname"
-                type="text"
-
-                placeholder="Enter your Last Name"
-                value={guestformsdata.lastname || ""}
-                onChange={(e) =>
-                  handleguestformchange("lastname", e.target.value)
-                }
-                autoComplete="family-name"
-                className="block w-full h-[40px] md:h-[44px] mb-3 md:mb-4 rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
-              />
-              {formErrors.lastname && (
-                <p className="text-red-500 text-xs mt-1">
-                  {formErrors.lastname}
-                </p>
-              )}
-              </div>
-              <div className="mb-4 md:mb-5">
-                <label
-                  htmlFor="email"
-                  className="block text-sm font-semibold text-gray-700 mb-2"
-                >
-                  Email Address
-                </label>
-                <input
-                  id="email"
-                  name="guest_email"
-                  type="email"
-
-                  placeholder="Enter your email"
-                  value={guestformsdata.guest_email || ""}
-                  onChange={(e) =>
-                    handleguestformchange("guest_email", e.target.value)
-                  }
-                  className="block w-full h-[40px] md:h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
-                />
-                {formErrors.guest_email && (
-                  <p className="text-red-500 text-xs mt-1">{formErrors.guest_email}</p>
-                )}
-              </div>
-              <div className="mb-4 md:mb-5">
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Phone Number
-                </label>
-                <input
-                  type="text"
-                  name="guest_phonenumber"
-                  inputMode="numeric"
-                   maxLength={12}
-                  placeholder="Enter your phone number"
-                  value={guestformsdata.guest_phonenumber || ""}
-                  onChange={(e) => {
-                    const value = e.target.value;
-
-                    // Allow only numbers
-                    if (/^\d*$/.test(value)) {
-                      handleguestformchange("guest_phonenumber", value);
-                    }
-                  }}
-                  className="block w-full h-[40px] md:h-[44px] rounded-lg border border-gray-300 px-3 
-                    text-[14px] text-gray-800 placeholder-gray-400 
-                    focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] 
-                    outline-none transition-all"
-                />
-                {formErrors.guest_phonenumber && (
-                  <p className="text-red-500 text-xs mt-1">
-                    {formErrors.guest_phonenumber}
-                  </p>
-                )}
-              </div>
-
-              {/* Password */}
-
-              {/* Submit Button */}
               <button
-                type="submit"
-                disabled={!termsAccepted}
-                className={`w-full font-semibold py-2 md:py-3 rounded-lg transition-all duration-300 shadow-md text-sm md:text-base ${termsAccepted
-                  ? "bg-[#1E5C3B] text-white hover:bg-green-700 transform hover:scale-105"
-                  : "bg-gray-400 text-gray-200 cursor-not-allowed"
-                  }`}
-              >
-                Proceed
-              </button>
-              {/* <button
-                type="button"
                 onClick={() => {
-                  setloginformshow(false);
-                  setguestformshow(false);
-
-                  setguestformsdata({
-                    guest_email: "",
-                    guest_name: "",
-                    guest_phonenumber: "",
-                  });
+                  setguestformshow(true);
+                  setLoginError(false);
                   setTermsAccepted(false);
-
-                  setFormErrors({});
-                  setLoginError("");
                 }}
-                className="mt-1 w-full bg-[#ffd954] text-white font-semibold py-2 md:py-3 rounded-lg hover:bg-green-700 transition-all duration-300 shadow-md transform hover:scale-105 text-sm md:text-base"
+                className="inline-flex items-center text-white justify-center h-[40px] md:h-[44px] px-4 md:px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition text-sm md:text-base"
               >
-                Back
-              </button> */}
-              <div className="mt-3 md:mt-4 flex items-start justify-center gap-2">
-                <input
-                  type="checkbox"
-                  id="terms"
-                  className="w-4 h-4 mt-0.5 text-[#1E5C3B] border-gray-300 rounded focus:ring-[#1E5C3B]"
-                  checked={termsAccepted}
-                  onChange={(e) => setTermsAccepted(e.target.checked)}
-                />
-             <label htmlFor="login_terms" className="text-xs md:text-sm text-gray-600 leading-tight">
-                    I agree to MovWise
-                    <Link
-                      href="/terms-of-use"
-                      className="text-green-600 underline hover:text-green-700"
-                    >
-                      Terms and Conditions
-                    </Link>{" "}
-                    and{" "}
-                    <Link
-                      href="/privacy-policy"
-                      className="text-green-600 underline hover:text-green-700"
-                    >
-                      Privacy Policy
-                    </Link>
-                  </label>
-              </div>
-            </form>
+                Guest User
+              </button>
+            </div>
+
+            <div className="w-full text-center sm:grid  sm:grid-cols-2 gap-4 md:gap-6 mt-4 md:mt-5 ">
+              {partnerloginshow && (
+                <button
+                  className="w-full text-white sm:w-1/2 inline-flex items-center col-span-2 mx-auto justify-center mx-auto h-[40px] md:h-[44px] px-4 md:px-6 rounded-full bg-[#F8C537] font-extrabold shadow-[0_2px_0_rgba(0,0,0,0.06)] hover:bg-[#ffd954] transition text-sm md:text-base"
+                  onClick={() => {
+                    setloginformshow(true);
+                    setlogintype("partner");
+                    setLoginError(false);
+                    setTermsAccepted(false);
+                  }}
+                >
+                  Partner Login
+                </button>
+              )}
+            </div>
           </div>
         )}
 

@@ -9,7 +9,8 @@ import { getData, postData, API_ENDPOINTS } from "../../auth/API/api";
 import Swal from "sweetalert2";
 import { formatGBP } from "../utility/poundconverter";
 
-import { Check, Rows, X } from "lucide-react";
+
+import { Check, Rows, X, Download } from "lucide-react";
 import { Rating } from "react-simple-star-rating";
 import Footer from "../../parts/Footer/footer";
 import SalesPurchasePropertyDetails from "./Sales_Purchase_PropertyDetails";
@@ -26,8 +27,23 @@ export default function PurchasePropertyDetails({
   handleprice,
  language,
  lenders,
- hide
+ hide,
+ conveyancerDetails,
+ clientDetails
 }) {
+  const pdfRef = useRef(null);
+
+  const downloadPDF = () => {
+    const element = pdfRef.current;
+    const opt = {
+      margin: 10,
+      filename: `purchase-quote-${quote?.id || 'quote'}.pdf`,
+      image: { type: "jpeg", quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { orientation: "portrait", unit: "mm", format: "a4" }
+    };
+    html2pdf().set(opt).from(element).save();
+  };
   // const [language, setlanguage] = useState([]);
   // async function fetchapi() {
   //   try {
@@ -142,19 +158,9 @@ export default function PurchasePropertyDetails({
           ["High Raise Support", servicData?.purchase_high_raise_support == 0 ? "No" : "Yes"],
           ["Purchase Mode", servicData?.purchase_mode],
           ["Buy To Let", servicData?.buy_to_let],
-         [
-  "Obtaining Mortgage",
-  servicData?.obtaining_mortgage === 0
-    ? "No"
-    : servicData?.lenders?.length
-      ? servicData.lenders
-          .map((id) =>
-            lenders?.find((l) => l.id === id)?.lenders_name
-          )
-          .filter(Boolean)
-          .join(", ")
-      : "--"
-],
+         ["Obtaining Mortgage",servicData?.obtaining_mortgage === 0? "No": servicData?.lenders?.length
+      ? servicData.lenders.map((id) =>lenders?.find((l) => l.id === id)?.lenders_name )
+          .filter(Boolean).join(", "): "--"],
           ["Gift Deposit", servicData?.gift_deposit != null ? `${servicData.gift_deposit} Gift Deposit` : "--"],
           ["Languages", language?.find((l) => l.id == servicData?.languages)?.language_name || "--"],
           ["LTA ISA", servicData?.purchase_lifetime_isa == 0 ? "No" : "Yes"],
@@ -188,18 +194,28 @@ export default function PurchasePropertyDetails({
   {/* PDF only: condensed sentence — hidden in UI */}
   <div className="purchase-pdf-summary" style={{ display: "none", padding: "12px 0" }}>
     <p style={{ fontSize: "13px", lineHeight: "1.8" }}>
-      I have made an offer in <strong>{servicData?.country || "--"}</strong>,{" "}
-      purchase price <strong>£{servicData?.purchase_price || "--"}</strong>,{" "}
+      {servicData?.stages || "--"} <strong>{servicData?.country || "--"}</strong>,{" "}
+      Purchase Price <strong>£{servicData?.purchase_price || "--"}</strong>,{" "}
       <strong>{servicData?.leasehold_or_free || "--"}</strong>,{" "}
-      purchase mode: <strong>{servicData?.purchase_mode || "--"}</strong>
-      {(servicData?.obtaining_mortgage == 1 || servicData?.obtaining_mortgage === true) && (
-        <>, obtaining mortgage: <strong>Yes</strong></>
-      )}
+      <strong>
+  {servicData?.purchase_mode === "firstTime"
+    ? "First-Time Buyer"
+    : servicData?.purchase_mode === "additional"
+    ? "Additional Property (Second Home)"
+    : servicData?.purchase_mode === "Buy to let"
+    ? "Additional Property (Buy to let)"
+    : servicData?.purchase_mode === "HomeMoving"
+    ? "Home Moving"
+    : "--"}
+</strong>
+     <>, Obtaining Mortgage:{" "}<strong>{(servicData?.obtaining_mortgage == 1 || servicData?.obtaining_mortgage === true)? (
+          servicData?.lenders?.length? servicData.lenders.map((id) =>lenders?.find((l) => l.id === id)?.lenders_name )
+          .filter(Boolean).join(", "): "Yes"): "No"}</strong></>
       {servicData?.gift_deposit != null && servicData?.gift_deposit !== "" && Number(servicData?.gift_deposit) !== 0 && (
-        <>, <strong>{servicData.gift_deposit}</strong> gift deposited</>
+        <>, <strong>{servicData.gift_deposit}</strong> Gift Deposited</>
       )}
       {language?.find((l) => l.id == servicData?.languages)?.language_name && (
-        <>, language: <strong>{language.find((l) => l.id == servicData?.languages).language_name}</strong></>
+        <>,  <strong>{language.find((l) => l.id == servicData?.languages).language_name}</strong></>
       )}
       .
     </p>
