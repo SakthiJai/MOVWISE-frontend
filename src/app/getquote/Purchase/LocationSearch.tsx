@@ -209,7 +209,7 @@ useEffect(() => {
 
 
   return (
-    <div className="w-full max-w-md mx-auto">
+  <div className="w-full min-w-0">
       <input
         type="text"
         placeholder="Search Location..."

@@ -61,25 +61,27 @@ console.log("showAddressLines:" , showAddressLines);
     <>
 
       {/* Address Line 1 */}
-      {/* {showAddressLines && (
+      {showAddressLines && (
         <div className="flex flex-col h-full">
           <label className="block text-sm font-medium text-gray-700 mb-1">
-            Address Line 1 <span className="text-red-900">*</span>
+            Address Line 1 <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
             value={formData[line1] || ""}
-                        disabled={showAddressLines}
             onChange={(e) => onChange(line1, e.target.value)}
-            className="block w-full h-[44px] rounded-xl border border-gray-300 px-4  text-gray-900"
+            placeholder="Enter address line 1"
+            className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-gray-900 hover:border-[#1E5C3B] focus:border-[#1E5C3B] focus:ring-1 focus:ring-[#1E5C3B] outline-none"
           />
-          <p className="text-[12px] text-red-500 min-h-[16px]">
-            {errors[line1]}
+          <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+            errors[line1] ? "text-red-500 opacity-100" : "opacity-0"
+          }`}>
+            {errors[line1] || "placeholder"}
           </p>
         </div>
       )}
 
-
+      {/* Address Line 2 */}
       {showAddressLines && (
         <div className="flex flex-col h-full">
           <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -88,16 +90,17 @@ console.log("showAddressLines:" , showAddressLines);
           <input
             type="text"
             value={formData[line2] || ""}
-                        disabled={showAddressLines}
-
             onChange={(e) => onChange(line2, e.target.value)}
-            className="block w-full h-[44px] rounded-xl border border-gray-300 px-4  text-gray-900"
+            placeholder="Enter address line 2 (optional)"
+            className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-gray-900 hover:border-[#1E5C3B] focus:border-[#1E5C3B] focus:ring-1 focus:ring-[#1E5C3B] outline-none"
           />
-          <p className="text-[12px] text-red-500 min-h-[16px]">
-            {errors[line2]}
+          <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
+            errors[line2] ? "text-red-500 opacity-100" : "opacity-0"
+          }`}>
+            {errors[line2] || "placeholder"}
           </p>
         </div>
-      )} */}
+      )}
 
       {/* Town */}
       <div className="flex flex-col h-full">

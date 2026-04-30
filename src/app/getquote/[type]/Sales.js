@@ -238,6 +238,14 @@ const handleSubmit = (e) => {
   newErrors.sales_stages = "Please select a stage";
   }
   
+  // Address validation - check based on whether manual address is being used
+  if (showAddressLines) {
+    // Manual address entry validation
+    if (!formData.sales_address_line1 || !formData.sales_address_line1.trim()) {
+      newErrors.sales_address_line1 = "Address line 1 is required";
+    }
+  }
+  
   if (!formData.sales_country) {
   newErrors.sales_country = "Please select a country";
 }

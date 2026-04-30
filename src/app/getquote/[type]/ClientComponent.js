@@ -9,6 +9,8 @@ import Salewithpurchase from "./Salewithpurchase";
 import Remortage from "./Remortage";
 import Purchase from "./Purchase";
 import Equity from "./Equity";
+import Surveyor from "./Surveyor";
+
 
 export default function ClientComponent({ type }) {
   const [data, setData] = useState(null);
@@ -35,6 +37,7 @@ export default function ClientComponent({ type }) {
                     {type === 'remortage' && <Remortage />}
                     {type === 'purchase' && <Purchase />}
                     {type === 'equity' && <Equity />}
+                    {type === 'surveyor' && <Surveyor />}
                     
                 </main>
             

@@ -355,6 +355,13 @@ export default function Purchase() {
       newErrors.stages = "Please select a stage";
     }
 
+    // Address validation - check based on whether manual address is being used
+    if (showAddressLines) {
+      // Manual address entry validation
+      if (!formData.address_line1 || !formData.address_line1.trim()) {
+        newErrors.address_line1 = "Address line 1 is required";
+      }
+    }
 
     if (!formData.country) {
       newErrors.country = "Please select a country";

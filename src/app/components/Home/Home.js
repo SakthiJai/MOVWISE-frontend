@@ -5,7 +5,7 @@ import Footer from "../../parts/Footer/footer";
 import Image from 'next/image';
 import Navbar from '../../parts/navbar/page';
 import Link from 'next/link';
-import { Facebook, Twitter, Linkedin, Instagram,Tag, MessageCircle, Clock, PhoneCall, Mail } from "lucide-react";
+import { Facebook, Twitter, Linkedin, Instagram,Tag, MessageCircle, Clock, PhoneCall, Mail, ClipboardCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState , useEffect } from 'react'
 import Signinmodal from "./../utility/Singingmodal";
@@ -171,7 +171,13 @@ const [loginformdata, setloginformdata] = useState({
       "service_id":5,
       page:"equity"
     },
-    
+{
+  label: "Surveyor Quote",
+  icon: <ClipboardCheck className="w-10 h-10 text-[#256041]" />,
+  desc: "Get accurate property surveys from trusted professionals",
+  service_id: 6,
+  page: "surveyor"
+}
 
     
   ];
