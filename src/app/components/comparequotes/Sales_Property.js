@@ -26,33 +26,49 @@ export default function SalesPropertyDetails({
   taxDetails,
   giftvalue,
   language
+
   
 }) {
-  // const [language, setlanguage] = useState([]);
-  // console.log("sales");
-  // console.log(quote,
-  // servicData,
-  // companydata,
-  // cardid,
-  // taxDetails,
-  // giftvalue,)
+ 
+const [lendersList, setLendersList] = useState([]);
+useEffect(() => {
+  const fetchLenders = async () => {
+    try {
+      const res = await getData(API_ENDPOINTS.lenders);
+      setLendersList(res?.users || []);
+    } catch (err) {
+      console.log(err);
+      setLendersList([]);
+    }
+  };
 
-  // async function fetchapi() {
-  //   try {
-  //     const res = await getData(API_ENDPOINTS.languages);
-  //     const language = res.users;
-  //     console.log(taxDetails);
-  //     setlanguage(language);
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // }
+  fetchLenders();
+}, []);
+const lenderNames = React.useMemo(() => {
+  if (String(servicData?.existing_mortgage) !== "1") return "No";
+  if (!Array.isArray(lendersList) || lendersList.length === 0) return "--";
 
-  // useEffect(() => {
-  //   fetchapi();
-  // }, []);
+  const raw = servicData?.lenders;
+  if (!raw) return "--";
 
-  return (
+  const ids = Array.isArray(raw)
+    ? raw
+    : String(raw)
+        .replace(/[\[\]"]+/g, "")
+        .split(",")
+        .map(i => i.trim())
+        .filter(Boolean);
+
+  const names = ids
+    .map(id =>
+      lendersList.find(l => String(l.id) === String(id))?.lenders_name
+    )
+    .filter(Boolean);
+
+  return names.length ? names.join(", ") : "--";
+}, [servicData?.lenders, servicData?.existing_mortgage, lendersList]);
+
+return (
     <div className="grid grid-cols-[0.5fr_1fr] p-1 border font  rounded-lg bg-white shadow px-6 py-2 mb-2 space-y-2 quotes  font_size_13px"  style={{
                                   backgroundColor: 'white', 
                                   color: 'black',
@@ -106,10 +122,16 @@ export default function SalesPropertyDetails({
               <td className="p-2 font-semibold w-40 text-left font_size_13px">Shared Ownership</td>
               <td className="p-2 text-left font_size_13px">{servicData?.shared_ownership || "--"}</td>
             </tr>
-            <tr className=" border-gray-200">
-              <td className="p-2 font-semibold w-40 text-left font_size_13px">Existing Mortgage</td>
-              <td className="p-2 text-left font_size_13px">{servicData?.existing_mortgage === 1 ? "Yes" : "No"}</td>
-            </tr>
+<tr className="border-gray-200">
+  <td className="p-2 font-semibold w-40 text-left font_size_13px">
+    Existing Mortgage
+  </td>
+
+<td className="p-2 text-left font_size_13px">
+
+  {lenderNames}
+</td>
+</tr>
             <tr className=" border-gray-200">
               <td className="p-2 font-semibold w-40 text-left font_size_13px">Languages</td>
               <td className="p-2 text-left font_size_13px">
@@ -117,10 +139,10 @@ export default function SalesPropertyDetails({
                   ?.language_name || "--"}
               </td>
             </tr>
-            <tr>
+            {/* <tr>
               <td className="p-2 font-semibold w-40 text-left font_size_13px">Lenders</td>
               <td className="p-2 text-left font_size_13px">{servicData?.lenders || "--"}</td>
-            </tr>
+            </tr> */}
           </tbody>
         </table>
       </div>

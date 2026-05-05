@@ -18,31 +18,44 @@ export default function Surveyor() {
   const formFieldRefs = useRef({});
   const [showAddressLines, setShowAddressLines] = useState(false);
 
-  const [formData, setFormData] = useState({
-    address: "",
-    address_line1: "",
-    address_line2: "",
-    city: "",
-    country: "",
-    propertyValue: "",
-    surveyType: "",
-    specialInstruction: "",
-  });
+ const [formData, setFormData] = useState({
+  address: "",
+  address_line1: "",
+  address_line2: "",
+  city: "",
+  country: "",
+  propertyValue: "",
+  surveyType: "",
+  specialInstruction: "",
+
+  // NEW
+  first_name: "",
+  last_name: "",
+  email: "",
+  phone_number: "",
+  valuation: "", // yes/no
+});
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
 
   const handleUnknownPostcode = () => {
     setShowAddressLines(true);
-    setFormData(prev => ({
-      ...prev,
-      address: "",
-      selectedId: "",
-      address_line1: "",
-      address_line2: "",
-      city: "",
-      country: "",
-    }));
+   setFormData({
+  address: "",
+  address_line1: "",
+  address_line2: "",
+  city: "",
+  country: "",
+  propertyValue: "",
+  surveyType: "",
+  specialInstruction: "",
+  first_name: "",
+  last_name: "",
+  email: "",
+  phone_number: "",
+  valuation: "",
+});
   };
 
   const handleChange = (field, value) => {
@@ -77,6 +90,28 @@ export default function Surveyor() {
     if (!formData.country) {
       newErrors.country = "Please select a country.";
     }
+    if (!formData.first_name.trim()) {
+  newErrors.first_name = "First name is required.";
+}
+
+if (!formData.last_name.trim()) {
+  newErrors.last_name = "Last name is required.";
+}
+
+if (!formData.email.trim()) {
+  newErrors.email = "Email is required.";
+} else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+  newErrors.email = "Invalid email format.";
+}
+
+if (!formData.phone_number.toString().trim()) {
+  newErrors.phone_number = "Phone number is required.";
+}
+
+// Conditional validation
+// if (formData.surveyType === "homebuyer_report" && formData.valuation === "") {
+//   newErrors.valuation = "Please select valuation option.";
+// }
 
     if (Object.keys(newErrors).length) {
       setErrors(newErrors);
@@ -91,16 +126,26 @@ export default function Surveyor() {
     //     ? `${formData.address_line1}${formData.address_line2 ? ', ' + formData.address_line2 : ''}, ${formData.city}, ${formData.country}`
     //     : formData.address;
 
-      const payload = {
+   const payload = {
   address: formData.address || "",
   address_line1: formData.address_line1 || "",
   address_line2: formData.address_line2 || "",
   country: formData.country || "",
-property_values: formData.propertyValue
-  ? parseInt(formData.propertyValue, 10)
-  : 0,
+  property_values: formData.propertyValue
+    ? parseInt(formData.propertyValue, 10)
+    : 0,
   survey_type: formData.surveyType,
   special_instruction: formData.specialInstruction?.trim() || "",
+
+  // NEW
+  first_name: formData.first_name.trim(),
+  last_name: formData.last_name.trim(),
+  email: formData.email.trim(),
+  phone_number: Number(formData.phone_number),
+  valuation:
+    formData.surveyType === "homebuyer_report"
+      ? Number(formData.valuation)
+      : null,
 };
 
       console.log("Sending payload:", payload);
@@ -119,6 +164,11 @@ property_values: formData.propertyValue
           propertyValue: "",
           surveyType: "",
           specialInstruction: "",
+          first_name: "",
+          last_name: "",
+          email: "",
+          phone_number: "",
+          valuation: ""
         });
       } else {
         setErrors({ submit: "Failed to save surveyor request. Please try again." });
@@ -197,12 +247,20 @@ property_values: formData.propertyValue
       className="w-full rounded-2xl border border-gray-300 px-4 py-3 text-sm"
     />
 
-   <select
+  <select
   value={formData.country}
   onChange={(e) => handleChange("country", e.target.value)}
-  className="w-full rounded-2xl border border-gray-300 px-4 py-3 text-sm"
+  className={`w-full rounded-2xl border px-4 py-3 text-sm
+    ${formData.country ? "text-gray-900" : "text-gray-400"}
+    border-gray-300 bg-white
+    appearance-none
+    hover:border-[#1E5C3B]
+    focus:outline-none focus:ring-2 focus:ring-[#1E5C3B] focus:border-[#1E5C3B]`}
 >
-  <option value="">Select Country</option>
+  <option value="" disabled hidden>
+    Select Country
+  </option>
+
   <option value="England">England</option>
   <option value="Scotland">Scotland</option>
   <option value="Wales">Wales</option>
@@ -228,31 +286,93 @@ property_values: formData.propertyValue
       placeholder="Enter property value"
       className="w-full rounded-2xl border border-gray-300 px-4 py-3 text-sm"
     />
+     {errors.propertyValue && (
+    <p className="text-red-500 text-xs mt-1">
+      {errors.propertyValue}
+    </p>
+  )}
   </div>
 
   {/* Survey Type */}
-  <div>
-    <label className="block text-sm font-medium text-gray-700 mb-2">
-      Survey type
-    </label>
-    <select
-      value={formData.surveyType}
-      onChange={(e) =>
-        handleChange("surveyType", e.target.value)
-      }
-      className="w-full rounded-2xl border border-gray-300 px-4 py-3 text-sm"
-    >
-      <option value="">Choose a survey type</option>
+<div>
+  <label className="block text-sm font-medium text-gray-700 mb-2">
+    Survey type
+  </label>
 
-      {surveyTypes.map((item) => (
-        <option key={item.value} value={item.value}>
-          {item.label}
-        </option>
-      ))}
-    </select>
-  </div>
+<select
+  value={formData.surveyType}
+  onChange={(e) => handleChange("surveyType", e.target.value)}
+  className={`w-full rounded-2xl border border-gray-300 
+             px-4 py-3 pr-10 text-sm bg-white
+             appearance-none
+             focus:outline-none focus:ring-2 focus:ring-[#1E5C3B] focus:border-[#1E5C3B]
+             focus:shadow-none
+             ${formData.surveyType ? "text-[#1E5C3B]" : "text-gray-400"}`}
+>
+  <option value="" disabled hidden>
+    Choose a survey type
+  </option>
+
+  {surveyTypes.map((item) => (
+    <option key={item.value} value={item.value}>
+      {item.label}
+    </option>
+  ))}
+</select>
+  {errors.surveyType && (
+    <p className="text-red-500 text-xs mt-1">
+      {errors.surveyType}
+    </p>
+  )}
+</div>
 
 </div>
+{formData.surveyType === "homebuyer_report" && (
+  <div className="flex flex-col h-full mt-4">
+
+    {/* LABEL */}
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      Do you require a valuation?
+    </label>
+
+    {/* TOGGLE */}
+    <div className="grid grid-cols-2 gap-3">
+
+      {/* YES */}
+      <button
+        type="button"
+        onClick={() => handleChange("valuation", 1)}
+        className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center shadow-sm
+          ${formData.valuation === 1
+            ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          }`}
+      >
+        Yes
+      </button>
+
+      {/* NO */}
+      <button
+        type="button"
+        onClick={() => handleChange("valuation", 0)}
+        className={`h-[44px] rounded-xl border-2 text-base font-semibold transition-all duration-200 flex items-center justify-center shadow-sm
+          ${formData.valuation === 0
+            ? "border-[#1E5C3B] bg-[#1E5C3B] text-white"
+            : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50"
+          }`}
+      >
+        No
+      </button>
+
+    </div>
+
+    {/* ERROR SPACE (optional like your design) */}
+    <p className="text-[12px] mt-1 min-h-[16px] text-red-500">
+      {errors.valuation}
+    </p>
+
+  </div>
+)}
 
 {/* Special Instructions (FULL WIDTH + TEXTAREA) */}
 <div>
@@ -270,7 +390,75 @@ property_values: formData.propertyValue
     className="w-full rounded-2xl border border-gray-300 px-4 py-3 text-sm resize-none"
   />
 </div>
+<h1 className="mb-6 text-3xl font-semibold text-gray-900">
+    Personal Details
+  </h1>
+<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
+  <div>
+  <input
+    type="text"
+    placeholder="First Name"
+    value={formData.first_name || ""}
+    onChange={(e) => handleChange("first_name", e.target.value)}
+    className={`w-full rounded-2xl border px-4 py-3 text-sm
+      ${errors.first_name ? "border-red-500" : "border-gray-300"}`}
+  />
+  {errors.first_name && (
+    <p className="text-red-500 text-xs mt-1">
+      {errors.first_name}
+    </p>
+  )}
+</div>
+
+<div>
+  <input
+    type="text"
+    placeholder="Last Name"
+    value={formData.last_name || ""}
+    onChange={(e) => handleChange("last_name", e.target.value)}
+    className={`w-full rounded-2xl border px-4 py-3 text-sm
+      ${errors.last_name ? "border-red-500" : "border-gray-300"}`}
+  />
+  {errors.last_name && (
+    <p className="text-red-500 text-xs mt-1">
+      {errors.last_name}
+    </p>
+  )}
+</div>
+
+<div>
+  <input
+    type="email"
+    placeholder="Email"
+    value={formData.email || ""}
+    onChange={(e) => handleChange("email", e.target.value)}
+    className={`w-full rounded-2xl border px-4 py-3 text-sm
+      ${errors.email ? "border-red-500" : "border-gray-300"}`}
+  />
+  {errors.email && (
+    <p className="text-red-500 text-xs mt-1">
+      {errors.email}
+    </p>
+  )}
+</div>
+
+ <div>
+  <input
+    type="tel"
+    placeholder="Phone Number"
+    value={formData.phone_number || ""}
+    onChange={(e) => handleChange("phone_number", e.target.value)}
+    className={`w-full rounded-2xl border px-4 py-3 text-sm
+      ${errors.phone_number ? "border-red-500" : "border-gray-300"}`}
+  />
+  {errors.phone_number && (
+    <p className="text-red-500 text-xs mt-1">
+      {errors.phone_number}
+    </p>
+  )}
+</div>
+</div>
     {/* Buttons */}
     <div className="flex justify-between">
    <button

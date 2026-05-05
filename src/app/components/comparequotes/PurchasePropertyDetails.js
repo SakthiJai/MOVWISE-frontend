@@ -44,21 +44,6 @@ export default function PurchasePropertyDetails({
     };
     html2pdf().set(opt).from(element).save();
   };
-  // const [language, setlanguage] = useState([]);
-  // async function fetchapi() {
-  //   try {
-  //     const res = await getData(API_ENDPOINTS.languagelist);
-  //     const language = res.users;
-  //     console.log(language);
-  //     setlanguage(language);
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   fetchapi();
-  // }, []);
 
   return (
       <div
@@ -80,56 +65,6 @@ export default function PurchasePropertyDetails({
           Purchase Quote
         </h5>
 
-        {/* Left Column */}
-        {/* <div className="py-2 font text-sm">
-          <div className="text-start">
-            <h3 className="text-lg font-semibold text-emerald-600">
-              Purchase Property Details
-            </h3>
-          </div>
-
-          <div className="overflow-x-auto md:overflow-visible py-6">
-            <table className="w-full border-collapse ">
-              <tbody>
-                {[
-                  ["Stages", servicData?.stages],
-                  ["Town City", servicData?.town_city],
-                  ["Country", servicData?.country],
-                  ["Purchase Price", `£${servicData?.purchase_price || "--"}`],
-                  ["No Of Bedrooms", servicData?.no_of_bedrooms],
-                  ["Leasehold Or Free", servicData?.leasehold_or_free],
-                  ["Property Type", servicData?.property_type],
-                  ["High Raise Support", servicData?.purchase_high_raise_support == 0 ? "No" : "Yes"],
-                  ["Purchase Mode", servicData?.purchase_mode],
-                  ["Buy To Let", servicData?.buy_to_let],
-                  ["Obtaining Mortgage", servicData?.obtaining_mortgage == 0 ? "No" : "Yes"],
-                  ["Gift Deposit", servicData?.gift_deposit != null ? `${servicData.gift_deposit} Gift Deposit` : "--"],
-                  ["Languages", language?.find((l) => l.id == servicData?.languages)?.language_name || "--"],
-                  ["LTA ISA", servicData?.purchase_lifetime_isa == 0 ? "No" : "Yes"],
-                  ["HMO Support", servicData?.purchase_need_hmo == 0 ? "No" : "Yes"],
-                ].map(([label, value], i) => (
-                  // <tr key={i} className="border-gray-200 block md:table-row mb-2 md:mb-0">
-                  //   <td className="p-2 md:px-1 md:py-1 font-semibold w-full md:w-40 text-left font_size_13px block md:table-cell">
-
-                  //     {label}
-                  //   </td>
-                  //   <td className="p-2 text-left font_size_13px block md:table-cell break-words">
-                  //     {value || "--"}
-                  //   </td>
-                  // </tr>
-                  <tr key={i} className=" border-gray-200">
-        <td className="p-1 text-sm">
-          <div className="flex  gap-x-4">
-            <span className="font-semibold w-30 text-start">{label}:</span>
-            <span>{value || "--"}</span>
-          </div>
-        </td>
-      </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div> */}
         <div className="py-2 font text-sm">
   <div className="text-start">
     <h3 className="text-lg font-semibold text-emerald-600">

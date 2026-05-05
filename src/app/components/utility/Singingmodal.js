@@ -320,7 +320,7 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
               className="bg-white w-full max-w-md p-6 md:p-8 rounded-2xl shadow-lg border border-gray-200"
             >
               <h2 className="text-lg md:text-xl font-bold text-[#1E5C3B] mb-4 md:mb-6 text-center">
-                Guest Users Please Fill Below Details
+               Users Please Fill Below Details
               </h2>
 
               {loginError && (

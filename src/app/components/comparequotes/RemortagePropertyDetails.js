@@ -30,6 +30,46 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
     //   }
     // }
 
+
+const [lendersList, setLendersList] = useState([]);
+
+useEffect(() => {
+  const fetchLenders = async () => {
+    try {
+      const res = await getData(API_ENDPOINTS.lenders);
+      setLendersList(res?.users || []);
+    } catch (err) {
+      console.log("Lenders API error:", err);
+      setLendersList([]);
+    }
+  };
+
+  fetchLenders();
+}, []);
+
+const lenderNames = React.useMemo(() => {
+  if (String(servicData?.obtaining_mortgage) !== "1") return "0";
+  if (!Array.isArray(lendersList) || lendersList.length === 0) return "--";
+
+  const raw = servicData?.lenders;
+  if (!raw) return "--";
+
+  const ids = Array.isArray(raw)
+    ? raw
+    : String(raw)
+        .replace(/[\[\]"]+/g, "")
+        .split(",")
+        .map(i => i.trim())
+        .filter(Boolean);
+
+  const names = ids
+    .map(id =>
+      lendersList.find(l => String(l.id) === String(id))?.lenders_name
+    )
+    .filter(Boolean);
+
+  return names.length ? names.join(", ") : "--";
+}, [servicData?.lenders, servicData?.obtaining_mortgage, lendersList]);
   return (
       <div className="grid grid-cols-[0.5fr_1fr] p-1 border font  rounded-lg bg-white shadow px-6 py-2 mb-2 space-y-2 quotes  font_size_13px"  style={{
                                   backgroundColor: 'white', 
@@ -130,9 +170,7 @@ export default function RemortagePropertyDetails({quote, servicData,companydata,
                                         <span className="font-semibold w-40 text-left font_size_13px">
                                          Obtaining Mortgage
                                         </span>
-                                        <span className="ml-10">
-                                          {servicData ?.obtaining_mortgage || "--"}
-                                        </span>
+<span className="ml-10">{lenderNames}</span>
                                       </div>
                                       <div className="flex">
                                         <span className="font-semibold w-40 text-left font_size_13px">
