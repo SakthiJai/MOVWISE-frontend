@@ -163,11 +163,11 @@ export default function PurchasePropertyDetails({
         : "No"}
     </strong>
 
-    {servicData?.gift_deposit && Number(servicData?.gift_deposit) !== 0 && (
-      <>
-        , <strong>{servicData.gift_deposit}</strong> Gift Deposited
-      </>
-    )}
+  {servicData && (
+  <>
+    , <strong>{servicData.gift_deposit ?? 0}</strong> Gift Deposited
+  </>
+)}
 
     {language?.find((l) => l.id == servicData?.languages)?.language_name && (
       <>

@@ -174,7 +174,7 @@ return (
 
       <div className="remortgage-pdf-summary pdf-only" style={{ padding: "12px 0" }}>
         <p style={{ fontSize: "13px", lineHeight: "1.8" }}>
-          {servicData?.country || "--"} remortgage for property value <strong>£{servicData?.property_values || "--"}</strong>, <strong>{servicData?.leasehold_or_free || "--"}</strong>, {servicData?.property_type || "--"}, {servicData?.buy_to_let || "--"}, Obtaining Mortgage: <strong>
+          {servicData?.country || "--"}, remortgage for property value <strong>£{servicData?.property_values || "--"}</strong>, <strong>{servicData?.leasehold_or_free || "--"}</strong>, {servicData?.property_type || "--"}, Buy to let:<strong>{servicData?.buy_to_let || "--"}</strong>, Obtaining Mortgage: <strong>
           {Number(servicData?.obtaining_mortgage) === 1
             ? servicData?.lenders?.length
               ? servicData.lenders
@@ -186,9 +186,11 @@ return (
               : "Yes"
             : "No"}
           </strong>
-          {servicData?.gift_deposit && Number(servicData?.gift_deposit) !== 0 && (
-            <> , <strong>{servicData.gift_deposit}</strong> Gift Deposited</>
-          )}
+          {/* {servicData && (
+  <>
+    , <strong>{servicData.gift_deposit ?? 0}</strong> Gift Deposited
+  </>
+)} */}
           {language?.find((l) => String(l.id) === String(servicData?.languages))?.language_name && (
             <> , <strong>{language.find((l) => String(l.id) === String(servicData?.languages))?.language_name}</strong></>
           )}.

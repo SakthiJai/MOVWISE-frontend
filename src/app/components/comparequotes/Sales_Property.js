@@ -213,11 +213,11 @@ return (
         : "No"}
     </strong>
 
-    {servicData?.shared_ownership && (
+    {/* {servicData?.shared_ownership && (
       <>
         , <strong>{servicData.shared_ownership}</strong>
       </>
-    )}
+    )} */}
 
     {language?.find((l) => l.id == servicData?.languages)?.language_name && (
       <>
