@@ -73,7 +73,7 @@ export default function PurchasePropertyDetails({
   </div>
 
   {/* UI only: full details table */}
-  <div className="purchase-ui-details py-6">
+  <div className="purchase-ui-details no-pdf py-6">
     <table
       className="w-full"
       style={{
@@ -127,34 +127,59 @@ export default function PurchasePropertyDetails({
   </div>
 
   {/* PDF only: condensed sentence — hidden in UI */}
-  <div className="purchase-pdf-summary" style={{ display: "none", padding: "12px 0" }}>
-    <p style={{ fontSize: "13px", lineHeight: "1.8" }}>
-      {servicData?.stages || "--"} <strong>{servicData?.country || "--"}</strong>,{" "}
-      Purchase Price <strong>£{servicData?.purchase_price || "--"}</strong>,{" "}
-      <strong>{servicData?.leasehold_or_free || "--"}</strong>,{" "}
-      <strong>
-  {servicData?.purchase_mode === "firstTime"
-    ? "First-Time Buyer"
-    : servicData?.purchase_mode === "additional"
-    ? "Additional Property (Second Home)"
-    : servicData?.purchase_mode === "Buy to let"
-    ? "Additional Property (Buy to let)"
-    : servicData?.purchase_mode === "HomeMoving"
-    ? "Home Moving"
-    : "--"}
-</strong>
-     <>, Obtaining Mortgage:{" "}<strong>{(servicData?.obtaining_mortgage == 1 || servicData?.obtaining_mortgage === true)? (
-          servicData?.lenders?.length? servicData.lenders.map((id) =>lenders?.find((l) => l.id === id)?.lenders_name )
-          .filter(Boolean).join(", "): "Yes"): "No"}</strong></>
-      {servicData?.gift_deposit != null && servicData?.gift_deposit !== "" && Number(servicData?.gift_deposit) !== 0 && (
-        <>, <strong>{servicData.gift_deposit}</strong> Gift Deposited</>
-      )}
-      {language?.find((l) => l.id == servicData?.languages)?.language_name && (
-        <>,  <strong>{language.find((l) => l.id == servicData?.languages).language_name}</strong></>
-      )}
-      .
-    </p>
-  </div>
+ <div className="purchase-pdf-summary pdf-only" style={{ padding: "12px 0" }}>
+  <p style={{ fontSize: "13px", lineHeight: "1.8" }}>
+    
+    {servicData?.stages || "--"}{" "}
+    <strong>{servicData?.country || "--"}</strong>,{" "}
+    
+    Purchase Price <strong>£{servicData?.purchase_price || "--"}</strong>,{" "}
+    
+    <strong>{servicData?.leasehold_or_free || "--"}</strong>,{" "}
+    
+    <strong>
+      {servicData?.purchase_mode === "firstTime"
+        ? "First-Time Buyer"
+        : servicData?.purchase_mode === "additional"
+        ? "Additional Property (Second Home)"
+        : servicData?.purchase_mode === "Buy to let"
+        ? "Additional Property (Buy to let)"
+        : servicData?.purchase_mode === "HomeMoving"
+        ? "Home Moving"
+        : "--"}
+    </strong>
+
+    , Obtaining Mortgage:{" "}
+    <strong>
+      {servicData?.obtaining_mortgage == 1 || servicData?.obtaining_mortgage === true
+        ? servicData?.lenders?.length
+          ? servicData.lenders
+              .map((id) =>
+                lenders?.find((l) => String(l.id) === String(id))?.lenders_name
+              )
+              .filter(Boolean)
+              .join(", ")
+          : "Yes"
+        : "No"}
+    </strong>
+
+    {servicData?.gift_deposit && Number(servicData?.gift_deposit) !== 0 && (
+      <>
+        , <strong>{servicData.gift_deposit}</strong> Gift Deposited
+      </>
+    )}
+
+    {language?.find((l) => l.id == servicData?.languages)?.language_name && (
+      <>
+        , <strong>
+          {language.find((l) => l.id == servicData?.languages)?.language_name}
+        </strong>
+      </>
+    )}
+
+    .
+  </p>
+</div>
 </div>
 
         {/* Right Column */}

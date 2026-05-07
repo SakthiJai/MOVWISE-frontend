@@ -55,6 +55,7 @@ export default function Remortage() {
   }),
 };
     const addition_applicable = [
+      {label:"Not Applicable", value:""},
   { label: "Islamic Mortgage", value: "Islamic Mortgage" },
   { label: "Equity Transfer", value: "Equity Transfer" },
   { label: "Expats / Overseas Client", value: "Expats / Overseas Client" },

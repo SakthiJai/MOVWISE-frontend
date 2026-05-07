@@ -24,6 +24,7 @@ const sharedOwnershipOptions = [
   { value: "No", label: "No" },
 ];
     const addition_applicable = [ 
+      {label:"Not Applicable", value:""},
   { label: "Islamic Mortgage", value: "Islamic Mortgage" },
   { label: "Equity Transfer", value: "Equity Transfer" },
   { label: "Expats / Overseas Client", value: "Expats / Overseas Client" }
@@ -984,7 +985,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
     {/* Select the addition if applicable */}
     <div className="flex flex-col h-full" ref={(el) => { formFieldRefs.current['addition_applicable'] = el; }}>
         <label htmlFor="addition_applicable" className="block text-sm font-medium text-gray-700 mb-1">
-            Select the addition if applicable to your sale
+            Select the addition if applicable to your sales
         </label>
         <div className="relative mt-auto">
             <Select

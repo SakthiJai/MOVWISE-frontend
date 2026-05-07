@@ -25,31 +25,55 @@ export default function SalesPropertyDetails({
   cardid,
   taxDetails,
   giftvalue,
-  language
-
-  
+  language,
+  lenders,
+  hide,
+  handleprice,isPdf   // ✅ add this
 }) {
- 
-const [lendersList, setLendersList] = useState([]);
-useEffect(() => {
-  const fetchLenders = async () => {
-    try {
-      const res = await getData(API_ENDPOINTS.lenders);
-      setLendersList(res?.users || []);
-    } catch (err) {
-      console.log(err);
-      setLendersList([]);
-    }
-  };
+ console.log("lenders in SalesPropertyDetails:", lenders);
+// const [lendersList, setLendersList] = useState([]);
+// useEffect(() => {
+//   const fetchLenders = async () => {
+//     try {
+//       const res = await getData(API_ENDPOINTS.lenders);
+//       setLendersList(res?.users || []);
+//     } catch (err) {
+//       console.log(err);
+//       setLendersList([]);
+//     }
+//   };
 
-  fetchLenders();
-}, []);
-const lenderNames = React.useMemo(() => {
-  if (String(servicData?.existing_mortgage) !== "1") return "No";
-  if (!Array.isArray(lendersList) || lendersList.length === 0) return "--";
+//   fetchLenders();
+// }, []);
+// const lenderNames = React.useMemo(() => {
+//   if (String(servicData?.existing_mortgage) !== "1") return "No";
+//   if (!Array.isArray(lendersList) || lendersList.length === 0) return "--";
 
-  const raw = servicData?.lenders;
-  if (!raw) return "--";
+//   const raw = servicData?.lenders;
+//   if (!raw) return "--";
+
+//   const ids = Array.isArray(raw)
+//     ? raw
+//     : String(raw)
+//         .replace(/[\[\]"]+/g, "")
+//         .split(",")
+//         .map(i => i.trim())
+//         .filter(Boolean);
+
+//   const names = ids
+//     .map(id =>
+//       lendersList.find(l => String(l.id) === String(id))?.lenders_name
+//     )
+//     .filter(Boolean);
+
+//   return names.length ? names.join(", ") : "--";
+// }, [servicData?.lenders, servicData?.existing_mortgage, lendersList]);
+
+const getLenderNames = (field) => {
+  const raw = servicData?.[field];
+
+  if (String(servicData?.existing_mortgage) === "0") return "No";
+  if (!raw || !lenders?.length) return "--";
 
   const ids = Array.isArray(raw)
     ? raw
@@ -61,15 +85,30 @@ const lenderNames = React.useMemo(() => {
 
   const names = ids
     .map(id =>
-      lendersList.find(l => String(l.id) === String(id))?.lenders_name
+      lenders.find(l => String(l.id) === String(id))?.lenders_name
     )
     .filter(Boolean);
 
   return names.length ? names.join(", ") : "--";
-}, [servicData?.lenders, servicData?.existing_mortgage, lendersList]);
+};
 
+
+const pdfRef = useRef(null);
+const downloadPDF = () => {
+  const element = pdfRef.current;
+
+  const opt = {
+    margin: 10,
+    filename: `sales-quote-${quote?.id || "quote"}.pdf`,
+    image: { type: "jpeg", quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { orientation: "portrait", unit: "mm", format: "a4" }
+  };
+
+  html2pdf().set(opt).from(element).save();
+};
 return (
-    <div className="grid grid-cols-[0.5fr_1fr] p-1 border font  rounded-lg bg-white shadow px-6 py-2 mb-2 space-y-2 quotes  font_size_13px"  style={{
+    <div ref={pdfRef} className="grid grid-cols-1 md:grid-cols-[0.5fr_1fr] p-1 border font rounded-lg bg-white shadow px-6 py-2 mb-2 gap-3 quotes font_size_13px" style={{
                                   backgroundColor: 'white', 
                                   color: 'black',
                                   padding: '24px',
@@ -81,75 +120,173 @@ return (
                                   maxWidth: '100%',
                                   overflow: 'auto'
                                 }}>
-      <h5 className="col-span-3 text-lg font-semibold font text-emerald-600 mb-10">Sales Quote</h5>
-      <div className="py-1 font text-sm">
+      <h5 className="col-span-1 md:col-span-3 text-lg font font-semibold text-emerald-600 mb-4 py-1">Sales Quote</h5>
+      <div className="py-2 font text-sm">
         <div className="text-start mb-4">
           <h3 className="text-lg font-semibold text-emerald-600">
             Sales Property Details
           </h3>
         </div>
-        <table className="w-full border-collapse">
-          <tbody>
-            <tr className=" border-gray-200">
-              <td className="p-2 font-semibold w-40 text-left font_size_13px">Stages</td>
-              <td className="p-2 text-left font_size_13px">{servicData?.sales_stages || "--"}</td>
-            </tr>
-            <tr className=" border-gray-200">
-              <td className="p-2 font-semibold w-40 text-left font_size_13px">Town City</td>
-              <td className="p-2 text-left font_size_13px">{servicData?.sales_town_city || "--"}</td>
-            </tr>
-            <tr className="border-gray-200">
-              <td className="p-2 font-semibold w-40 text-left font_size_13px">Country</td>
-              <td className="p-2 text-left font_size_13px">{servicData?.sales_country || "--"}</td>
-            </tr>
-            <tr className=" border-gray-200">
-              <td className="p-2 font-semibold w-40 text-left font_size_13px">Price</td>
-              <td className="p-2 text-left font_size_13px">£{servicData?.sales_price || "--"}.00</td>
-            </tr>
-            <tr className=" border-gray-200">
-              <td className="p-2 font-semibold w-40 text-left font_size_13px">No Of Bedrooms</td>
-              <td className="p-2 text-left font_size_13px">{servicData?.sales_no_of_bedrooms || "--"}</td>
-            </tr>
-            <tr className=" border-gray-200">
-              <td className="p-2 font-semibold w-40 text-left font_size_13px">Leasehold Or Free</td>
-              <td className="p-2 text-left font_size_13px">{servicData?.sales_leasehold_or_free || "--"}</td>
-            </tr>
-            <tr className=" border-gray-200">
-              <td className="p-2 font-semibold w-40 text-left font_size_13px">Property Type</td>
-              <td className="p-2 text-left font_size_13px">{servicData?.sales_property_type || "--"}</td>
-            </tr>
-            <tr className=" border-gray-200">
-              <td className="p-2 font-semibold w-40 text-left font_size_13px">Shared Ownership</td>
-              <td className="p-2 text-left font_size_13px">{servicData?.shared_ownership || "--"}</td>
-            </tr>
-<tr className="border-gray-200">
-  <td className="p-2 font-semibold w-40 text-left font_size_13px">
-    Existing Mortgage
-  </td>
+       
+        <div className="sales-ui-details no-pdf py-6">
+  <table
+    className="w-full"
+    style={{
+      tableLayout: "fixed",
+      borderCollapse: "collapse"
+    }}
+  >
+    <tbody>
+      {[
+        ["Stages", servicData?.sales_stages],
+        ["Town City", servicData?.sales_town_city],
+        ["Country", servicData?.sales_country],
+        ["Price", `£${servicData?.sales_price || "--"}`],
+        ["No Of Bedrooms", servicData?.sales_no_of_bedrooms],
+        ["Leasehold Or Free", servicData?.sales_leasehold_or_free],
+        ["Property Type", servicData?.sales_property_type],
+        ["Shared Ownership", servicData?.shared_ownership],
 
-<td className="p-2 text-left font_size_13px">
+        // Existing Mortgage (same style as purchase)
+     ["Existing Mortgage", getLenderNames("lenders")],
+    //  ["Existing Mortgage",servicData?.existing_mortgage === 0? "No": servicData?.lenders?.length
+    //   ? servicData.lenders.map((id) =>lenders?.find((l) => l.id === id)?.lenders_name )
+    //       .filter(Boolean).join(", "): "--"],
 
-  {lenderNames}
-</td>
-</tr>
-            <tr className=" border-gray-200">
-              <td className="p-2 font-semibold w-40 text-left font_size_13px">Languages</td>
-              <td className="p-2 text-left font_size_13px">
-                {language.find((l) => l.id == servicData?.languages)
-                  ?.language_name || "--"}
-              </td>
-            </tr>
-            {/* <tr>
-              <td className="p-2 font-semibold w-40 text-left font_size_13px">Lenders</td>
-              <td className="p-2 text-left font_size_13px">{servicData?.lenders || "--"}</td>
-            </tr> */}
-          </tbody>
-        </table>
+
+        [
+          "Languages",
+          language?.find((l) => l.id == servicData?.languages)
+            ?.language_name || "--",
+        ],
+      ].map(([label, value], i) => (
+        <tr key={i}>
+          <td
+            style={{
+              width: "220px",
+              fontWeight: "600",
+              padding: "6px 10px 6px 0",
+              verticalAlign: "top", textAlign: "left"
+            }}
+          >
+            {label}:
+          </td>
+
+          <td
+            style={{
+              padding: "6px 0",
+              wordBreak: "break-word", textAlign: "left"
+            }}
+          >
+            {value || "--"}
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+
+<div className="sales-pdf-summary pdf-only" style={{ padding: "12px 0" }}>
+  <p style={{ fontSize: "13px", lineHeight: "1.8" }}>
+    
+    {servicData?.sales_stages || "--"}{" "}
+    <strong>{servicData?.sales_country || "--"}</strong>,{" "}
+    
+    Sales Price <strong>£{servicData?.sales_price || "--"}</strong>,{" "}
+    
+    <strong>{servicData?.sales_leasehold_or_free || "--"}</strong>,{" "}
+    
+    <strong>{servicData?.sales_property_type || "--"}</strong>
+
+    , Existing Mortgage:{" "}
+    <strong>
+      {servicData?.existing_mortgage == 1 || servicData?.existing_mortgage === true
+        ? servicData?.lenders?.length
+          ? servicData.lenders
+              .map((id) =>
+                lenders?.find((l) => String(l.id) === String(id))?.lenders_name
+              )
+              .filter(Boolean)
+              .join(", ")
+          : "Yes"
+        : "No"}
+    </strong>
+
+    {servicData?.shared_ownership && (
+      <>
+        , <strong>{servicData.shared_ownership}</strong>
+      </>
+    )}
+
+    {language?.find((l) => l.id == servicData?.languages)?.language_name && (
+      <>
+        , <strong>
+          {language.find((l) => l.id == servicData?.languages)?.language_name}
+        </strong>
+      </>
+    )}
+
+    .
+  </p>
+</div>
+
+{/* <div className="purchase-pdf-summary" style={{ padding: "12px 0", fontSize: "13px", lineHeight: "1.8" }}>
+  <p>
+    {servicData?.sales_stages || "--"}{" "}
+    <strong>{servicData?.sales_country || "--"}</strong>,{" "}
+    Sales Price <strong>£{servicData?.sales_price || "--"}</strong>,{" "}
+    <strong>{servicData?.sales_leasehold_or_free || "--"}</strong>,{" "}
+
+    <strong>
+      {servicData?.purchase_mode === "firstTime"
+        ? "First-Time Buyer"
+        : servicData?.purchase_mode === "additional"
+        ? "Additional Property (Second Home)"
+        : servicData?.purchase_mode === "Buy to let"
+        ? "Additional Property (Buy to let)"
+        : servicData?.purchase_mode === "HomeMoving"
+        ? "Home Moving"
+        : "--"}
+    </strong>
+
+    , Obtaining Mortgage:{" "}
+    <strong>
+      {servicData?.existing_mortgage == 1 || servicData?.existing_mortgage === true
+        ? servicData?.lenders?.length
+          ? servicData.lenders
+              .map((id) =>
+                lenders?.find((l) => String(l.id) === String(id))?.lenders_name
+              )
+              .filter(Boolean)
+              .join(", ")
+          : "Yes"
+        : "No"}
+    </strong>
+
+    {servicData?.gift_deposit && Number(servicData?.gift_deposit) !== 0 && (
+      <>
+        , <strong>{servicData.gift_deposit}</strong> Gift Deposit
+      </>
+    )}
+
+    {language?.find((l) => l.id == servicData?.languages)?.language_name && (
+      <>
+        , <strong>
+          {language.find((l) => l.id == servicData?.languages)?.language_name}
+        </strong>
+      </>
+    )}
+
+    .
+  </p>
+</div> */}
       </div>
-      <div className="font">
-        <div className=" p-3 ">
+      {!hide && (
+      <div className="font_size_13px mt-6 md:mt-0" style={{ pageBreakBefore: 'always' }}>
+        <div className="font p-3">
           <h3
-            className="text-lg text-start text-emerald-600 font-semibold  mb-3"
+            className="text-lg text-start text-emerald-600 font-semibold mb-3"
             onClick={() => {
               handleprice();
             }}
@@ -157,7 +294,7 @@ return (
             Fee Breakdown
           </h3>
 
-          <table className="pdf-fee-table w-full border-collapse text-black font">
+          <table className="pdf-fee-table w-full border-collapse text-black font min-w-[520px] md:min-w-0">
             <thead>
               <tr className="border-b border-gray-300 text-left">
                 <th className="p-2 w-1/2">Type</th>
@@ -232,7 +369,7 @@ return (
                               <div className="ml-4 font_size_13px font-bold">
                                 {" "}
                                 {/* margin-left works here */}
-                                Total
+                                {category} Total
                               </div>
                             </td>
 
@@ -275,7 +412,7 @@ return (
                         {/* <td className="p-2 text-right text-emerald-600 font_size_13px" > {formatGBP(Number(item.vat))}</td> */}
                       </tr>
                   
-                    {item.service_details[0].service_type == 2 && (
+                    {item?.service_details?.[0]?.service_type == 2 && (
                       <>
                         {(quote.service_details[0].country === "England" ||
                           quote.service_details[0].country ===
@@ -312,6 +449,7 @@ return (
           </table>
         </div>
       </div>
+      )}
     </div>
   );
 }

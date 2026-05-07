@@ -381,6 +381,34 @@ font-size: small;
     break-before: page;
   }
 }
+/* Default (UI / screen) */
+.no-pdf {
+  display: block;
+}
+
+.pdf-only {
+  display: none;
+}
+
+/* When generating PDF / printing */
+@media print {
+  .no-pdf {
+    display: none !important;
+  }
+
+  .pdf-only {
+    display: block !important;
+  }
+}
+/* For jsPDF / html2canvas */
+.pdf-mode .no-pdf {
+  display: none !important;
+}
+
+.pdf-mode .pdf-only {
+  display: block !important;
+}
+
 /* @media print {
   .pdf-page-break {
     page-break-before: always;

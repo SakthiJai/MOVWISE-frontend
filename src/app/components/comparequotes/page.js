@@ -293,7 +293,17 @@ useEffect(() => {
         // Swap UI table → condensed sentence
         cloned.querySelectorAll('.purchase-ui-details').forEach(el => { el.style.display = 'none'; });
         cloned.querySelectorAll('.purchase-pdf-summary').forEach(el => { el.style.display = 'block'; });
+// ✅ Sales FIX
+cloned.querySelectorAll('.sales-ui-details').forEach(el => {
+  el.style.display = 'none';
+});
 
+cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
+  el.style.display = 'block';
+});
+
+        cloned.querySelectorAll('.remortgage-ui-details').forEach(el => { el.style.display = 'none'; });
+        cloned.querySelectorAll('.remortgage-pdf-summary').forEach(el => { el.style.display = 'block'; });
         // Handle notes section
         const notesEl = cloned.querySelector('.pdf-notes-section');
         if (notesEl) {
@@ -611,20 +621,93 @@ useEffect(() => {
     }
   }
 
-  async function sendHtmlToBackend() {
+//   async function sendHtmlToBackend() {
+//   try {
+//     if (!pdfRef?.current) return;
+
+//     // Remove scroll restrictions before capture
+//     pdfRef.current.style.maxHeight = "none";
+//     pdfRef.current.style.overflow = "visible";
+//     pdfRef.current.style.height = "auto";
+
+//     // Clone DOM and inject PDF-mode styles so instruct email shows condensed sentence
+//   const instructClone = pdfRef.current.cloneNode(true);
+
+// // 1. remove unwanted UI
+// instructClone.querySelectorAll('.sales-ui-details').forEach(el => el.remove());
+// instructClone.querySelectorAll('.purchase-ui-details').forEach(el => el.remove());
+
+// // 2. inject style
+// const instructStyle = document.createElement('style');
+// instructStyle.textContent = `...`;
+// instructClone.prepend(instructStyle);
+
+// // 3. convert to HTML
+// const htmlContent = instructClone.outerHTML;
+
+//     let servicetype = localStorage.getItem("service");
+
+//     const payload = {
+//       ref_no: view_data?.service_details?.[0]?.quote_ref_number,
+//       servicetype: servicetype,
+//       quoteid: view_data?.quote_id,
+//       popup_html: htmlContent,   // ✅ IMPORTANT
+//     };
+
+//     await instructquote(payload);
+
+//   } catch (error) {
+//     console.error("Error sending HTML:", error);
+//   } finally {
+//     setinstructloader(false);
+//   }
+// }
+
+async function sendHtmlToBackend() {
   try {
     if (!pdfRef?.current) return;
 
-    // Remove scroll restrictions before capture
     pdfRef.current.style.maxHeight = "none";
     pdfRef.current.style.overflow = "visible";
     pdfRef.current.style.height = "auto";
 
-    // Clone DOM and inject PDF-mode styles so instruct email shows condensed sentence
+    // 1. CLONE
     const instructClone = pdfRef.current.cloneNode(true);
+
+    // 2. REMOVE UI SECTIONS (VERY IMPORTANT)
+    instructClone.querySelectorAll('.sales-ui-details').forEach(el => el.remove());
+    instructClone.querySelectorAll('.purchase-ui-details').forEach(el => el.remove());
+    instructClone.querySelectorAll('.remortgage-ui-details').forEach(el => el.remove());
+
+    // 3. INJECT STYLE (THIS IS THE CORRECT PLACE)
     const instructStyle = document.createElement('style');
-    instructStyle.textContent = '.purchase-ui-details { display: none !important; } .purchase-pdf-summary { display: block !important; } .pdf-fee-table { font-size: 10.5px !important; line-height: 1.3 !important; } .pdf-fee-table th, .pdf-fee-table td { padding: 4px 8px !important; line-height: 1.3 !important; }';
+    instructStyle.textContent = `
+      .no-pdf { display: none !important; }
+      .pdf-only { display: block !important; }
+
+      .purchase-ui-details { display: none !important; }
+      .sales-ui-details { display: none !important; }
+      .remortgage-ui-details { display: none !important; }
+
+      .purchase-pdf-summary { display: block !important; }
+      .sales-pdf-summary { display: block !important; }
+      .remortgage-pdf-summary { display: block !important; }
+
+      .pdf-fee-table {
+        font-size: 10.5px !important;
+        line-height: 1.3 !important;
+      }
+
+      .pdf-fee-table th,
+      .pdf-fee-table td {
+        padding: 4px 8px !important;
+        line-height: 1.3 !important;
+      }
+    `;
+
     instructClone.prepend(instructStyle);
+
+    // 4. FINAL HTML
     const htmlContent = instructClone.outerHTML;
 
     let servicetype = localStorage.getItem("service");
@@ -633,7 +716,7 @@ useEffect(() => {
       ref_no: view_data?.service_details?.[0]?.quote_ref_number,
       servicetype: servicetype,
       quoteid: view_data?.quote_id,
-      popup_html: htmlContent,   // ✅ IMPORTANT
+      popup_html: htmlContent,
     };
 
     await instructquote(payload);
@@ -721,7 +804,7 @@ useEffect(() => {
       qutesdata(parsedData);
 
     }
-    else if (query_ref_no.length > 0) {
+    else if (query_ref_no && query_ref_no.length > 0) {
       setLoading(true);
       console.log("Using ref number:", query_ref_no);
       qutesdata(null);
@@ -1798,10 +1881,10 @@ handleInstructFromCard(
 
 
                                       {view_data.service_details.length == 1 && (<>
-                                        {(view_data.service_details[0].service_type == 1) && <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} />}
+                                        {(view_data.service_details[0].service_type == 1) && <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} lenders={lenders}  />}
                                    
-                                        {(view_data.service_details[0].service_type == 2) && <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} lenders={lenders} />}
-                                        {(view_data.service_details[0].service_type == 4) && <RemortagePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} />}  </>
+                                        {(view_data.service_details[0].service_type == 2) && <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} lenders={lenders}  />}
+                                        {(view_data.service_details[0].service_type == 4) && <RemortagePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language}  />}  </>
                                       )}
                                       {view_data.service_details.length > 1 && (<>
                                         <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice}  /> <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[1]} companydata={companydata} cardid={cardid} taxDetails={taxDetails2} giftvalue={giftvalue} handleprice={handleprice} lenders={lenders} /></>)}
@@ -1930,9 +2013,9 @@ handleInstructFromCard(
 
 
                                       {view_data.service_details.length == 1 && (<>
-                                        {(view_data.service_details[0].service_type == 1) && <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} />}
+                                        {(view_data.service_details[0].service_type == 1) && <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} lenders={lenders}  />}
                                         {(view_data.service_details[0].service_type == 2) && <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} lenders={lenders} />}
-                                        {(view_data.service_details[0].service_type == 4) && <RemortagePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language}/>}  </>
+                                        {(view_data.service_details[0].service_type == 4) && <RemortagePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language}lenders={lenders}/>}  </>
                                       )}
                                       {view_data.service_details.length > 1 && (<>
                                         <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} /> <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[1]} companydata={companydata} cardid={cardid} taxDetails={taxDetails2} giftvalue={giftvalue} handleprice={handleprice} lenders={lenders} /></>)}
