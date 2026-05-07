@@ -1,11 +1,14 @@
 // Required for static export in Next.js app router
 export async function generateStaticParams() {
-
-  
-  // Fetch blog slugs from the API at build time
-  const res = await getData(API_ENDPOINTS.blogs);
-  if (!res || !Array.isArray(res.data)) return [];
-  return res.data.map(blog => ({ slug: encodeURIComponent(blog.slug) }));
+  try {
+    // Fetch blog slugs from the API at build time
+    const res = await getData(API_ENDPOINTS.blogs);
+    if (!res || !Array.isArray(res.data)) return [];
+    return res.data.map(blog => ({ slug: encodeURIComponent(blog.slug) }));
+  } catch (error) {
+    console.error("generateStaticParams failed:", error);
+    return [];
+  }
 }
 import React from "react";
 import Navbar from "../../parts/navbar/page";
