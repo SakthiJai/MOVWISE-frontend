@@ -329,10 +329,20 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
           el.style.borderRadius = '0';
           el.style.overflow = 'visible';
           el.style.maxHeight = 'none';
-          // Give table cells generous padding so columns don't run together
+          el.style.textAlign = 'left';
+          
+          // Flexible table cell styling
           if (cellTags.has(el.tagName)) {
-            el.style.padding = '6px 16px 6px 4px';
-            el.style.whiteSpace = 'nowrap';
+            el.style.padding = '5px 8px';
+            el.style.whiteSpace = 'normal';
+            el.style.wordWrap = 'break-word';
+            el.style.overflowWrap = 'break-word';
+            el.style.textAlign = 'left';
+          }
+          if (el.tagName === 'TABLE') {
+            el.style.width = '100%';
+            el.style.borderCollapse = 'collapse';
+            el.style.tableLayout = 'auto';
           }
           if (el.tagName === 'IMG') {
             el.style.display = 'block';
@@ -341,15 +351,32 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
             el.style.objectFit = 'contain';
           }
         });
+        
+        // Right-align Fee Amount and VAT columns in fee tables
+        cloned.querySelectorAll('.pdf-fee-table tr').forEach(row => {
+          const cells = row.querySelectorAll('th, td');
+          cells.forEach((cell, index) => {
+            // Columns 1 and 2 (Fee Amount and VAT) should be right-aligned
+            if (index === 1 || index === 2) {
+              cell.style.textAlign = 'right';
+            } else {
+              cell.style.textAlign = 'left';
+            }
+          });
+        });
 
         // Increase fee breakdown row height in PDF output
         feeRows.forEach(row => {
           row.style.lineHeight = '1.45';
+          row.style.verticalAlign = 'middle';
         });
         feeCells.forEach(cell => {
           cell.style.fontSize = '11px';
-          cell.style.padding = '6px 10px';
+          cell.style.padding = '5px 8px';
           cell.style.lineHeight = '1.45';
+          cell.style.verticalAlign = 'middle';
+          cell.style.whiteSpace = 'normal';
+          cell.style.wordWrap = 'break-word';
         });
         return cloned;
       };
@@ -492,6 +519,19 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
           el.style.boxShadow = 'none';
           el.style.borderRadius = '0';
         });
+        
+        // Right-align Fee Amount and VAT columns in notes fee tables
+        notesEl.querySelectorAll('.pdf-fee-table tr').forEach(row => {
+          const cells = row.querySelectorAll('th, td');
+          cells.forEach((cell, index) => {
+            if (index === 1 || index === 2) {
+              cell.style.textAlign = 'right';
+            } else {
+              cell.style.textAlign = 'left';
+            }
+          });
+        });
+        
         notesEl.style.display = 'block';
         notesEl.style.pageBreakBefore = 'unset';
         notesWrapper.appendChild(notesEl);
@@ -519,6 +559,490 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
     }
   };
 
+
+//   const generatePDF = async () => {
+//     try {
+//       if (!pdfRef.current) {
+//         Swal.fire('Error', 'PDF element not found', 'error');
+//         return;
+//       }
+
+//       const margin = 10;
+//       const imgWidth = 210 - margin * 2;
+//       const pageHeight = 297 - margin * 2;
+
+//       const pdf = new jsPDF({
+//         orientation: 'portrait',
+//         unit: 'mm',
+//         format: 'a4',
+//         compress: true,
+//       });
+
+//       // Helper: clone pdfRef, apply PDF-mode swaps, strip Tailwind classes
+//       const buildClone = (hideNotes) => {
+//         const cloned = pdfRef.current.cloneNode(true);
+
+//         // Swap UI table → condensed sentence
+//         cloned.querySelectorAll('.purchase-ui-details').forEach(el => { el.style.display = 'none'; });
+//         cloned.querySelectorAll('.purchase-pdf-summary').forEach(el => { el.style.display = 'block'; });
+// // ✅ Sales FIX
+// cloned.querySelectorAll('.sales-ui-details').forEach(el => {
+//   el.style.display = 'none';
+// });
+
+// cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
+//   el.style.display = 'block';
+// });
+
+//         cloned.querySelectorAll('.remortgage-ui-details').forEach(el => { el.style.display = 'none'; });
+//         cloned.querySelectorAll('.remortgage-pdf-summary').forEach(el => { el.style.display = 'block'; });
+//         // Handle notes section
+//         const notesEl = cloned.querySelector('.pdf-notes-section');
+//         if (notesEl) {
+//           notesEl.style.display = hideNotes ? 'none' : 'block';
+//         }
+
+//         const feeCells = cloned.querySelectorAll('.pdf-fee-table th, .pdf-fee-table td');
+//         const feeRows = cloned.querySelectorAll('.pdf-fee-table tr');
+//         feeRows.forEach(row => row.setAttribute('data-pdf-fee-row', '1'));
+
+//         const headingTags = new Set(['H1', 'H2', 'H3', 'H4', 'H5', 'H6']);
+//         const cellTags = new Set(['TD', 'TH']);
+
+//         // Helper function to convert oklch to rgb
+//         const oklchToRgb = (oklchStr) => {
+//           try {
+//             // Parse oklch(l c h / a) format
+//             const match = oklchStr.match(/oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\s*\)/i);
+//             if (!match) return '#000000'; // fallback
+
+//             const l = parseFloat(match[1]);
+//             const c = parseFloat(match[2]);
+//             const h = parseFloat(match[3]);
+//             const a = match[4] ? parseFloat(match[4]) : 1;
+
+//             // Convert OKLCH to RGB (simplified conversion)
+//             // This is an approximation - for production, consider using a proper color library
+//             const hue = h / 360;
+//             const chroma = c / 100;
+//             const lightness = l / 100;
+
+//             // Simple HSL-like conversion (not perfect but better than nothing)
+//             const x = chroma * (1 - Math.abs((hue * 6) % 2 - 1));
+//             let r, g, b;
+
+//             if (hue >= 0 && hue < 1/6) {
+//               r = chroma; g = x; b = 0;
+//             } else if (hue >= 1/6 && hue < 2/6) {
+//               r = x; g = chroma; b = 0;
+//             } else if (hue >= 2/6 && hue < 3/6) {
+//               r = 0; g = chroma; b = x;
+//             } else if (hue >= 3/6 && hue < 4/6) {
+//               r = 0; g = x; b = chroma;
+//             } else if (hue >= 4/6 && hue < 5/6) {
+//               r = x; g = 0; b = chroma;
+//             } else {
+//               r = chroma; g = 0; b = x;
+//             }
+
+//             const m = lightness - chroma / 2;
+//             r = Math.round((r + m) * 255);
+//             g = Math.round((g + m) * 255);
+//             b = Math.round((b + m) * 255);
+
+//             return `rgb(${r}, ${g}, ${b})`;
+//           } catch (e) {
+//             return '#000000'; // fallback
+//           }
+//         };
+
+//         // Helper function to convert unsupported color functions
+//         const convertColor = (colorValue) => {
+//           if (!colorValue || typeof colorValue !== 'string') return colorValue;
+
+//           // Handle oklch
+//           if (colorValue.includes('oklch(')) {
+//             return oklchToRgb(colorValue);
+//           }
+
+//           // Handle other potential unsupported functions like lch, lab, color(), etc.
+//           if (colorValue.includes('lch(') || colorValue.includes('lab(') || colorValue.includes('color(')) {
+//             // For now, fallback to black for other unsupported color functions
+//             return '#000000';
+//           }
+
+//           // Handle CSS custom properties that might contain unsupported colors
+//           if (colorValue.startsWith('var(')) {
+//             // For CSS variables, try to resolve them or fallback
+//             return '#000000';
+//           }
+
+//           return colorValue;
+//         };
+
+//         cloned.querySelectorAll('*').forEach(el => {
+//           const computedStyle = window.getComputedStyle(el);
+
+//           // Convert all color-related computed styles
+//           const colorProperties = [
+//             'color', 'backgroundColor', 'borderColor', 'borderTopColor', 'borderRightColor',
+//             'borderBottomColor', 'borderLeftColor', 'outlineColor', 'textDecorationColor',
+//             'columnRuleColor', 'caretColor'
+//           ];
+
+//           colorProperties.forEach(prop => {
+//             const computedValue = computedStyle[prop];
+//             if (computedValue && computedValue !== 'rgba(0, 0, 0, 0)' && computedValue !== 'transparent') {
+//               el.style[prop] = convertColor(computedValue);
+//             }
+//           });
+
+//           el.style.fontFamily = 'Arial, sans-serif';
+//           el.style.color = headingTags.has(el.tagName) ? convertColor('#059669') : convertColor('#000');
+//           el.style.fontSize = '11px';
+//           el.style.margin = '0';
+//           el.style.border = 'none';
+//           el.style.boxShadow = 'none';
+//           el.style.borderRadius = '0';
+//           el.style.overflow = 'visible';
+//           el.style.maxHeight = 'none';
+
+//           // Give table cells generous padding so columns don't run together
+//           if (cellTags.has(el.tagName)) {
+//             el.style.padding = '6px 16px 6px 4px';
+//             el.style.whiteSpace = 'nowrap';
+//           }
+
+//           if (el.tagName === 'IMG') {
+//             el.style.display = 'block';
+//             el.style.visibility = 'visible';
+//             el.style.opacity = '1';
+//             el.style.objectFit = 'contain';
+//           }
+//         });
+
+//         // Increase fee breakdown row height in PDF output
+        
+//         cloned.querySelectorAll('*').forEach(el => {
+
+//   // Base styles
+//   el.style.fontFamily = 'Arial, sans-serif';
+//   el.style.color = headingTags.has(el.tagName) ? '#059669' : '#000';
+//   el.style.fontSize = '11px';
+//   el.style.margin = '0';
+//   el.style.boxShadow = 'none';
+//   el.style.overflow = 'visible';
+//   el.style.maxHeight = 'none';
+
+//   // ✅ PDF info cards only
+//   if (el.classList.contains('pdf-info-card')) {
+//     el.style.backgroundColor = '#f3f4f6';
+//     el.style.border = '1px solid #d1d5db';
+//     el.style.borderRadius = '8px';
+//     el.style.padding = '14px';
+//     el.style.display = 'block';
+//     el.style.width = '100%';
+//     el.style.minHeight = '120px';
+//     el.style.boxSizing = 'border-box';
+//   }
+
+//   // Table styling
+//   if (cellTags.has(el.tagName)) {
+//     el.style.padding = '6px 16px 6px 4px';
+//     el.style.whiteSpace = 'nowrap';
+//   }
+
+//   // Image fixes
+//   if (el.tagName === 'IMG') {
+//     el.style.display = 'block';
+//     el.style.visibility = 'visible';
+//     el.style.opacity = '1';
+//     el.style.objectFit = 'contain';
+//   }
+// });
+//         feeRows.forEach(row => {
+//           row.style.lineHeight = '1.45';
+//         });
+//         feeCells.forEach(cell => {
+//           cell.style.fontSize = '11px';
+//           cell.style.padding = '6px 10px';
+//           cell.style.lineHeight = '1.45';
+//         });
+//         return cloned;
+//       };
+
+//       const canvasOptions = {
+//         scale: 1.5,
+//         useCORS: true,
+//         allowTaint: true,
+//         backgroundColor: '#ffffff',
+//         logging: false,
+//         imageTimeout: 10000,
+//         windowWidth: 800,
+//         ignoreElements: (element) => {
+//           // Ignore elements that might cause issues
+//           if (element.tagName === 'IMG' && (!element.complete || element.naturalWidth === 0)) {
+//             return true; // Skip broken images
+//           }
+//           return false;
+//         },
+//         onclone: (clonedDoc) => {
+//           // Additional cleanup on cloned document
+//           const images = clonedDoc.querySelectorAll('img');
+//           images.forEach(img => {
+//             if (!img.complete || img.naturalWidth === 0) {
+//               img.style.display = 'none'; // Hide broken images
+//             }
+//           });
+//         }
+//       };
+
+//       const waitForImages = async (container) => {
+//         const images = Array.from(container.querySelectorAll('img'));
+//         await Promise.all(
+//           images.map((img) =>
+//             new Promise((resolve) => {
+//               img.crossOrigin = 'anonymous';
+//               img.loading = 'eager';
+//               img.decoding = 'sync';
+
+//               if (img.complete && img.naturalWidth > 0) {
+//                 resolve();
+//                 return;
+//               }
+
+//               const done = () => {
+//                 // If image failed to load, replace with a placeholder
+//                 if (!img.complete || img.naturalWidth === 0) {
+//                   // Create a small transparent placeholder
+//                   const canvas = document.createElement('canvas');
+//                   canvas.width = 1;
+//                   canvas.height = 1;
+//                   const ctx = canvas.getContext('2d');
+//                   ctx.fillStyle = 'rgba(0,0,0,0)';
+//                   ctx.fillRect(0, 0, 1, 1);
+//                   img.src = canvas.toDataURL();
+//                 }
+//                 resolve();
+//               };
+
+//               img.addEventListener('load', done, { once: true });
+//               img.addEventListener('error', () => {
+//                 // On error, create a placeholder
+//                 const canvas = document.createElement('canvas');
+//                 canvas.width = 1;
+//                 canvas.height = 1;
+//                 const ctx = canvas.getContext('2d');
+//                 ctx.fillStyle = 'rgba(0,0,0,0)';
+//                 ctx.fillRect(0, 0, 1, 1);
+//                 img.src = canvas.toDataURL();
+//                 done();
+//               }, { once: true });
+
+//               setTimeout(done, 2500);
+//             })
+//           )
+//         );
+//       };
+
+//       // --- Capture main content (notes hidden) ---
+//       const mainWrapper = document.createElement('div');
+//       mainWrapper.style.cssText = 'position:absolute;left:-9999px;top:0;width:800px;background:white;padding:15px;font-family:Arial,sans-serif;line-height:1.4;';
+//       const mainClone = buildClone(true);
+//       mainClone.style.overflow = 'visible';
+//       mainClone.style.maxHeight = 'none';
+//       mainWrapper.appendChild(mainClone);
+//       document.body.appendChild(mainWrapper);
+//       await waitForImages(mainWrapper);
+
+//       // Collect safe page break points at the end of fee table rows.
+//       const canvasScale = Number(canvasOptions.scale || 1);
+//       const cloneTop = mainClone.getBoundingClientRect().top;
+//       const rowBreakPointsPx = Array.from(mainClone.querySelectorAll('[data-pdf-fee-row="1"]'))
+//         .map((row) => {
+//           const rowRect = row.getBoundingClientRect();
+//           return Math.round((rowRect.bottom - cloneTop) * canvasScale);
+//         })
+//         .filter((point, idx, arr) => point > 0 && arr.indexOf(point) === idx)
+//         .sort((a, b) => a - b);
+
+//       let mainCanvas;
+//       try {
+//         mainCanvas = await html2canvas(mainWrapper, { ...canvasOptions, windowHeight: mainWrapper.scrollHeight });
+//       } catch (error) {
+//         console.warn('html2canvas failed for main content:', error);
+//         // Try with html-to-image as fallback
+//         try {
+//           const pngDataUrl = await toPng(mainWrapper, {
+//             ...canvasOptions,
+//             height: mainWrapper.scrollHeight,
+//             width: 800,
+//             style: { transform: 'scale(1)' }
+//           });
+
+//           // Convert PNG data URL to canvas
+//           mainCanvas = document.createElement('canvas');
+//           const ctx = mainCanvas.getContext('2d');
+//           const img = new Image();
+//           await new Promise((resolve, reject) => {
+//             img.onload = () => {
+//               mainCanvas.width = img.width;
+//               mainCanvas.height = img.height;
+//               ctx.drawImage(img, 0, 0);
+//               resolve();
+//             };
+//             img.onerror = reject;
+//             img.src = pngDataUrl;
+//           });
+//         } catch (fallbackError) {
+//           console.error('Both html2canvas and html-to-image failed:', fallbackError);
+//           throw new Error('Failed to render PDF content');
+//         }
+//       }
+
+//       document.body.removeChild(mainWrapper);
+
+//       if (!mainCanvas || mainCanvas.width === 0) throw new Error('Canvas rendering failed');
+
+//       // Slice the canvas into real page chunks to avoid duplicate rows between pages.
+//       const pageHeightPx = Math.floor((pageHeight * mainCanvas.width) / imgWidth);
+//       let renderedHeightPx = 0;
+//       let firstPage = true;
+
+//       while (renderedHeightPx < mainCanvas.height) {
+//         const remainingPx = mainCanvas.height - renderedHeightPx;
+//         let sliceHeightPx = Math.min(pageHeightPx, remainingPx);
+
+//         // Prefer cutting at row boundaries so text does not split across pages.
+//         const targetCutPx = renderedHeightPx + sliceHeightPx;
+//         const minCutPx = renderedHeightPx + 20;
+//         const candidateBreaks = rowBreakPointsPx.filter(
+//           (point) => point <= targetCutPx && point > minCutPx
+//         );
+//         const maxBacktrackPx = 120 * canvasScale;
+//         if (
+//           candidateBreaks.length > 0 &&
+//           remainingPx > pageHeightPx &&
+//           targetCutPx - candidateBreaks[candidateBreaks.length - 1] <= maxBacktrackPx
+//         ) {
+//           const bestCutPx = candidateBreaks[candidateBreaks.length - 1];
+//           sliceHeightPx = bestCutPx - renderedHeightPx;
+//         }
+
+//         const pageCanvas = document.createElement('canvas');
+//         pageCanvas.width = mainCanvas.width;
+//         pageCanvas.height = sliceHeightPx;
+
+//         const pageCtx = pageCanvas.getContext('2d');
+//         if (!pageCtx) {
+//           throw new Error('Failed to create canvas context for PDF page slicing');
+//         }
+
+//         pageCtx.drawImage(
+//           mainCanvas,
+//           0,
+//           renderedHeightPx,
+//           mainCanvas.width,
+//           sliceHeightPx,
+//           0,
+//           0,
+//           mainCanvas.width,
+//           sliceHeightPx
+//         );
+
+//         const pageImgData = pageCanvas.toDataURL('image/png');
+//         const renderedHeightMm = (sliceHeightPx * imgWidth) / mainCanvas.width;
+
+//         if (!firstPage) {
+//           pdf.addPage();
+//         }
+//         pdf.addImage(pageImgData, 'PNG', margin, margin, imgWidth, renderedHeightMm);
+
+//         firstPage = false;
+//         renderedHeightPx += sliceHeightPx;
+//       }
+
+//       // --- Capture notes on a separate page ---
+//       const notesWrapper = document.createElement('div');
+//       notesWrapper.style.cssText = 'position:absolute;left:-9999px;top:0;width:800px;background:white;padding:15px;font-family:Arial,sans-serif;line-height:1.4;';
+//       const notesOnlyClone = pdfRef.current.cloneNode(true);
+//       // Keep only the notes element
+//       const notesEl = notesOnlyClone.querySelector('.pdf-notes-section');
+//       notesWrapper.innerHTML = '';
+//       if (notesEl) {
+//         const headingTags = new Set(['H1', 'H2', 'H3', 'H4', 'H5', 'H6']);
+//         notesEl.querySelectorAll('*').forEach(el => {
+//           el.className = '';
+//           el.style.fontFamily = 'Arial, sans-serif';
+//           el.style.color = headingTags.has(el.tagName) ? '#059669' : '#000';
+//           el.style.fontSize = '11px';
+//           el.style.margin = '0';
+//           el.style.background = 'transparent';
+//           el.style.backgroundColor = 'transparent';
+//           el.style.border = 'none';
+//           el.style.boxShadow = 'none';
+//           el.style.borderRadius = '0';
+//         });
+//         notesEl.style.display = 'block';
+//         notesEl.style.pageBreakBefore = 'unset';
+//         notesWrapper.appendChild(notesEl);
+//       }
+//       document.body.appendChild(notesWrapper);
+//       await waitForImages(notesWrapper);
+
+//       let notesCanvas;
+//       try {
+//         notesCanvas = await html2canvas(notesWrapper, { ...canvasOptions, windowHeight: notesWrapper.scrollHeight });
+//       } catch (error) {
+//         console.warn('html2canvas failed for notes:', error);
+//         // Try with html-to-image as fallback
+//         try {
+//           const pngDataUrl = await toPng(notesWrapper, {
+//             ...canvasOptions,
+//             height: notesWrapper.scrollHeight,
+//             width: 800,
+//             style: { transform: 'scale(1)' }
+//           });
+
+//           // Convert PNG data URL to canvas
+//           notesCanvas = document.createElement('canvas');
+//           const ctx = notesCanvas.getContext('2d');
+//           const img = new Image();
+//           await new Promise((resolve, reject) => {
+//             img.onload = () => {
+//               notesCanvas.width = img.width;
+//               notesCanvas.height = img.height;
+//               ctx.drawImage(img, 0, 0);
+//               resolve();
+//             };
+//             img.onerror = reject;
+//             img.src = pngDataUrl;
+//           });
+//         } catch (fallbackError) {
+//           console.warn('html-to-image also failed for notes, skipping notes section:', fallbackError);
+//           notesCanvas = null;
+//         }
+//       }
+
+//       document.body.removeChild(notesWrapper);
+
+//       if (notesCanvas && notesCanvas.width > 0 && notesCanvas.height > 0) {
+//         pdf.addPage();
+//         const notesImgData = notesCanvas.toDataURL('image/png');
+//         const notesImgHeight = (notesCanvas.height * imgWidth) / notesCanvas.width;
+//         pdf.addImage(notesImgData, 'PNG', margin, margin, imgWidth, notesImgHeight);
+//       }
+
+//       const currentRef = ref || 'quote';
+//       pdf.save(`${currentRef}.pdf`);
+//       Swal.fire('Success', 'PDF downloaded successfully!', 'success');
+//     } catch (error) {
+//       console.error('PDF generation error:', error);
+//       Swal.fire('Error', `Failed to generate PDF: ${error.message}`, 'error');
+//     } finally {
+//       setPdfLoading(false);
+//     }
+//   };
   function handleDownloadFromCard(quote) {
     // Ensure the selected quote content is mounted in the popup before export.
     setPdfLoading(true);
@@ -694,14 +1218,43 @@ async function sendHtmlToBackend() {
       .remortgage-pdf-summary { display: block !important; }
 
       .pdf-fee-table {
-        font-size: 10.5px !important;
-        line-height: 1.3 !important;
+        font-size: 11px !important;
+        line-height: 1.45 !important;
+        width: 100% !important;
+        border-collapse: collapse !important;
+        table-layout: auto !important;
       }
 
       .pdf-fee-table th,
       .pdf-fee-table td {
-        padding: 4px 8px !important;
-        line-height: 1.3 !important;
+        padding: 5px 8px !important;
+        line-height: 1.45 !important;
+        vertical-align: middle !important;
+        white-space: normal !important;
+        word-wrap: break-word !important;
+        overflow-wrap: break-word !important;
+      }
+      
+      .pdf-fee-table th {
+        font-weight: bold !important;
+        background-color: #f3f4f6 !important;
+        border-bottom: 1px solid #d1d5db !important;
+        text-align: left !important;
+      }
+      
+      .pdf-fee-table th:nth-child(2),
+      .pdf-fee-table th:nth-child(3) {
+        text-align: right !important;
+      }
+      
+      .pdf-fee-table td {
+        border-bottom: 1px solid #e5e7eb !important;
+        text-align: left !important;
+      }
+      
+      .pdf-fee-table td:nth-child(2),
+      .pdf-fee-table td:nth-child(3) {
+        text-align: right !important;
       }
     `;
 
@@ -1814,9 +2367,9 @@ handleInstructFromCard(
                                       {/* Contact Details and User Details in Single Row */}
                                  <tr className="border-gray-200 block md:table-row">
                                         {/* Contact Details Column */}
-                                        <td className="p-1 border-gray-200 align-top w-full md:w-1/2 sm:w block md:table-cell">
-                                          <div className="bg-gray-50 p-3 rounded">
-                                            <h4 className="font-semibold text-emerald-600 mb-3">Conveyancer Details</h4>
+                                        <td className="p-1 border-gray-200 align-top w-full md:w-1/2 block md:table-cell">
+                                          <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-xl">
+                                            <h4 className="font-semibold text-emerald-700 mb-3">Conveyancer Details</h4>
                                             <div className="space-y-2">
                                               <div className="flex flex-wrap gap-x-1">
                                                 <span className="font-semibold text-sm">Name:</span>
@@ -1845,8 +2398,8 @@ handleInstructFromCard(
 
                                         {/* User Details Column */}
                                         <td className="p-1 align-top w-full md:w-1/2 block md:table-cell mt-2 md:mt-0">
-                                          <div className="bg-gray-50 p-3 rounded">
-                                            <h4 className="font-semibold text-emerald-600 mb-3">Client Details</h4>
+                                          <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-xl">
+                                            <h4 className="font-semibold text-emerald-700 mb-3">Client Details</h4>
                                             <div className="space-y-2">
                                               <div className="flex flex-wrap gap-x-1">
                                                 <span className="font-semibold text-sm">Name:</span>
@@ -1971,7 +2524,14 @@ handleInstructFromCard(
                                       {/* Contact Details and User Details in Single Row */}
                                       <tr>
                                         <td style={{ width: "50%", verticalAlign: "top", padding: "10px" }}>
-                                          <div style={{ backgroundColor: "#f9fafb", padding: "12px", borderRadius: "6px" }}>
+                                          <div
+  className="pdf-info-card"
+  style={{
+    backgroundColor: "#f9fafb",
+    padding: "12px",
+    borderRadius: "6px"
+  }}
+>
                                             <h4 style={{ color: "#059669", marginBottom: "12px", textAlign: "center" }}>
                                               Conveyancer Details
                                             </h4>
@@ -1986,7 +2546,14 @@ handleInstructFromCard(
                                         </td>
 
                                         <td style={{ width: "50%", verticalAlign: "top", padding: "10px" }}>
-                                          <div style={{ backgroundColor: "#f9fafb", padding: "12px", borderRadius: "6px" }}>
+                                        <div
+  className="pdf-info-card"
+  style={{
+    backgroundColor: "#f9fafb",
+    padding: "12px",
+    borderRadius: "6px"
+  }}
+>
                                             <h4 style={{ color: "#059669", marginBottom: "12px",textAlign: "center" }}>
                                               Client Details
                                             </h4>
