@@ -64,6 +64,7 @@ export default function Remortage() {
    { label: "HMO BTL", value: "HMO BTL" }
 ];
   const buyToLetOptions = [
+    {value:"", label:"Not Applicable"},
   { value: "No", label: "No" },
   { value: "personal", label: "Yes - Personal name" },
   { value: "company", label: "Yes - Company name" },
@@ -279,10 +280,10 @@ const handleChange = (name, value) => {
   newErrors.leasehold_or_free="please select a leasehold_or_free"
  }
 
-if(!formData.buy_to_let){
-  newErrors.buy_to_let="please select buy_to_let"
-}
-    const errorOrder = ["address", "country", "property_values", "no_of_bedrooms", "leasehold_or_free", "property_type", "buy_to_let", "lenders", "preferLanguage", "languages", "addition_applicable"];
+// if(!formData.buy_to_let){
+//   newErrors.buy_to_let="please select buy_to_let"
+// }
+    const errorOrder = ["address", "country", "property_values", "no_of_bedrooms", "leasehold_or_free", "property_type", "lenders", "preferLanguage", "languages", "addition_applicable"];
     for (const field of errorOrder) {
       if (newErrors[field]) {
         const refKey = (field === "country") ? "address" : (field === "preferLanguage") ? "languages" : field;
@@ -732,7 +733,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                          {/* 💰 PURCHASE FINANCE */}
               <div className="space-y-6 mb-4">
                 <h2 className="text-xl font-bold text-gray-900 border-b-2 border-[#1E5C3B] pb-2 flex items-center gap-2">
-                 < CoinsIcon  className="w-7 h-7 text-yellow-400" /> PURCHASE FINANCE
+                 < CoinsIcon  className="w-7 h-7 text-yellow-400" /> REMORTGAGE FINANCE
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
 
@@ -764,10 +765,9 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
   />
 </div>
   <p
-className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
-   errors.buy_to_let ? "text-red-500 opacity-100" : "opacity-0"
+className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 
 }`}>
-  {errors.buy_to_let || "placeholder"} {/* placeholder keeps same height */}
+ 
 </p>
                   </div>
 

@@ -56,7 +56,7 @@ useEffect(() => {
   console.log(purchaseRef.current); 
   }, []);
   const buyToLetOptions = [
-  { value: "", label: "Not Applicable", isDisabled: true },
+  { value: "", label: "Not Applicable" },
   { value: "No", label: "No" },
   { value: "personal", label: "Yes - Personal name" },
   { value: "company", label: "Yes - Company name" },
@@ -280,9 +280,9 @@ useEffect(() => {
 
 
     
-    if(!formData.buy_to_let){
-      newErrors.buy_to_let="please select buy_to_let"
-    }
+    // if(!formData.buy_to_let){
+    //   newErrors.buy_to_let="please select buy_to_let"
+    // }
         setErrors(newErrors);
         console.log(errors)
          setFormData((prev) => ({ ...prev, ['service_type']: localStorage.getItem("service")}));
@@ -704,10 +704,8 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
 
             </div>
               <p
-className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
-   errors.buy_to_let ? "text-red-500 opacity-100" : "opacity-0"
-}`}>
-  {errors.buy_to_let || "placeholder"} {/* placeholder keeps same height */}
+className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 `}>
+  {/* placeholder keeps same height */}
 </p>
                   </div>
 

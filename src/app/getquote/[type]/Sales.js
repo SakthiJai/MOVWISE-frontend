@@ -19,6 +19,7 @@ export default function Sales() {
   { value: "Sale agreed", label: "Sale agreed" }
 ];
 const sharedOwnershipOptions = [
+  {value: "", label: "Not Applicable"},
   { value: "Yes (housing association)", label: "Yes (housing association)" },
   { value: "Yes (Help To Buy)", label: "Yes (Help To Buy)" },
   { value: "No", label: "No" },
@@ -126,7 +127,7 @@ const [languagepreference, setlanguagepreference] = useState(" ");
   sales_leasehold_or_free: "Leasehold", 
     //sales_property_type: "",
   sales_property_type: "Flat",
-  shared_ownership: "",
+  //shared_ownership: "",
     //existing_mortgage:"yes",
   existing_mortgage:0,
   languages:"",
@@ -284,9 +285,9 @@ const handleSubmit = (e) => {
   }
 
  
-    if (!formData.shared_ownership) {
-    newErrors.shared_ownership = "Please select a ownership";
-  }
+  //   if (!formData.shared_ownership) {
+  //   newErrors.shared_ownership = "Please select a ownership";
+  // }
  const errorOrder = [
       "sales_stages",
       "sales_country",
@@ -295,7 +296,7 @@ const handleSubmit = (e) => {
       "sales_no_of_bedrooms",
       "sales_leasehold_or_free",
       "sales_property_type",
-      "shared_ownership",
+     // "shared_ownership",
       "existing_mortgage",
       "preferLanguage",
       "lenders",
@@ -854,12 +855,6 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
   isSearchable={false}
 />
 
-                         <p
-className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
-   errors.shared_ownership ? "text-red-500 opacity-100" : "opacity-0"
-}`}>
-  {errors.shared_ownership || "placeholder"} {/* placeholder keeps same height */}
-</p>
                       </div>
 
 

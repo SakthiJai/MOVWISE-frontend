@@ -193,16 +193,16 @@ const [loginformdata, setloginformdata] = useState({
     setLoading(true); 
     console.log("Selected service type:", type);
     console.log("Selected service id:", id);
-    if (id === 5  ) {
-  setLoading(false);
-  setShowPopup(true);
-  return;
-}
+//     if (id === 8  ) {
+//   setLoading(false);
+//   setShowPopup(true);
+//   return;
+// }
 
-    else{setTimeout(() => {
+    
       setLoading(false);
       router.push(`/getquote/${type.replace(/\s+/g, "").toLowerCase()}`);
-    }, 2000);}
+    
   };
   
   const closeModal = () => {
