@@ -28,7 +28,8 @@ const sharedOwnershipOptions = [
       {label:"Not Applicable", value:""},
   { label: "Islamic Mortgage", value: "Islamic Mortgage" },
   { label: "Equity Transfer", value: "Equity Transfer" },
-  { label: "Expats / Overseas Client", value: "Expats / Overseas Client" }
+  { label: "Expats / Overseas Client", value: "Expats / Overseas Client" },
+  {label:"Right to Buy", value:"Right to Buy"}
 ];
 
 const partnerloginshow=false;
