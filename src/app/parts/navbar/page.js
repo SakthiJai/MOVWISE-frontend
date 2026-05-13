@@ -137,12 +137,12 @@ const Navbar = ({ originalstyle = false ,hide=true}) => {
 
       {/* MOBILE BUTTONS */}
       <div className="flex items-center gap-2 md:hidden sm:ml-4">
-        <Link
+        {hide && <Link
           href="/#quote_type"
           className="h-[40px] px-4 rounded-full bg-[#F8C537] font-extrabold flex items-center justify-center"
         >
           Get Quote
-        </Link>
+        </Link>}
 
         <button
           onClick={() => setMenuOpen(!menuOpen)}
@@ -156,7 +156,7 @@ const Navbar = ({ originalstyle = false ,hide=true}) => {
       {menuOpen && (
         <div className="absolute top-17 left-0 right-0 w-full bg-white border-t md:hidden z-50">
           <nav className="flex flex-col">
-            {links.map((link) => (
+            {hide && links.map((link) => (
               <Link
                 key={link.href}
                 href={link.href}

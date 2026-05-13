@@ -139,7 +139,7 @@ function ComparequotesContent() {
   const [total, settotal] = useState(0);
   const [giftvalue, setgiftvalue] = useState(0);
   const [conveyancerid, setconveyancerid] = useState(0);
-  let call = false;
+  const [userlogin, setuserlogin] = useState(false);
 
 const CircularProgress = ({ progress }) => {
   const radius = 16;
@@ -238,6 +238,12 @@ const CircularProgress = ({ progress }) => {
     fetchtaxdetails(id);
   }
   const [language, setLanguage] = useState([]);
+
+  useEffect(() => {
+    if (localStorage.getItem("user") && localStorage.getItem("logintype")) {
+      setuserlogin(true);
+    }
+  }, []);
 
   useEffect(() => {
     const id = cardid ?? view_data?.conveying_details?.conveying_id;
@@ -1612,7 +1618,7 @@ handleInstructFromCard(
       )}
 
       <div className='bg-white shadow-md sticky top-0 p-4 z-50'>
-        <Navbar />
+        <Navbar hide={!userlogin} />
       </div>
 
 
