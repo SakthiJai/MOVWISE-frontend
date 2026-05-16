@@ -41,7 +41,7 @@ const FeesTable = ({ quote, label = "Sales" }) => {
         <tbody>
           {/* Legal Fees */}
           <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
-            <td className="text-sm font-bold">Legal Fees</td>
+            <td className="text-sm font-bold text-emerald-600">Legal Fees</td>
             <td className="text-sm font-semibold text-emerald-600">{formatGBP(quote.legal_fees)}</td>
             <td className="text-sm text-emerald-600 font-semibold">{formatGBP(quote.vat)}</td>
           </tr>
@@ -62,7 +62,7 @@ const FeesTable = ({ quote, label = "Sales" }) => {
 
           {/* TOTAL */}
           <tr className="grid grid-cols-3 w-full gap-5 border-t border-gray-300 bg-gray-50">
-            <td className="text-sm font-semibold">Total</td>
+            <td className="text-sm font-semibold text-emerald-600">Total</td>
             <td className="text-sm font-semibold text-emerald-600">
               {formatGBP(
                 Number(quote.supplements || 0) +
@@ -337,6 +337,12 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
         const headingTags = new Set(['H1', 'H2', 'H3', 'H4', 'H5', 'H6']);
         const cellTags = new Set(['TD', 'TH']);
         cloned.querySelectorAll('*').forEach(el => {
+          const originalClasses = el.className ? el.className.split(' ') : [];
+          const row = el.closest('.pdf-fee-table tr');
+          const rowLabel = row?.querySelector('td, th')?.textContent?.trim();
+          const isLegalFeesRow = rowLabel === 'Legal Fees';
+          const isFinalTotalRow = rowLabel === 'Total';
+
           el.className = '';
           el.style.fontFamily = 'Arial, sans-serif';
           el.style.color = headingTags.has(el.tagName) ? '#059669' : '#000';
@@ -344,13 +350,36 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
           el.style.margin = '0';
           el.style.background = 'transparent';
           el.style.backgroundColor = 'transparent';
-          el.style.border = 'none';
+          
+          // Skip border reset for pdf-fee-table cells
+          if (!el.closest('.pdf-fee-table')) {
+            el.style.border = 'none';
+          }
+          
           el.style.boxShadow = 'none';
           el.style.borderRadius = '0';
           el.style.overflow = 'visible';
           el.style.maxHeight = 'none';
           el.style.textAlign = 'left';
-          
+
+          if (originalClasses.includes('text-emerald-600') || isLegalFeesRow || isFinalTotalRow) {
+            el.style.color = '#059669';
+            if (cellTags.has(el.tagName)) {
+              el.style.fontWeight = '700';
+            }
+          }
+
+          if (originalClasses.includes('font-semibold') || originalClasses.includes('font-bold')) {
+            el.style.fontWeight = '700';
+          }
+
+          if (originalClasses.includes('bg-gray-50')) {
+            el.style.backgroundColor = '#f9fafb';
+          }
+          if (originalClasses.includes('bg-gray-100')) {
+            el.style.backgroundColor = '#f3f4f6';
+          }
+
           // Flexible table cell styling
           if (cellTags.has(el.tagName)) {
             el.style.padding = '5px 8px';
@@ -358,6 +387,11 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
             el.style.wordWrap = 'break-word';
             el.style.overflowWrap = 'break-word';
             el.style.textAlign = 'left';
+            
+            // Add borders for pdf-fee-table cells
+            if (el.closest('.pdf-fee-table')) {
+              el.style.border = '1px solid #d1d5db';
+            }
           }
           if (el.tagName === 'TABLE') {
             el.style.width = '100%';
@@ -382,6 +416,8 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
             } else {
               cell.style.textAlign = 'left';
             }
+            // Add table borders for structure
+            cell.style.border = '1px solid #d1d5db';
           });
         });
 
@@ -1276,6 +1312,14 @@ async function sendHtmlToBackend() {
       .pdf-fee-table td:nth-child(3) {
         text-align: right !important;
       }
+
+      .pdf-fee-table tr.bg-gray-50 td {
+        background-color: #f9fafb !important;
+      }
+
+      .pdf-fee-table tr.bg-gray-100 td {
+        background-color: #f3f4f6 !important;
+      }
     `;
 
     instructClone.prepend(instructStyle);
@@ -2022,7 +2066,7 @@ handleInstructFromCard(
                                         <tbody>
                                           {/* Legal Fees */}
                                           <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
-                                            <td className="text-sm font-bold">Legal Fees</td>
+                                            <td className="text-sm font-bold text-emerald-600">Legal Fees</td>
                                             <td className="text-sm font-semibold text-emerald-600">{formatGBP(quote.service_details[0].taxInfo.legal_fees)}</td>
                                             <td className="text-sm text-emerald-600 font-semibold">{formatGBP(quote.service_details[0].taxInfo.vat)}</td>
                                           </tr>
@@ -2043,7 +2087,7 @@ handleInstructFromCard(
 
                                           {/* TOTAL */}
                                           <tr className="grid grid-cols-3 w-full gap-5 border-t border-gray-300 bg-gray-50">
-                                            <td className="text-sm font-semibold">Total</td>
+                                            <td className="text-sm font-semibold text-emerald-600">Total</td>
                                             <td className="text-sm font-semibold text-emerald-600">
                                               {formatGBP(
                                                 quote.service_details[0].taxInfo.total
@@ -2103,7 +2147,7 @@ handleInstructFromCard(
                                         <tbody>
                                           {/* Legal Fees */}
                                           <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
-                                            <td className="text-sm font-bold">Legal Fees</td>
+                                            <td className="text-sm font-bold text-emerald-600">Legal Fees</td>
                                             <td className="text-sm font-semibold text-emerald-600">{formatGBP(quote.service_details[1].taxInfo.legal_fees)}</td>
                                             <td className="text-sm text-emerald-600 font-semibold">{formatGBP(quote.service_details[1].taxInfo.vat)}</td>
                                           </tr>
@@ -2124,7 +2168,7 @@ handleInstructFromCard(
 
                                           {/* TOTAL */}
                                           <tr className="grid grid-cols-3 w-full gap-5 border-t border-gray-300 bg-gray-50">
-                                            <td className="text-sm font-semibold">Total</td>
+                                            <td className="text-sm font-semibold text-emerald-600">Total</td>
                                             <td className="text-sm font-semibold text-emerald-600">
                                               {formatGBP(quote.service_details[1].taxInfo.total)}
                                             </td>
@@ -2183,7 +2227,7 @@ handleInstructFromCard(
 
                                         {/* Legal Fees */}
                                         <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
-                                          <td className="text-sm font-bold">Legal Fees</td>
+                                          <td className="text-sm font-bold text-emerald-600">Legal Fees</td>
                                           <td className="text-sm font-semibold text-emerald-600">{formatGBP(quote.legal_fees)}</td>
                                           <td className="text-sm text-emerald-600 font-semibold">{formatGBP(quote.vat)}</td>
                                         </tr>
@@ -2208,7 +2252,7 @@ handleInstructFromCard(
 
                                         {/* TOTAL — Border ONLY ABOVE */}
                                         <tr className="grid grid-cols-3 w-full gap-5 border-t border-gray-300 bg-gray-50">
-                                          <td className="text-sm font-semibold">Total</td>
+                                          <td className="text-sm font-semibold text-emerald-600">Total</td>
                                           <td className="text-sm font-semibold text-emerald-600">
                                             {formatGBP(
                                               Number(quote.supplements || 0) +

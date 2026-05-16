@@ -32,6 +32,38 @@ const Partnersprofile = () => {
       return "Conveyancer Rejected";
     case 8:
       return "Conveyancer On-Hold";
+      case 9:
+      return "Client care pack sent ";
+      case 10:
+      return "Client care pack received";
+      case 11:
+      return "ID requirements satisfied";
+      case 12:
+      return "Search fees received";
+      case 13:
+      return "Contract paperwork received";
+      case 14:
+      return "Searches ordered";
+      case 15:
+      return "Contract approved and enquiries raised";
+      case 16:
+      return "Mortgage offer received";
+      case 17:
+      return "Mortgage offer checked and conditions satisfied";
+      case 18:
+      return "Searches received";
+      case 19:
+      return "Replies to enquiries received ";
+      case 20:
+      return "Report sent to clients with documents";
+      case 21:
+      return "All documents received";
+      case 22:
+      return "Deposit received";
+      case 23:
+      return "Contracts exchanged";
+      case 24:
+      return "Case Completed";
     default:
       return "Unknown";
   }

@@ -292,17 +292,30 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
               Making property transactions simple, secure, and smart.
             </p>
           </div>
-<button
-                className="mt-6 md:mt-8 mx-auto bg-white text-[#1E5C3B] font-semibold px-6 md:px-8 py-2 md:py-3 rounded-full hover:bg-gray-100 transition-all duration-300 shadow-lg transform hover:scale-105 text-sm md:text-base"
-                onClick={() => {
-                  setloginformshow(true);
-                  setlogintype("user");
-                  setLoginError(false);
-                  setTermsAccepted(false);
-                }}
-              >
-                Sign In
-              </button>
+          <div className="flex flex-col gap-3 mt-6 md:mt-8 items-center w-full">
+            <button
+              className="w-full max-w-[220px] bg-white text-[#1E5C3B] font-semibold px-6 md:px-8 py-2 md:py-3 rounded-full hover:bg-gray-100 transition-all duration-300 shadow-lg transform hover:scale-105 text-sm md:text-base"
+              onClick={() => {
+                setloginformshow(true);
+                setlogintype("user");
+                setLoginError(false);
+                setTermsAccepted(false);
+              }}
+            >
+              User Sign In
+            </button>
+            <button
+              className="w-full max-w-[220px] bg-white text-[#1E5C3B] font-semibold px-6 md:px-8 py-2 md:py-3 rounded-full border border-white hover:bg-gray-100 transition-all duration-300 shadow-lg transform hover:scale-105 text-sm md:text-base"
+              onClick={() => {
+                setloginformshow(true);
+                setlogintype("partner");
+                setLoginError(false);
+                setTermsAccepted(false);
+              }}
+            >
+              Partner Login
+            </button>
+          </div>
         </div>
 
         {/* RIGHT SIDE (Content Section - 65%) */}

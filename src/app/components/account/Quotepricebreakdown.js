@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import React, { forwardRef, useEffect, useRef, useState,useImperativeHandle } from "react";
 import { API_ENDPOINTS, getData,postData } from "../../auth/API/api";
 import { formatGBP } from "../utility/poundconverter";
+import Swal from "sweetalert2";
 import SalesPropertyDetails from "../comparequotes/Sales_Property";
 import PurchasePropertyDetails from "../comparequotes/PurchasePropertyDetails";
 import PurchasePropertyprofile from "../comparequotes/purchasepropertyprofile";
@@ -15,10 +16,23 @@ const PriceBreakdownCard = forwardRef(({  companydetails, quoteId,quoteUser,quot
   let selectedcompany_quote_id= companydetails?.find((item)=>item.quote_id==quoteId);
 
   const handlestatus = async () => {
+    let payloadStatus = status;
+    if (clientCareStage === "sent" && status === "6") {
+      payloadStatus = "9";
+    }
+    if (clientCareStage === "received" && status === "9") {
+      payloadStatus = "10";
+    }
+    if (clientCareStage === "search" && status === "11") {
+      payloadStatus = "12";
+    }
+    if (clientCareStage === "received_searches" && status === "14") {
+      payloadStatus = "18";
+    }
 
   const data = {
     conveyancer_notes: notes,
-    status: status,
+    status: payloadStatus,
     quote_id:selectedcompany_quote_id.quote_id,
   };
 
@@ -28,6 +42,16 @@ const PriceBreakdownCard = forwardRef(({  companydetails, quoteId,quoteUser,quot
   
     const response = await postData(API_ENDPOINTS.statusupdate, data);
     console.log("API Response:", response);
+    
+    if (response?.status === true || response?.success === true) {
+      Swal.fire({
+        title: "Success!",
+        text: "Status updated Successfull",
+        icon: "success",
+        confirmButtonColor: "#10b981",
+        confirmButtonText: "OK"
+      });
+    }
 
   } catch (error) {
     console.log("API Error:", error);
@@ -42,10 +66,11 @@ console.log('refno ', quote_ref_number)
   console.log("companydetails",companydetails,quoteId);
 const [notes, setNotes] = useState("");
 const [status, setStatus] = useState("");
-  const [logintype,setlogintype]=useState()
-  const [feeCategory, setfeeCategory] = useState({});
-  const [taxDetails, settaxDetails] = useState();
-  const [vattax,setvattax]=useState();
+const [clientCareStage, setClientCareStage] = useState(null);
+const [logintype,setlogintype]=useState()
+const [feeCategory, setfeeCategory] = useState({});
+const [taxDetails, settaxDetails] = useState();
+const [vattax,setvattax]=useState();
 const router = useRouter();
 
   
@@ -104,6 +129,57 @@ console.log(view_data);
   if (!selected) return;
 
   console.log("Selected Quote:", selected);
+
+  // ✅ Show special client care stages when quote status is 6, 9, 10, or 11
+  if (Number(selected.status) === 6) {
+    setClientCareStage("sent");
+    setStatus("6");
+  } else if (Number(selected.status) === 9) {
+    setClientCareStage("received");
+    setStatus("9");
+  } else if (Number(selected.status) === 10) {
+    setClientCareStage("id");
+    setStatus("10");
+  } else if (Number(selected.status) === 11) {
+    setClientCareStage("search");
+    setStatus("11");
+  } else if (Number(selected.status) === 12) {
+    setClientCareStage("ordered");
+    setStatus("13");
+  } else if (Number(selected.status) === 13) {
+    setClientCareStage("contract_approved");
+    setStatus("15");
+  } else if (Number(selected.status) === 15) {
+    setClientCareStage("enquiries_received");
+    setStatus("16");
+  } else if (Number(selected.status) === 16) {
+    setClientCareStage("mortgage_checked");
+    setStatus("17");
+  } else if (Number(selected.status) === 19) {
+    setClientCareStage("report_sent");
+    setStatus("20");
+  } else if (Number(selected.status) === 20) {
+    setClientCareStage("docs_received");
+    setStatus("21");
+  } else if (Number(selected.status) === 21) {
+    setClientCareStage("deposit_received");
+    setStatus("22");
+  } else if (Number(selected.status) === 22) {
+    setClientCareStage("contracts_exchanged");
+    setStatus("23");
+  } else if (Number(selected.status) === 23) {
+    setClientCareStage("case_completed");
+    setStatus("24");
+  } else if (Number(selected.status) === 18) {
+    setClientCareStage("case_completed_18");
+    setStatus("24");
+  } else if (Number(selected.status) === 14) {
+    setClientCareStage("received_searches");
+    setStatus("14");
+  } else if (selected.status !== undefined && selected.status !== null) {
+    setClientCareStage(null);
+    setStatus(String(selected.status));
+  }
 
   // ✅ Group tax details safely
   const grouped = (selected.taxDetails || []).reduce((acc, item) => {
@@ -376,7 +452,93 @@ useEffect(() => {
     onChange={(e) => setNotes(e.target.value)}
   />
 
- <select
+{clientCareStage ? (
+  <select
+    className="text-black border rounded px-3 py-2 w-1/3 h-[44px]"
+    value={status}
+    onChange={(e) => setStatus(e.target.value)}
+  >
+    {clientCareStage === "sent" && (
+      <option value="6">Client Care Sent</option>
+    )}
+    {clientCareStage === "received" && (
+      <option value="9">Client care pack received</option>
+    )}
+    {clientCareStage === "id" && (
+      <>
+        <option value="11">ID requirements satisfied</option>
+      </>
+    )}
+    {clientCareStage === "search" && (
+      <>
+        <option value="12">Search fees received</option>
+        <option value="24">Case Completed</option>
+      </>
+    )}
+    {clientCareStage === "ordered" && (
+      <>
+        <option value="13">Contract paperwork received</option>
+        <option value="14">Searches ordered </option>
+        <option value="24">Case Completed</option>
+      </>
+    )}
+    {clientCareStage === "received_searches" && (
+      <>
+        <option value="18">Searches received</option>
+      </>
+    )}
+    {clientCareStage === "contract_approved" && (
+      <>
+        <option value="15">Contract approved and enquiries raised</option>
+        <option value="24">Case Completed</option>
+      </>
+    )}
+    {clientCareStage === "enquiries_received" && (
+      <>
+        <option value="16">Mortgage offer received</option>
+        <option value="19">Replies to enquiries received</option>
+      </>
+    )}
+    {clientCareStage === "mortgage_checked" && (
+      <>
+        <option value="17">Mortgage offer checked and conditions satisfied</option>
+        <option value="17">Case Completed</option>
+      </>
+    )}
+    {clientCareStage === "report_sent" && (
+      <>
+        <option value="20">Report sent to clients with documents</option>
+      </>
+    )}
+    {clientCareStage === "case_completed_18" && (
+      <>
+        <option value="24">Case Completed</option>
+      </>
+    )}
+    {clientCareStage === "docs_received" && (
+      <>
+        <option value="21">All documents received from client</option>
+      </>
+    )}
+    {clientCareStage === "deposit_received" && (
+      <>
+        <option value="22">Deposit received</option>
+      </>
+    )}
+    {clientCareStage === "contracts_exchanged" && (
+      <>
+        <option value="23">Contracts exchanged</option>
+        <option value="24">Case Completed</option>
+      </>
+    )}
+    {clientCareStage === "case_completed" && (
+      <>
+        <option value="24">Case Completed</option>
+      </>
+    )}
+  </select>
+) : (
+  <select
     className="text-black border rounded px-3 py-2 w-1/3 h-[44px]"
     value={status}
     onChange={(e) => setStatus(e.target.value)}
@@ -386,6 +548,8 @@ useEffect(() => {
     <option value="7">Rejected</option>
     <option value="8">On Hold</option>
   </select>
+)}
+
 
   <button
     className="bg-emerald-600 text-white px-5 h-[44px] rounded hover:bg-emerald-700"
