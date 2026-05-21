@@ -333,11 +333,13 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
         const feeCells = cloned.querySelectorAll('.pdf-fee-table th, .pdf-fee-table td');
         const feeRows = cloned.querySelectorAll('.pdf-fee-table tr');
         feeRows.forEach(row => row.setAttribute('data-pdf-fee-row', '1'));
+        cloned.querySelectorAll('.pdf-logo-cell').forEach(el => el.setAttribute('data-pdf-logo-cell', '1'));
 
         const headingTags = new Set(['H1', 'H2', 'H3', 'H4', 'H5', 'H6']);
         const cellTags = new Set(['TD', 'TH']);
         cloned.querySelectorAll('*').forEach(el => {
           const originalClasses = el.className ? el.className.split(' ') : [];
+          const isPdfLogoCell = originalClasses.includes('pdf-logo-cell');
           const isPdfInfoCardItem = !!el.closest('.pdf-info-card');
           const isPdfOuterCard = !!el.closest('.pdf-outer-card');
           const row = el.closest('.pdf-fee-table tr');
@@ -368,7 +370,7 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
           }
           el.style.overflow = 'visible';
           el.style.maxHeight = 'none';
-          el.style.textAlign = 'left';
+          el.style.textAlign = isPdfLogoCell ? 'center' : 'left';
 
           if (originalClasses.includes('text-emerald-600') || isLegalFeesRow || isFinalTotalRow) {
             el.style.color = '#059669';
@@ -427,6 +429,14 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
             // Add table borders for structure
             cell.style.border = '1px solid #d1d5db';
           });
+        });
+
+        cloned.querySelectorAll('[data-pdf-logo-cell="1"]').forEach(cell => {
+          cell.style.textAlign = 'center';
+        });
+        cloned.querySelectorAll('[data-pdf-logo-cell="1"] img').forEach(img => {
+          img.style.margin = '0 auto';
+          img.style.display = 'block';
         });
 
         // Increase fee breakdown row height in PDF output
@@ -2455,14 +2465,14 @@ handleInstructFromCard(
                                     <tbody>
                                       {/* Company Logo Row */}
                                       <tr>
-                                        <td colSpan="2" className="p-4 text-left md:text-left text-center">
+                                        <td colSpan="2" className="pdf-logo-cell p-4 text-left md:text-left text-center">
                                       {view_data?.appsetting_details?.logo ? (
                                         <img
                                           width={140}
                                           height={100}
                                           src={view_data?.appsetting_details?.logo}
                                           alt={quote.company_name || "company logo"}
-                                          className="mx-auto md:mx-0"
+                                          className="mx-auto"
                                         />
                                       ) : (
                                         <span className="block text-[22px] sm:text-[28px] md:text-[34px] me-1 p-2 leading-tight md:leading-none font-extrabold text-[#1E5C3B] tracking-tight text-center md:text-left">
@@ -2613,7 +2623,7 @@ handleInstructFromCard(
                                     <tbody>
                                       {/* Company Logo Row */}
                                       <tr>
-                                        <td colSpan="2" className="p-4 text-left md:text-left text-center">
+                                        <td colSpan="2" className="pdf-logo-cell p-4 text-left md:text-left text-center">
                                       {view_data?.appsetting_details?.logo ? (
                                         <img
                                           width={140}
