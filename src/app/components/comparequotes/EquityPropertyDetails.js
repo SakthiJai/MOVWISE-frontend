@@ -80,7 +80,7 @@ export default function EquityPropertyDetails({quote, servicData, companydata, c
 // }, [servicData?.lenders, servicData?.obtaining_mortgage, lendersList]);
 return (
   <div
-    className="grid grid-cols-1 md:grid-cols-[0.5fr_1fr] p-1 border font rounded-lg bg-white shadow px-6 py-2 mb-2 gap-3 quotes font_size_13px"
+    className="grid grid-cols-1 md:grid-cols-[0.5fr_1fr] p-1 border font rounded-lg bg-white shadow px-6 py-2 mb-2 gap-3 quotes font_size_13px pdf-outer-card"
     style={{
       backgroundColor: "white",
       color: "black",

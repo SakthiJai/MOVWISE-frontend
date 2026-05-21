@@ -338,6 +338,8 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
         const cellTags = new Set(['TD', 'TH']);
         cloned.querySelectorAll('*').forEach(el => {
           const originalClasses = el.className ? el.className.split(' ') : [];
+          const isPdfInfoCardItem = !!el.closest('.pdf-info-card');
+          const isPdfOuterCard = !!el.closest('.pdf-outer-card');
           const row = el.closest('.pdf-fee-table tr');
           const rowLabel = row?.querySelector('td, th')?.textContent?.trim();
           const isLegalFeesRow = rowLabel === 'Legal Fees';
@@ -348,16 +350,22 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
           el.style.color = headingTags.has(el.tagName) ? '#059669' : '#000';
           el.style.fontSize = '11px';
           el.style.margin = '0';
-          el.style.background = 'transparent';
-          el.style.backgroundColor = 'transparent';
+          if (!isPdfInfoCardItem && !el.closest('.pdf-fee-card') && !isPdfOuterCard) {
+            el.style.background = 'transparent';
+            el.style.backgroundColor = 'transparent';
+          }
           
-          // Skip border reset for pdf-fee-table cells
-          if (!el.closest('.pdf-fee-table')) {
+          // Skip border reset for pdf-fee-table cells, pdf info cards, fee card wrappers, and outer PDF cards
+          if (!el.closest('.pdf-fee-table') && !isPdfInfoCardItem && !el.closest('.pdf-fee-card') && !isPdfOuterCard) {
             el.style.border = 'none';
           }
           
-          el.style.boxShadow = 'none';
-          el.style.borderRadius = '0';
+          if (!isPdfOuterCard) {
+            el.style.boxShadow = 'none';
+          }
+          if (!isPdfInfoCardItem && !el.closest('.pdf-fee-card') && !isPdfOuterCard) {
+            el.style.borderRadius = '0';
+          }
           el.style.overflow = 'visible';
           el.style.maxHeight = 'none';
           el.style.textAlign = 'left';
@@ -433,6 +441,20 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
           cell.style.verticalAlign = 'middle';
           cell.style.whiteSpace = 'normal';
           cell.style.wordWrap = 'break-word';
+        });
+
+        cloned.querySelectorAll('.pdf-info-card, .pdf-fee-card').forEach(card => {
+          card.style.backgroundColor = '#f8fafc';
+          card.style.border = '1px solid #e5e7eb';
+          card.style.borderRadius = '20px';
+          card.style.padding = '16px';
+          card.style.marginBottom = '18px';
+        });
+        cloned.querySelectorAll('.pdf-info-card > div, .pdf-fee-card > div').forEach(inner => {
+          inner.style.backgroundColor = '#ffffff';
+          inner.style.border = '1px solid #e5e7eb';
+          inner.style.borderRadius = '18px';
+          inner.style.padding = '16px';
         });
         return cloned;
       };
@@ -1308,6 +1330,34 @@ async function sendHtmlToBackend() {
         text-align: left !important;
       }
       
+      .pdf-fee-card {
+        background-color: #f8fafc !important;
+        border: 1px solid #e5e7eb !important;
+        border-radius: 20px !important;
+        padding: 16px !important;
+        margin-bottom: 18px !important;
+      }
+
+      .pdf-fee-card > div {
+        background-color: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+      }
+
+      .pdf-info-card {
+        background-color: #f8fafc !important;
+        border: 1px solid #e5e7eb !important;
+        border-radius: 20px !important;
+        padding: 16px !important;
+        margin-bottom: 18px !important;
+      }
+
+      .pdf-info-card > div {
+        background-color: transparent !important;
+        border: none !important;
+        padding: 0 !important;
+      }
+
       .pdf-fee-table td:nth-child(2),
       .pdf-fee-table td:nth-child(3) {
         text-align: right !important;
@@ -2388,8 +2438,8 @@ handleInstructFromCard(
 
 
                                 {/* ---------- MAIN CONTAINER ---------- */}
-                                  <div ref={pdfRef} id="quote-popup" className="quote-mobile border  rounded-lg bg-white shadow px-6 py-2 mb-2 space-y-2 quotes" style={{
-                                  backgroundColor: 'white',
+                                  <div ref={pdfRef} id="quote-popup" className="quote-mobile border rounded-lg bg-transparent shadow px-6 py-2 mb-2 space-y-2 quotes" style={{
+                                  backgroundColor: 'transparent',
                                   color: 'black',
                                   padding: '24px',
                                   border: '1px solid #e5e7eb',
@@ -2546,8 +2596,8 @@ handleInstructFromCard(
                                   </div>
 
                                 </div>
-                                <div ref={pdfRef} id="quote-popup" className=" quote-desktop border  rounded-lg bg-white shadow px-6 py-2 mb-2 space-y-2 quotes" style={{
-                                  backgroundColor: 'white',
+                                <div ref={pdfRef} id="quote-popup" className=" quote-desktop border rounded-lg bg-transparent shadow px-6 py-2 mb-2 space-y-2 quotes" style={{
+                                  backgroundColor: 'transparent',
                                   color: 'black',
                                   padding: '24px',
                                   border: '1px solid #e5e7eb',
@@ -2738,6 +2788,4 @@ export default function Comparequotes() {
     </React.Suspense>
   );
 }
-// ttgvggvgvgvgccgcgcgcgcgcgcgcgc
-//nhnfrnnr
-//hrfrjngktkmg
+// tfggggg

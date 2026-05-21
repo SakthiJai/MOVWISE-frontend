@@ -108,7 +108,7 @@ const downloadPDF = () => {
   html2pdf().set(opt).from(element).save();
 };
 return (
-    <div ref={pdfRef} className="grid grid-cols-1 md:grid-cols-[0.5fr_1fr] p-1 border font rounded-lg bg-white shadow px-6 py-2 mb-2 gap-3 quotes font_size_13px" style={{
+    <div ref={pdfRef} className="grid grid-cols-1 md:grid-cols-[0.5fr_1fr] p-1 border font rounded-lg bg-white shadow px-6 py-2 mb-2 gap-3 quotes font_size_13px pdf-outer-card" style={{
                                   backgroundColor: 'white', 
                                   color: 'black',
                                   padding: '24px',

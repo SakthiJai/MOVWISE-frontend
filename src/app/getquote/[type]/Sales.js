@@ -19,7 +19,7 @@ export default function Sales() {
   { value: "Sale agreed", label: "Sale agreed" }
 ];
 const sharedOwnershipOptions = [
-  {value: "", label: "Not Applicable"},
+  {value: "No", label: "Not Applicable"},
   { value: "Yes (housing association)", label: "Yes (housing association)" },
   { value: "Yes (Help To Buy)", label: "Yes (Help To Buy)" },
   { value: "No", label: "No" },

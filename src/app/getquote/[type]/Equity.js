@@ -56,7 +56,7 @@ useEffect(() => {
   console.log(purchaseRef.current); 
   }, []);
   const buyToLetOptions = [
-  { value: "", label: "Not Applicable" },
+  { value: "No", label: "Not Applicable" },
   { value: "No", label: "No" },
   { value: "personal", label: "Yes - Personal name" },
   { value: "company", label: "Yes - Company name" },
@@ -677,7 +677,7 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200 ${
                          {/* 💰 PURCHASE FINANCE */}
               <div className="space-y-6 mb-6">
                 <h2 className="text-xl font-bold text-gray-900 border-b-2 border-[#1E5C3B] pb-2 flex items-center gap-2">
-                 < CoinsIcon className="w-7 h-7 text-yellow-400" /> PURCHASE FINANCE
+                 < CoinsIcon className="w-7 h-7 text-yellow-400" /> EQUITY FINANCE
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
 

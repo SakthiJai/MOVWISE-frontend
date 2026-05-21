@@ -64,7 +64,7 @@ export default function Remortage() {
    { label: "HMO BTL", value: "HMO BTL" }
 ];
   const buyToLetOptions = [
-    {value:"", label:"Not Applicable"},
+    {value:"No", label:"Not Applicable"},
   { value: "No", label: "No" },
   { value: "personal", label: "Yes - Personal name" },
   { value: "company", label: "Yes - Company name" },
