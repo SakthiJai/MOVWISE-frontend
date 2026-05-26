@@ -61,7 +61,7 @@ export default function PurchasePropertyDetails({
           overflow: "auto",
         }}
       >
-        <h5 className="col-span-1 md:col-span-3 text-lg font font-semibold text-emerald-600 mb-4 py-1">
+        <h5 className="col-span-1 md:col-span-3 text-lg font font-semibold text-emerald-600 mb-4 py-1 text-center pdf-quote-heading">
           Purchase Quote
         </h5>
 
@@ -184,7 +184,7 @@ export default function PurchasePropertyDetails({
 
         {/* Right Column */}
         {!hide &&(
-      <div className=" font_size_13px mt-6 md:mt-0"  style={{ pageBreakBefore: "always" }}>
+      <div className=" font_size_13px mt-6 md:mt-4"  style={{ pageBreakBefore: "always" }}>
           <div className="font p-3">
             <h3
               className="text-lg text-start text-emerald-600 font-semibold mb-3 cursor-pointer"

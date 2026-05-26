@@ -11,8 +11,11 @@ module.exports = {
         gothic: ['"League Gothic"', 'sans-serif'],
       },
       colors: {
-        movwise: "#008236", 
+        movwise: "#008236",
         'convey-green': '#008236',
+        gray: {
+          10: '#f7f7f7',
+        },
       },
       keyframes: {
         sliding: {

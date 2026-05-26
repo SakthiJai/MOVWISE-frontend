@@ -30,9 +30,9 @@ const FeesTable = ({ quote, label = "Sales" }) => {
 
   return (
     <div className="border-t border-gray-200 pt-6 flex justify-end">
-      <table className="border-collapse text-black font">
+      <table className="pdf-fee-table border-collapse text-black font">
         <thead>
-          <tr className="border-b border-gray-300 text-left grid grid-cols-3 w-full gap-5">
+          <tr className="border-b border-gray-300 text-left">
             <th className="text-sm font-semibold">Type</th>
             <th className="text-sm font-semibold">Fee Amount</th>
             <th className="text-sm font-semibold">VAT</th>
@@ -40,28 +40,28 @@ const FeesTable = ({ quote, label = "Sales" }) => {
         </thead>
         <tbody>
           {/* Legal Fees */}
-          <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+          <tr className="border-gray-200">
             <td className="text-sm font-bold text-emerald-600">Legal Fees</td>
             <td className="text-sm font-semibold text-emerald-600">{formatGBP(quote.legal_fees)}</td>
             <td className="text-sm text-emerald-600 font-semibold">{formatGBP(quote.vat)}</td>
           </tr>
 
           {/* Supplements */}
-          <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+          <tr className="border-gray-200">
             <td className="text-sm">Supplements</td>
             <td className="text-sm">{formatGBP(quote.supplements)}</td>
             <td className="text-sm">{formatGBP(quote.supplementsvat)}</td>
           </tr>
 
           {/* Disbursements */}
-          <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+          <tr className="border-gray-200">
             <td className="text-sm">Disbursements</td>
             <td className="text-sm">{formatGBP(quote.disbursements)}</td>
             <td className="text-sm">{formatGBP(quote.disbursementsvat)}</td>
           </tr>
 
           {/* TOTAL */}
-          <tr className="grid grid-cols-3 w-full gap-5 border-t border-gray-300 bg-gray-50">
+          <tr className="border-t border-gray-300 bg-gray-50">
             <td className="text-sm font-semibold text-emerald-600">Total</td>
             <td className="text-sm font-semibold text-emerald-600">
               {formatGBP(
@@ -80,7 +80,7 @@ const FeesTable = ({ quote, label = "Sales" }) => {
             <>
               {(quote.service_details[0].country === "England" ||
                 quote.service_details[0].country === "Northern Ireland") && (
-                  <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+                  <tr className="border-gray-200">
                     <td className="text-sm font-semibold">Stamp Duty</td>
                     <td className="text-sm">{formatGBP(quote.stamp_duty)}</td>
                     <td className="text-sm">-</td>
@@ -88,7 +88,7 @@ const FeesTable = ({ quote, label = "Sales" }) => {
                 )}
 
               {quote.service_details[0].country === "Scotland" && (
-                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+                <tr className="border-gray-200">
                   <td className="text-sm font-semibold">LBTT</td>
                   <td className="text-sm">{formatGBP(quote.lbtt)}</td>
                   <td className="text-sm">-</td>
@@ -96,7 +96,7 @@ const FeesTable = ({ quote, label = "Sales" }) => {
               )}
 
               {quote.service_details[0].country === "Wales" && (
-                <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
+                <tr className="border-gray-200">
                   <td className="text-sm font-semibold">LLT</td>
                   <td className="text-sm">{formatGBP(quote.llt)}</td>
                   <td className="text-sm">-</td>
@@ -310,6 +310,50 @@ useEffect(() => {
       const buildClone = (hideNotes) => {
         const cloned = pdfRef.current.cloneNode(true);
 
+        const injectedPdfStyles = document.createElement('style');
+        injectedPdfStyles.textContent = `
+          .pdf-fee-table, [data-pdf-fee-table="1"],
+          .pdf-fee-table th, [data-pdf-fee-table="1"] th,
+          .pdf-fee-table td, [data-pdf-fee-table="1"] td {
+            border: 1px solid #d1d5db !important;
+            border-collapse: collapse !important;
+            border-spacing: 0 !important;
+            background-color: #ffffff !important;
+          }
+          .pdf-fee-table, [data-pdf-fee-table="1"] {
+            width: 100% !important;
+            table-layout: auto !important;
+            border: 1px solid #d1d5db !important;
+            box-sizing: border-box !important;
+            margin-top: 14px !important;
+            margin-bottom: 14px !important;
+          }
+          .pdf-fee-table th, [data-pdf-fee-table="1"] th {
+            background-color: #f8fafc !important;
+            border-bottom: 1px solid #d1d5db !important;
+            text-align: left !important;
+          }
+          .pdf-fee-table th:nth-child(2),
+          .pdf-fee-table th:nth-child(3),
+          .pdf-fee-table td:nth-child(2),
+          .pdf-fee-table td:nth-child(3),
+          [data-pdf-fee-table="1"] th:nth-child(2),
+          [data-pdf-fee-table="1"] th:nth-child(3),
+          [data-pdf-fee-table="1"] td:nth-child(2),
+          [data-pdf-fee-table="1"] td:nth-child(3) {
+            text-align: right !important;
+          }
+          .pdf-fee-table tr:last-child td,
+          [data-pdf-fee-table="1"] tr:last-child td {
+            border-bottom: 1px solid #000 !important;
+          }
+          .pdf-fee-table td, [data-pdf-fee-table="1"] td {
+            background-color: #ffffff !important;
+          }
+        `;
+        cloned.prepend(injectedPdfStyles);
+        cloned.querySelectorAll('.pdf-fee-table').forEach(table => table.setAttribute('data-pdf-fee-table', '1'));
+
         // Swap UI table → condensed sentence
         cloned.querySelectorAll('.purchase-ui-details').forEach(el => { el.style.display = 'none'; });
         cloned.querySelectorAll('.purchase-pdf-summary').forEach(el => { el.style.display = 'block'; });
@@ -330,8 +374,8 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
           notesEl.style.display = hideNotes ? 'none' : 'block';
         }
 
-        const feeCells = cloned.querySelectorAll('.pdf-fee-table th, .pdf-fee-table td');
-        const feeRows = cloned.querySelectorAll('.pdf-fee-table tr');
+        const feeCells = cloned.querySelectorAll('[data-pdf-fee-table="1"] th, [data-pdf-fee-table="1"] td');
+        const feeRows = cloned.querySelectorAll('[data-pdf-fee-table="1"] tr');
         feeRows.forEach(row => row.setAttribute('data-pdf-fee-row', '1'));
         cloned.querySelectorAll('.pdf-logo-cell').forEach(el => el.setAttribute('data-pdf-logo-cell', '1'));
 
@@ -342,7 +386,8 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
           const isPdfLogoCell = originalClasses.includes('pdf-logo-cell');
           const isPdfInfoCardItem = !!el.closest('.pdf-info-card');
           const isPdfOuterCard = !!el.closest('.pdf-outer-card');
-          const row = el.closest('.pdf-fee-table tr');
+          const currentRow = el.closest('tr');
+          const row = currentRow?.closest('[data-pdf-fee-table="1"]') ? currentRow : null;
           const rowLabel = row?.querySelector('td, th')?.textContent?.trim();
           const isLegalFeesRow = rowLabel === 'Legal Fees';
           const isFinalTotalRow = rowLabel === 'Total';
@@ -358,7 +403,7 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
           }
           
           // Skip border reset for pdf-fee-table cells, pdf info cards, fee card wrappers, and outer PDF cards
-          if (!el.closest('.pdf-fee-table') && !isPdfInfoCardItem && !el.closest('.pdf-fee-card') && !isPdfOuterCard) {
+          if (!el.closest('[data-pdf-fee-table="1"]') && !isPdfInfoCardItem && !el.closest('.pdf-fee-card') && !isPdfOuterCard) {
             el.style.border = 'none';
           }
           
@@ -370,7 +415,10 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
           }
           el.style.overflow = 'visible';
           el.style.maxHeight = 'none';
-          el.style.textAlign = isPdfLogoCell ? 'center' : 'left';
+          const isPdfQuoteHeading = originalClasses.includes('pdf-quote-heading');
+          const isPdfPropertyHeading = originalClasses.includes('pdf-property-heading');
+          const isPdfFeeHeading = originalClasses.includes('pdf-fee-heading');
+          el.style.textAlign = isPdfLogoCell || isPdfQuoteHeading || isPdfPropertyHeading || isPdfFeeHeading ? 'center' : 'left';
 
           if (originalClasses.includes('text-emerald-600') || isLegalFeesRow || isFinalTotalRow) {
             el.style.color = '#059669';
@@ -398,8 +446,8 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
             el.style.overflowWrap = 'break-word';
             el.style.textAlign = 'left';
             
-            // Add borders for pdf-fee-table cells
-            if (el.closest('.pdf-fee-table')) {
+            // Add a full border for pdf-fee-table cells so exported PDF shows lines
+            if (el.closest('[data-pdf-fee-table="1"]')) {
               el.style.border = '1px solid #d1d5db';
             }
           }
@@ -407,6 +455,9 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
             el.style.width = '100%';
             el.style.borderCollapse = 'collapse';
             el.style.tableLayout = 'auto';
+            if (el.closest('[data-pdf-fee-table="1"]')) {
+              el.style.border = '1px solid #d1d5db';
+            }
           }
           if (el.tagName === 'IMG') {
             el.style.display = 'block';
@@ -416,21 +467,34 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
           }
         });
         
-        // Right-align Fee Amount and VAT columns in fee tables
-        cloned.querySelectorAll('.pdf-fee-table tr').forEach(row => {
+        // Ensure all fee tables have collapsed borders and strong cell borders
+        cloned.querySelectorAll('[data-pdf-fee-table="1"]').forEach(table => {
+          table.style.borderCollapse = 'collapse';
+          table.style.borderSpacing = '0';
+          table.style.border = '1px solid #d1d5db';
+          table.style.boxSizing = 'border-box';
+          table.style.backgroundColor = '#ffffff';
+          table.style.marginTop = '14px';
+          table.style.marginBottom = '14px';
+        });
+
+        cloned.querySelectorAll('[data-pdf-fee-table="1"] tr').forEach(row => {
           const cells = row.querySelectorAll('th, td');
           cells.forEach((cell, index) => {
-            // Columns 1 and 2 (Fee Amount and VAT) should be right-aligned
             if (index === 1 || index === 2) {
               cell.style.textAlign = 'right';
             } else {
               cell.style.textAlign = 'left';
             }
-            // Add table borders for structure
             cell.style.border = '1px solid #d1d5db';
+            cell.style.backgroundColor = '#ffffff';
           });
         });
 
+        // Thinner bottom border for the header row
+        cloned.querySelectorAll('[data-pdf-fee-table="1"] thead th').forEach(th => {
+          th.style.borderBottom = '1px solid #d1d5db';
+        });
         cloned.querySelectorAll('[data-pdf-logo-cell="1"]').forEach(cell => {
           cell.style.textAlign = 'center';
         });
@@ -594,6 +658,8 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
       const notesEl = notesOnlyClone.querySelector('.pdf-notes-section');
       notesWrapper.innerHTML = '';
       if (notesEl) {
+        // Preserve fee table markers before resetting element classes
+        notesEl.querySelectorAll('.pdf-fee-table').forEach(table => table.setAttribute('data-pdf-fee-table', '1'));
         const headingTags = new Set(['H1', 'H2', 'H3', 'H4', 'H5', 'H6']);
         notesEl.querySelectorAll('*').forEach(el => {
           el.className = '';
@@ -609,7 +675,7 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
         });
         
         // Right-align Fee Amount and VAT columns in notes fee tables
-        notesEl.querySelectorAll('.pdf-fee-table tr').forEach(row => {
+        notesEl.querySelectorAll('[data-pdf-fee-table="1"] tr').forEach(row => {
           const cells = row.querySelectorAll('th, td');
           cells.forEach((cell, index) => {
             if (index === 1 || index === 2) {
