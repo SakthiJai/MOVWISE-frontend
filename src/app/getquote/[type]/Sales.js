@@ -136,7 +136,9 @@ const [languagepreference, setlanguagepreference] = useState(" ");
   lenders:"",  
   user_id:null,
   service_type:null,
-  "addition_applicable" :""
+  "addition_applicable" :"",
+  // sales_mode can be 'personal' or 'company'
+  sales_mode: "personal",
 });
  console.log("formdata:" , formData)
 
@@ -976,6 +978,28 @@ className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}
             </p>
         )}
         <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}></p>
+    </div>
+
+    {/* Sales Mode: Personal or Company (Dropdown) */}
+    <div className="flex flex-col h-full" ref={(el) => { formFieldRefs.current['sales_mode'] = el; }}>
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        Sale Mode
+      </label>
+
+      <div className="relative mt-auto">
+        <Select
+          inputId="sales_mode"
+          options={[{ value: 'personal', label: 'Personal Name' }, { value: 'company', label: 'Company Name' }]}
+          styles={selectStyles}
+          value={[{ value: 'personal', label: 'Personal Name' }, { value: 'company', label: 'Company Name' }].find(opt => opt.value === formData.sales_mode)}
+          onChange={(selected) => handleChange('sales_mode', selected?.value || 'personal')}
+          placeholder="Select sale mode"
+          isSearchable={false}
+        />
+      </div>
+
+      <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`}>
+      </p>
     </div>
 
     {/* Select the addition if applicable */}

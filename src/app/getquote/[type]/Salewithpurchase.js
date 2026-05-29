@@ -181,6 +181,7 @@ useEffect(() => {
     gift_deposit: "",
     purchase_price: "",
     purchase_mode:"",
+    sales_mode: "personal",
     no_of_bedrooms: options_purchase[0],
     property_type: "Flat",
     leasehold_or_free: "Freehold", 
@@ -200,6 +201,7 @@ useEffect(() => {
   sales_stages: null,sales_address: "",sales_price: "",sales_no_of_bedrooms:null,
   sales_property_type: null,
   sales_leasehold_or_free: null,
+  sales_mode: null,
 
   // PURCHASE FIELDS
   address_line1: "",
@@ -1074,6 +1076,31 @@ console.log(e);
                         {errors.sales_shared_ownership && (
                           <p className="text-red-500 text-[12px] mt-1">{errors.sales_shared_ownership}</p>
                         )}
+                      </div>
+
+                      {/* Sale Mode */}
+                      <div className="flex flex-col h-full" id="sales_mode">
+                        <label htmlFor="sales_mode" className="block text-sm font-medium text-gray-700 mb-1">
+                          Sale mode
+                        </label>
+                        <div className="relative mt-auto">
+                          <Select
+                            inputId="sales_mode"
+                            options={[
+                              { value: "personal", label: "Personal name" },
+                              { value: "company", label: "Company name" },
+                            ]}
+                            styles={selectStyles}
+                            defaultValue={{ value: "personal", label: "Personal name" }}
+                            value={[
+                              { value: "personal", label: "Personal name" },
+                              { value: "company", label: "Company name" },
+                            ].find((opt) => opt.value === (formData.sales_mode || "personal"))}
+                            onChange={(selected) => handleChange("sales_mode", selected?.value || "personal")}
+                            placeholder="Select sale mode"
+                            isSearchable={false}
+                          />
+                        </div>
                       </div>
 
                       {/* Existing Mortgage */}
