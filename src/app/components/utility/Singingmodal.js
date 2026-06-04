@@ -269,7 +269,7 @@ export default function Signinmodal({ closeModal, partnerloginshow, onLoginSucce
       localStorage.setItem("logintype", "guest");
 
       if (onLoginSuccess) {
-        console.log("🟢 Calling onLoginSuccess callback from guest signup...");
+       // console.log("🟢 Calling onLoginSuccess callback from guest signup...");
         closeModal();
         onLoginSuccess();
         return;

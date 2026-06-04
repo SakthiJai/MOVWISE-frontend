@@ -315,7 +315,7 @@ useEffect(() => {
           .pdf-fee-table, [data-pdf-fee-table="1"],
           .pdf-fee-table th, [data-pdf-fee-table="1"] th,
           .pdf-fee-table td, [data-pdf-fee-table="1"] td {
-            border: 1px solid #d1d5db !important;
+            border: 0.05px solid rgba(0,0,0,0.06) !important;
             border-collapse: collapse !important;
             border-spacing: 0 !important;
             background-color: #ffffff !important;
@@ -323,14 +323,14 @@ useEffect(() => {
           .pdf-fee-table, [data-pdf-fee-table="1"] {
             width: 100% !important;
             table-layout: auto !important;
-            border: 1px solid #d1d5db !important;
+            border: 0.05px solid rgba(0,0,0,0.06) !important;
             box-sizing: border-box !important;
             margin-top: 14px !important;
             margin-bottom: 14px !important;
           }
           .pdf-fee-table th, [data-pdf-fee-table="1"] th {
             background-color: #f8fafc !important;
-            border-bottom: 1px solid #d1d5db !important;
+            border-bottom: 0.05px solid rgba(0,0,0,0.06) !important;
             text-align: left !important;
           }
           .pdf-fee-table th:nth-child(2),
@@ -345,7 +345,10 @@ useEffect(() => {
           }
           .pdf-fee-table tr:last-child td,
           [data-pdf-fee-table="1"] tr:last-child td {
-            border-bottom: 1px solid #000 !important;
+            border-bottom: 0.05px solid rgba(0,0,0,0.06) !important;
+          }
+          [data-pdf-fee-table="1"] tr[data-pdf-fee-highlight="1"] td {
+            background-color: #f9fafb !important;
           }
           .pdf-fee-table td, [data-pdf-fee-table="1"] td {
             background-color: #ffffff !important;
@@ -391,6 +394,17 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
           const rowLabel = row?.querySelector('td, th')?.textContent?.trim();
           const isLegalFeesRow = rowLabel === 'Legal Fees';
           const isFinalTotalRow = rowLabel === 'Total';
+          const highlightPatterns = [
+            /^(Transaction Supplement Fees)$/i,
+            /^(Standard Disbursements)$/i,
+            /^(Leasehold Specific Fees & Disbursements)$/i,
+          ];
+          const isCategoryHeadingRow = rowLabel && highlightPatterns.some((pattern) => pattern.test(rowLabel));
+          const isHighlightedFeeRow = isCategoryHeadingRow || isFinalTotalRow;
+
+          if (isHighlightedFeeRow && currentRow) {
+            currentRow.dataset.pdfFeeHighlight = '1';
+          }
 
           el.className = '';
           el.style.fontFamily = 'Arial, sans-serif';
@@ -448,7 +462,7 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
             
             // Add a full border for pdf-fee-table cells so exported PDF shows lines
             if (el.closest('[data-pdf-fee-table="1"]')) {
-              el.style.border = '1px solid #d1d5db';
+              el.style.border = '0.05px solid rgba(0,0,0,0.06)';
             }
           }
           if (el.tagName === 'TABLE') {
@@ -456,7 +470,7 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
             el.style.borderCollapse = 'collapse';
             el.style.tableLayout = 'auto';
             if (el.closest('[data-pdf-fee-table="1"]')) {
-              el.style.border = '1px solid #d1d5db';
+              el.style.border = '0.05px solid rgba(0,0,0,0.06)';
             }
           }
           if (el.tagName === 'IMG') {
@@ -471,7 +485,7 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
         cloned.querySelectorAll('[data-pdf-fee-table="1"]').forEach(table => {
           table.style.borderCollapse = 'collapse';
           table.style.borderSpacing = '0';
-          table.style.border = '1px solid #d1d5db';
+          table.style.border = '0.05px solid rgba(0,0,0,0.06)';
           table.style.boxSizing = 'border-box';
           table.style.backgroundColor = '#ffffff';
           table.style.marginTop = '14px';
@@ -480,20 +494,27 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
 
         cloned.querySelectorAll('[data-pdf-fee-table="1"] tr').forEach(row => {
           const cells = row.querySelectorAll('th, td');
+          const rowLabel = row.querySelector('td, th')?.textContent?.trim();
+          const isFinalTotalRow = rowLabel === 'Total';
+          const isHighlightedFeeRow = row.dataset.pdfFeeHighlight === '1';
           cells.forEach((cell, index) => {
             if (index === 1 || index === 2) {
               cell.style.textAlign = 'right';
             } else {
               cell.style.textAlign = 'left';
             }
-            cell.style.border = '1px solid #d1d5db';
-            cell.style.backgroundColor = '#ffffff';
+            cell.style.border = '0.05px solid rgba(0,0,0,0.06)';
+            if (isHighlightedFeeRow) {
+              cell.style.backgroundColor = isFinalTotalRow ? '#f3f4f6' : '#f9fafb';
+            } else {
+              cell.style.backgroundColor = '#ffffff';
+            }
           });
         });
 
         // Thinner bottom border for the header row
         cloned.querySelectorAll('[data-pdf-fee-table="1"] thead th').forEach(th => {
-          th.style.borderBottom = '1px solid #d1d5db';
+          th.style.borderBottom = '0.1px solid #e5e7eb';
         });
         cloned.querySelectorAll('[data-pdf-logo-cell="1"]').forEach(cell => {
           cell.style.textAlign = 'center';
@@ -1392,7 +1413,7 @@ async function sendHtmlToBackend() {
       .pdf-fee-table th {
         font-weight: bold !important;
         background-color: #f3f4f6 !important;
-        border-bottom: 1px solid #d1d5db !important;
+        border-bottom: 0.05px solid rgba(0,0,0,0.06) !important;
         text-align: left !important;
       }
       
@@ -1402,13 +1423,13 @@ async function sendHtmlToBackend() {
       }
       
       .pdf-fee-table td {
-        border-bottom: 1px solid #e5e7eb !important;
+        border-bottom: 0.05px solid rgba(0,0,0,0.06) !important;
         text-align: left !important;
       }
       
       .pdf-fee-card {
         background-color: #f8fafc !important;
-        border: 1px solid #e5e7eb !important;
+        border: 0.05px solid rgba(0,0,0,0.06) !important;
         border-radius: 20px !important;
         padding: 16px !important;
         margin-bottom: 18px !important;
@@ -1422,7 +1443,7 @@ async function sendHtmlToBackend() {
 
       .pdf-info-card {
         background-color: #f8fafc !important;
-        border: 1px solid #e5e7eb !important;
+        border: 0.05px solid rgba(0,0,0,0.06) !important;
         border-radius: 20px !important;
         padding: 16px !important;
         margin-bottom: 18px !important;
@@ -1482,7 +1503,7 @@ async function sendHtmlToBackend() {
         let refNumberExist = query_ref_no || localStorage.getItem("ref_no");
         console.log("Using ref number:", query_ref_no);
         if (!refNumberExist || refNumberExist == "" || refNumberExist.trim() == "") {
-          const response = await postData(API_ENDPOINTS.services, formData);
+          const response = await postData(API_ENDPOINTS.services, formData) ;
           console.log("✅ service API Response:", response?.service?.quote_ref_number);
 
           localStorage.setItem("ref_no", response?.service?.quote_ref_number);
@@ -2635,7 +2656,7 @@ handleInstructFromCard(
                                         
                                       )}
                                       {view_data.service_details.length > 1 && (<>
-                                        <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice}  /> <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[1]} companydata={companydata} cardid={cardid} taxDetails={taxDetails2} giftvalue={giftvalue} handleprice={handleprice} lenders={lenders} /></>)}
+                                        <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} lenders={lenders}  /> <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[1]} companydata={companydata} cardid={cardid} taxDetails={taxDetails2} giftvalue={giftvalue} handleprice={handleprice} language={language} lenders={lenders} /></>)}
 
                                     </div>
 
@@ -2864,4 +2885,4 @@ export default function Comparequotes() {
     </React.Suspense>
   );
 }
-// tfggggg
+// tfgggggnkjdfnkjdfjkfdkjfdkjkjf
