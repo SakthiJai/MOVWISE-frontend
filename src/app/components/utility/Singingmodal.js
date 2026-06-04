@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
 import { Hand } from "lucide-react";
 
-export default function Signinmodal({ closeModal, partnerloginshow }) {
+export default function Signinmodal({ closeModal, partnerloginshow, onLoginSuccess, isSurveyorFlow = false }) {
   const router = useRouter();
   // console.log(page)
   const [loginformshow, setloginformshow] = useState(false);
@@ -146,6 +146,13 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
         localStorage.setItem("user", userId);
         console.log(Number(localStorage.getItem("service")));
 
+        if (onLoginSuccess) {
+          console.log("🟢 Calling onLoginSuccess callback from login...");
+          closeModal();
+          onLoginSuccess();
+          return;
+        }
+
         if (
           Number(localStorage.getItem("service")) > 0 ||
           localStorage.getItem("user")
@@ -245,18 +252,28 @@ export default function Signinmodal({ closeModal, partnerloginshow }) {
       // 5️⃣ Build quote object (LOGIN-LIKE)
       const updatedQuote = {
         ...quoteData,
-        guest_user: guest_uuid, // ✅ numeric DB ID
+        guest_user: guest_uuid,
         guest_name: result.data.name,
         guest_email: result.data.email,
         guest_phonenumber: result.data.phone_number,
         user_id: null,
-        service_type: 2,
+        service_type:
+          quoteData?.service_type ||
+          Number(localStorage.getItem("service")) ||
+          2,
       };
 
       // 6️⃣ Store everything safely
       localStorage.setItem("getquote", JSON.stringify(updatedQuote));
       localStorage.setItem("guest_uuid", guest_uuid); // ✅ UUID stored safely
       localStorage.setItem("logintype", "guest");
+
+      if (onLoginSuccess) {
+        console.log("🟢 Calling onLoginSuccess callback from guest signup...");
+        closeModal();
+        onLoginSuccess();
+        return;
+      }
 
       // 7️⃣ Redirect
       router.push("/components/comparequotes");

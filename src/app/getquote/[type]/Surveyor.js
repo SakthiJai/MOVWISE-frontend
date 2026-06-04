@@ -6,6 +6,7 @@ import { postData } from "../../auth/API/api";
 import LocationSearch from '../Purchase/LocationSearch';
 import AddressFields from './AddressFields';
 import { getData,API_ENDPOINTS  } from "../../auth/API/api";
+import Signinmodal from "../../components/utility/Singingmodal";
 const surveyTypes = [
   { value: "homebuyer_report", label: "Homebuyer Report" },
   { value: "building_survey", label: "Building Survey" }
@@ -17,6 +18,13 @@ export default function Surveyor() {
   const surveyorRef = useRef(null);
   const formFieldRefs = useRef({});
   const [showAddressLines, setShowAddressLines] = useState(false);
+  const [modalopen, setModalopen] = useState(false);
+  const [pendingSubmit, setPendingSubmit] = useState(false);
+  const partnerloginshow = false;
+  const closeModal = () => {
+    setModalopen(false);
+    setPendingSubmit(false);
+  };
 
  const [formData, setFormData] = useState({
   address: "",
@@ -65,93 +73,110 @@ export default function Surveyor() {
     }
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const getStoredSurveyorRef = () => {
+    const fromStorage = localStorage.getItem("ref_no") || localStorage.getItem("quote_ref_number");
+    if (fromStorage) return fromStorage;
 
-    const newErrors = {};
-    
-    // Address validation - check based on whether manual address is being used
-    // if (showAddressLines) {
-    //   if (!formData.address_line1 || !formData.address_line1.trim()) {
-    //     newErrors.address_line1 = "Address line 1 is required.";
-    //   }
-    // } else {
-    //   if (!formData.address || !formData.address.trim()) {
-    //     newErrors.address = "Address is required.";
-    //   }
-    // }
-
-    if (!formData.propertyValue.trim()) {
-      newErrors.propertyValue = "Property value is required.";
+    try {
+      const quoteData = JSON.parse(localStorage.getItem("getquote") || "{}");
+      return (
+        quoteData?.quote_ref_number ||
+        quoteData?.quote_ref_id ||
+        quoteData?.ref_no ||
+        ""
+      );
+    } catch (error) {
+      return "";
     }
-    if (!formData.surveyType) {
-      newErrors.surveyType = "Please select a survey type.";
+  };
+
+  const fetchSurveyorQuoteByRef = async (quoteRefNumber) => {
+    if (!quoteRefNumber) {
+      console.warn("No quoteRefNumber provided to fetchSurveyorQuoteByRef");
+      return null;
     }
-    if (!formData.country) {
-      newErrors.country = "Please select a country.";
+
+    try {
+      console.log("Calling surveyor quote endpoint for ref:", quoteRefNumber);
+      const response = await getData(`${API_ENDPOINTS.surveyorquotes}/${quoteRefNumber}`);
+      console.log("Fetched surveyor quote by ref:", quoteRefNumber, response);
+      return response;
+    } catch (error) {
+      console.error("Failed to fetch surveyor quote by ref:", quoteRefNumber, error);
+      return null;
     }
-    if (!formData.first_name.trim()) {
-  newErrors.first_name = "First name is required.";
-}
+  };
 
-if (!formData.last_name.trim()) {
-  newErrors.last_name = "Last name is required.";
-}
+  const handleLoginSuccess = async () => {
+    console.log("🔵 handleLoginSuccess called!");
+    setModalopen(false);
 
-if (!formData.email.trim()) {
-  newErrors.email = "Email is required.";
-} else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-  newErrors.email = "Invalid email format.";
-}
-
-if (!formData.phone_number.toString().trim()) {
-  newErrors.phone_number = "Phone number is required.";
-}
-
-// Conditional validation
-// if (formData.surveyType === "homebuyer_report" && formData.valuation === "") {
-//   newErrors.valuation = "Please select valuation option.";
-// }
-
-    if (Object.keys(newErrors).length) {
-      setErrors(newErrors);
+    if (pendingSubmit) {
+      console.log("🔵 pendingSubmit is true, submitting surveyor request...");
+      setPendingSubmit(false);
+      await submitSurveyorRequest();
       return;
     }
 
+    const quoteRefNumber = getStoredSurveyorRef();
+    console.log("🔵 Surveyor login success, stored quote ref:", quoteRefNumber);
+    if (quoteRefNumber) {
+      console.log("🔵 Found quote ref, fetching surveyor quote...");
+      await fetchSurveyorQuoteByRef(quoteRefNumber);
+      window.alert("Surveyor login successful. Fetching quote details now.");
+    } else {
+      console.warn("🔴 No stored surveyor quote ref found after login.");
+    }
+  };
+
+  const submitSurveyorRequest = async () => {
     setLoading(true);
-
     try {
-      // Build the full address
-    //   const fullAddress = showAddressLines 
-    //     ? `${formData.address_line1}${formData.address_line2 ? ', ' + formData.address_line2 : ''}, ${formData.city}, ${formData.country}`
-    //     : formData.address;
-
-   const payload = {
-  address: formData.address || "",
-  address_line1: formData.address_line1 || "",
-  address_line2: formData.address_line2 || "",
-  country: formData.country || "",
-  property_values: formData.propertyValue
-    ? parseInt(formData.propertyValue, 10)
-    : 0,
-  survey_type: formData.surveyType,
-  special_instruction: formData.specialInstruction?.trim() || "",
-
-  // NEW
-  first_name: formData.first_name.trim(),
-  last_name: formData.last_name.trim(),
-  email: formData.email.trim(),
-  phone_number: Number(formData.phone_number),
-  valuation:
-    formData.surveyType === "homebuyer_report"
-      ? Number(formData.valuation)
-      : null,
-};
+      const payload = {
+        address: formData.address || "",
+        address_line1: formData.address_line1 || "",
+        address_line2: formData.address_line2 || "",
+        country: formData.country || "",
+        property_values: formData.propertyValue
+          ? parseInt(formData.propertyValue, 10)
+          : 0,
+        survey_type: formData.surveyType,
+        special_instruction: formData.specialInstruction?.trim() || "",
+        first_name: formData.first_name.trim(),
+        last_name: formData.last_name.trim(),
+        email: formData.email.trim(),
+        phone_number: Number(formData.phone_number),
+        valuation:
+          formData.surveyType === "homebuyer_report"
+            ? Number(formData.valuation)
+            : null,
+        service_type: 6,
+        user_id: Number(localStorage.getItem("user")) || null,
+        guest_user: localStorage.getItem("guest_uuid") || null,
+      };
 
       console.log("Sending payload:", payload);
       const response = await postData(SURVEYOR_API_URL, payload);
 
       console.log("API Response:", response);
+      const savedRefNumber =
+        response?.newSurveyor?.quote_ref_number ||
+        response?.newSurveyor?.id ||
+        response?.service?.quote_ref_number ||
+        response?.quote_ref_number ||
+        response?.data?.quote_ref_number ||
+        response?.service?.quote_ref_id ||
+        response?.quote_ref_id ||
+        getStoredSurveyorRef();
+
+   
+      if (savedRefNumber) {
+        localStorage.setItem("ref_no", savedRefNumber);
+        await fetchSurveyorQuoteByRef(savedRefNumber);
+       // window.alert("Surveyor quote created successfully.");
+      } else {
+        console.warn("No ref number available after surveyor create response.");
+      }
 
       if (response && (response.success || response.message)) {
         setShowSuccess(true);
@@ -181,9 +206,85 @@ if (!formData.phone_number.toString().trim()) {
     }
   };
 
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
+    const newErrors = {};
+    
+    // Address validation - check based on whether manual address is being used
+    // if (showAddressLines) {
+    //   if (!formData.address_line1 || !formData.address_line1.trim()) {
+    //     newErrors.address_line1 = "Address line 1 is required.";
+    //   }
+    // } else {
+    //   if (!formData.address || !formData.address.trim()) {
+    //     newErrors.address = "Address is required.";
+    //   }
+    // }
+
+    if (!formData.propertyValue.trim()) {
+      newErrors.propertyValue = "Property value is required.";
+    }
+    if (!formData.surveyType) {
+      newErrors.surveyType = "Please select a survey type.";
+    }
+    if (!formData.country) {
+      newErrors.country = "Please select a country.";
+    }
+//     if (!formData.first_name.trim()) {
+//   newErrors.first_name = "First name is required.";
+// }
+
+// if (!formData.last_name.trim()) {
+//   newErrors.last_name = "Last name is required.";
+// }
+
+// if (!formData.email.trim()) {
+//   newErrors.email = "Email is required.";
+// } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+//   newErrors.email = "Invalid email format.";
+// }
+
+// if (!formData.phone_number.toString().trim()) {
+//   newErrors.phone_number = "Phone number is required.";
+// }
+
+// Conditional validation
+// if (formData.surveyType === "homebuyer_report" && formData.valuation === "") {
+//   newErrors.valuation = "Please select valuation option.";
+// }
+
+    if (Object.keys(newErrors).length) {
+      setErrors(newErrors);
+      return;
+    }
+
+    if (!localStorage.getItem("user")) {
+      setPendingSubmit(true);
+      setModalopen(true);
+      return;
+    }
+
+    await submitSurveyorRequest();
+  };
+
 
   return (
     <>
+      {/* Loader Overlay */}
+      {loading && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-8 shadow-xl">
+            <div className="flex flex-col items-center">
+              <div className="relative h-16 w-16 mb-4">
+                <div className="absolute inset-0 border-4 border-gray-200 rounded-full"></div>
+                <div className="absolute inset-0 border-4 border-[#1E5C3B] rounded-full border-t-transparent animate-spin"></div>
+              </div>
+              <p className="text-gray-700 font-medium">Your Quotes are Loading...</p>
+            </div>
+          </div>
+        </div>
+      )}
    <div className="mt-8 mx-auto max-w-4xl rounded-[28px] border border-gray-200 bg-white p-6 shadow-sm">
   <h1 className="mb-6 text-3xl font-semibold text-gray-900">
     Surveyor Quote
@@ -390,7 +491,7 @@ if (!formData.phone_number.toString().trim()) {
     className="w-full rounded-2xl border border-gray-300 px-4 py-3 text-sm resize-none"
   />
 </div>
-<h1 className="mb-6 text-3xl font-semibold text-gray-900">
+{/* <h1 className="mb-6 text-3xl font-semibold text-gray-900">
     Personal Details
   </h1>
 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -458,7 +559,7 @@ if (!formData.phone_number.toString().trim()) {
     </p>
   )}
 </div>
-</div>
+</div> */}
     {/* Buttons */}
     <div className="flex justify-between">
    <button
@@ -471,14 +572,28 @@ if (!formData.phone_number.toString().trim()) {
 
       <button
         type="submit"
-        className="h-12 rounded-full bg-[#1E5C3B] px-6 text-sm font-semibold text-white"
+        disabled={loading}
+        className={`h-12 rounded-full px-6 text-sm font-semibold text-white transition-all duration-200 ${
+          loading
+            ? "bg-gray-400 cursor-not-allowed opacity-75"
+            : "bg-[#1E5C3B] hover:bg-[#16472F]"
+        }`}
       >
-        Continue
+        {loading ? "Processing..." : "Continue"}
       </button>
     </div>
 
   </form>
 </div>
+
+      {modalopen && (
+        <Signinmodal
+          closeModal={closeModal}
+          partnerloginshow={partnerloginshow}
+          onLoginSuccess={handleLoginSuccess}
+          isSurveyorFlow={true}
+        />
+      )}
 
       {showSuccess && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
