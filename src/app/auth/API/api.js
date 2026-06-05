@@ -1,11 +1,12 @@
 // ✅ Base URL for your backend
 const BASE_URL = "https://admin.movwise.com/api";
- //const BASE_URL = "http://localhost:5000/api";
+
+//const BASE_URL = "http://localhost:5000/api";
 export const config = {
   api: {
     bodyParser: {
       sizeLimit: '100mb'
-    }
+    } 
   }
 };
 // ✅ Example: central place for all API endpoints
@@ -21,6 +22,8 @@ export const API_ENDPOINTS = {
     // quotesfilter:`${BASE_URL}/quotes/filter`,
     compareQuotes:`${BASE_URL}/compare-quotes`,
     languages:`${BASE_URL}/languages`,
+    surveyorquotes:`${BASE_URL}/surveyorquotes`,
+    languagelist:`${BASE_URL}/languagelist`,
     partnerfilter:`${BASE_URL}/partnerfilter`,
     feecatgory:`${BASE_URL}/feecategory`,
     feetype:`${BASE_URL}/feetype`,
@@ -43,6 +46,9 @@ export const API_ENDPOINTS = {
     resetpassword:`${BASE_URL}/reset_password`,
      blogs:`${BASE_URL}/blog`,
      blogDetail:`${BASE_URL}/blog`,
+     statusupdate:`${BASE_URL}/quotes-updates-status`,
+     sendinstructmail:`${BASE_URL}/sendinstructmail`,
+     createsurveyor:`${BASE_URL}/createsurveyor`
 }
   // add more endpoints here
 

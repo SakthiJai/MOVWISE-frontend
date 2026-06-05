@@ -30,6 +30,17 @@ export default function SalesPropertyDetails({
   hide,
   handleprice,isPdf   // ✅ add this
 }) {
+  const getTaxTotal = (taxInfo = {}, fallback = {}) =>
+    Number(taxInfo.vat ?? fallback.vat ?? 0) +
+    Number(taxInfo.supplementsvat ?? fallback.supplementsvat ?? 0) +
+    Number(taxInfo.disbursementsvat ?? fallback.disbursementsvat ?? 0);
+
+  const categoryVatTotal = Object.values(taxDetails || {}).reduce(
+    (sum, category) => sum + Number(category?.vat || 0),
+    0
+  );
+  const legalFeeVat = Number(servicData?.taxInfo?.vat ?? quote.vat ?? 0);
+  const totalTaxVat = categoryVatTotal + legalFeeVat || getTaxTotal(servicData?.taxInfo || {}, quote);
  console.log("lenders in SalesPropertyDetails:", lenders);
 // const [lendersList, setLendersList] = useState([]);
 // useEffect(() => {
@@ -406,7 +417,7 @@ return (
                         </td>
                         <td className="p-2 text-right text-emerald-600">
                           <span> 
-                            {formatGBP( servicData?.taxInfo?.vat||quote.total_vat)}</span>
+                            {formatGBP(totalTaxVat)}</span>
                         </td>
 
                         {/* <td className="p-2 text-right text-emerald-600 font_size_13px" > {formatGBP(Number(item.vat))}</td> */}

@@ -33,6 +33,18 @@ export default function PurchasePropertyDetails({
 }) {
   const pdfRef = useRef(null);
 
+  const getTaxTotal = (taxInfo = {}, fallback = {}) =>
+    Number(taxInfo.vat ?? fallback.vat ?? 0) +
+    Number(taxInfo.supplementsvat ?? fallback.supplementsvat ?? 0) +
+    Number(taxInfo.disbursementsvat ?? fallback.disbursementsvat ?? 0);
+
+  const categoryVatTotal = Object.values(taxDetails || {}).reduce(
+    (sum, category) => sum + Number(category?.vat || 0),
+    0
+  );
+  const legalFeeVat = Number(servicData?.taxInfo?.vat ?? quote.vat ?? 0);
+  const totalTaxVat = categoryVatTotal + legalFeeVat || getTaxTotal(servicData?.taxInfo || {}, quote);
+
   const downloadPDF = () => {
     const element = pdfRef.current;
     const opt = {
@@ -276,7 +288,7 @@ export default function PurchasePropertyDetails({
                             )}
                           </td>
                           <td className="p-2 text-right text-emerald-600 font-bold">
-                            {formatGBP(servicData?.taxInfo?.vat || quote.total_vat)}
+                            {formatGBP(totalTaxVat)}
                           </td>
                         </tr>
                         <>

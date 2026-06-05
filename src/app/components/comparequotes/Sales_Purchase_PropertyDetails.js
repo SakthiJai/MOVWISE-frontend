@@ -384,7 +384,7 @@ export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId ,se
                                          Vat
                                         </span>
                                         <span className="ml-10">
-                                          {servicData?.total_vat || "--"}
+                                          {servicData?.vat || "--"}
                                         </span>
                                       </div>
 

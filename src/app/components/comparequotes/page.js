@@ -26,7 +26,46 @@ import { toPng } from "html-to-image";
 
 // Reusable component for fees table
 const FeesTable = ({ quote, label = "Sales" }) => {
+  // If quote contains multiple service_details, compute totals from each service's taxInfo
+  const computed = (quote?.service_details && Array.isArray(quote.service_details) && quote.service_details.length > 0)
+    ? quote.service_details.reduce((acc, sd) => {
+        const t = sd.taxInfo || {};
+        acc.legal_fees += Number(t.legal_fees || 0);
+        acc.vat += Number(t.vat || 0);
+        acc.supplements += Number(t.supplements || 0);
+        acc.supplementsvat += Number(t.supplementsvat || 0);
+        acc.disbursements += Number(t.disbursements || 0);
+        acc.disbursementsvat += Number(t.disbursementsvat || 0);
+        return acc;
+      }, { legal_fees: 0, vat: 0, supplements: 0, supplementsvat: 0, disbursements: 0, disbursementsvat: 0 })
+    : null;
 
+  const legalFees = computed ? computed.legal_fees : Number(quote.legal_fees || 0);
+  const vatValue = computed ? computed.vat : Number(quote.vat || 0);
+  const supplements = computed ? computed.supplements : Number(quote.supplements || 0);
+  const supplementsvat = computed ? computed.supplementsvat : Number(quote.supplementsvat || 0);
+  const disbursements = computed ? computed.disbursements : Number(quote.disbursements || 0);
+  const disbursementsvat = computed ? computed.disbursementsvat : Number(quote.disbursementsvat || 0);
+
+  // Compute total VAT defensively from service_details when available
+  const totalVatComputed = computed
+    ? Number(computed.vat || 0) + Number(computed.supplementsvat || 0) + Number(computed.disbursementsvat || 0)
+    : Number(vatValue || 0) + Number(supplementsvat || 0) + Number(disbursementsvat || 0);
+
+  // Debug: log computed VAT breakdown for diagnosis (remove after verification)
+  try {
+    console.log('FeesTable VAT breakdown', {
+      quote_id: quote?.quote_id || quote?.id || null,
+      legalFees,
+      vatValue,
+      supplements,
+      supplementsvat,
+      disbursements,
+      disbursementsvat,
+      totalVatComputed,
+      source: computed ? 'service_details' : 'quote'
+    });
+  } catch (e) {}
 
   return (
     <div className="border-t border-gray-200 pt-6 flex justify-end">
@@ -42,36 +81,32 @@ const FeesTable = ({ quote, label = "Sales" }) => {
           {/* Legal Fees */}
           <tr className="border-gray-200">
             <td className="text-sm font-bold text-emerald-600">Legal Fees</td>
-            <td className="text-sm font-semibold text-emerald-600">{formatGBP(quote.legal_fees)}</td>
-            <td className="text-sm text-emerald-600 font-semibold">{formatGBP(quote.vat)}</td>
+            <td className="text-sm font-semibold text-emerald-600">{formatGBP(legalFees)}</td>
+            <td className="text-sm text-emerald-600 font-semibold">{formatGBP(vatValue)}</td>
           </tr>
 
           {/* Supplements */}
           <tr className="border-gray-200">
             <td className="text-sm">Supplements</td>
-            <td className="text-sm">{formatGBP(quote.supplements)}</td>
-            <td className="text-sm">{formatGBP(quote.supplementsvat)}</td>
+            <td className="text-sm">{formatGBP(supplements)}</td>
+            <td className="text-sm">{formatGBP(supplementsvat)}</td>
           </tr>
 
           {/* Disbursements */}
           <tr className="border-gray-200">
             <td className="text-sm">Disbursements</td>
-            <td className="text-sm">{formatGBP(quote.disbursements)}</td>
-            <td className="text-sm">{formatGBP(quote.disbursementsvat)}</td>
+            <td className="text-sm">{formatGBP(disbursements)}</td>
+            <td className="text-sm">{formatGBP(disbursementsvat)}</td>
           </tr>
 
           {/* TOTAL */}
           <tr className="border-t border-gray-300 bg-gray-50">
             <td className="text-sm font-semibold text-emerald-600">Total</td>
             <td className="text-sm font-semibold text-emerald-600">
-              {formatGBP(
-                Number(quote.supplements || 0) +
-                Number(quote.disbursements || 0) +
-                Number(quote.legal_fees || 0)
-              )}
+              {formatGBP(Number(supplements || 0) + Number(disbursements || 0) + Number(legalFees || 0))}
             </td>
             <td className="text-sm font-semibold text-emerald-600">
-              {formatGBP(Number(quote.disbursementsvat) + Number(quote.supplementsvat) + Number(quote.vat))}
+              {formatGBP(totalVatComputed)}
             </td>
           </tr>
 
@@ -107,6 +142,14 @@ const FeesTable = ({ quote, label = "Sales" }) => {
         </tbody>
       </table>
     </div>
+  );
+};
+
+const getTaxTotal = (taxInfo = {}, fallback = {}) => {
+  return (
+    Number(taxInfo.vat ?? fallback.vat ?? 0) +
+    Number(taxInfo.supplementsvat ?? fallback.supplementsvat ?? 0) +
+    Number(taxInfo.disbursementsvat ?? fallback.disbursementsvat ?? 0)
   );
 };
 
@@ -2241,7 +2284,7 @@ handleInstructFromCard(
                                               )}
                                             </td>
                                             <td className="text-sm font-semibold text-emerald-600">
-                                              {formatGBP(quote.service_details[0].taxInfo.vat)}
+                                              {formatGBP(getTaxTotal(quote.service_details[0].taxInfo))}
                                             </td>
                                           </tr>
 
@@ -2320,7 +2363,7 @@ handleInstructFromCard(
                                               {formatGBP(quote.service_details[1].taxInfo.total)}
                                             </td>
                                             <td className="text-sm font-semibold text-emerald-600">
-                                              {formatGBP(quote.service_details[1].taxInfo.vat)}
+                                              {formatGBP(getTaxTotal(quote.service_details[1].taxInfo))}
                                             </td>
                                           </tr>
 
@@ -2375,22 +2418,22 @@ handleInstructFromCard(
                                         {/* Legal Fees */}
                                         <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
                                           <td className="text-sm font-bold text-emerald-600">Legal Fees</td>
-                                          <td className="text-sm font-semibold text-emerald-600">{formatGBP(quote.legal_fees)}</td>
-                                          <td className="text-sm text-emerald-600 font-semibold">{formatGBP(quote.vat)}</td>
+                                          <td className="text-sm font-semibold text-emerald-600">{formatGBP(quote.service_details[0].taxInfo?.legal_fees || quote.legal_fees)}</td>
+                                          <td className="text-sm text-emerald-600 font-semibold">{formatGBP(quote.service_details[0].taxInfo?.vat || quote.vat)}</td>
                                         </tr>
                                         <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
                                           <td className="text-sm ">Supplements</td>
-                                          <td className="text-sm ">{formatGBP(quote.supplements)}</td>
-                                          <td className="text-sm ">  {formatGBP(quote.supplementsvat)}
+                                          <td className="text-sm ">{formatGBP(quote.service_details[0].taxInfo?.supplements || quote.supplements)}</td>
+                                          <td className="text-sm ">  {formatGBP(quote.service_details[0].taxInfo?.supplementsvat || quote.supplementsvat)}
                                           </td>
                                         </tr>
 
                                         {/* Disbursements */}
                                         <tr className="grid grid-cols-3 w-full gap-5  border-gray-200">
                                           <td className="text-sm ">Disbursements</td>
-                                          <td className="text-sm ">{formatGBP(quote.disbursements)}</td>
+                                          <td className="text-sm ">{formatGBP(quote.service_details[0].taxInfo?.disbursements || quote.disbursements)}</td>
                                           <td className="text-sm ">
-                                            {formatGBP(quote.disbursementsvat)}
+                                            {formatGBP(quote.service_details[0].taxInfo?.disbursementsvat || quote.disbursementsvat)}
                                           </td>
                                         </tr>
 
@@ -2402,12 +2445,15 @@ handleInstructFromCard(
                                           <td className="text-sm font-semibold text-emerald-600">Total</td>
                                           <td className="text-sm font-semibold text-emerald-600">
                                             {formatGBP(
-                                              Number(quote.supplements || 0) +
-                                              Number(quote.disbursements || 0) +
-                                              Number(quote.legal_fees || 0)
+                                              quote.service_details[0].taxInfo?.total ??
+                                              (Number(quote.service_details[0].taxInfo?.supplements || quote.supplements || 0) +
+                                              Number(quote.service_details[0].taxInfo?.disbursements || quote.disbursements || 0) +
+                                              Number(quote.service_details[0].taxInfo?.legal_fees || quote.legal_fees || 0))
                                             )}
                                           </td>
-                                          <td className="text-sm font-semibold text-emerald-600">{formatGBP(Number(quote.disbursementsvat) + Number(quote.supplementsvat) + Number(quote.vat))}</td>
+                                          <td className="text-sm font-semibold text-emerald-600">{formatGBP(
+                                            getTaxTotal(quote.service_details[0]?.taxInfo || quote)
+                                          )}</td>
                                         </tr>
                                         {quote.service_details[0].service_type == 2 && (
                                           <>

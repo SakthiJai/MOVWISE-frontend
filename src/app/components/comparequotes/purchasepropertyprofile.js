@@ -27,6 +27,17 @@ export default function PurchasePropertyprofile({
  language,
  hide
 }) {
+  const getTaxTotal = (taxInfo = {}, fallback = {}) =>
+    Number(taxInfo.vat ?? fallback.vat ?? 0) +
+    Number(taxInfo.supplementsvat ?? fallback.supplementsvat ?? 0) +
+    Number(taxInfo.disbursementsvat ?? fallback.disbursementsvat ?? 0);
+
+  const categoryVatTotal = Object.values(taxDetails || {}).reduce(
+    (sum, category) => sum + Number(category?.vat || 0),
+    0
+  );
+  const legalFeeVat = Number(servicData?.taxInfo?.vat ?? quote.vat ?? 0);
+  const totalTaxVat = categoryVatTotal + legalFeeVat || getTaxTotal(servicData?.taxInfo || {}, quote);
   // const [language, setlanguage] = useState([]);
   // async function fetchapi() {
   //   try {
@@ -209,7 +220,7 @@ export default function PurchasePropertyprofile({
                             )}
                           </td>
                           <td className="p-2 text-right text-emerald-600 font-bold">
-                            {formatGBP(servicData?.taxInfo?.vat || quote.total_vat)}
+                            {formatGBP(totalTaxVat)}
                           </td>
                         </tr>
                         <>
