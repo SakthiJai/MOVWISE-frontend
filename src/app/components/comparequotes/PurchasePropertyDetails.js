@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState, useRef } from "react";
 import DOMPurify from "dompurify";
 import Navbar from "../../parts/navbar/page";
@@ -8,11 +9,6 @@ import { useRouter } from "next/navigation";
 import { getData, postData, API_ENDPOINTS } from "../../auth/API/api";
 import Swal from "sweetalert2";
 import { formatGBP } from "../utility/poundconverter";
-
-
-import { Check, Rows, X, Download } from "lucide-react";
-import { Rating } from "react-simple-star-rating";
-import Footer from "../../parts/Footer/footer";
 import SalesPurchasePropertyDetails from "./Sales_Purchase_PropertyDetails";
 import RemortagePropertyDetails from "./RemortagePropertyDetails";
 import Select from "react-select";
@@ -44,6 +40,36 @@ export default function PurchasePropertyDetails({
   );
   const legalFeeVat = Number(servicData?.taxInfo?.vat ?? quote.vat ?? 0);
   const totalTaxVat = categoryVatTotal + legalFeeVat || getTaxTotal(servicData?.taxInfo || {}, quote);
+  useEffect(() => {
+    console.log("language array in PurchasePropertyDetails:", language);
+    console.log("servicData.languages in PurchasePropertyDetails:", servicData?.languages);
+    console.log("servicData in PurchasePropertyDetails:", servicData);
+  }, [language, servicData]);
+
+  const getLanguageDisplay = () => {
+    const langList = language || [];
+    let raw = servicData?.languages ?? servicData?.purchase_languages ?? servicData?.conveying_details?.languages;
+    if (raw == null || raw === "") return "--";
+
+    let ids = [];
+    if (Array.isArray(raw)) ids = raw;
+    else if (typeof raw === "string") {
+      try {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) ids = parsed; else ids = [parsed];
+      } catch (e) {
+        ids = raw.replace(/[\[\]"]+/g, "").split(",").map(s => s.trim()).filter(Boolean);
+      }
+    } else {
+      ids = [raw];
+    }
+
+    const names = ids
+      .map(id => langList.find(l => String(l.id) === String(id))?.language_name)
+      .filter(Boolean);
+
+    return names.length ? names.join(", ") : "--";
+  };
 
   const downloadPDF = () => {
     const element = pdfRef.current;
@@ -78,11 +104,12 @@ export default function PurchasePropertyDetails({
         </h5>
 
         <div className="py-2 font text-sm">
-  <div className="text-start">
+        <div className="text-start">
     <h3 className="text-lg font-semibold text-emerald-600">
       Purchase Property Details
     </h3>
   </div>
+       
 
   {/* UI only: full details table */}
   <div className="purchase-ui-details no-pdf py-6">
@@ -109,7 +136,7 @@ export default function PurchasePropertyDetails({
       ? servicData.lenders.map((id) =>lenders?.find((l) => l.id === id)?.lenders_name )
           .filter(Boolean).join(", "): "--"],
           ["Gift Deposit", servicData?.gift_deposit != null ? `${servicData.gift_deposit} Gift Deposit` : "--"],
-          ["Languages", language?.find((l) => l.id == servicData?.languages)?.language_name || "--"],
+          ["Languages", getLanguageDisplay()],
           ["LTA ISA", servicData?.purchase_lifetime_isa == 0 ? "No" : "Yes"],
           ["HMO Support", servicData?.purchase_need_hmo == 0 ? "No" : "Yes"],
         ].map(([label, value], i) => (
@@ -181,11 +208,9 @@ export default function PurchasePropertyDetails({
   </>
 )}
 
-    {language?.find((l) => l.id == servicData?.languages)?.language_name && (
+    {getLanguageDisplay() !== "--" && (
       <>
-        , <strong>
-          {language.find((l) => l.id == servicData?.languages)?.language_name}
-        </strong>
+        , <strong>{getLanguageDisplay()}</strong>
       </>
     )}
 

@@ -19,7 +19,7 @@ import SalesPropertyDetails from "./Sales_Property";
 import PurchasePropertyDetails from "./PurchasePropertyDetails";
 import SalesPurchasePropertyDetails from "./Sales_Purchase_PropertyDetails";
 import RemortagePropertyDetails from "./RemortagePropertyDetails";
-import EquityPropertyDetails from "./EquityPropertyDEtails";
+import EquityPropertyDetails from "./EquityPropertyDetails";
 import Select from 'react-select';
 import { useSearchParams } from "next/navigation";
 import { toPng } from "html-to-image";
@@ -2848,7 +2848,7 @@ handleInstructFromCard(
                                         {(view_data.service_details[0].service_type == 5) && <EquityPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language}lenders={lenders}/>}  </>
                                       )}
                                       {view_data.service_details.length > 1 && (<>
-                                        <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} /> <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[1]} companydata={companydata} cardid={cardid} taxDetails={taxDetails2} giftvalue={giftvalue} handleprice={handleprice} lenders={lenders} /></>)}
+                                        <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} lenders={lenders} /> <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[1]} companydata={companydata} cardid={cardid} taxDetails={taxDetails2} giftvalue={giftvalue} handleprice={handleprice} language={language} lenders={lenders} /></>)}
 
                                     </div>
 

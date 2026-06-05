@@ -1,3 +1,4 @@
+"use client";
 import React, { useEffect, useState, useRef } from "react";
 import DOMPurify from "dompurify";
 import Navbar from "../../parts/navbar/page";
@@ -41,7 +42,12 @@ export default function SalesPropertyDetails({
   );
   const legalFeeVat = Number(servicData?.taxInfo?.vat ?? quote.vat ?? 0);
   const totalTaxVat = categoryVatTotal + legalFeeVat || getTaxTotal(servicData?.taxInfo || {}, quote);
- console.log("lenders in SalesPropertyDetails:", lenders);
+ useEffect(() => {
+    console.log("lenders in SalesPropertyDetails:", lenders);
+    console.log("language array in SalesPropertyDetails:", language);
+    console.log("servicData.languages:", servicData?.languages);
+    console.log("servicData full object:", servicData);
+  }, [lenders, language, servicData]);
 // const [lendersList, setLendersList] = useState([]);
 // useEffect(() => {
 //   const fetchLenders = async () => {
@@ -103,6 +109,33 @@ const getLenderNames = (field) => {
   return names.length ? names.join(", ") : "--";
 };
 
+  const getLanguageDisplay = () => {
+    const langList = language || [];
+    let raw = servicData?.languages ?? servicData?.sales_languages ?? servicData?.conveying_details?.languages;
+    if (raw == null || raw === "") return "--";
+
+    // normalize to array of ids/strings
+    let ids = [];
+    if (Array.isArray(raw)) ids = raw;
+    else if (typeof raw === "string") {
+      try {
+        const parsed = JSON.parse(raw);
+        if (Array.isArray(parsed)) ids = parsed; else ids = [parsed];
+      } catch (e) {
+        // not JSON, try comma-separated
+        ids = raw.replace(/[\[\]"]+/g, "").split(",").map(s => s.trim()).filter(Boolean);
+      }
+    } else {
+      ids = [raw];
+    }
+
+    const names = ids
+      .map(id => langList.find(l => String(l.id) === String(id))?.language_name)
+      .filter(Boolean);
+
+    return names.length ? names.join(", ") : "--";
+  };
+
 
 const pdfRef = useRef(null);
 const downloadPDF = () => {
@@ -138,6 +171,7 @@ return (
             Sales Property Details
           </h3>
         </div>
+      
        
         <div className="sales-ui-details no-pdf py-6">
   <table
@@ -167,8 +201,7 @@ return (
 
         [
           "Languages",
-          language?.find((l) => l.id == servicData?.languages)
-            ?.language_name || "--",
+          getLanguageDisplay(),
         ],
       ].map(([label, value], i) => (
         <tr key={i}>
@@ -230,11 +263,9 @@ return (
       </>
     )} */}
 
-    {language?.find((l) => l.id == servicData?.languages)?.language_name && (
+    {getLanguageDisplay() !== "--" && (
       <>
-        , <strong>
-          {language.find((l) => l.id == servicData?.languages)?.language_name}
-        </strong>
+        , <strong>{getLanguageDisplay()}</strong>
       </>
     )}
 
