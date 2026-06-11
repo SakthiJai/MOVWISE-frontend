@@ -27,10 +27,33 @@ const getTaxTotal = (taxInfo = {}, fallback = {}) => {
   );
 };
 
+const getTaxDetailsRows = (quote) => {
+  const rows = [];
+  const taxDetails = quote?.conveying_details?.taxDetails;
+
+  if (taxDetails && typeof taxDetails === "object") {
+    Object.values(taxDetails).forEach((group) => {
+      if (Array.isArray(group)) {
+        group.forEach((item) => {
+          rows.push({
+            label: item.fees_type || item.fees_type_name || "Fee",
+            amount: Number(item.fees_amount ?? item.amount ?? 0),
+            vat: Number(item.vat ?? 0),
+          });
+        });
+      }
+    });
+  }
+
+  return rows;
+};
+
 // Reusable component for fees table
 const FeesTable = ({ quote, label = "Survey" }) => {
-  // If quote contains multiple service_details, compute totals from each service's taxInfo
-  const computed = (quote?.service_details && Array.isArray(quote.service_details) && quote.service_details.length > 0)
+  const taxRows = getTaxDetailsRows(quote);
+  const hasTaxRows = taxRows.length > 0;
+
+  const computed = !hasTaxRows && quote?.service_details && Array.isArray(quote.service_details) && quote.service_details.length > 0
     ? quote.service_details.reduce((acc, sd) => {
         const t = sd.taxInfo || {};
         acc.legal_fees += Number(t.legal_fees || 0);
@@ -43,29 +66,22 @@ const FeesTable = ({ quote, label = "Survey" }) => {
       }, { legal_fees: 0, vat: 0, supplements: 0, supplementsvat: 0, disbursements: 0, disbursementsvat: 0 })
     : null;
 
-  const legalFees = Number(quote.fees_amount || 0);
-  const vatValue =  Number(quote.vat || 0);
+  const legalFees = hasTaxRows
+    ? taxRows.reduce((sum, row) => sum + row.amount, 0)
+    : computed ? computed.legal_fees : Number(quote.fees_amount || 0);
+  const vatValue = hasTaxRows
+    ? taxRows.reduce((sum, row) => sum + row.vat, 0)
+    : computed ? computed.vat : Number(quote.vat || 0);
   const supplements = computed ? computed.supplements : Number(quote.supplements || 0);
   const supplementsvat = computed ? computed.supplementsvat : Number(quote.supplementsvat || 0);
   const disbursements = computed ? computed.disbursements : Number(quote.disbursements || 0);
   const disbursementsvat = computed ? computed.disbursementsvat : Number(quote.disbursementsvat || 0);
 
-  // Compute total VAT defensively from service_details when available
-  const totalVatComputed =  Number(vatValue || 0) ;
-  // Debug: log computed VAT breakdown for diagnosis (remove after verification)
-  try {
-    console.log('FeesTable VAT breakdown', {
-      quote_id: quote?.quote_id || quote?.id || null,
-      legalFees,
-      vatValue,
-      supplements,
-      supplementsvat,
-      disbursements,
-      disbursementsvat,
-      totalVatComputed,
-      source: computed ? 'service_details' : 'quote'
-    });
-  } catch (e) {}
+  const totalVatComputed = hasTaxRows
+    ? taxRows.reduce((sum, row) => sum + row.vat, 0)
+    : computed
+      ? Number(computed.vat || 0) + Number(computed.supplementsvat || 0) + Number(computed.disbursementsvat || 0)
+      : Number(vatValue || 0);
 
   return (
     <div className="border-t border-gray-200 pt-6 flex justify-end">
@@ -78,30 +94,39 @@ const FeesTable = ({ quote, label = "Survey" }) => {
           </tr>
         </thead>
         <tbody>
-          {/* Legal Fees / Survey Fee */}
-          <tr className="border-gray-200">
-            <td className="text-sm font-bold text-emerald-600 px-3 ">{label} Fee</td>
-            <td className="text-sm font-semibold text-emerald-600 px-1">{formatGBP(legalFees)}</td>
-            <td className="text-sm text-emerald-600 font-semibold px-1 ">{formatGBP(vatValue)}</td>
-          </tr>
+          {!hasTaxRows && (
+            <>
+              <tr className="border-gray-200">
+                <td className="text-sm font-bold text-emerald-600 px-3 ">{label} Fee</td>
+                <td className="text-sm font-semibold text-emerald-600 px-1">{formatGBP(legalFees)}</td>
+                <td className="text-sm text-emerald-600 font-semibold px-1 ">{formatGBP(vatValue)}</td>
+              </tr>
 
-          {/* Supplements */}
-          {supplements > 0 && (
-            <tr className="border-gray-200">
-              <td className="text-sm px-3 py-2">Supplements</td>
-              <td className="text-sm px-3 py-2">{formatGBP(supplements)}</td>
-              <td className="text-sm px-3 py-2">{formatGBP(supplementsvat)}</td>
-            </tr>
+              {supplements > 0 && (
+                <tr className="border-gray-200">
+                  <td className="text-sm px-3 py-2">Supplements</td>
+                  <td className="text-sm px-3 py-2">{formatGBP(supplements)}</td>
+                  <td className="text-sm px-3 py-2">{formatGBP(supplementsvat)}</td>
+                </tr>
+              )}
+
+              {disbursements > 0 && (
+                <tr className="border-gray-200">
+                  <td className="text-sm px-3 py-2">Disbursements</td>
+                  <td className="text-sm px-3 py-2">{formatGBP(disbursements)}</td>
+                  <td className="text-sm px-3 py-2">{formatGBP(disbursementsvat)}</td>
+                </tr>
+              )}
+            </>
           )}
 
-          {/* Disbursements */}
-          {disbursements > 0 && (
-            <tr className="border-gray-200">
-              <td className="text-sm px-3 py-2">Disbursements</td>
-              <td className="text-sm px-3 py-2">{formatGBP(disbursements)}</td>
-              <td className="text-sm px-3 py-2">{formatGBP(disbursementsvat)}</td>
+          {hasTaxRows && taxRows.map((row, index) => (
+            <tr key={`${row.label}-${index}`} className="border-gray-200">
+              <td className="text-sm px-3 py-2">{row.label}</td>
+              <td className="text-sm px-3 py-2">{formatGBP(row.amount)}</td>
+              <td className="text-sm px-3 py-2">{formatGBP(row.vat)}</td>
             </tr>
-          )}
+          ))}
 
           {/* TOTAL */}
           <tr className="border-t border-gray-300 bg-gray-50">
@@ -119,6 +144,52 @@ const FeesTable = ({ quote, label = "Survey" }) => {
   );
 };
 
+const formatYesNo = (value) => {
+  if (value === true || value === 1 || value === "1") return "Yes";
+  if (value === false || value === 0 || value === "0") return "No";
+  return value ?? "—";
+};
+
+const getServiceTypeLabel = (serviceType) => {
+  switch (Number(serviceType)) {
+    case 1:
+      return "Sales";
+    case 2:
+      return "Purchase";
+    case 4:
+      return "Remortgage";
+    case 5:
+      return "Equity";
+    default:
+      return "Property";
+  }
+};
+
+const getServiceDetailRows = (serviceData = {}) => {
+  const rows = [];
+
+  if (serviceData.address) rows.push(["Address", serviceData.address]);
+  if (serviceData.town_city || serviceData.sales_town_city) rows.push(["Town / City", serviceData.town_city || serviceData.sales_town_city]);
+  if (serviceData.country || serviceData.sales_country) rows.push(["Country", serviceData.country || serviceData.sales_country]);
+  if (serviceData.purchase_price || serviceData.sales_price || serviceData.property_values || serviceData.price) {
+    const priceValue = serviceData.purchase_price || serviceData.sales_price || serviceData.property_values || serviceData.price;
+    rows.push(["Property Value", typeof priceValue === "number" ? formatGBP(priceValue) : priceValue]);
+  }
+  if (serviceData.stages || serviceData.sales_stages) rows.push(["Stages", serviceData.stages || serviceData.sales_stages]);
+  if (serviceData.no_of_bedrooms || serviceData.sales_no_of_bedrooms) rows.push(["Number of Bedrooms", serviceData.no_of_bedrooms || serviceData.sales_no_of_bedrooms]);
+  if (serviceData.leasehold_or_free || serviceData.sales_leasehold_or_free) rows.push(["Leasehold or Freehold", serviceData.leasehold_or_free || serviceData.sales_leasehold_or_free]);
+  if (serviceData.property_type || serviceData.sales_property_type) rows.push(["Property Type", serviceData.property_type || serviceData.sales_property_type]);
+  if (serviceData.shared_ownership !== undefined && serviceData.shared_ownership !== null) rows.push(["Shared Ownership", formatYesNo(serviceData.shared_ownership)]);
+  if (serviceData.existing_mortgage !== undefined || serviceData.obtaining_mortgage !== undefined) {
+    rows.push(["Existing Mortgage", formatYesNo(serviceData.existing_mortgage ?? serviceData.obtaining_mortgage)]);
+  }
+  if (serviceData.languages) {
+    const languages = Array.isArray(serviceData.languages) ? serviceData.languages.join(", ") : serviceData.languages;
+    rows.push(["Language", languages]);
+  }
+
+  return rows;
+};
 
 const CircularProgress = ({ progress }) => {
   const radius = 16;
@@ -169,6 +240,131 @@ const CircularProgress = ({ progress }) => {
   );
 };
 
+function SurveyorQuoteModal({ quote, onClose }) {
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, []);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4 py-10 overflow-hidden"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-[1100px] rounded-[32px] bg-white shadow-2xl overflow-hidden border border-gray-200"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="flex items-center justify-between gap-4 border-b border-gray-200 bg-white px-6 py-5">
+          <button
+            className="rounded-full border border-emerald-600 bg-white px-4 py-2 text-sm font-medium text-emerald-600 transition hover:bg-emerald-50"
+            onClick={onClose}
+          >
+            Back
+          </button>
+
+          <div className="text-center">
+            <div className="text-2xl font-extrabold tracking-[0.15em] text-emerald-800">MovWise</div>
+          </div>
+
+          <button
+            className="rounded-full border border-emerald-600 bg-white px-4 py-2 text-sm font-medium text-emerald-600 transition hover:bg-emerald-50"
+            onClick={() => {
+              // Add instruct behavior here if needed.
+            }}
+          >
+            Instruct
+          </button>
+        </div>
+
+        <div className="max-h-[calc(100vh-7rem)] overflow-y-auto px-6 pb-6 pt-6">
+          <div className="grid gap-6 lg:grid-cols-2">
+            <div className="rounded-[28px] border border-gray-200 bg-slate-50 p-6 shadow-sm">
+              <h3 className="mb-4 text-base font-semibold text-emerald-700">Conveyancer Details</h3>
+              <div className="space-y-3 text-sm text-gray-700">
+                <div className="flex flex-wrap gap-2"><span className="font-semibold">Name:</span><span>{quote.conveying_details?.company_name || "N/A"}</span></div>
+                <div className="flex flex-wrap gap-2"><span className="font-semibold">Phone:</span><span>{quote.conveying_details?.phone_number || quote.phone_number || "N/A"}</span></div>
+                <div className="flex flex-wrap gap-2"><span className="font-semibold">Email:</span><span>{quote.conveying_details?.email || quote.email || "N/A"}</span></div>
+                <div className="flex flex-wrap gap-2"><span className="font-semibold">Quote Ref:</span><span className="break-all">{quote.quote_ref_number || quote.reference || "—"}</span></div>
+              </div>
+            </div>
+            <div className="rounded-[28px] border border-gray-200 bg-slate-50 p-6 shadow-sm">
+              <h3 className="mb-4 text-base font-semibold text-emerald-700">Client Details</h3>
+              <div className="space-y-3 text-sm text-gray-700">
+                <div className="flex flex-wrap gap-2"><span className="font-semibold">Name:</span><span>{quote?.customer_details?.first_name || ""} {quote?.customer_details?.last_name || ""}</span></div>
+                <div className="flex flex-wrap gap-2"><span className="font-semibold">Email:</span><span>{quote?.customer_details?.email || "--"}</span></div>
+                <div className="flex flex-wrap gap-2"><span className="font-semibold">Phone:</span><span>{quote?.customer_details?.phone_number || "--"}</span></div>
+                <div className="flex flex-wrap gap-2"><span className="font-semibold">Address:</span><span>{quote?.service_details?.[0]?.address || "--"}</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid gap-6 lg:grid-cols-[1.05fr_1fr] items-start mt-6">
+            <div className="rounded-[28px] border border-gray-200 bg-slate-50 p-6 shadow-sm">
+              <div className="flex items-center justify-between gap-4 mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-emerald-700">Surveyor Service Details</h3>
+                  {/* <p className="text-sm text-gray-500">Service type: {getServiceTypeLabel(quote?.service_details?.[0]?.service_type)}</p> */}
+                </div>
+                {/* <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">Detaiddls</span> */}
+              </div>
+              <div className="grid gap-3 text-sm text-gray-700">
+                {getServiceDetailRows(quote?.service_details?.[0] || {}).length > 0 ? (
+                  getServiceDetailRows(quote?.service_details?.[0] || {}).map(([label, value]) => (
+                    <div key={label} className="grid grid-cols-[max-content_1fr] gap-3">
+                      <span className="font-semibold text-gray-900">{label}:</span>
+                      <span>{value || "—"}</span>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-gray-500">No service details available for this quote.</p>
+                )}
+              </div>
+            </div>
+
+            <div className="rounded-[28px] border border-gray-200 bg-white p-6 shadow-sm">
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-gray-900">Fee Breakdown</h3>
+                  {/* <p className="text-sm text-gray-500">Detailed fees and VAT for this quote</p> */}
+                </div>
+                {/* <div className="rounded-3xl bg-slate-50 px-4 py-3 text-right shadow-sm">
+                  <p className="text-xs uppercase tracking-[0.2em] text-gray-500">Quote Total</p>
+                  <p className="mt-1 text-3xl font-semibold text-gray-900">{formatGBP(Number(quote.fees_amount || 0))}</p>
+                </div> */}
+              </div>
+              <div className="mt-4 overflow-x-auto">
+                <FeesTable quote={quote} label="Survey" />
+              </div>
+            </div>
+          </div>
+
+          <div className="rounded-[28px] border border-gray-200 bg-white p-6 shadow-sm mt-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-3">Notes</h3>
+            {quote?.conveying_details?.notes ? (
+              <div
+                className="prose prose-sm max-w-none text-gray-700"
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(quote.conveying_details.notes),
+                }}
+              />
+            ) : quote?.conveying_details?.short_notes ? (
+              <p className="text-sm text-gray-700">{quote.conveying_details.short_notes}</p>
+            ) : (
+              <p className="text-sm text-gray-500">No notes available for this quote.</p>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
 function SurveyorquotesContent() {
   const searchParams = useSearchParams();
   const query_ref_no = searchParams.get("ref_no");
@@ -181,7 +377,7 @@ function SurveyorquotesContent() {
   const [quotefound, setquotefound] = useState(false);
   const [userlogin, setuserlogin] = useState(false);
   
-  const [dropdownOpenId, setDropdownOpenId] = useState(null);
+  const [selectedQuote, setSelectedQuote] = useState(null);
   const [pdfLoading, setPdfLoading] = useState(false);
   const [pendingDownload, setPendingDownload] = useState(false);
   const pdfRef = useRef(null);
@@ -782,12 +978,12 @@ function SurveyorquotesContent() {
     setcompanydata(sorted);
   };
 
-  const toggleDropdowncard = (id) => {
-    if (dropdownOpenId === id) {
-      setDropdownOpenId(null);
-    } else {
-      setDropdownOpenId(id);
-    }
+  const openDetailsModal = (quote) => {
+    setSelectedQuote(quote);
+  };
+
+  const closeDetailsModal = () => {
+    setSelectedQuote(null);
   };
 
   return (
@@ -921,15 +1117,15 @@ function SurveyorquotesContent() {
                             </p>
                             <button
                               className="text-green-700 text-sm font-medium hover:underline cursor-pointer"
-                              onClick={() => toggleDropdowncard(quote.conveying_details.conveying_id)}
+                              onClick={() => openDetailsModal(quote)}
                             >
-                              <u>View Details</u>
+                              <u>Price Breakdown</u>
                             </button>
                           </div>
 
                           <div
                             className="w-7 h-7 flex items-center justify-center bg-white border border-gray-300 rounded-md shadow-sm cursor-pointer"
-                            onClick={() => toggleDropdowncard(quote.conveying_details.conveying_id)}
+                            onClick={() => openDetailsModal(quote)}
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -937,11 +1133,7 @@ function SurveyorquotesContent() {
                               viewBox="0 0 24 24"
                               strokeWidth="1.5"
                               stroke="currentColor"
-                              className={`w-4 h-4 text-gray-600 transform transition-transform duration-200 ${
-                                dropdownOpenId === quote.conveying_details.conveying_id
-                                  ? "rotate-180"
-                                  : ""
-                              }`}
+                              className="w-4 h-4 text-gray-600"
                             >
                               <path
                                 strokeLinecap="round"
@@ -1011,9 +1203,6 @@ function SurveyorquotesContent() {
                           </div>
                         </div>
 
-                        {dropdownOpenId === quote.conveying_details.conveying_id && (
-                          <FeesTable quote={quote} label="Survey" />
-                        )}
                       </div>
                     </div>
                   ))}
@@ -1023,6 +1212,8 @@ function SurveyorquotesContent() {
           </section>
         </div>
       </main>
+
+      {selectedQuote && <SurveyorQuoteModal quote={selectedQuote} onClose={closeDetailsModal} />}
 
       <Footer />
     </div>
