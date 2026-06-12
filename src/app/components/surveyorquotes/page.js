@@ -83,64 +83,120 @@ const FeesTable = ({ quote, label = "Survey" }) => {
       ? Number(computed.vat || 0) + Number(computed.supplementsvat || 0) + Number(computed.disbursementsvat || 0)
       : Number(vatValue || 0);
 
+      const taxItems =
+  Object.values(quote?.conveying_details?.taxDetails || {})
+    .flat() || [];
+
+const subTotalFees = taxItems.reduce(
+  (sum, item) => sum + Number(item.fees_amount || 0),
+  0
+);
+
+const subTotalVat = taxItems.reduce(
+  (sum, item) => sum + Number(item.vat || 0),
+  0
+);
+
   return (
-    <div className="border-t border-gray-200 pt-6 flex justify-end">
-      <table className="pdf-fee-table border-collapse text-black font">
-        <thead>
-          <tr className="border-b border-gray-300 text-left">
-            <th className="text-sm font-semibold px-3 ">Type</th>
-            <th className="text-sm font-semibold px-1">Fee Amount</th>
-            <th className="text-sm font-semibold px-1 ">VAT</th>
-          </tr>
-        </thead>
-        <tbody>
-          {!hasTaxRows && (
-            <>
-              <tr className="border-gray-200">
-                <td className="text-sm font-bold text-emerald-600 px-3 ">{label} Fee</td>
-                <td className="text-sm font-semibold text-emerald-600 px-1">{formatGBP(legalFees)}</td>
-                <td className="text-sm text-emerald-600 font-semibold px-1 ">{formatGBP(vatValue)}</td>
-              </tr>
+<div className="border-t border-gray-200 pt-6">
 
-              {supplements > 0 && (
-                <tr className="border-gray-200">
-                  <td className="text-sm px-3 py-2">Supplements</td>
-                  <td className="text-sm px-3 py-2">{formatGBP(supplements)}</td>
-                  <td className="text-sm px-3 py-2">{formatGBP(supplementsvat)}</td>
-                </tr>
-              )}
+  <table className="w-full table-fixed border-collapse text-black">
 
-              {disbursements > 0 && (
-                <tr className="border-gray-200">
-                  <td className="text-sm px-3 py-2">Disbursements</td>
-                  <td className="text-sm px-3 py-2">{formatGBP(disbursements)}</td>
-                  <td className="text-sm px-3 py-2">{formatGBP(disbursementsvat)}</td>
-                </tr>
-              )}
-            </>
-          )}
+    <thead>
+      <tr className="border-b border-gray-300 text-left">
+        <th className="w-[55%] text-sm font-semibold px-8 py-3">
+          Type
+        </th>
 
-          {hasTaxRows && taxRows.map((row, index) => (
-            <tr key={`${row.label}-${index}`} className="border-gray-200">
-              <td className="text-sm px-3 py-2">{row.label}</td>
-              <td className="text-sm px-3 py-2">{formatGBP(row.amount)}</td>
-              <td className="text-sm px-3 py-2">{formatGBP(row.vat)}</td>
-            </tr>
-          ))}
+        <th className="w-[22%] text-sm font-semibold px-8 py-3 text-right">
+          Fee Amount
+        </th>
 
-          {/* TOTAL */}
-          <tr className="border-t border-gray-300 bg-gray-50">
-            <td className="text-sm font-semibold text-emerald-600 px-3 ">Total</td>
-            <td className="text-sm font-semibold text-emerald-600 px-1 ">
-              {formatGBP(Number(supplements || 0) + Number(disbursements || 0) + Number(legalFees || 0))}
+        <th className="w-[23%] text-sm font-semibold px-8 py-3 text-right">
+          VAT
+        </th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      {/* SUB TOTAL ROW */}
+      <tr  className="border-b border-gray-200">
+  <td className="px-8 py-3 text-sm font-semibold text-emerald-700">
+    Fee Amount Value
+  </td>
+
+  <td className="px-8 py-3 text-right text-sm font-semibold text-emerald-700">
+    {formatGBP(Number(quote?.fees_amount || 0))}
+  </td>
+
+  <td className="px-8 py-3 text-right text-sm font-semibold text-emerald-700">
+    {formatGBP(Number(quote?.vat || 0))}
+  </td>
+</tr>
+
+      {/* SECTION LABEL ROW (CORRECT WAY) */}
+      <tr className="border-t border-gray-300 bg-gray-100">
+        <td colSpan={3} className="w-[55%] text-sm font-semibold px-8 py-3">
+          Fee Categories
+        </td>
+      </tr>
+
+      {/* TAX ROWS */}
+      {hasTaxRows &&
+        taxRows.map((row, index) => (
+          <tr
+            key={`${row.label}-${index}`}
+            className="border-b border-gray-200"
+          >
+            <td className="text-sm px-8 py-3">
+              {row.label}
             </td>
-            <td className="text-sm font-semibold text-emerald-600 px-1 ">
-              {formatGBP(totalVatComputed)}
+
+            <td className="text-sm px-8 py-3 text-right">
+              {formatGBP(row.amount)}
+            </td>
+
+            <td className="text-sm px-8 py-3 text-right">
+              {formatGBP(row.vat)}
             </td>
           </tr>
-        </tbody>
-      </table>
-    </div>
+        ))}
+        {/* SUBTOTAL ROW (taxDetails only) */}
+<tr className="px-8 py-3 font-bold ">
+  <td className="w-[55%] text-sm font-semibold px-8 py-3">
+    Sub Total 
+  </td>
+
+  <td className="text-sm font-semibold  px-8 py-4 text-right w-[55%]">
+    {formatGBP(subTotalFees)}
+  </td>
+
+  <td className="text-sm font-semibold  px-8 py-4 text-right w-[55%]">
+    {formatGBP(subTotalVat)}
+  </td>
+</tr>
+
+      {/* TOTAL ROW */}
+   <tr className="border-t-2 border-gray-300 bg-gray-50">
+  <td className="text-sm font-semibold text-emerald-700 px-8 py-4 ">
+    Total
+  </td>
+
+  <td className="text-sm font-semibold text-emerald-700 px-8 py-4 text-right">
+    {formatGBP(Number(quote.total || 0))}
+  </td>
+
+  <td className="text-sm font-semibold text-emerald-700 px-8 py-4 text-right">
+    {formatGBP(Number(quote.total_vat || 0))}
+  </td>
+</tr>
+
+    </tbody>
+
+  </table>
+
+</div>
   );
 };
 
@@ -171,22 +227,25 @@ const getServiceDetailRows = (serviceData = {}) => {
   if (serviceData.address) rows.push(["Address", serviceData.address]);
   if (serviceData.town_city || serviceData.sales_town_city) rows.push(["Town / City", serviceData.town_city || serviceData.sales_town_city]);
   if (serviceData.country || serviceData.sales_country) rows.push(["Country", serviceData.country || serviceData.sales_country]);
+  if (serviceData.survey_type || serviceData.survey_type) rows.push(["Survey Type", serviceData.survey_type || serviceData.survey_type]);
+ 
   if (serviceData.purchase_price || serviceData.sales_price || serviceData.property_values || serviceData.price) {
     const priceValue = serviceData.purchase_price || serviceData.sales_price || serviceData.property_values || serviceData.price;
     rows.push(["Property Value", typeof priceValue === "number" ? formatGBP(priceValue) : priceValue]);
   }
-  if (serviceData.stages || serviceData.sales_stages) rows.push(["Stages", serviceData.stages || serviceData.sales_stages]);
-  if (serviceData.no_of_bedrooms || serviceData.sales_no_of_bedrooms) rows.push(["Number of Bedrooms", serviceData.no_of_bedrooms || serviceData.sales_no_of_bedrooms]);
-  if (serviceData.leasehold_or_free || serviceData.sales_leasehold_or_free) rows.push(["Leasehold or Freehold", serviceData.leasehold_or_free || serviceData.sales_leasehold_or_free]);
-  if (serviceData.property_type || serviceData.sales_property_type) rows.push(["Property Type", serviceData.property_type || serviceData.sales_property_type]);
-  if (serviceData.shared_ownership !== undefined && serviceData.shared_ownership !== null) rows.push(["Shared Ownership", formatYesNo(serviceData.shared_ownership)]);
-  if (serviceData.existing_mortgage !== undefined || serviceData.obtaining_mortgage !== undefined) {
-    rows.push(["Existing Mortgage", formatYesNo(serviceData.existing_mortgage ?? serviceData.obtaining_mortgage)]);
-  }
-  if (serviceData.languages) {
-    const languages = Array.isArray(serviceData.languages) ? serviceData.languages.join(", ") : serviceData.languages;
-    rows.push(["Language", languages]);
-  }
+  if(serviceData.valuation) rows.push(["Valuation",(serviceData.valuation==1)?"yes":"No"]);
+  // if (serviceData.stages || serviceData.sales_stages) rows.push(["Stages", serviceData.stages || serviceData.sales_stages]);
+  // if (serviceData.no_of_bedrooms || serviceData.sales_no_of_bedrooms) rows.push(["Number of Bedrooms", serviceData.no_of_bedrooms || serviceData.sales_no_of_bedrooms]);
+  // if (serviceData.leasehold_or_free || serviceData.sales_leasehold_or_free) rows.push(["Leasehold or Freehold", serviceData.leasehold_or_free || serviceData.sales_leasehold_or_free]);
+  // if (serviceData.property_type || serviceData.sales_property_type) rows.push(["Property Type", serviceData.property_type || serviceData.sales_property_type]);
+  // if (serviceData.shared_ownership !== undefined && serviceData.shared_ownership !== null) rows.push(["Shared Ownership", formatYesNo(serviceData.shared_ownership)]);
+  // if (serviceData.existing_mortgage !== undefined || serviceData.obtaining_mortgage !== undefined) {
+  //   rows.push(["Existing Mortgage", formatYesNo(serviceData.existing_mortgage ?? serviceData.obtaining_mortgage)]);
+  // }
+  // if (serviceData.languages) {
+  //   const languages = Array.isArray(serviceData.languages) ? serviceData.languages.join(", ") : serviceData.languages;
+  //   rows.push(["Language", languages]);
+  // }
 
   return rows;
 };
@@ -251,116 +310,201 @@ function SurveyorQuoteModal({ quote, onClose }) {
   }, []);
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm px-4 py-10 overflow-hidden"
-      onClick={onClose}
-    >
-      <div
-        className="w-full max-w-[1100px] rounded-[32px] bg-white shadow-2xl overflow-hidden border border-gray-200"
-        onClick={(event) => event.stopPropagation()}
+
+  
+<div
+  className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-6"
+  onClick={onClose}
+>
+  <div
+    className="w-full max-w-[1700px] bg-white border border-gray-200 shadow-xl"
+    onClick={(e) => e.stopPropagation()}
+  >
+    {/* Header */}
+    <div className="flex items-center justify-between px-6 py-4 border-b">
+      <button
+        onClick={onClose}
+        className="border border-emerald-600 text-emerald-600 px-4 py-2 text-sm rounded"
       >
-        <div className="flex items-center justify-between gap-4 border-b border-gray-200 bg-white px-6 py-5">
-          <button
-            className="rounded-full border border-emerald-600 bg-white px-4 py-2 text-sm font-medium text-emerald-600 transition hover:bg-emerald-50"
-            onClick={onClose}
-          >
-            Back
-          </button>
+        Back
+      </button>
 
-          <div className="text-center">
-            <div className="text-2xl font-extrabold tracking-[0.15em] text-emerald-800">MovWise</div>
+      <h1 className="text-3xl font-bold text-emerald-700">
+        MovWise
+      </h1>
+
+      <button className="border border-emerald-600 text-emerald-600 px-4 py-2 text-sm rounded">
+        Instruct
+      </button>
+    </div>
+
+    <div className="max-h-[90vh] overflow-y-auto p-6">
+
+      {/* Logo */}
+      <div className="mb-8">
+        {quote?.conveying_details?.logo && (
+          <img
+            src={quote.conveying_details.logo}
+            alt="Company Logo"
+            className="h-16 object-contain"
+          />
+        )}
+      </div>
+
+      {/* Top Details */}
+      <div className="grid grid-cols-2 gap-6">
+
+        <div className="bg-gray-50 p-5">
+          <h3 className="text-center text-emerald-700 font-semibold mb-4">
+            Conveyancer Details
+          </h3>
+
+          <div className="space-y-2 text-sm">
+            <p>
+              <strong>Name:</strong>{" "}
+              {quote?.conveying_details?.company_name || "N/A"}
+            </p>
+
+            <p>
+              <strong>Phone:</strong>{" "}
+              {quote?.conveying_details?.phone_number || "N/A"}
+            </p>
+
+            <p>
+              <strong>Email:</strong>{" "}
+              {quote?.conveying_details?.email || "N/A"}
+            </p>
+
+            <p>
+              <strong>Quote Ref:</strong>{" "}
+              {quote?.quote_ref_number || "—"}
+            </p>
           </div>
-
-          <button
-            className="rounded-full border border-emerald-600 bg-white px-4 py-2 text-sm font-medium text-emerald-600 transition hover:bg-emerald-50"
-            onClick={() => {
-              // Add instruct behavior here if needed.
-            }}
-          >
-            Instruct
-          </button>
         </div>
 
-        <div className="max-h-[calc(100vh-7rem)] overflow-y-auto px-6 pb-6 pt-6">
-          <div className="grid gap-6 lg:grid-cols-2">
-            <div className="rounded-[28px] border border-gray-200 bg-slate-50 p-6 shadow-sm">
-              <h3 className="mb-4 text-base font-semibold text-emerald-700">Conveyancer Details</h3>
-              <div className="space-y-3 text-sm text-gray-700">
-                <div className="flex flex-wrap gap-2"><span className="font-semibold">Name:</span><span>{quote.conveying_details?.company_name || "N/A"}</span></div>
-                <div className="flex flex-wrap gap-2"><span className="font-semibold">Phone:</span><span>{quote.conveying_details?.phone_number || quote.phone_number || "N/A"}</span></div>
-                <div className="flex flex-wrap gap-2"><span className="font-semibold">Email:</span><span>{quote.conveying_details?.email || quote.email || "N/A"}</span></div>
-                <div className="flex flex-wrap gap-2"><span className="font-semibold">Quote Ref:</span><span className="break-all">{quote.quote_ref_number || quote.reference || "—"}</span></div>
-              </div>
-            </div>
-            <div className="rounded-[28px] border border-gray-200 bg-slate-50 p-6 shadow-sm">
-              <h3 className="mb-4 text-base font-semibold text-emerald-700">Client Details</h3>
-              <div className="space-y-3 text-sm text-gray-700">
-                <div className="flex flex-wrap gap-2"><span className="font-semibold">Name:</span><span>{quote?.customer_details?.first_name || ""} {quote?.customer_details?.last_name || ""}</span></div>
-                <div className="flex flex-wrap gap-2"><span className="font-semibold">Email:</span><span>{quote?.customer_details?.email || "--"}</span></div>
-                <div className="flex flex-wrap gap-2"><span className="font-semibold">Phone:</span><span>{quote?.customer_details?.phone_number || "--"}</span></div>
-                <div className="flex flex-wrap gap-2"><span className="font-semibold">Address:</span><span>{quote?.service_details?.[0]?.address || "--"}</span></div>
-              </div>
-            </div>
-          </div>
+        <div className="bg-gray-50 p-5">
+          <h3 className="text-center text-emerald-700 font-semibold mb-4">
+            Client Details
+          </h3>
 
-          <div className="grid gap-6 lg:grid-cols-[1.05fr_1fr] items-start mt-6">
-            <div className="rounded-[28px] border border-gray-200 bg-slate-50 p-6 shadow-sm">
-              <div className="flex items-center justify-between gap-4 mb-4">
-                <div>
-                  <h3 className="text-lg font-semibold text-emerald-700">Surveyor Service Details</h3>
-                  {/* <p className="text-sm text-gray-500">Service type: {getServiceTypeLabel(quote?.service_details?.[0]?.service_type)}</p> */}
-                </div>
-                {/* <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-emerald-700">Detaiddls</span> */}
-              </div>
-              <div className="grid gap-3 text-sm text-gray-700">
-                {getServiceDetailRows(quote?.service_details?.[0] || {}).length > 0 ? (
-                  getServiceDetailRows(quote?.service_details?.[0] || {}).map(([label, value]) => (
-                    <div key={label} className="grid grid-cols-[max-content_1fr] gap-3">
-                      <span className="font-semibold text-gray-900">{label}:</span>
-                      <span>{value || "—"}</span>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-sm text-gray-500">No service details available for this quote.</p>
-                )}
-              </div>
-            </div>
+          <div className="space-y-2 text-sm">
+            <p>
+              <strong>Name:</strong>{" "}
+              {quote?.customer_details?.first_name}{" "}
+              {quote?.customer_details?.last_name}
+            </p>
 
-            <div className="rounded-[28px] border border-gray-200 bg-white p-6 shadow-sm">
-              <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between mb-4">
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-900">Fee Breakdown</h3>
-                  {/* <p className="text-sm text-gray-500">Detailed fees and VAT for this quote</p> */}
-                </div>
-                {/* <div className="rounded-3xl bg-slate-50 px-4 py-3 text-right shadow-sm">
-                  <p className="text-xs uppercase tracking-[0.2em] text-gray-500">Quote Total</p>
-                  <p className="mt-1 text-3xl font-semibold text-gray-900">{formatGBP(Number(quote.fees_amount || 0))}</p>
-                </div> */}
-              </div>
-              <div className="mt-4 overflow-x-auto">
-                <FeesTable quote={quote} label="Survey" />
-              </div>
-            </div>
-          </div>
+            <p>
+              <strong>Email:</strong>{" "}
+              {quote?.customer_details?.email || "--"}
+            </p>
 
-          <div className="rounded-[28px] border border-gray-200 bg-white p-6 shadow-sm mt-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-3">Notes</h3>
-            {quote?.conveying_details?.notes ? (
-              <div
-                className="prose prose-sm max-w-none text-gray-700"
-                dangerouslySetInnerHTML={{
-                  __html: DOMPurify.sanitize(quote.conveying_details.notes),
-                }}
-              />
-            ) : quote?.conveying_details?.short_notes ? (
-              <p className="text-sm text-gray-700">{quote.conveying_details.short_notes}</p>
-            ) : (
-              <p className="text-sm text-gray-500">No notes available for this quote.</p>
-            )}
+            <p>
+              <strong>Phone:</strong>{" "}
+              {quote?.customer_details?.phone_number || "--"}
+            </p>
+
+            <p>
+              <strong>Address:</strong>{" "}
+              {quote?.service_details?.[0]?.address || "--"}
+            </p>
           </div>
         </div>
       </div>
+
+      {/* Sales Quote Title */}
+      {/* OUTER BOX */}
+<div className="border border-gray-300 bg-white p-6 mt-10">
+  {/* Sales Quote Title */}
+  <div className="text-center mb-8">
+    <h2 className="text-xl font-bold text-emerald-700">
+      Surveyor Quote
+    </h2>
+  </div>
+
+  {/* INNER GRID */}
+  <div className="grid grid-cols-[320px_1fr] gap-12">
+
+    {/* Left Side */}
+    <div>
+      <h3 className="font-bold text-emerald-700 mb-4 text-lg">
+        Surveyor Property Details
+      </h3>
+
+      <div className="space-y-3 text-sm">
+        {getServiceDetailRows(
+          quote?.service_details?.[0] || {}
+        ).map(([label, value]) => (
+          <div
+            key={label}
+            className="grid grid-cols-[150px_1fr] border-b border-gray-100 pb-2"
+          >
+            <span className="font-medium text-gray-700">
+              {label}
+            </span>
+
+            <span className="text-gray-900">
+              {value || "--"}
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
+
+    {/* Right Side */}
+    <div>
+      <h3 className="font-bold text-emerald-700 mb-5 text-lg">
+        Fee Breakdown
+      </h3>
+
+      <div className="overflow-hidden border border-gray-200">
+        <table className="w-full text-sm">
+          <tbody>
+            <FeesTable
+              quote={quote}
+              label="Survey"
+            />
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+      {/* Notes */}
+      <div className="mt-10 border-t pt-6">
+        <h3 className="font-bold mb-3">
+          Notes
+        </h3>
+
+        {quote?.conveying_details?.notes ? (
+          <div
+            className="prose max-w-none"
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(
+                quote.conveying_details.notes
+              ),
+            }}
+          />
+        ) : quote?.conveying_details?.short_notes ? (
+          <p>
+            {quote.conveying_details.short_notes}
+          </p>
+        ) : (
+          <p className="text-gray-500">
+            No notes available.
+          </p>
+        )}
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
   );
 }
 
@@ -1113,7 +1257,7 @@ function SurveyorquotesContent() {
                         <div className="flex items-center gap-4">
                           <div className="text-right">
                             <p className="text-xl font-bold text-gray-900">
-                              {formatGBP(Number(quote.fees_amount || 0))}
+                              {formatGBP(Number(quote.total || 0))}
                             </p>
                             <button
                               className="text-green-700 text-sm font-medium hover:underline cursor-pointer"
