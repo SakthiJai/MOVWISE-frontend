@@ -97,6 +97,13 @@ const subTotalVat = taxItems.reduce(
   0
 );
 
+ const [instructpayload, setinstructpayload] = useState({
+    "ref_no": "",
+    "servicetype": "",
+    "quoteid": "",
+  })
+
+
   return (
 <div className="border-t border-gray-200 pt-6">
 
@@ -300,6 +307,56 @@ const CircularProgress = ({ progress }) => {
 };
 
 function SurveyorQuoteModal({ quote, onClose }) {
+  const router = useRouter();
+
+  const [modalInstructLoader, setModalInstructLoader] = useState(false);
+  async function modalInstructQuote() {
+
+  try {
+
+    setModalInstructLoader(true);
+
+    const payload = {
+      quoteid: quote.quote_id,
+      servicetype: "surveyor",
+      ref_no: quote.quote_ref_number
+    };
+
+    console.log("Modal Instruct Payload:", payload);
+
+
+    const instruct = await postData(
+      API_ENDPOINTS.surveyorquote_mail,
+      payload
+    );
+
+
+    console.log("API Response:", instruct);
+
+
+    if (instruct) {
+
+      await postData(
+        API_ENDPOINTS.surveyorinstructmail,
+        payload
+      );
+
+
+      router.push(`/Instruct?id=${payload.quoteid}`);
+
+    }
+
+
+  } catch (error) {
+
+    console.error("Instruct error:", error);
+
+  } finally {
+
+    setModalInstructLoader(false);
+
+  }
+}
   useEffect(() => {
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -333,9 +390,17 @@ function SurveyorQuoteModal({ quote, onClose }) {
         MovWise
       </h1>
 
-      <button className="border border-emerald-600 text-emerald-600 px-4 py-2 text-sm rounded">
+      {/* <button >
         Instruct
-      </button>
+      </button> */}
+      <button
+  disabled={modalInstructLoader}
+  onClick={modalInstructQuote}
+  className="border border-emerald-600 text-emerald-600 px-4 py-2 text-sm rounded"
+>
+  {modalInstructLoader ? "Processing..." : "Instruct"}
+</button>
+      
     </div>
 
     <div className="max-h-[90vh] overflow-y-auto p-6">
@@ -514,6 +579,7 @@ function SurveyorquotesContent() {
   const query_ref_no = searchParams.get("ref_no");
   const router = useRouter();
 
+  const [instructloader, setinstructloader] = useState(false);
   const [companydata, setcompanydata] = useState([]);
   const [quoteData, setquoteData] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -533,6 +599,31 @@ function SurveyorquotesContent() {
     { value: "Price", label: "Price" },
   ]);
   const [filterselected, setfilterselected] = useState([]);
+
+  async function instructquote(instructpayload) {
+  try {
+    const instruct = await postData(
+      API_ENDPOINTS.surveyorquote_mail,
+      instructpayload
+    );
+
+    console.log("API Response:", instruct);
+
+    if (instruct) {
+      setinstructloader(false);
+
+      postData(
+        API_ENDPOINTS.surveyorinstructmail,
+        instructpayload
+      );
+
+      router.push(`/Instruct?id=${instructpayload.quoteid}`);
+    }
+  } catch (e) {
+    setinstructloader(false);
+    console.error("API error:", e);
+  }
+}
 
   useEffect(() => {
     if (localStorage.getItem("user") && localStorage.getItem("logintype")) {
@@ -1328,11 +1419,32 @@ function SurveyorquotesContent() {
                           </div>
 
                           <div className="flex flex-row px-15 justify-start lg:col-start-3 lg:justify-end">
-                            <button
-                              className="px-3 py-1.5 rounded-full text-sm cursor-pointer bg-white border border-[#4A7C59] text-[#4A7C59] hover:bg-gray-50 mx-auto block md:inline-block"
-                            >
-                              Instruct
-                            </button>
+                          <button
+  disabled={instructloader}
+  className={`px-3 py-1.5 rounded-full text-sm cursor-pointer
+    ${
+      instructloader
+        ? "bg-[#4A7C59]/70 cursor-not-allowed"
+        : "bg-[#4A7C59] hover:bg-[#3b6248] text-white"
+    }`}
+onClick={() => {
+  console.log("Instruct clicked");
+
+  setinstructloader(true);
+
+  const payload = {
+    quoteid: quote.quote_id,
+    servicetype: "surveyor",
+    ref_no: quote.quote_ref_number
+  };
+
+  console.log("Payload:", payload);
+
+  instructquote(payload);
+}}
+>
+  {instructloader ? "Processing..." : "Instruct"}
+</button>
                             <button
                               disabled={pdfLoading || pendingDownload}
                               className={`px-3 py-1.5 rounded-full text-sm cursor-pointer ${
