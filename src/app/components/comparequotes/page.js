@@ -2217,6 +2217,8 @@ handleInstructFromCard(
                                   </div>
 
                                 </div>
+
+                                
                                 <div ref={pdfRef} id="quote-popup" className=" quote-desktop border rounded-lg bg-transparent shadow px-6 py-2 mb-2 space-y-2 quotes" style={{
                                   backgroundColor: 'transparent',
                                   color: 'black',

@@ -107,8 +107,9 @@ const subTotalVat = taxItems.reduce(
   return (
 <div className="border-t border-gray-200 pt-6">
 
-  <table className="w-full table-fixed border-collapse text-black">
-
+<table 
+  className="pdf-fee-table w-full table-fixed border-collapse text-black"
+>
     <thead>
       <tr className="border-b border-gray-300 text-left">
         <th className="w-[55%] text-sm font-semibold px-8 py-3">
@@ -306,11 +307,18 @@ const CircularProgress = ({ progress }) => {
   );
 };
 
-function SurveyorQuoteModal({ quote, onClose }) {
+function SurveyorQuoteModal({
+  quote,
+  onClose,
+  modalPdfRef,
+  downloadPdf,
+   onInstructQuote
+}) {
   const router = useRouter();
 
   const [modalInstructLoader, setModalInstructLoader] = useState(false);
-  async function modalInstructQuote() {
+async function modalInstructQuote() {
+  console.log("MODAL BUTTON CLICKED");
 
   try {
 
@@ -319,44 +327,21 @@ function SurveyorQuoteModal({ quote, onClose }) {
     const payload = {
       quoteid: quote.quote_id,
       servicetype: "surveyor",
-      ref_no: quote.quote_ref_number
+      ref_no: quote.quote_ref_number,
+      html: modalPdfRef.current ? modalPdfRef.current.outerHTML : ""
     };
 
-    console.log("Modal Instruct Payload:", payload);
+    console.log("MODAL PAYLOAD", payload);
 
+    await onInstructQuote(payload);
 
-    const instruct = await postData(
-      API_ENDPOINTS.surveyorquote_mail,
-      payload
-    );
-
-
-    console.log("API Response:", instruct);
-
-
-    if (instruct) {
-
-      await postData(
-        API_ENDPOINTS.surveyorinstructmail,
-        payload
-      );
-
-
-      router.push(`/Instruct?id=${payload.quoteid}`);
-
-    }
-
-
-  } catch (error) {
-
-    console.error("Instruct error:", error);
-
+  } catch(error) {
+    console.error(error);
   } finally {
-
     setModalInstructLoader(false);
-
   }
 }
+
   useEffect(() => {
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -403,10 +388,13 @@ function SurveyorQuoteModal({ quote, onClose }) {
       
     </div>
 
-    <div className="max-h-[90vh] overflow-y-auto p-6">
+    <div
+      id="price-breakdown-pdf"
+      ref={modalPdfRef}
+      className="max-h-[90vh] overflow-y-auto p-6">
 
       {/* Logo */}
-      <div className="mb-8">
+     <div className="pdf-logo-cell mb-8">
         {quote?.conveying_details?.logo && (
           <img
             src={quote.conveying_details.logo}
@@ -417,9 +405,9 @@ function SurveyorQuoteModal({ quote, onClose }) {
       </div>
 
       {/* Top Details */}
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-2 gap-6 pdf-grid">
 
-        <div className="bg-gray-50 p-5">
+       <div className="bg-gray-50 p-5 pdf-card">
           <h3 className="text-center text-emerald-700 font-semibold mb-4">
             Conveyancer Details
           </h3>
@@ -447,7 +435,7 @@ function SurveyorQuoteModal({ quote, onClose }) {
           </div>
         </div>
 
-        <div className="bg-gray-50 p-5">
+        <div className="bg-gray-50 p-5 pdf-card">
           <h3 className="text-center text-emerald-700 font-semibold mb-4">
             Client Details
           </h3>
@@ -479,7 +467,7 @@ function SurveyorQuoteModal({ quote, onClose }) {
 
       {/* Sales Quote Title */}
       {/* OUTER BOX */}
-<div className="border border-gray-300 bg-white p-6 mt-10">
+<div className="border border-gray-300 bg-white p-6 mt-10 pdf-modal-card">
   {/* Sales Quote Title */}
   <div className="text-center mb-8">
     <h2 className="text-xl font-bold text-emerald-700">
@@ -523,14 +511,10 @@ function SurveyorQuoteModal({ quote, onClose }) {
       </h3>
 
       <div className="overflow-hidden border border-gray-200">
-        <table className="w-full text-sm">
-          <tbody>
-            <FeesTable
-              quote={quote}
-              label="Survey"
-            />
-          </tbody>
-        </table>
+       <FeesTable
+    quote={quote}
+    label="Survey"
+  />
       </div>
     </div>
 
@@ -540,7 +524,7 @@ function SurveyorQuoteModal({ quote, onClose }) {
 
 
       {/* Notes */}
-      <div className="mt-10 border-t pt-6">
+     <div className="pdf-notes-section mt-10 border-t pt-6">
         <h3 className="font-bold mb-3">
           Notes
         </h3>
@@ -578,7 +562,7 @@ function SurveyorquotesContent() {
   const searchParams = useSearchParams();
   const query_ref_no = searchParams.get("ref_no");
   const router = useRouter();
-
+const [pendingInstructQuote, setPendingInstructQuote] = useState(null);
   const [instructloader, setinstructloader] = useState(false);
   const [companydata, setcompanydata] = useState([]);
   const [quoteData, setquoteData] = useState([]);
@@ -590,7 +574,10 @@ function SurveyorquotesContent() {
   const [selectedQuote, setSelectedQuote] = useState(null);
   const [pdfLoading, setPdfLoading] = useState(false);
   const [pendingDownload, setPendingDownload] = useState(false);
-  const pdfRef = useRef(null);
+  
+const modalPdfRef = useRef(null);
+
+
   const hasCalledService = useRef(false);
 
   const [filteroption] = useState([
@@ -601,30 +588,80 @@ function SurveyorquotesContent() {
   const [filterselected, setfilterselected] = useState([]);
 
   async function instructquote(instructpayload) {
+   
+console.log("PAYLOAD", instructpayload);
   try {
+
+    setinstructloader(true);
+
+    console.log("API CALL PAYLOAD", instructpayload);
+
     const instruct = await postData(
       API_ENDPOINTS.surveyorquote_mail,
       instructpayload
     );
 
-    console.log("API Response:", instruct);
+    console.log("FIRST API RESPONSE", instruct);
 
-    if (instruct) {
-      setinstructloader(false);
-
-      postData(
+    
+ router.push(`/Instruct?id=${instructpayload.quoteid}`);
+      await postData(
         API_ENDPOINTS.surveyorinstructmail,
         instructpayload
       );
 
-      router.push(`/Instruct?id=${instructpayload.quoteid}`);
-    }
+     
+    
+
   } catch (e) {
-    setinstructloader(false);
+
     console.error("API error:", e);
+
+  } finally {
+
+    setinstructloader(false);
+
   }
 }
 
+useEffect(() => {
+
+  if (!pendingInstructQuote) return;
+
+
+  const sendInstruct = async () => {
+
+    if (!modalPdfRef.current) {
+      setTimeout(sendInstruct, 200);
+      return;
+    }
+
+
+    try {
+
+      const payload = {
+        ...pendingInstructQuote,
+        html: modalPdfRef.current.outerHTML
+      };
+
+
+      await instructquote(payload);
+
+
+    } finally {
+
+      setinstructloader(false);
+      setPendingInstructQuote(null);
+
+    }
+
+  };
+
+
+  sendInstruct();
+
+
+}, [pendingInstructQuote]);
   useEffect(() => {
     if (localStorage.getItem("user") && localStorage.getItem("logintype")) {
       setuserlogin(true);
@@ -705,7 +742,7 @@ function SurveyorquotesContent() {
 
   const generatePDF = async () => {
     try {
-      if (!pdfRef.current) {
+      if (!modalPdfRef.current) {
         Swal.fire('Error', 'PDF element not found', 'error');
         return;
       }
@@ -723,60 +760,292 @@ function SurveyorquotesContent() {
 
       // Helper: clone pdfRef, apply PDF-mode swaps, strip Tailwind classes
       const buildClone = (hideNotes) => {
-        const cloned = pdfRef.current.cloneNode(true);
+        const cloned = modalPdfRef.current.cloneNode(true);
+const propertyFeeGrid = Array.from(
+  cloned.querySelectorAll(".grid")
+).find(el =>
+  el.textContent.includes("Surveyor Property Details") &&
+  el.textContent.includes("Fee Breakdown")
+);
 
+if (propertyFeeGrid) {
+  propertyFeeGrid.classList.add("pdf-property-fee-grid");
+}
         const injectedPdfStyles = document.createElement('style');
-        injectedPdfStyles.textContent = `
-          .pdf-fee-table, [data-pdf-fee-table="1"],
-          .pdf-fee-table th, [data-pdf-fee-table="1"] th,
-          .pdf-fee-table td, [data-pdf-fee-table="1"] td {
-            border: 0.05px solid rgba(0,0,0,0.06) !important;
-            border-collapse: collapse !important;
-            border-spacing: 0 !important;
-            background-color: #ffffff !important;
-          }
-          .pdf-fee-table, [data-pdf-fee-table="1"] {
-            width: 100% !important;
-            table-layout: auto !important;
-            border: 0.05px solid rgba(0,0,0,0.06) !important;
-            box-sizing: border-box !important;
-            margin-top: 14px !important;
-            margin-bottom: 14px !important;
-          }
-          .pdf-fee-table th, [data-pdf-fee-table="1"] th {
-            background-color: #f8fafc !important;
-            border-bottom: 0.05px solid rgba(0,0,0,0.06) !important;
-            text-align: left !important;
-          }
-          .pdf-fee-table th:nth-child(2),
-          .pdf-fee-table th:nth-child(3),
-          .pdf-fee-table td:nth-child(2),
-          .pdf-fee-table td:nth-child(3),
-          [data-pdf-fee-table="1"] th:nth-child(2),
-          [data-pdf-fee-table="1"] th:nth-child(3),
-          [data-pdf-fee-table="1"] td:nth-child(2),
-          [data-pdf-fee-table="1"] td:nth-child(3) {
-            text-align: right !important;
-          }
-          .pdf-fee-table tr:last-child td,
-          [data-pdf-fee-table="1"] tr:last-child td {
-            border-bottom: 0.05px solid rgba(0,0,0,0.06) !important;
-          }
-          [data-pdf-fee-table="1"] tr[data-pdf-fee-highlight="1"] td {
-            background-color: #f9fafb !important;
-          }
-          .pdf-fee-table td, [data-pdf-fee-table="1"] td {
-            background-color: #ffffff !important;
-          }
-        `;
+      injectedPdfStyles.textContent = `
+
+/* top cards spacing */
+.pdf-grid {
+  display:grid !important;
+  grid-template-columns:1fr 1fr !important;
+  gap:28px !important;
+  margin-bottom:30px !important;
+  margin-top:10px !important;
+}
+
+
+/* cards */
+.pdf-card {
+  background:#f9fafb !important;
+  border:1px solid #e5e7eb !important;
+  border-radius:14px !important;
+  padding:18px !important;
+  min-height:90px !important;
+}
+
+
+/* main quote container */
+.pdf-modal-card {
+  border:1px solid #e5e7eb !important;
+  border-radius:16px !important;
+  padding:24px !important;
+  margin-top:25px !important;
+  background:white !important;
+}
+
+
+/* property + fee area */
+.pdf-property-fee-grid {
+  display:block !important;
+  margin-top:20px !important;
+}
+
+
+/* ============================
+        FEE TABLE PDF
+   ============================ */
+
+
+/* table */
+[data-pdf-fee-table="1"] {
+
+ width:100% !important;
+ border-collapse:collapse !important;
+ table-layout:fixed !important;
+
+ border:1px solid #d1d5db !important;
+
+ margin-top:15px !important;
+
+ font-family:Arial, sans-serif !important;
+
+}
+
+
+/* cells */
+
+[data-pdf-fee-table="1"] th,
+[data-pdf-fee-table="1"] td {
+
+ border:1px solid #d1d5db !important;
+
+ padding:10px !important;
+
+ font-size:11px !important;
+
+ vertical-align:middle !important;
+
+}
+
+
+
+/* header */
+
+[data-pdf-fee-table="1"] thead th {
+
+ background:#f3f4f6 !important;
+
+ font-weight:700 !important;
+
+ color:#111 !important;
+
+}
+
+
+
+/* first column */
+
+[data-pdf-fee-table="1"] th:first-child,
+[data-pdf-fee-table="1"] td:first-child {
+
+ width:55% !important;
+
+ text-align:left !important;
+
+}
+
+
+/* amount columns */
+
+[data-pdf-fee-table="1"] th:nth-child(2),
+[data-pdf-fee-table="1"] td:nth-child(2),
+[data-pdf-fee-table="1"] th:nth-child(3),
+[data-pdf-fee-table="1"] td:nth-child(3) {
+
+ width:22.5% !important;
+
+ text-align:right !important;
+
+}
+
+
+/* Fee Amount Value */
+
+[data-pdf-fee-table="1"] tbody tr:nth-child(1) td {
+
+ color:#059669 !important;
+
+ font-weight:700 !important;
+
+ background:#ffffff !important;
+
+}
+
+
+/* Fee Categories */
+
+[data-pdf-fee-table="1"] td[colspan="3"] {
+
+ background:#f3f4f6 !important;
+
+ font-weight:700 !important;
+
+ text-align:left !important;
+
+}
+
+
+
+/* normal fee rows */
+
+[data-pdf-fee-table="1"] tbody tr td {
+
+ background:#ffffff !important;
+
+}
+
+
+
+/* subtotal */
+
+[data-pdf-fee-table="1"] tbody tr:nth-last-child(2) td {
+
+ font-weight:700 !important;
+
+ background:#ffffff !important;
+
+}
+
+
+
+/* total */
+
+[data-pdf-fee-table="1"] tbody tr:last-child td {
+
+ background:#f8fafc !important;
+
+ color:#059669 !important;
+
+ font-weight:700 !important;
+
+}
+
+
+/* remove weird PDF spacing */
+
+[data-pdf-fee-table="1"] tr {
+
+ height:auto !important;
+
+}
+
+
+
+`;
         cloned.prepend(injectedPdfStyles);
         cloned.querySelectorAll('.pdf-fee-table').forEach(table => table.setAttribute('data-pdf-fee-table', '1'));
 
+    injectedPdfStyles.textContent += `
+
+.pdf-modal-card {
+  border:1px solid #e5e7eb !important;
+  border-radius:16px !important;
+  padding:20px !important;
+  background:#ffffff !important;
+}
+
+.pdf-grid {
+  display:grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap:24px !important;
+}
+
+.pdf-card {
+  background:#f9fafb !important;
+  border:1px solid #e5e7eb !important;
+  border-radius:14px !important;
+  padding:18px !important;
+}
+
+.pdf-title {
+ color:#059669 !important;
+ font-weight:700 !important;
+ text-align:center !important;
+}
+/* ===========================
+   PDF ONLY - PROPERTY DETAILS
+   =========================== */
+
+.pdf-modal-card .grid-cols-\[150px_1fr\] {
+
+    display:flex !important;
+    grid-template-columns:none !important;
+
+    gap:4px !important;
+
+    border:none !important;
+    padding-bottom:4px !important;
+
+}
+
+
+/* key */
+.pdf-modal-card .grid-cols-\[150px_1fr\] span:first-child {
+
+    font-weight:700 !important;
+
+    color:#111 !important;
+
+    display:inline !important;
+
+}
+
+
+/* value */
+.pdf-modal-card .grid-cols-\[150px_1fr\] span:last-child {
+
+    color:#333 !important;
+
+    display:inline !important;
+
+}
+
+
+/* remove underline only in PDF */
+
+.pdf-modal-card .grid-cols-\[150px_1fr\] {
+
+    border-bottom:none !important;
+
+}
+
+`;
         // Handle notes section
-        const notesEl = cloned.querySelector('.pdf-notes-section');
-        if (notesEl) {
-          notesEl.style.display = hideNotes ? 'none' : 'block';
-        }
+      const notesEl = cloned.querySelector('.pdf-notes-section');
+
+if (notesEl && hideNotes) {
+  notesEl.remove();
+}
 
         const feeCells = cloned.querySelectorAll('[data-pdf-fee-table="1"] th, [data-pdf-fee-table="1"] td');
         const feeRows = cloned.querySelectorAll('[data-pdf-fee-table="1"] tr');
@@ -786,7 +1055,10 @@ function SurveyorquotesContent() {
         const headingTags = new Set(['H1', 'H2', 'H3', 'H4', 'H5', 'H6']);
         const cellTags = new Set(['TD', 'TH']);
         cloned.querySelectorAll('*').forEach(el => {
-          const originalClasses = el.className ? el.className.split(' ') : [];
+         const originalClasses =
+  typeof el.className === "string"
+    ? el.className.split(" ")
+    : [];
           const isPdfLogoCell = originalClasses.includes('pdf-logo-cell');
           const isPdfInfoCardItem = !!el.closest('.pdf-info-card');
           const isPdfOuterCard = !!el.closest('.pdf-outer-card');
@@ -807,7 +1079,26 @@ function SurveyorquotesContent() {
             currentRow.dataset.pdfFeeHighlight = '1';
           }
 
-          el.className = '';
+       // Keep Tailwind classes for PDF layout
+if (el instanceof SVGElement) {
+  el.removeAttribute("class");
+}else if (el.classList) {
+
+  const keepClasses = [
+    "pdf-grid",
+    "pdf-card",
+    "pdf-modal-card",
+    "pdf-quote-heading",
+    "pdf-property-heading",
+    "pdf-fee-heading"
+  ];
+
+  [...el.classList].forEach(cls => {
+    if (!keepClasses.includes(cls)) {
+      el.classList.remove(cls);
+    }
+  });
+}
           el.style.fontFamily = 'Arial, sans-serif';
           el.style.color = headingTags.has(el.tagName) ? '#059669' : '#000';
           el.style.fontSize = '11px';
@@ -833,8 +1124,33 @@ function SurveyorquotesContent() {
           const isPdfQuoteHeading = originalClasses.includes('pdf-quote-heading');
           const isPdfPropertyHeading = originalClasses.includes('pdf-property-heading');
           const isPdfFeeHeading = originalClasses.includes('pdf-fee-heading');
+    const isPropertyDetailRow =
+  el.closest(".pdf-modal-card") &&
+  el.querySelectorAll("span").length === 2; 
           el.style.textAlign = isPdfLogoCell || isPdfQuoteHeading || isPdfPropertyHeading || isPdfFeeHeading ? 'center' : 'left';
+if (isPropertyDetailRow) {
 
+  const spans = el.querySelectorAll("span");
+
+  if (spans.length === 2) {
+
+    el.style.display = "block";
+    el.style.borderBottom = "none";
+    el.style.paddingBottom = "2px";
+
+    spans[0].style.fontWeight = "700";
+    spans[0].style.color = "#111";
+    spans[0].style.display = "inline";
+
+    spans[1].style.color = "#333";
+    spans[1].style.display = "inline";
+
+    spans[0].innerHTML =
+      spans[0].innerHTML + ":";
+
+    spans[1].style.marginLeft = "5px";
+  }
+}
           if (originalClasses.includes('text-emerald-600') || isLegalFeesRow || isFinalTotalRow) {
             el.style.color = '#059669';
             if (cellTags.has(el.tagName)) {
@@ -952,8 +1268,78 @@ function SurveyorquotesContent() {
           inner.style.borderRadius = '18px';
           inner.style.padding = '16px';
         });
+        // FORCE FEE TABLE PDF STYLE (add before return cloned)
+cloned.querySelectorAll('[data-pdf-fee-table="1"]').forEach(table => {
+
+  table.style.width = "100%";
+  table.style.borderCollapse = "collapse";
+  table.style.border = "1px solid #d1d5db";
+  table.style.tableLayout = "fixed";
+
+  table.querySelectorAll("th, td").forEach(cell => {
+    cell.style.border = "1px solid #d1d5db";
+    cell.style.padding = "10px";
+    cell.style.fontSize = "11px";
+  });
+
+
+  // header row
+  table.querySelectorAll("thead th").forEach(th=>{
+    th.style.background="#f3f4f6";
+    th.style.fontWeight="700";
+  });
+
+
+  // columns
+  table.querySelectorAll("th:first-child, td:first-child")
+  .forEach(cell=>{
+    cell.style.width="55%";
+    cell.style.textAlign="left";
+  });
+
+
+  table.querySelectorAll("th:nth-child(2), td:nth-child(2), th:nth-child(3), td:nth-child(3)")
+  .forEach(cell=>{
+    cell.style.width="22.5%";
+    cell.style.textAlign="right";
+  });
+
+
+  // Fee amount row
+  const rows = table.querySelectorAll("tr");
+
+  if(rows.length > 1){
+    rows[1].querySelectorAll("td").forEach(cell=>{
+      cell.style.fontWeight="700";
+      cell.style.color="#059669";
+    });
+  }
+
+
+  // category row
+  rows.forEach(row=>{
+    if(row.innerText.includes("Fee Categories")){
+      row.querySelectorAll("td").forEach(cell=>{
+        cell.style.background="#f3f4f6";
+        cell.style.fontWeight="700";
+      });
+    }
+  });
+
+
+  // total row
+  if(rows.length){
+    rows[rows.length-1].querySelectorAll("td").forEach(cell=>{
+      cell.style.background="#f8fafc";
+      cell.style.fontWeight="700";
+      cell.style.color="#059669";
+    });
+  }
+
+});
         return cloned;
       };
+   
 
       const canvasOptions = {
         scale: 1.5,
@@ -991,10 +1377,11 @@ function SurveyorquotesContent() {
       // --- Capture main content (notes hidden) ---
       const mainWrapper = document.createElement('div');
       mainWrapper.style.cssText = 'position:absolute;left:-9999px;top:0;width:800px;background:white;padding:15px;font-family:Arial,sans-serif;line-height:1.4;';
-      const mainClone = buildClone(true);
-      mainClone.style.overflow = 'visible';
-      mainClone.style.maxHeight = 'none';
-      mainWrapper.appendChild(mainClone);
+    const mainClone = buildClone(true);  // keep notes
+mainClone.style.overflow = 'visible';
+mainClone.style.maxHeight = 'none';
+
+mainWrapper.appendChild(mainClone);
       document.body.appendChild(mainWrapper);
       await waitForImages(mainWrapper);
 
@@ -1075,7 +1462,7 @@ function SurveyorquotesContent() {
       // --- Capture notes on a separate page ---
       const notesWrapper = document.createElement('div');
       notesWrapper.style.cssText = 'position:absolute;left:-9999px;top:0;width:800px;background:white;padding:15px;font-family:Arial,sans-serif;line-height:1.4;';
-      const notesOnlyClone = pdfRef.current.cloneNode(true);
+      const notesOnlyClone = modalPdfRef.current.cloneNode(true);
       // Keep only the notes element
       const notesEl = notesOnlyClone.querySelector('.pdf-notes-section');
       notesWrapper.innerHTML = '';
@@ -1117,12 +1504,32 @@ function SurveyorquotesContent() {
       const notesCanvas = await html2canvas(notesWrapper, { ...canvasOptions, windowHeight: notesWrapper.scrollHeight });
       document.body.removeChild(notesWrapper);
 
-      if (notesCanvas && notesCanvas.width > 0 && notesCanvas.height > 0) {
+if (notesCanvas && notesCanvas.width > 0 && notesCanvas.height > 0) {
+
+    const notesImgData = notesCanvas.toDataURL('image/png');
+    const notesImgHeight = (notesCanvas.height * imgWidth) / notesCanvas.width;
+
+    // get current pdf page height position
+    let currentY = margin + ((renderedHeightPx * imgWidth) / mainCanvas.width);
+
+    // add gap before notes
+    currentY += 10;
+
+    // if notes don't fit, create new page
+    if (currentY + notesImgHeight > pageHeight) {
         pdf.addPage();
-        const notesImgData = notesCanvas.toDataURL('image/png');
-        const notesImgHeight = (notesCanvas.height * imgWidth) / notesCanvas.width;
-        pdf.addImage(notesImgData, 'PNG', margin, margin, imgWidth, notesImgHeight);
-      }
+        currentY = margin;
+    }
+
+    pdf.addImage(
+        notesImgData,
+        'PNG',
+        margin,
+        currentY,
+        imgWidth,
+        notesImgHeight
+    );
+}
 
       const currentRef = ref || 'surveyor-quote';
       pdf.save(`${currentRef}.pdf`);
@@ -1136,36 +1543,46 @@ function SurveyorquotesContent() {
   };
 
   const handleDownloadFromCard = (quote) => {
-    setPdfLoading(true);
-    setPendingDownload(true);
+  setSelectedQuote(quote);
+  setPdfLoading(true);
+  setPendingDownload(true);
+};
+
+useEffect(() => {
+  if (!pendingDownload) return;
+
+  let attempts = 0;
+  const maxAttempts = 20;
+
+  const tryGenerate = async () => {
+
+    if (modalPdfRef?.current) {
+      await generatePDF();
+      setPendingDownload(false);
+      return;
+    }
+
+    attempts += 1;
+
+    if (attempts >= maxAttempts) {
+      setPendingDownload(false);
+      setPdfLoading(false);
+
+      Swal.fire(
+        'Error',
+        'Price breakdown modal not ready',
+        'error'
+      );
+
+      return;
+    }
+
+    setTimeout(tryGenerate, 100);
   };
 
-  useEffect(() => {
-    if (!pendingDownload) return;
+  tryGenerate();
 
-    let attempts = 0;
-    const maxAttempts = 20;
-
-    const tryGenerate = async () => {
-      if (pdfRef?.current) {
-        await generatePDF();
-        setPendingDownload(false);
-        return;
-      }
-
-      attempts += 1;
-      if (attempts >= maxAttempts) {
-        setPendingDownload(false);
-        setPdfLoading(false);
-        Swal.fire('Error', 'PDF element not found', 'error');
-        return;
-      }
-
-      setTimeout(tryGenerate, 100);
-    };
-
-    tryGenerate();
-  }, [pendingDownload]);
+}, [pendingDownload]);
 
   const handlefilterchange = (selectedoption = []) => {
     setfilterselected(selectedoption);
@@ -1296,7 +1713,7 @@ function SurveyorquotesContent() {
                   />
                 </div>
 
-                <div className="mt-8 space-y-6" ref={pdfRef}>
+                <div className="mt-8 space-y-6" >
                   {loading && (
                     <div className="flex flex-col justify-center items-center py-6">
                       <div className="h-8 w-8 border-2 border-[#4A7C59] border-t-transparent rounded-full animate-spin"></div>
@@ -1428,34 +1845,31 @@ function SurveyorquotesContent() {
         : "bg-[#4A7C59] hover:bg-[#3b6248] text-white"
     }`}
 onClick={() => {
-  console.log("Instruct clicked");
 
   setinstructloader(true);
 
-  const payload = {
+  setSelectedQuote(quote);
+
+  setPendingInstructQuote({
     quoteid: quote.quote_id,
     servicetype: "surveyor",
-    ref_no: quote.quote_ref_number
-  };
+    ref_no: quote.quote_ref_number,
+  });
 
-  console.log("Payload:", payload);
-
-  instructquote(payload);
 }}
 >
   {instructloader ? "Processing..." : "Instruct"}
+</button><button
+  disabled={pdfLoading || pendingDownload}
+  className={`px-3 py-1.5 rounded-full text-sm cursor-pointer ${
+    pdfLoading || pendingDownload
+      ? "bg-[#4A7C59]/70 cursor-not-allowed"
+      : "bg-[#4A7C59] hover:bg-[#3b6248] text-white"
+  } mx-auto block md:inline-block`}
+  onClick={() => handleDownloadFromCard(quote)}
+>
+  {pdfLoading || pendingDownload ? "Downloading..." : "Download"}
 </button>
-                            <button
-                              disabled={pdfLoading || pendingDownload}
-                              className={`px-3 py-1.5 rounded-full text-sm cursor-pointer ${
-                                pdfLoading || pendingDownload
-                                  ? "bg-[#4A7C59]/70 cursor-not-allowed"
-                                  : "bg-[#4A7C59] hover:bg-[#3b6248] text-white"
-                              } mx-auto block md:inline-block`}
-                              onClick={() => handleDownloadFromCard(quote)}
-                            >
-                              {pdfLoading || pendingDownload ? "Downloading..." : "Download"}
-                            </button>
                           </div>
                         </div>
 
@@ -1469,7 +1883,8 @@ onClick={() => {
         </div>
       </main>
 
-      {selectedQuote && <SurveyorQuoteModal quote={selectedQuote} onClose={closeDetailsModal} />}
+      {selectedQuote && <SurveyorQuoteModal quote={selectedQuote} onClose={closeDetailsModal}   modalPdfRef={modalPdfRef}  onInstructQuote={instructquote}
+ />}
 
       <Footer />
     </div>

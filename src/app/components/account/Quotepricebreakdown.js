@@ -50,7 +50,10 @@ const PriceBreakdownCard = forwardRef(({  companydetails, quoteId,quoteUser,quot
         icon: "success",
         confirmButtonColor: "#10b981",
         confirmButtonText: "OK"
-      });
+      })
+       .then(() => {
+    window.location.reload(); // Reload current page data
+  });
     }
 
   } catch (error) {
@@ -79,7 +82,7 @@ const timers = useRef({});
  const [view_data, setview_data] = useState({service_details: []});
 
  useEffect(()=>{
-console.log(view_data);
+console.log("status is there:",view_data);
  },[view_data])
 
 //    useEffect(() => {
@@ -239,6 +242,49 @@ useEffect(() => {
 
 
   const [activeIndex, setActiveIndex] = useState();
+  const currentStatus = Number(activeIndex);
+
+  const isRejectedCase = [4, 5, 7, 8].includes(Number(activeIndex));
+ 
+  const statusToPathIndex = {
+  2: 0,
+  3: 1,
+  4: 2,
+  5: 3,
+  6: 4,
+  7: 5,
+  8: 6,
+  9: 7,
+  10: 8,
+  11: 9,
+  12: 10,
+  13: 12,
+  14: 13,
+  15: 14,
+  16: 15,
+  17: 16,
+  18: 17,
+  19: 18,
+  20: 19,
+  21: 20,
+  22: 21,
+  23: 22,
+  24: 23,
+};
+const activePathIndex = statusToPathIndex[activeIndex] ?? -1;
+
+  //const isRejectedCase = [4, 5, 7, 8].includes(Number(activeIndex));
+
+useEffect(() => {
+  const match = companydetails.find(
+    item => item.quote_id == quoteId
+  );
+
+  if (match) {
+    setActiveIndex(Number(match.status || 1));
+    console.log("Status Updated:", match.status);
+  }
+}, [companydetails, quoteId]);
 
   useImperativeHandle(ref, () => ({
     refreshCard() {
@@ -571,23 +617,47 @@ useEffect(() => {
               className="overflow-visible justify-center ml-10"
             >
               {/* Zigzag segments */}
-              {[
-                "M60 80 H330",
-                "M330 80 V260",
-                "M330 260 H60",
-                "M60 260 V440",
-                "M60 440 H330",
-                "M330 440 V620",
-                "M330 620 H60",
-                "M60 620 V800",
-                "M60 800 H330",
-                "M330 800 V980",
-              ].map((d, i) => (
+            {[
+  "M60 80 H330",
+  "M330 80 V260",
+  "M330 260 H60",
+  "M60 260 V440",
+  "M60 440 H330",
+  "M330 440 V620",
+  "M330 620 H60",
+  "M60 620 V800",
+  "M60 800 H330",
+  "M330 800 V980",
+
+  // NEW PART
+  "M330 980 H60",
+  "M60 980 V1160",
+  "M60 1160 H330",
+  "M330 1160 V1340",
+  "M330 1340 H60",
+  "M60 1340 V1520",
+  "M60 1520 H330",
+  "M330 1520 V1700",
+  "M330 1700 H60",
+  "M60 1700 V1880",
+  "M60 1880 H330",
+  "M330 1880 V2060",
+  "M330 2060 H200",
+  "M200 2060 V2240",
+].map((d, i) => (
                 <path
                   key={i}
                   d={d}
                   fill="none"
-                  stroke={i <= activeIndex ? "#32a852" : "#e5f2ec"}
+              stroke={
+  i < activePathIndex
+    ? "#32a852"
+    : i === activePathIndex && isRejectedCase
+    ? "#dc2626"
+    : i <= activePathIndex
+    ? "#32a852"
+    : "#e5f2ec"
+}
                   strokeWidth="48"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -595,64 +665,97 @@ useEffect(() => {
               ))}
 
               {/* CORNER MILESTONES */}
-              {[
-             { x: 30, y: 80, label: "Draft" },
-{ x: 370, y: 80, label: "Submitted" },
-{ x: 370, y: 260, label: "Reviewing" },
-{ x: 30, y: 260, label: "Approved" },
-{ x: 30, y: 440, label: "Processing" },
-{ x: 370, y: 440, label: "In Progress" },
-{ x: 370, y: 620, label: "Completed" },
-{ x: 30, y: 620, label: "Verified" },
-{ x: 30, y: 800, label: "Final Check" },
-{ x: 370, y: 800, label: "Closed" },
-{ x: 300, y: 1030, label: "Archived" },
+             {[
+  { x: 30, y: 80, label: "Instructed", status: 2 },
+  { x: 370, y: 80, label: "Admin Approved", status: 3 },
+  { x: 370, y: 260, label: "Admin Rejected", status: 4 },
+  { x: 30, y: 260, label: "Admin On-Hold", status: 5 },
+  { x: 30, y: 440, label: "Conveyancer Approved", status: 6 },
+  { x: 370, y: 440, label: "Conveyancer Rejected", status: 7 },
+  { x: 370, y: 620, label: "Conveyancer On-Hold", status: 8 },
+  { x: 30, y: 620, label: "Client care pack sent", status: 9 },
+  { x: 30, y: 800, label: "Client care pack received", status: 10 },
+  { x: 370, y: 800, label: "ID requirements satisfied", status: 11 },
+  { x: 300, y: 1030, label: "Search fees received", status: 12 },
+ { x: 30, y: 1160, label: "Contract paperwork received", status: 13 },
+{ x: 370, y: 1160, label: "Searches ordered", status: 14 },
 
-              ].map((s, i) => (
-                <foreignObject
-                  key={i}
-                  x={s.x - 30}
-                  y={s.y - 30}
-                  width="120"
-                  height="120"
-                >
-                  <div
-                    style={{
-                      cursor: "pointer",
-                      display: "flex",
-                      flexDirection: "column",
-                      alignItems: "center",
-                    }}
-                  >
-                    {/* Circle */}
-                    <div
-                      className={`milestone-circle ${
-                        activeIndex >= i ? "active" : ""
-                      }`}
-                    >
-                      <svg width="26" height="26" viewBox="0 0 24 24">
-                        <path
-                          d="M6 2v20M6 4h10l-2 3 2 3H6"
-                          stroke="white"
-                          strokeWidth="2"
-                          fill="none"
-                        />
-                      </svg>
-                    </div>
+{ x: 370, y: 1340, label: "Contract approved and enquiries raised", status: 15 },
+{ x: 30, y: 1340, label: "Mortgage offer received", status: 16 },
 
-                    {/* Label */}
-                    <p
-                      className={
-                        activeIndex >= i
-                          ? "text-black font-bold"
-                          : "text-gray-400"
-                      }
-                    >
-                      {s.label}
-                    </p>
-                  </div>
-                </foreignObject>
-              ))}
+{ x: 30, y: 1520, label: "Mortgage offer checked", status: 17 },
+{ x: 370, y: 1520, label: "Searches received", status: 18 },
+
+{ x: 370, y: 1700, label: "Replies to enquiries received", status: 19 },
+{ x: 30, y: 1700, label: "Report sent to clients", status: 20 },
+
+{ x: 30, y: 1880, label: "All documents received", status: 21 },
+{ x: 370, y: 1880, label: "Deposit received", status: 22 },
+
+{ x: 370, y: 2060, label: "Contracts exchanged", status: 23 },
+
+{ x: 200, y: 2240, label: "Case Completed", status: 24 },
+].map((s, i) => {
+const currentStatus = Number(activeIndex);
+
+const isCurrentRejected =
+  currentStatus === Number(s.status) &&
+  [4, 5, 7, 8].includes(Number(s.status));
+ 
+  const isCompleted =
+    Number(activeIndex) > Number(s.status) &&
+    ![4, 5, 7, 8].includes(Number(s.status));
+
+  return (
+    <foreignObject
+      key={i}
+      x={s.x - 30}
+      y={s.y - 30}
+      width="120"
+      height="120"
+    >
+      <div
+        style={{
+          cursor: "pointer",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+
+        <div
+  className={`milestone-circle ${
+    isCurrentRejected
+      ? "!bg-red-600"
+      : isCompleted || currentStatus >= Number(s.status)
+      ? "active"
+      : ""
+  }`}
+>
+          <svg width="26" height="26" viewBox="0 0 24 24">
+            <path
+              d="M6 2v20M6 4h10l-2 3 2 3H6"
+              stroke="white"
+              strokeWidth="2"
+              fill="none"
+            />
+          </svg>
+        </div>
+
+        <p
+          className={
+            isCurrentRejected || Number(activeIndex) >= Number(s.status)
+              ? "text-black font-bold text-xl"
+              : "text-gray-400 text-xl"
+          }
+        >
+          {s.label}
+        </p>
+
+      </div>
+    </foreignObject>
+  );
+})}
             </svg>
           </div>
         </div>
