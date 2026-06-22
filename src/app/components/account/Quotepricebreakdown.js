@@ -10,6 +10,7 @@ import PurchasePropertyDetails from "../comparequotes/PurchasePropertyDetails";
 import PurchasePropertyprofile from "../comparequotes/purchasepropertyprofile";
 import SalesPurchasePropertyDetails from "../comparequotes/Sales_Purchase_PropertyDetails";
 import RemortagePropertyDetails from "../comparequotes/RemortagePropertyDetails";
+import EquityPropertyDetails from "../comparequotes/EquityPropertyDetails";
 
 const PriceBreakdownCard = forwardRef(({  companydetails, quoteId,quoteUser,quote_ref_number }, ref) => {
 
@@ -17,10 +18,10 @@ const PriceBreakdownCard = forwardRef(({  companydetails, quoteId,quoteUser,quot
 
   const handlestatus = async () => {
     let payloadStatus = status;
-    if (clientCareStage === "sent" && status === "6") {
+    if (clientCareStage === "Client care pack sent" && status === "6") {
       payloadStatus = "9";
     }
-    if (clientCareStage === "received" && status === "9") {
+    if (clientCareStage === "Client care pack received" && status === "9") {
       payloadStatus = "10";
     }
     if (clientCareStage === "search" && status === "11") {
@@ -135,10 +136,10 @@ console.log("status is there:",view_data);
 
   // ✅ Show special client care stages when quote status is 6, 9, 10, or 11
   if (Number(selected.status) === 6) {
-    setClientCareStage("sent");
+    setClientCareStage("Client care pack sent");
     setStatus("6");
   } else if (Number(selected.status) === 9) {
-    setClientCareStage("received");
+    setClientCareStage("Client care pack received");
     setStatus("9");
   } else if (Number(selected.status) === 10) {
     setClientCareStage("id");
@@ -245,6 +246,49 @@ useEffect(() => {
   const currentStatus = Number(activeIndex);
 
   const isRejectedCase = [4, 5, 7, 8].includes(Number(activeIndex));
+  const milestones = [
+  { x: 30, y: 80, label: "Instructed", status: 2 },
+
+  ...(activeIndex === 3
+    ? [{ x: 370, y: 80, label: "Admin Approved", status: 3 }]
+    : activeIndex === 4
+    ? [{ x: 370, y: 260, label: "Admin Rejected", status: 4 }]
+    : activeIndex === 5
+    ? [{ x: 30, y: 260, label: "Admin On-Hold", status: 5 }]
+    : [
+        { x: 370, y: 80, label: "Admin Approved", status: 3 },
+        { x: 370, y: 260, label: "Admin Rejected", status: 4 },
+        { x: 30, y: 260, label: "Admin On-Hold", status: 5 },
+      ]),
+
+  ...(activeIndex === 6
+  ? [{ x: 30, y: 440, label: "Conveyancer Approved", status: 6 }]
+  : activeIndex === 7
+  ? [{ x: 370, y: 440, label: "Conveyancer Rejected", status: 7 }]
+  : activeIndex === 8
+  ? [{ x: 370, y: 620, label: "Conveyancer On-Hold", status: 8 }]
+  : [
+      { x: 30, y: 440, label: "Conveyancer Approved", status: 6 },
+      { x: 370, y: 440, label: "Conveyancer Rejected", status: 7 },
+      { x: 370, y: 620, label: "Conveyancer On-Hold", status: 8 },
+    ]),
+  { x: 30, y: 620, label: "Client care pack sent", status: 9 },
+  { x: 30, y: 800, label: "Client care pack received", status: 10 },
+  { x: 370, y: 800, label: "ID requirements satisfied", status: 11 },
+  { x: 300, y: 1030, label: "Search fees received", status: 12 },
+  { x: 30, y: 1160, label: "Contract paperwork received", status: 13 },
+  { x: 370, y: 1160, label: "Searches ordered", status: 14 },
+  { x: 370, y: 1340, label: "Contract approved and enquiries raised", status: 15 },
+  { x: 30, y: 1340, label: "Mortgage offer received", status: 16 },
+  { x: 30, y: 1520, label: "Mortgage offer checked", status: 17 },
+  { x: 370, y: 1520, label: "Searches received", status: 18 },
+  { x: 370, y: 1700, label: "Replies to enquiries received", status: 19 },
+  { x: 30, y: 1700, label: "Report sent to clients", status: 20 },
+  { x: 30, y: 1880, label: "All documents received", status: 21 },
+  { x: 370, y: 1880, label: "Deposit received", status: 22 },
+  { x: 370, y: 2060, label: "Contracts exchanged", status: 23 },
+  { x: 200, y: 2240, label: "Case Completed", status: 24 },
+];
  
   const statusToPathIndex = {
   2: 0,
@@ -314,15 +358,51 @@ useEffect(() => {
   const getStatusLabel = (status) => {
   switch (status) {
     case 2:
-      return "Customer Requested";
+      return "Quote Instructed";
     case 3:
       return "Admin Approved";
+    case 4:
+      return "Admin Rejected";
+    case 5:
+      return "Admin on-Hold";
     case 6:
       return "Conveyancer Approved";
     case 7:
       return "Conveyancer Rejected";
-    case 8:
+       case 8:
       return "Conveyancer On-Hold";
+       case 9:
+      return "Client care pack sent";
+       case 10:
+      return "Client care pack received";
+       case 11:
+      return "ID requirements satisfied";
+       case 12:
+      return "Search fees received";
+       case 13:
+      return "Contract paperwork received";
+       case 14:
+      return "Searches ordered";
+       case 15:
+      return "Contract approved";
+       case 16:
+      return "Mortgage offer received";
+       case 17:
+      return "Mortgage offer checked";
+       case 18:
+      return "Searches received";
+       case 19:
+      return "Replies to enquiries received";
+       case 20:
+      return "Report sent to clients with documents";
+       case 21:
+      return "All documents received";
+       case 22:
+      return "Deposit received";
+       case 23:
+      return "Contracts exchanged";
+       case 24:
+      return "Case Completed";
     default:
       return "Unknown";
   }
@@ -384,6 +464,7 @@ useEffect(() => {
                           {(item.service_type== 2 ) && <PurchasePropertyprofile quote={item}  page="profile" hide={true}  servicData={view_data.service_details[0]}  />}   
                           {(item.service_type == 1 ) && <SalesPurchasePropertyDetails quote={item}  page="profile" servicData={view_data.service_details[0]}/>}   
                           {(item.service_type == 4 ) && <RemortagePropertyDetails quote={item}  page="profile" servicData={view_data.service_details[0]}/>}  
+                          {(item.service_type == 5 ) && <EquityPropertyDetails quote={item}  page="profile" servicData={view_data.service_details[0]}/>}  
                         </div>
 
                     </div>
@@ -504,10 +585,10 @@ useEffect(() => {
     value={status}
     onChange={(e) => setStatus(e.target.value)}
   >
-    {clientCareStage === "sent" && (
-      <option value="6">Client Care Sent</option>
+    {clientCareStage === "Client care pack sent" && (
+      <option value="6">Client care pack sent</option>
     )}
-    {clientCareStage === "received" && (
+    {clientCareStage === "Client care pack received" && (
       <option value="9">Client care pack received</option>
     )}
     {clientCareStage === "id" && (
@@ -665,37 +746,7 @@ useEffect(() => {
               ))}
 
               {/* CORNER MILESTONES */}
-             {[
-  { x: 30, y: 80, label: "Instructed", status: 2 },
-  { x: 370, y: 80, label: "Admin Approved", status: 3 },
-  { x: 370, y: 260, label: "Admin Rejected", status: 4 },
-  { x: 30, y: 260, label: "Admin On-Hold", status: 5 },
-  { x: 30, y: 440, label: "Conveyancer Approved", status: 6 },
-  { x: 370, y: 440, label: "Conveyancer Rejected", status: 7 },
-  { x: 370, y: 620, label: "Conveyancer On-Hold", status: 8 },
-  { x: 30, y: 620, label: "Client care pack sent", status: 9 },
-  { x: 30, y: 800, label: "Client care pack received", status: 10 },
-  { x: 370, y: 800, label: "ID requirements satisfied", status: 11 },
-  { x: 300, y: 1030, label: "Search fees received", status: 12 },
- { x: 30, y: 1160, label: "Contract paperwork received", status: 13 },
-{ x: 370, y: 1160, label: "Searches ordered", status: 14 },
-
-{ x: 370, y: 1340, label: "Contract approved and enquiries raised", status: 15 },
-{ x: 30, y: 1340, label: "Mortgage offer received", status: 16 },
-
-{ x: 30, y: 1520, label: "Mortgage offer checked", status: 17 },
-{ x: 370, y: 1520, label: "Searches received", status: 18 },
-
-{ x: 370, y: 1700, label: "Replies to enquiries received", status: 19 },
-{ x: 30, y: 1700, label: "Report sent to clients", status: 20 },
-
-{ x: 30, y: 1880, label: "All documents received", status: 21 },
-{ x: 370, y: 1880, label: "Deposit received", status: 22 },
-
-{ x: 370, y: 2060, label: "Contracts exchanged", status: 23 },
-
-{ x: 200, y: 2240, label: "Case Completed", status: 24 },
-].map((s, i) => {
+             {milestones.map((s, i) => {
 const currentStatus = Number(activeIndex);
 
 const isCurrentRejected =

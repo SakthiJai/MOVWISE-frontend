@@ -436,11 +436,13 @@ let response = await postData(
                   <tr className="hover:bg-gray-50 transition duration-150 text-black">
                     <td className="p-3">{indexOfFirstRecord + index + 1}</td>
                     <td className="p-3">{getServiceTypeLabel(quote.service_type)}</td>
-                    <td className="p-3 ">{quote.created_at}</td>
+                    <td className="p-3 ">{quote.updated_at}</td>
                     <td className="p-3">
                       {quote.service_type === 1 ? quote.sales_country:quote.country}
                     </td>
-                    <td className="p-3">£ {quote.purchase_price}</td>
+                   <td className="p-3">
+  £ {quote.purchase_price ?? quote.sales_price ?? quote.property_values}
+</td>
                     <td className="p-3">
                       {loginType === "user"
                         ? quote.company_name
