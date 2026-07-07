@@ -47,7 +47,7 @@ const PriceBreakdownCard = forwardRef(({  companydetails, quoteId,quoteUser,quot
     if (response?.status === true || response?.success === true) {
       Swal.fire({
         title: "Success!",
-        text: "Status updated Successfull",
+        text: "Status updated Sucessfull",
         icon: "success",
         confirmButtonColor: "#10b981",
         confirmButtonText: "OK"

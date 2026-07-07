@@ -26,32 +26,98 @@ import Footer from "../parts/Footer/footer";
 
 export default function Blog() {
 const [blogs, setBlogs] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+const [page, setPage] = useState(1);
+const [loading, setLoading] = useState(false);
+const [hasMore, setHasMore] = useState(true);
 
-  useEffect(() => {
-    async function fetchBlogs() {
-      try {
-        setLoading(true);
-        setError(null);
-        // Replace API_ENDPOINTS.blogs with your actual endpoint for blogs
-        const response = await getData(API_ENDPOINTS.blogs);
-        if (response && Array.isArray(response.data)) {
-          setBlogs(response.data);
-        } else {
-          setBlogs([]);
-        }
-      } catch (err) {
-        setError("Failed to load blogs");
-        setBlogs([]);
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchBlogs();
-  }, []);
+const observer = useRef(null);
+const loadingRef = useRef(false);
+  // useEffect(() => {
+  //   async function fetchBlogs() {
+  //     try {
+  //       setLoading(true);
+  //       setError(null);
+  //       // Replace API_ENDPOINTS.blogs with your actual endpoint for blogs
+  //       const response = await getData(API_ENDPOINTS.blogs);
+  //       if (response && Array.isArray(response.data)) {
+  //         setBlogs(response.data);
+  //       } else {
+  //         setBlogs([]);
+  //       }
+  //     } catch (err) {
+  //       setError("Failed to load blogs");
+  //       setBlogs([]);
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   }
+  //   fetchBlogs();
+  // }, []);
     
+const fetchBlogs = async (pageNo) => {
 
+   if (loadingRef.current || !hasMore) return;
+
+loadingRef.current = true;
+setLoading(true);
+
+    try {
+
+        const response = await getData(
+            `${API_ENDPOINTS.blogs}?page=${pageNo}&limit=9`
+        );
+
+        if (response?.success) {
+
+            setBlogs(prev => [...prev, ...response.data]);
+
+            setHasMore(response.hasMore);
+
+        }
+
+    } catch (err) {
+
+        console.log(err);
+
+    } finally {
+
+      loadingRef.current = false;
+setLoading(false);
+
+    }
+
+};
+
+useEffect(() => {
+    fetchBlogs(page);
+}, [page]);
+useEffect(() => {
+  if (!observer.current) return;
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      if (
+    entries[0].isIntersecting &&
+    hasMore &&
+    !loading
+) {
+    setPage(prev => prev + 1);
+}
+    },
+    {
+      threshold: 0.5,
+    }
+  );
+
+  io.observe(observer.current);
+
+  return () => io.disconnect();
+}, [blogs, page, hasMore, loading]);
+ 
+ 
+ 
+ 
+ 
   // State to hold companies data (initialized with static data)
  
 
@@ -68,11 +134,12 @@ const [blogs, setBlogs] = useState([]);
 
                       {/* Blog list: 3 columns per row on large screens, 2 rows (6 cards) */}
                       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {blogs.map((data, i) => (
-                          <Link href={`/blog/${data.slug}`} key={i}>
-                            <article
-                              className="bg-white border border-gray-100 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-transform duration-150"
-                            >
+                       {blogs.map((data, i) => (
+  <Link href={`/blog/${data.slug}`} key={data.slug}>
+    <article
+      ref={i === blogs.length - 1 ? observer : null}
+      className="bg-white border border-gray-100 rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-transform duration-150"
+    >
                               <div className="w-full h-40 bg-gray-100 overflow-hidden">
                                 <Image
                                   src={data.banner}
@@ -101,13 +168,23 @@ const [blogs, setBlogs] = useState([]);
                             </article>
                           </Link>
                         ))}
-                      </div>
+                     </div>
 
-                    </section>
+{/* <div ref={observer} className="h-5"></div> */}
+
+{loading && (
+  <div className="text-center py-5">
+    Loading...
+  </div>
+)}
+
+</section>
                     </div>
                 </main>
       
                 <Footer />
+            
             </div>
+            
   );
 }
