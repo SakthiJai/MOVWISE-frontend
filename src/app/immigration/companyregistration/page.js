@@ -16,336 +16,37 @@ import { set } from "react-hook-form";
 export default function Companyregistration() {
 let audience_target = ["Individuals", "Businesses"]
 let category_types=["general, visit, study, work, family, settlement, citizenship, appeals, protection, euss, bno, sponsor, cos, compliance"]
-let Category_service =  [
-  {
-    "id": 1,
-    "service_code": "CON",
-    "service_name": "Initial Consultation",
-    "category": "General",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "N/A",
-    "service_support":"false"
-  },
-  {
-    "id": 2,
-    "service_code": "VIS",
-    "service_name": "Standard Visitor Visa",
-    "category": "Visit",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£115 - £200",
-    "service_support":"false"
-  },
-  {
-    "id": 3,
-    "service_code": "STS",
-    "service_name": "Short-Term Study Visa",
-    "category": "Study",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£200",
-    "service_support":"false"
-  },
-  {
-    "id": 4,
-    "service_code": "STU",
-    "service_name": "Student Visa",
-    "category": "Study",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£490",
-    "service_support":"false"
-  },
-  {
-    "id": 5,
-    "service_code": "GRAD",
-    "service_name": "Graduate Visa",
-    "category": "Study",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£822",
-    "service_support":"false"
-  },
-  {
-    "id": 6,
-    "service_code": "SKW",
-    "service_name": "Skilled Worker Visa",
-    "category": "Work",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£719 - £1,500",
-    "service_support":"false"
-  },
-  {
-    "id": 7,
-    "service_code": "GLO",
-    "service_name": "Global Talent Visa",
-    "category": "Work",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£167 - £623",
-    "service_support":"false"
-  },
-  {
-    "id": 8,
-    "service_code": "INN",
-    "service_name": "Innovator Founder Visa",
-    "category": "Work",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£1,036",
-    "service_support":"false"
-  },
-  {
-    "id": 9,
-    "service_code": "ANC",
-    "service_name": "UK Ancestry Visa",
-    "category": "Family",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£637",
-    "service_support":"false"
-  },
-  {
-    "id": 10,
-    "service_code": "YMS",
-    "service_name": "Youth Mobility Scheme",
-    "category": "Work",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£298",
-    "service_support":"false"
-  },
-  {
-    "id": 11,
-    "service_code": "SPO",
-    "service_name": "Spouse/Partner Visa (First)",
-    "category": "Family",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£1,846",
-    "service_support":"false"
-  },
-  {
-    "id": 12,
-    "service_code": "SPX",
-    "service_name": "Spouse/Partner Visa (Extension)",
-    "category": "Family",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£1,048",
-    "service_support":"false"
-  },
-  {
-    "id": 13,
-    "service_code": "FIAN",
-    "service_name": "Fiancé(e) Visa",
-    "category": "Family",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£1,846",
-    "service_support":"false"
-  },
-  {
-    "id": 14,
-    "service_code": "DEP",
-    "service_name": "Dependent Visas",
-    "category": "Family",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£1,846",
-    "service_support":"false"
-  },
-  {
-    "id": 15,
-    "service_code": "ADR",
-    "service_name": "Adult Dependent Relative Visa",
-    "category": "Family",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£3,250",
-    "service_support":"false"
-  },
-  {
-    "id": 16,
-    "service_code": "ILR-F",
-    "service_name": "ILR - Family Route (SET M)",
-    "category": "Settlement",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£2,885",
-    "service_support":"false"
-  },
-  {
-    "id": 17,
-    "service_code": "ILR-W",
-    "service_name": "ILR - Work Route (SET O)",
-    "category": "Settlement",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£2,885",
-    "service_support":"false"
-  },
-  {
-    "id": 18,
-    "service_code": "ILR-L",
-    "service_name": "ILR - Long Residence (10+ yrs)",
-    "category": "Settlement",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£2,885",
-    "service_support":"false"
-  },
-  {
-    "id": 19,
-    "service_code": "CIT-N",
-    "service_name": "British Citizenship - Naturalisation",
-    "category": "Citizenship",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£1,580"
-  },
-  {
-    "id": 20,
-    "service_code": "CIT-R",
-    "service_name": "British Citizenship - Registration",
-    "category": "Citizenship",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£1,580"
-  },
-  {
-    "id": 21,
-    "service_code": "AR",
-    "service_name": "Administrative Review",
-    "category": "Appeals",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£80 - £120",
-    "service_support":"false"
-  },
-  {
-    "id": 22,
-    "service_code": "APP",
-    "service_name": "Appeal Representation (First-Tier)",
-    "category": "Appeals",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£140",
-    "service_support":"false"
-  },
-  {
-    "id": 23,
-    "service_code": "JR",
-    "service_name": "Judicial Review",
-    "category": "Appeals",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£154 - £225",
-    "service_support":"false"
-  },
-  {
-    "id": 24,
-    "service_code": "BAIL",
-    "service_name": "Immigration Bail Applications",
-    "category": "Appeals",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£80"
-  },
-  {
-    "id": 25,
-    "service_code": "ASYL",
-    "service_name": "Asylum Application",
-    "category": "Protection",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£0"
-  },
-  {
-    "id": 26,
-    "service_code": "EUSS-P",
-    "service_name": "EUSS - Pre-Settled/Settled",
-    "category": "EUSS",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£0 - £80",
-    "service_support":"false"
-  },
-  {
-    "id": 27,
-    "service_code": "EUSS-F",
-    "service_name": "EUSS - Family Permit",
-    "category": "EUSS",
-    "target_audience": "Individuals",
-    "home_office_fee_ref": "£80 - £180",
-    "service_support":"false"
-  },
-  {
-    "id": 28,
-    "service_code": "BNO",
-    "service_name": "BN(O) Status Holder Visa",
-    "category": "BNO",
-    "target_audience": "Individuals",
-    "service_support":"false",
-    "home_office_fee_ref": "£180 - £250"
-  },
-  {
-    "id": 29,
-    "service_code": "SPL",
-    "service_name": "Sponsor Licence Application",
-    "category": "Sponsor",
-    "target_audience": "Businesses",
-    "home_office_fee_ref": "£536 - £1,476",
-    "service_support":"false"
-  },
-  {
-    "id": 30,
-    "service_code": "SPR",
-    "service_name": "Sponsor Licence Renewal/Re-rating",
-    "category": "Sponsor",
-    "target_audience": "Businesses",
-    "home_office_fee_ref": "£536 - £1,476"
-  },
-  {
-    "id": 31,
-    "service_code": "SPC",
-    "service_name": "Sponsor Licence Compliance Audit",
-    "category": "Sponsor",
-    "target_audience": "Businesses",
-    "home_office_fee_ref": "N/A"
-  },
-  {
-    "id": 32,
-    "service_code": "SPA",
-    "service_name": "Sponsor Duty Action Plan",
-    "category": "Sponsor",
-    "target_audience": "Businesses",
-    "home_office_fee_ref": "N/A",
-    "service_support":"false"
-  },
-  {
-    "id": 33,
-    "service_code": "COS-D",
-    "service_name": "COS - Defined Allocation Request",
-    "category": "COS",
-    "target_audience": "Businesses",
-    "home_office_fee_ref": "£25",
-    "service_support":"false"
-  },
-  {
-    "id": 34,
-    "service_code": "COS-U",
-    "service_name": "COS - Undefined Assignment Advice",
-    "category": "COS",
-    "target_audience": "Businesses",
-    "home_office_fee_ref": "£25"
-  },
-  {
-    "id": 35,
-    "service_code": "BULK",
-    "service_name": "Skilled Worker - Bulk Applications",
-    "category": "Work",
-    "target_audience": "Businesses",
-    "home_office_fee_ref": "£719 - £1,500"
-  },
-  {
-    "id": 36,
-    "service_code": "RTS",
-    "service_name": "Right to Work Check Training & Audit",
-    "category": "Compliance",
-    "target_audience": "Businesses",
-    "home_office_fee_ref": "N/A",
-    "service_support":"false"
-  }
-]
-const [categoryVat, setCategoryVat] = useState({});
+let Category_service ;
 
-const [selectedServicesoption, setSelectedServicesoption] = useState(() =>
-  Category_service.map((item) => ({
-    ...item,
-    includeVat: false,
-    fees: "",
-  }))
-);
+
+const [categoryVat, setCategoryVat] = useState({});
+const [categoryServices, setCategoryServices] = useState([]);
+const [selectedServicesoption, setSelectedServicesoption] = useState();
 let service_error = ""
 
 console.log("check =>",selectedServicesoption)
+
+useEffect(() => {
+  const fetchServices = async () => {
+    const response = await getData(API_ENDPOINTS.Immigration_category_services);
+
+    const services = response.CategoryService;
+
+    if (Array.isArray(services)) {
+      setCategoryServices(services);
+
+      setSelectedServicesoption(
+        services.map((item) => ({
+          ...item,
+          includeVat: false,
+          fees: "",
+        }))
+      );
+    }
+  };
+
+  fetchServices();
+}, []);
 
 
   useEffect(() => {
@@ -397,13 +98,13 @@ const [selectedServiceIds, setSelectedServiceIds] = useState([]);
 
 const categories = [
   ...new Set(
-    Category_service
+    categoryServices
       .filter((service) => service.target_audience === selectedAudience)
       .map((service) => service.category)
-  )
+  ),
 ];
 
-const filteredServices = Category_service.filter(
+const filteredServices = categoryServices.filter(
   (service) =>
     service.target_audience === selectedAudience &&
     service.category === selectedCategory
@@ -491,9 +192,8 @@ const filteredServices = Category_service.filter(
       console.error("Error fetching languages:", error);
     }
   };
-  useEffect(() => {
-    fetchlanguages();
-  }, []);
+
+ 
 
   // const handleChangeLang = (selectedOptions = []) => {
   //      const hasNotRequired = selectedOptions.some(
@@ -556,6 +256,7 @@ useEffect(() => {
   };
 
   fetchLenders();
+  fetchlanguages();
 }, []);
 
 
@@ -710,6 +411,9 @@ useEffect(() => {
     }
   };
 
+
+
+
   // Handle image upload
     const handleImageChange = (e) => {
       setimageerror("");
@@ -832,47 +536,22 @@ setShowServicePopup(true);
     { value: "Remortgage", label: "Remortgage", id: 4 },
   ];
 
-  const toggleJurisdiction = (option) => {
-    setSelectedJurisdictions((prev) => {
-      prev = prev || []; // ensure array
+ 
+const savecompanydetails = async()=>{
 
-      const exists = prev.some((item) => item.value === option.value);
+  try{
+        const response = await postData(API_ENDPOINTS.Immigration_createCompany,formData);
+        console.log(response);
+  }
+  catch(error){
+    console.log("Error saving company details:", error);
+  }
+   
+  
 
-      const updated = exists
-        ? prev.filter((item) => item.value !== option.value)
-        : [...prev, option];
+setShowServicePopup(false)
+}
 
-      handleChange({
-        name: "regions",
-        value: updated.map((x) => x.value),
-      });
-
-       // Clear error
-    setErrors((prevErr) => ({ ...prevErr, jurisdictions: "" }));
-
-      return updated;
-    });
-  };
-
-
-const togglesercice = (opt) => {
-  setSelectedServices((prev) => {
-    const exists = prev.some((item) => item.value === opt.value);
-
-    const updated = exists
-      ? prev.filter((item) => item.value !== opt.value)
-      : [...prev, opt];
-
-    // Update form
-    const values = updated.map((x) => x.id);
-    handleChange({ name: "service_id", value: values });
-
-    // Clear error using the SAME key as validation
-    setErrors((prevErr) => ({ ...prevErr, services: "" }));
-
-    return updated;
-  });
-};
 
 
   return (
@@ -1373,7 +1052,7 @@ const togglesercice = (opt) => {
 
         <button
           type="button"
-          onClick={() => setShowServicePopup(false)}
+          
           className="text-2xl text-gray-500 hover:text-gray-800"
           aria-label="Close popup"
         >
@@ -1416,10 +1095,7 @@ const togglesercice = (opt) => {
 
         <button
           type="button"
-          onClick={() => {
-            setShowServicePopup(false);
-            // Continue with final API submission here
-          }}
+          onClick={() => savecompanydetails()}
           className="rounded-full bg-[#1E5C3B] px-6 py-2 text-white"
         >
           Confirm and Submit
