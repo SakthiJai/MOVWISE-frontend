@@ -626,31 +626,37 @@ useEffect(() => {
                         </h2>
 
                       <div className="mt-5 flex flex-col gap-5">
-                        <div>
-                          <label className="block text-sm font-medium text-[#6A7682] mb-2">
+                        <fieldset>
+                          <legend className="block text-sm font-medium text-[#6A7682] mb-2">
                             Target Audience<span className="text-red-500">*</span>
-                          </label>
+                          </legend>
 
-                          <div className="flex gap-3">
+                          <div className="flex flex-wrap gap-3">
                             {["Individuals", "Businesses"].map((audience) => (
-                              <button
+                              <label
                                 key={audience}
-                                type="button"
-                                onClick={() => {
-                                  setSelectedAudience(audience);
-                                  setSelectedCategory("");
-                                }}
-                                className={`px-5 py-2 border rounded-md ${
+                                className={`flex min-w-[150px] cursor-pointer items-center gap-3 rounded-md border px-5 py-3 transition-colors ${
                                   selectedAudience === audience
-                                    ? "bg-[#1E5C3B] text-white"
-                                    : "bg-white text-[#6A7682]"
+                                    ? "border-[#1E5C3B] bg-[#F0F7F3] text-[#1E5C3B]"
+                                    : "border-gray-300 bg-white text-[#6A7682] hover:border-[#1E5C3B]"
                                 }`}
                               >
-                                {audience}
-                              </button>
+                                <input
+                                  type="radio"
+                                  name="targetAudience"
+                                  value={audience}
+                                  checked={selectedAudience === audience}
+                                  onChange={() => {
+                                    setSelectedAudience(audience);
+                                    setSelectedCategory("");
+                                  }}
+                                  className="h-4 w-4 accent-[#1E5C3B]"
+                                />
+                                <span className="text-sm font-medium">{audience}</span>
+                              </label>
                             ))}
                           </div>
-                        </div>
+                        </fieldset>
 
                         {selectedAudience && (
                           <div>
@@ -687,46 +693,47 @@ useEffect(() => {
                             </label>
 
                             <div className="border rounded-md overflow-hidden">
-                              <div className="grid grid-cols-2 gap-4 bg-gray-100 p-3 font-medium text-[#6A7682]">
+                              <div className="bg-gray-100 p-3 font-medium text-[#6A7682]">
                                 <div>Service Name</div>
                               </div>
 
-                              {filteredServices.map((service) => {
-                                const isSelected = selectedServiceIds.includes(service.id);
+                              <div className="grid grid-cols-1 gap-3 p-3 sm:grid-cols-2 lg:grid-cols-3">
+                                {filteredServices.map((service) => {
+                                  const isSelected = selectedServiceIds.includes(service.id);
 
-                                return (
-                                  <div
-                                    key={service.id}
-                                    className="grid grid-cols-3 gap-4 items-center border-t p-3"
-                                  >
-                                    <label className="flex items-center gap-2 text-[#6A7682]">
-                                      <input
-                                        type="checkbox"
-                                        checked={isSelected}
-                                        onChange={(event) => {
-                                          const includeService = event.target.checked;
+                                  return (
+                                    <div
+                                      key={service.id}
+                                      className="flex items-center rounded-md border border-gray-200 p-3"
+                                    >
+                                      <label className="flex items-center gap-2 text-[#6A7682]">
+                                        <input
+                                          type="checkbox"
+                                          checked={isSelected}
+                                          onChange={(event) => {
+                                            const includeService = event.target.checked;
 
-                                          setSelectedServiceIds((previous) =>
-                                            includeService
-                                              ? [...previous, service.id]
-                                              : previous.filter((id) => id !== service.id)
-                                          );
+                                            setSelectedServiceIds((previous) =>
+                                              includeService
+                                                ? [...previous, service.id]
+                                                : previous.filter((id) => id !== service.id)
+                                            );
 
-                                          setSelectedServicesoption((previous) =>
-                                            previous.map((item) =>
-                                              item.id === service.id
-                                                ? { ...item, service_support: includeService }
-                                                : item
-                                            )
-                                          );
-                                        }}
-                                      />
-                                      <span>{service.service_name}</span>
-                                    </label>
-                                  </div>
-                                  
-                                );
-                              })}
+                                            setSelectedServicesoption((previous) =>
+                                              previous.map((item) =>
+                                                item.id === service.id
+                                                  ? { ...item, service_support: includeService }
+                                                  : item
+                                              )
+                                            );
+                                          }}
+                                        />
+                                        <span>{service.service_name}</span>
+                                      </label>
+                                    </div>
+                                  );
+                                })}
+                              </div>
 
                             </div>
                           </div>

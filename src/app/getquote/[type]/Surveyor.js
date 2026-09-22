@@ -345,7 +345,7 @@ export default function Surveyor() {
       placeholder="City"
       value={formData.city}
       onChange={(e) => handleChange("city", e.target.value)}
-      className="w-full rounded-2xl border border-gray-300 px-4 py-3 text-sm"
+                                className=" hover:border-[#1E5C3B]  outline-none block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
     />
 
   <select
@@ -385,7 +385,7 @@ export default function Surveyor() {
         handleChange("propertyValue", e.target.value)
       }
       placeholder="Enter property value"
-      className="w-full rounded-2xl border border-gray-300 px-4 py-3 text-sm"
+       className=" hover:border-[#1E5C3B]  outline-none block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
     />
      {errors.propertyValue && (
     <p className="text-red-500 text-xs mt-1">
@@ -408,8 +408,9 @@ export default function Surveyor() {
              appearance-none
              focus:outline-none focus:ring-2 focus:ring-[#1E5C3B] focus:border-[#1E5C3B]
              focus:shadow-none
-             ${formData.surveyType ? "text-[#1E5C3B]" : "text-gray-400"}`}
->
+             ${formData.surveyType ? "text-gray-900" : "text-gray-400"}`}
+>                   
+
   <option value="" disabled hidden>
     Choose a survey type
   </option>
@@ -488,8 +489,9 @@ export default function Surveyor() {
     }
     placeholder="Enter instructions"
     rows={4}
-    className="w-full rounded-2xl border border-gray-300 px-4 py-3 text-sm resize-none"
+    className="w-full rounded-2xl border border-gray-300 px-4 py-3 text-sm resize-none text-gray-900"
   />
+
 </div>
 {/* <h1 className="mb-6 text-3xl font-semibold text-gray-900">
     Personal Details
