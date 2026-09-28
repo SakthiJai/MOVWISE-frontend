@@ -475,6 +475,9 @@ cloned.querySelectorAll('.sales-pdf-summary').forEach(el => {
           const isPdfQuoteHeading = originalClasses.includes('pdf-quote-heading');
           const isPdfPropertyHeading = originalClasses.includes('pdf-property-heading');
           const isPdfFeeHeading = originalClasses.includes('pdf-fee-heading');
+          if (isPdfQuoteHeading) {
+            el.style.fontSize = '20px';
+          }
           el.style.textAlign = isPdfLogoCell || isPdfQuoteHeading || isPdfPropertyHeading || isPdfFeeHeading ? 'center' : 'left';
 
           if (originalClasses.includes('text-emerald-600') || isLegalFeesRow || isFinalTotalRow) {
