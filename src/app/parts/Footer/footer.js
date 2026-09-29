@@ -73,6 +73,9 @@ export default function Footer(){
     };
   }, [resetIdleTimer]);
 // ...existing code...
+
+  const [type, setType] = useState(false);
+ 
     
     return(
             <footer className="bg-gray-800 text-gray-400 py-12 font relative-z-10">
@@ -94,9 +97,9 @@ export default function Footer(){
                     const userId = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
                     e.preventDefault();
                     if (userId) {
-                      
                       router.push('/#quote_type');
                     } else {
+                       setType(1);
                       setModalopen(true);
                     }
                   }}
@@ -104,9 +107,26 @@ export default function Footer(){
                 >
                   <PrimaryCAT text="For Login" />
                 </div>
+                 {/* <div 
+                  onClick={(e) => {
+                    localStorage.removeItem("service");
+                    const userId = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+                    e.preventDefault();
+                    if (userId) {
+                      
+                      router.push('/#quote_type');
+                    } else {
+                      setType(3);
+                      setModalopen(true);
+                    }
+                  }}
+                  className="text-blue-500 underline"
+                >
+                  <PrimaryCAT text="For Immigration Login" />
+                </div> */}
                 </Link>
         {modalopen && (
-                        <Signinmodal closeModal={closeModal} partnerloginshow={partnerloginshow} ></Signinmodal>
+                        <Signinmodal closeModal={closeModal} partnerloginshow={partnerloginshow} type={type} ></Signinmodal>
                         )}</li>
               <li><Link href="/components/About" className="hover:text-amber-500">About Us</Link></li>
               <li><Link href="/#contact" className="hover:text-amber-500">Contact</Link></li>

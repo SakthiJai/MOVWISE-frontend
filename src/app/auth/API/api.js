@@ -1,5 +1,5 @@
 // ✅ Base URL for your backend
-const BASE_URL = "https://admin.movwise.com/api";
+  const BASE_URL = "https://admin.movwise.com/api";
 
 //const BASE_URL = "http://localhost:5000/api";
 export const config = {
@@ -16,7 +16,7 @@ export const API_ENDPOINTS = {
   lenders: `${BASE_URL}/lenders`,
   register: `${BASE_URL}/register`,
   login:`${BASE_URL}/login`,
-    remortages:`${BASE_URL}/remortgages`,
+  remortages:`${BASE_URL}/remortgages`,
     sales:`${BASE_URL}/sales`,
     createQuote:`${BASE_URL}/create-quote`,
     // quotesfilter:`${BASE_URL}/quotes/filter`,
@@ -48,7 +48,18 @@ export const API_ENDPOINTS = {
      blogDetail:`${BASE_URL}/blog`,
      statusupdate:`${BASE_URL}/quotes-updates-status`,
      sendinstructmail:`${BASE_URL}/sendinstructmail`,
-     createsurveyor:`${BASE_URL}/createsurveyor`
+     createsurveyor:`${BASE_URL}/createsurveyor`,       
+
+     //NEW API FOR MOVWISE
+     partnervalidation:`${BASE_URL}/partnervalidation`,
+
+
+
+      // IMMIGRATION
+
+      Immigration_category_services: `${BASE_URL}/immigration-category-services`,
+      Immigration_createCompany: `${BASE_URL}/createImmigrationCompany`,
+      Immigration_createUser:`${BASE_URL}/companyuserservices`
 }
   // add more endpoints here
 

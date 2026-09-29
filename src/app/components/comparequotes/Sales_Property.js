@@ -164,7 +164,7 @@ return (
                                   maxWidth: '100%',
                                   overflow: 'auto'
                                 }}>
-      <h5 className="col-span-1 md:col-span-3 text-lg font font-semibold text-emerald-600 mb-4 py-1 text-center pdf-quote-heading">Sales Quote</h5>
+      <h5 className="col-span-1 md:col-span-3 text-lg font font-semibold text-emerald-600 mb-4 py-1 text-center pdf-quote-heading">p</h5>
       <div className="py-2 font text-sm">
         <div className="text-start mb-4">
           <h3 className="text-lg font-semibold text-emerald-600">

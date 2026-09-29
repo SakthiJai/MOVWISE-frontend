@@ -273,7 +273,7 @@ const [loginformdata, setloginformdata] = useState({
         </div>
       </section>
         <div className=" scroll-mt-24 px-6 py-14 mt-5.5" id='quote_type'>
-        <h1 className="text-4xl font-extrabold text-center text-gray-900 mb-3 tracking-tight">
+        <h1 className="text-4xl font-extrabold text-center text-gray-900 mb-3 tracking-tight"id="get-quote">
           Choose Your Quote Type
         </h1>
         <p className="text-gray-600 text-center mb-12 text-lg">
@@ -281,7 +281,7 @@ const [loginformdata, setloginformdata] = useState({
         </p>
 
         {/* Card Row */}
-        <div className="flex flex-wrap gap-6 justify-center">
+        <div className="flex flex-wrap gap-6 justify-center" >
           {options.map((opt) => (
             <div onClick={() => handleSelect(opt.page,opt.service_id)}
               key={opt.label} style={{ cursor: "pointer" }}
@@ -422,7 +422,15 @@ const [loginformdata, setloginformdata] = useState({
         <option key={index} className='text-black'>{lang.language_name}</option>
       ))}
                   </select>
-                  <button className="bg-emerald-600 text-white py-2 px-4 rounded-lg hover:bg-emerald-700">Search</button>
+                  <button className="bg-emerald-600 text-white py-2 px-4 rounded-lg hover:bg-emerald-700"
+                    onClick={() => {
+    document.getElementById("get-quote")?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  }}
+  style={{ cursor: "pointer" }}>
+    Search</button>
                 </div>
                 <p className="mt-6 text-sm text-gray-500 font-semibold">Languages Available: English, Spanish, Tamil, Hindi, Malayalam, Telugu, Polish, Punjabi, Urdu, Arabic, Romanian, and more.</p>
               </div>

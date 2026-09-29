@@ -203,7 +203,7 @@ setimageerror("");
     case 5:
       return "Quote is under progress";
     case 6:
-      return "Rejected by you";
+      return "Approved by Conveyancer";
     case 7:
       return "Quote is about to completed";
     default:

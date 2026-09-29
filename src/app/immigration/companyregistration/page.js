@@ -24,7 +24,7 @@ const [categoryServices, setCategoryServices] = useState([]);
 const [selectedServicesoption, setSelectedServicesoption] = useState();
 let service_error = ""
 
-console.log("check =>",selectedServicesoption)
+
 
 useEffect(() => {
   const fetchServices = async () => {
@@ -95,6 +95,9 @@ const [selectedServices, setSelectedServices] = useState([]);
 const [showServicePopup, setShowServicePopup] = useState(false);
 const [selectedServiceIds, setSelectedServiceIds] = useState([]);
 
+const fetched_Target_audience = [
+  ...new Set(categoryServices.map(item => item.target_audience))
+];
 
 const categories = [
   ...new Set(
@@ -836,26 +839,31 @@ setShowServicePopup(false)
       Target Audience<span className="text-red-500">*</span>
     </label>
 
-    <div className="flex gap-3">
-      {["Individuals", "Businesses"].map((audience) => (
-        <button
-          key={audience}
-          type="button"
-          onClick={() => {
-            setSelectedAudience(audience);
-            setSelectedCategory("");
-        
-          }}
-          className={`px-5 py-2 border rounded-md ${
-            selectedAudience === audience
-              ? "bg-[#1E5C3B] text-white"
-              : "bg-white text-[#6A7682]"
-          }`}
-        >
-          {audience}
-        </button>
-      ))}
-    </div>
+      <div className="flex flex-wrap gap-3">
+                            {fetched_Target_audience.map((audience) => (
+                              <label
+                                key={audience}
+                                className={`flex min-w-[150px] cursor-pointer items-center gap-3 rounded-md border px-5 py-3 transition-colors ${
+                                  selectedAudience === audience
+                                    ? "border-[#1E5C3B] bg-[#F0F7F3] text-[#1E5C3B]"
+                                    : "border-gray-300 bg-white text-[#6A7682] hover:border-[#1E5C3B]"
+                                }`}
+                              >
+                                <input
+                                  type="radio"
+                                  name="targetAudience"
+                                  value={audience}
+                                  checked={selectedAudience === audience}
+                                  onChange={() => {
+                                    setSelectedAudience(audience);
+                                    setSelectedCategory("");
+                                  }}
+                                  className="h-4 w-4 accent-[#1E5C3B]"
+                                />
+                                <span className="text-sm font-medium">{audience}</span>
+                              </label>
+                            ))}
+                          </div>
   </div>
 
 
@@ -905,6 +913,7 @@ setShowServicePopup(false)
 </div>
 
         {/* Service Rows */}
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
        {filteredServices.map((service) => {
   const selected = selectedServicesoption.find(
     (item) => item.id === service.id
@@ -915,7 +924,7 @@ setShowServicePopup(false)
   return (
     <div
       key={service.id}
-      className="grid grid-cols-3 gap-4 items-center border-t p-3"
+      className="flex items-center rounded-md  p-3"
     >
       <label className="flex items-center gap-2 text-[#6A7682]">
         <input
@@ -950,6 +959,7 @@ setShowServicePopup(false)
     </div>
   );
 })}
+</div>
 
 <div className="flex items-center gap-2 border-t bg-gray-50 p-3">
 <input

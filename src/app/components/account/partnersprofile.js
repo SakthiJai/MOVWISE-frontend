@@ -698,11 +698,10 @@ const handleImageChange = (e) => {
 
   // --- Mock Data for Illustration (Unchanged) ---
   const userDetails = {
-    name: "DevaPrasad A.S",
+    name: "Prasad A.S",
     email: "deva@example.com",
   };
 
-  const quotesList = [{ id: 1, text: "ABC Legal Hub", status: "Status" }];
   // -----------------------------------
 
   function handlechangepage(val) {
@@ -809,7 +808,7 @@ const handleImageChange = (e) => {
       <div className="space-y-4">
         <div className="flex items-center space-x-4">
           <div className="w-16 h-16 bg-blue-200 rounded-full flex items-center justify-center text-blue-800 text-2xl font-bold">
-            {userDetails.name[0]}
+            {formData.company_name}
           </div>
           <div>
             <p className="text-xl font-semibold text-gray-900">
@@ -1249,7 +1248,7 @@ const handleImageChange = (e) => {
 
         <aside className="govt_by_scheme md:col-span-1 govt_by_scheme p-6 h-auto max-h-80 bg-white shadow-lg rounded-xl font">
           <h3 className="text-xl font-bold text-gray-800 mb-4 border-b pb-2">
-            {userDetails.name}
+            {formData.company_name}
           </h3>
           <div className="flex md:flex-col space-x-4 md:space-x-0 md:space-y-2">
             <span
@@ -1323,8 +1322,8 @@ const handleImageChange = (e) => {
       companydetails={companyitems || []}
       quoteId={selectedQuoteId}
       quote_ref_number={QuoteRefNumber}
-
     />
+    
   </div>
 </div>
 )}

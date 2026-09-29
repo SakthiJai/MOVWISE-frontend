@@ -302,7 +302,7 @@ useEffect(() => {
       console.log("API Response:", response);
 
       if (response.code == 200) {
-        localStorage.clear();
+       
         setShowSuccess(true); // show success modal
       } else {
         alert(`Failed: ${response.data?.message || "Server error"}`);

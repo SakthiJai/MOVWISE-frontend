@@ -59,6 +59,7 @@ export default function Companyregistration() {
   const [notes, setNotes] = useState("");
 
   const [jurisdictions, setjuisdictions] = useState([]);
+ const [duplicateMessage, setDuplicateMessage] = useState("");
 
 
   const fetchlanguages = async () => {
@@ -351,15 +352,7 @@ useEffect(() => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // ✅ Handle submit
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validate()) {
-      console.log("✅ Valid form:", formData);
-      alert("");
-      // router.push("/next-page"); // if you want navigation
-    }
-  };
+  
 
   // Handle image upload
     const handleImageChange = (e) => {
@@ -391,7 +384,7 @@ useEffect(() => {
     };
 
   // Handle Continue button click
-  const handleContinue = () => {
+  const  handleContinue = async () => {
     console.log("inside continue");
     const newErrors = {};
 
@@ -457,18 +450,58 @@ useEffect(() => {
     // Logo validation
 
     setErrors(newErrors);
-    console.log(errors);
+   
     // Navigate only if valid
     if (Object.keys(newErrors).length === 0) {
-      updateCompanyData({ ...formData, logo: image });
-      localStorage.removeItem("companyData");
-      localStorage.setItem("companyData", JSON.stringify({ ...formData }));
-      console.log("inside navigation");
-      router.push("/quotationdetails");
+
+    const res = await partneremailandphonevalidation();
+
+if (!res) return;
+if (!res) return;
+
+if (res.duplicate) {
+  const emailDuplicate = Boolean(res.email_duplicate);
+  const phoneDuplicate = Boolean(res.phone_duplicate);
+
+  let message = "The email ID or phone number is already registered.";
+
+  if (emailDuplicate && phoneDuplicate) {
+    message = "Both the email ID and phone number are already registered.";
+  } else if (emailDuplicate) {
+    message = "This email ID is already registered.";
+  } else if (phoneDuplicate) {
+    message = "This phone number is already registered.";
+  }
+
+  setDuplicateMessage(message);
+  return;
+}
+
+updateCompanyData({ ...formData, logo: image });
+localStorage.removeItem("companyData");
+localStorage.setItem("companyData", JSON.stringify({ ...formData }));
+router.push("/quotationdetails");
+      
+ 
     }
-    console.log(errors);
-    console.log(API_BASE_URL)
+  
   };
+
+ async function partneremailandphonevalidation() {
+  try {
+    const res = await postData(API_ENDPOINTS.partnervalidation, {
+      email: formData.email,
+      phone_number: formData.phone_number
+    });
+
+ 
+
+    return res; 
+  } catch (e) {
+    console.log("Validation error:", e);
+    return null;
+  }
+}
 
   const serviceoptions = [
     { value: "Purchase", label: "Purchase", id: 2 },
@@ -941,6 +974,77 @@ const togglesercice = (opt) => {
         </main>
         {/* Bottom Actions */}
       </div>
+
+      {duplicateMessage.length > 0 && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="duplicate-modal-title"
+      className="relative w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
+    >
+      <button
+        type="button"
+        onClick={() => setDuplicateMessage([])}
+        aria-label="Close"
+        className="absolute right-4 top-3 text-2xl text-gray-500 hover:text-gray-800"
+      >
+        &times;
+      </button>
+
+      <h2 id="duplicate-modal-title" className="pr-8 text-lg font-semibold text-gray-900">
+        Details already registered
+      </h2>
+
+      <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-gray-700">
+       {duplicateMessage && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="duplicate-modal-title"
+      className="relative w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
+    >
+      <button
+        type="button"
+        onClick={() => setDuplicateMessage("")}
+        aria-label="Close"
+        className="absolute right-4 top-3 text-2xl text-gray-500 hover:text-gray-800"
+      >
+        &times;
+      </button>
+
+      <h2
+        id="duplicate-modal-title"
+        className="pr-8 text-lg font-semibold text-gray-900"
+      >
+        Details already registered
+      </h2>
+
+      <p className="mt-3 text-sm text-gray-700">{duplicateMessage}</p>
+
+      <button
+        type="button"
+        onClick={() => setDuplicateMessage("")}
+        className="mt-5 rounded bg-[#1E5C3B] px-4 py-2 text-white"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
+      </ul>
+
+      <button
+        type="button"
+       onClick={() => setDuplicateMessage("")}
+        className="mt-5 rounded bg-[#1E5C3B] px-4 py-2 text-white"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
       <Footer />
     </div>
   );

@@ -14,53 +14,11 @@ import Signinmodal from "../../components/utility/Singingmodal";
 // src/components/ServiceSelection.js
 
 export default function ServiceSelection() {
-  const stageOptions = [
-  { value: "Just researching / budgeting", label: "Just researching / budgeting" },
-  { value: "Have received an offer", label: "Have received an offer" },
-  { value: "Sale agreed", label: "Sale agreed" }
-];
-const sharedOwnershipOptions = [
-  {value: "No", label: "Not Applicable"},
-  { value: "Yes (housing association)", label: "Yes (housing association)" },
-  { value: "Yes (Help To Buy)", label: "Yes (Help To Buy)" },
-  { value: "No", label: "No" },
-];
-    const addition_applicable = [ 
-      {label:"Not Applicable", value:""},
-  { label: "Islamic Mortgage", value: "Islamic Mortgage" },
-  { label: "Equity Transfer", value: "Equity Transfer" },
-  { label: "Expats / Overseas Client", value: "Expats / Overseas Client" },
-  {label:"Right to Buy", value:"Right to Buy"}
-];
+
 
 const partnerloginshow=false;
 
-const sharedOwnershipStyles = {
-  control: (base, state) => ({
-    ...base,
-    minHeight: "44px",
-    borderRadius: "12px",
-    borderColor: state.isFocused ? "#1E5C3B" : "#D1D5DB",
-    boxShadow: state.isFocused ? "0 0 0 1px #1E5C3B" : "none",
-    "&:hover": {
-      borderColor: "#1E5C3B",
-    },
-    fontSize: "14px",
-    fontWeight: 500,
-  }),
-  option: (base, state) => ({
-    ...base,
-   backgroundColor: state.isFocused
-      ? "#F6CE53"
-      : "white",
-    color: "#111",
-    cursor: "pointer",
-  }),
-  singleValue: (base) => ({
-    ...base,
-    color: "#111827",
-  }),
-};
+
 const selectStyles = {
   control: (base, state) => ({
     ...base,
@@ -83,26 +41,7 @@ const selectStyles = {
     cursor: "pointer",
   }),
 };
-const lender_languagestyles = {
-  option: (base, state) => ({
-    ...base,
-    backgroundColor: state.isSelected
-      ? "#F6CE53"
-      : state.isFocused
-      ? "#F6CE53"
-      : "white",
-    color: "#111",
-    cursor: "pointer",
-    ":active": {
-      backgroundColor: "#F6CE53",
-    },
-  }),
 
-  singleValue: (base) => ({
-    ...base,
-    color: "#111827",
-  }),
-};
   const formFieldRefs = useRef({});
    const [addresskey,setaddresskey]=useState("");
   const [showAddressLines, setShowAddressLines] = useState(false);
@@ -111,38 +50,16 @@ const lender_languagestyles = {
         { value: "Not Known", label: "Not Known", id: 0 },
       ]);
 
-const [languagepreference, setlanguagepreference] = useState(" ");
 
-  const options = ["1", "2", "3", "4", "5" , "5+"];
+
 
   const [formData, setFormData] = useState({
-    "sales_stages":"",
- "sales_address": "",
- "sales_address_line1": "",
-  "sales_address_line2": "",
-  "sales_country": "",
-  "sales_city": "",
-  sales_price: "",
-    //sales_no_of_bedrooms: "",
-  sales_no_of_bedrooms: options[0],
-    //sales_leasehold_or_free: "", 
-  sales_leasehold_or_free: "Leasehold", 
-    //sales_property_type: "",
-  sales_property_type: "Flat",
-  //shared_ownership: "",
-    //existing_mortgage:"yes",
-  existing_mortgage:0,
+   
   languages:"",
-  specal_instruction:"",
-  lenders:"",  
-  user_id:null,
-  service_type:null,
-  "addition_applicable" :"",
-  // sales_mode can be 'personal' or 'company'
-  sales_mode: "personal",
+ 
 });
 
-const [categoryVat, setCategoryVat] = useState({});
+
 const [categoryServices, setCategoryServices] = useState([]);
 const [selectedServicesoption, setSelectedServicesoption] = useState([]);
 const [selectedAudience, setSelectedAudience] = useState("");
@@ -173,6 +90,12 @@ useEffect(() => {
   fetchServices();
 }, []);
 
+
+const fetched_Target_audience = [
+  ...new Set(categoryServices.map(item => item.target_audience))
+];
+
+
 const categories = [
   ...new Set(
     categoryServices
@@ -186,24 +109,12 @@ const filteredServices = categoryServices.filter(
     service.target_audience === selectedAudience &&
     service.category === selectedCategory
 );
+
+
  console.log("formdata:" , selectedServicesoption)
 
 const [rawValue, setRawValue] = useState("");
-const handleUnknownPostcode = () => {
-  // 1️⃣ Condition: user clicked "I don’t know the postcode yet"
-  setShowAddressLines(true); // show address fields
 
-  // 2️⃣ Reset address-related fields
-  setFormData(prev => ({
-    ...prev,
-    [`sales_address`]: "",          // ← THIS is the missing one
-    [`selectedId`]: "",
-    [`sales_address_line1`]: "",
-    [`sales_address_line2`]: "",
-    [`sales_city`]: "",
-    [`sales_country`]: "",
-  }));
-};
  const closeModal = () => {
     console.log("closing...");
     setModalopen(false);
@@ -283,126 +194,50 @@ const handleSubmit = (e) => {
     // simple validation
     let newErrors = {};
  
-  
-  
-  if (!formData.sales_stages) {
-  newErrors.sales_stages = "Please select a stage";
-  }
-  
-  // Address validation - check based on whether manual address is being used
-  if (showAddressLines) {
-    // Manual address entry validation
-    if (!formData.sales_address_line1 || !formData.sales_address_line1.trim()) {
-      newErrors.sales_address_line1 = "Address line 1 is required";
-    }
-  }
-  
-  if (!formData.sales_country) {
-  newErrors.sales_country = "Please select a country";
-}
-
   if (!selectedLanguage || selectedLanguage.length === 0) {
     newErrors.preferLanguage = "Please select a language";
   }
 
-  if (!selectedLenders || selectedLenders.length === 0 && formData.existing_mortgage==1) {
-  newErrors.lenders = "Please select at least one lender";
-}
-// if(!formData.addition_applicable){
-//       newErrors.addition_applicable="please select addition_applicable"
-//     }
-
- 
-  /*if (!formData.sales_address.trim()) {
-    newErrors.address = "Property address is required";
-  } else if (formData.sales_address.trim().length < 5) {
-    newErrors.address = "Address must be at least 5 characters";
-  }*/
-
-  
-  if (!formData.sales_price) {
-    newErrors.sales_price = "Agreed sales price is required";
-  } else if (Number(formData.sales_price) <= 0) {
-    newErrors.sales_price = "Price must be a positive number";
-  }
-
- 
+   const selectedServices = selectedServicesoption.filter((service) =>
+  selectedServiceIds.includes(service.id)
+);
 
 
-  if (!formData.sales_leasehold_or_free) {
-    newErrors.sales_leasehold_or_free = "Please select leasehold or freehold";
-  }
-
- 
-  //   if (!formData.shared_ownership) {
-  //   newErrors.shared_ownership = "Please select a ownership";
-  // }
- const errorOrder = [
-      "sales_stages",
-      "sales_country",
-      "address",
-      "sales_price",
-      "sales_no_of_bedrooms",
-      "sales_leasehold_or_free",
-      "sales_property_type",
-     // "shared_ownership",
-      "existing_mortgage",
-      "preferLanguage",
-      "lenders",
-      "addition_applicable"
-    ];
-    for (const field of errorOrder) {
-      if (newErrors[field] || (field === "sales_country" && newErrors.sales_country) || (field === "address" && newErrors.address)) {
-        const refKey = (field === "sales_country" || field === "address") ? "sales_address" : field;
-        const element = formFieldRefs.current[refKey];
-        if (element) {
-          element.scrollIntoView({ behavior: "smooth", block: "center" });
-          break;
-        }
-      }
-    }
-
+if (selectedServices.length === 0) {
+  newErrors.service_error = "Please select at least one service";
+} 
 
    setErrors(newErrors);
-    
-  setFormData((prev) => ({ ...prev, ['service_type']: localStorage.getItem("service")}));
-    // if no errors, submit
-    if (Object.keys(newErrors).length === 0) {
-           // localStorage.removeItem("getquote");
-      formData.service_type=localStorage.getItem("service");
-      console.log(formData)
-       localStorage.setItem("getquote", JSON.stringify(formData));
-      console.log("✅ Form submitted:", formData);
-            localStorage.setItem("service", JSON.stringify(1));
 
-      //alert("Form submitted successfully!");
-      
-      if(localStorage.getItem("user")){
-        formData.user_id=localStorage.getItem("user");
-        localStorage.setItem("getquote", JSON.stringify(formData));
-         router.push("/components/comparequotes");
-      }
-      else{
-       setModalopen(true)
-      }
-      
-      
+  if (Object.keys(newErrors).length === 0) {
+  const updatedFormData = {
+    user_id: localStorage.getItem("user"),
+     languages: selectedLanguage.id,
+    services: selectedServices
+   
+  };
 
-    }
+  setFormData(updatedFormData);
+  console.log("updated formdata =>", updatedFormData);
 
+       saveuser(updatedFormData);
+}
+
+     console.log("formasdfasdfdata =>", formData);
+  
   };
    
 
-const handleContinue = (e) => {
-  e.preventDefault();
-console.log(formData)
-  if (validate()) {
-    console.log("✅ Valid form data:", formData);
-    
-  } else {
-    console.log("❌ Validation failed:", errors);
+   async function saveuser(formData){
+      try{
+        let res = await postData(API_ENDPOINTS.Immigration_createUser, formData);
+        console.log(res);
+      }
+      catch(e){
+        console.log(e);
+      }
   }
-};
+
 
     const [selectedLenders, setSelectedLenders] = useState([]);//imp
      const options_l = [
@@ -536,11 +371,7 @@ useEffect(() => {
        
        
 
-        // Initial state for the toggle buttons
-        const [scheme, setScheme] = useState("yes");
-        const [existing_mortgage, setexisting_mortgage] = useState("yes");
-        const [newBuild, setNewBuild] = useState("yes");
-        const [shared_ownership, setshared_ownership] = useState("yes");
+ 
 
   return (
                 <div className="min-h-screen bg-white font">
@@ -632,7 +463,7 @@ useEffect(() => {
                           </legend>
 
                           <div className="flex flex-wrap gap-3">
-                            {["Individuals", "Businesses"].map((audience) => (
+                            {fetched_Target_audience.map((audience) => (
                               <label
                                 key={audience}
                                 className={`flex min-w-[150px] cursor-pointer items-center gap-3 rounded-md border px-5 py-3 transition-colors ${
@@ -671,7 +502,7 @@ useEffect(() => {
                                   type="button"
                                   onClick={() => {
                                     setSelectedCategory(category);
-                                    setSelectedServiceIds([]);
+                                   
                                   }}
                                   className={`px-5 py-2 border rounded-md ${
                                     selectedCategory === category
@@ -704,7 +535,7 @@ useEffect(() => {
                                   return (
                                     <div
                                       key={service.id}
-                                      className="flex items-center rounded-md border border-gray-200 p-3"
+                                      className="flex items-center rounded-md  p-3"
                                     >
                                       <label className="flex items-center gap-2 text-[#6A7682]">
                                         <input
@@ -738,6 +569,34 @@ useEffect(() => {
                             </div>
                           </div>
                         )}
+
+                        <div className="space-y-4">
+                          <div ref={(element) => { formFieldRefs.current.preferLanguage = element; }}>
+                            <label className="block text-sm font-semibold text-gray-800 mb-1">
+                              Prefer solicitor in your first language? <span className="text-red-500">*</span>
+                            </label>
+                            <div className="mt-2">
+                              <Select
+                                options={lang}
+                                instanceId="language-select"
+                                value={selectedLanguage || formData.languages}
+                                styles={selectStyles}
+                                onChange={(selectedOption) => {
+                                  handleChangeLang(selectedOption);
+                              
+                                  if (errors.preferLanguage) {
+                                    setErrors((previous) => ({ ...previous, preferLanguage: "" }));
+                                  }
+                                }}
+                                placeholder="Choose languages..."
+                                className="text-black mt-2"
+                              />
+                            </div>
+                            <p className="text-[12px] mt-1 min-h-[16px] text-red-500">
+                              {errors.preferLanguage}
+                            </p>
+                          </div>
+                        </div>
                       </div>
       
   

@@ -59,6 +59,8 @@ export default function Quotationdetails() {
   const [remainingsupplement, setremainingsupplement] = useState([]);
   const [remainingdisbursement, setremainingdisbursement] = useState([]);
   const [remainingleashold, setremainingleashold] = useState([]);
+const [showBackConfirm, setShowBackConfirm] = useState(false);
+
 
   const modules = {
     toolbar: [
@@ -95,10 +97,7 @@ const INDIVIDUAL_SEARCHES = [
   "Environmental Search",
   "Water and Drainage Search",
 ];
-const isSearchPack = (row) => row.fee_type === SEARCH_PACK;
 
-const isIndividualSearch = (row) =>
-  INDIVIDUAL_SEARCHES.includes(row.fee_type);
 
 
 
@@ -126,7 +125,6 @@ const isIndividualSearch = (row) =>
           service_id:""
         }
        serviceId.service_id = storedData.service_id;
-console.log(serviceId);
         // Call both APIs in parallel
         const [response1, response2, response3] = await Promise.all([
           getData(API_ENDPOINTS.feecatgory),
@@ -1958,16 +1956,16 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
             <h1 className="bg-gray-50 px-4 py-2 font-semibold text-green-800 text-sm uppercase tracking-wide">
               Share your Notes Details
             </h1>
-            <div className="border border-gray-300 rounded-lg overflow-hidden">
-              <ReactQuill
-                theme="snow"
-                value={notesData}
-                onChange={setnotesData}
-                modules={modules}
-                formats={formats}
-                className="h-[150px] text-black"
-              />
-            </div>
+            <div className="border border-gray-300 rounded-lg">
+  <ReactQuill
+    theme="snow"
+    value={notesData}
+    onChange={setnotesData}
+    modules={modules}
+    formats={formats}
+    className="notes-editor text-black"
+  />
+</div>
           </div>
         </div>
 
@@ -1976,11 +1974,12 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
 
       <div className=" m-10 flex justify-end gap-4 max-w-screen">
         <button
-          onClick={() => router.back()}
-          className="font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1B1D21]"
-        >
-          Back
-        </button>
+  type="button"
+  onClick={() => setShowBackConfirm(true)}
+  className="font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full border border-[#E5E7EB] bg-white text-[#1B1D21]"
+>
+  Back
+</button>
         <button
           className="font-outfit font-semibold text-[16px] h-[44px] px-8 inline-flex items-center justify-center rounded-full bg-[#1E5C3B] text-[#EDF4EF]"
           onClick={handleSubmit}
@@ -2847,6 +2846,50 @@ const handlePriceChange = (feesCategoryId, rowIndex, field, value) => {
           </div>
         </div>
       )}
+
+      {showBackConfirm && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="back-confirm-title"
+      className="relative w-full max-w-md rounded-lg bg-white p-6 shadow-xl"
+    >
+      <button
+        type="button"
+        onClick={() => setShowBackConfirm(false)}
+        aria-label="Close"
+        className="absolute right-4 top-3 text-2xl text-gray-500 hover:text-gray-800"
+      >
+        &times;
+      </button>
+
+      <h2 id="back-confirm-title" className="pr-8 text-lg font-semibold text-gray-900">
+        Leave this page?
+      </h2>
+      <p className="mt-3 text-sm text-gray-700">
+        Your quotation details will be lost if you go back.
+      </p>
+
+      <div className="mt-5 flex justify-end gap-3">
+        <button
+          type="button"
+          onClick={() => setShowBackConfirm(false)}
+          className="rounded border border-gray-300 px-4 py-2 text-gray-800"
+        >
+          Stay here
+        </button>
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="rounded bg-[#1E5C3B] px-4 py-2 text-white"
+        >
+          Go back
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 }

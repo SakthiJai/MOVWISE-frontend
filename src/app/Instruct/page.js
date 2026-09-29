@@ -92,15 +92,10 @@ function InstructContent() {
                 <CircleCheckBig className="mr-2 text-green-600" />
                 You will receive your detailed quotation shortly by email (Please check your Inbox, in case it&apos;s in your spam folder).
               </li>
-              <li className="flex items-center">
-                <CircleCheckBig className="mr-3 text-green-600 w-8 h-8" />
-                We appreciate your interest in Movwise services and remain committed to providing you with clear, efficient, and reliable support throughout this process.
-              </li>
+             
             </ul>
 
-            <p className="text-xl font-semibold text-emerald-800 border-t border-emerald-200 pt-4 mt-4">
-              Movwise-Trusted Partner price for complete peace of mind — especially when every property detail matters.
-            </p>
+          
           </div>
 
           {/* Property Details Section */}

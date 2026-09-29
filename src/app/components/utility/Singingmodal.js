@@ -3,9 +3,9 @@ import React, { useState, useEffect } from "react";
 import { getData, postData, API_ENDPOINTS } from "../../auth/API/api";
 import { useRouter } from "next/navigation";
 import { v4 as uuidv4 } from "uuid";
-import { Hand } from "lucide-react";
+import { Hand, X } from "lucide-react";
 
-export default function Signinmodal({ closeModal, partnerloginshow, onLoginSuccess, isSurveyorFlow = false }) {
+export default function Signinmodal({ closeModal, partnerloginshow, onLoginSuccess, isSurveyorFlow = false,type=1 }) {
   const router = useRouter();
   // console.log(page)
   const [loginformshow, setloginformshow] = useState(false);
@@ -231,6 +231,7 @@ export default function Signinmodal({ closeModal, partnerloginshow, onLoginSucce
         email: guestformsdata.guest_email,
         phone_number: guestformsdata.guest_phonenumber,
         guest_uuid: guest_uuid,
+        type: type
       };
       console.log(payload)
       const response = await postData(
@@ -297,7 +298,7 @@ export default function Signinmodal({ closeModal, partnerloginshow, onLoginSucce
           onClick={closeModal}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold leading-none"
         >
-          
+          <X />
         </button>
         {/* LEFT SIDE (Brand Section - 35%) */}
         <div className="text-center bg-gradient-to-br from-[#1E5C3B] to-green-600 text-white flex flex-col justify-between items-center md:items-start p-4 md:p-8">
@@ -335,7 +336,7 @@ export default function Signinmodal({ closeModal, partnerloginshow, onLoginSucce
           </div>
         </div>
 
-        {/* RIGHT SIDE (Content Section - 65%) */}
+      
         {!loginformshow && !guestformshow && (
           <div className="flex justify-center items-center min-h-[60vh] md:min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-4 md:p-6">
             <form
@@ -888,7 +889,7 @@ export default function Signinmodal({ closeModal, partnerloginshow, onLoginSucce
                   : "bg-gray-400 text-gray-200 cursor-not-allowed"
                   }`}
               >
-                Proceed
+                
               </button>
               <button
                 type="button"
