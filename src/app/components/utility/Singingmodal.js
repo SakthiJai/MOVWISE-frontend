@@ -293,7 +293,7 @@ export default function Signinmodal({ closeModal, partnerloginshow, onLoginSucce
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 md:p-4">
-      <div className="bg-white rounded-2xl shadow-2xl overflow-hidden w-full max-w-4xl h-auto max-h-[90vh] md:max-h-none grid grid-cols-1 md:grid-cols-[35%_65%] animate-scale-in relative mt-[60px] overflow-y-auto md:overflow-visible">
+      <div className="bg-white rounded-2xl shadow-2xl overflow-hidden  grid grid-cols-1 md:grid-cols-[35%_65%] animate-scale-in relative mt-20 overflow-y-auto md:overflow-visible">
         <button
           onClick={closeModal}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold leading-none"
@@ -350,7 +350,7 @@ export default function Signinmodal({ closeModal, partnerloginshow, onLoginSucce
               }}
               className="bg-white w-full max-w-md p-6 md:p-8 rounded-2xl shadow-lg border border-gray-200"
             >
-              <h2 className="text-lg md:text-xl font-bold text-[#1E5C3B] mb-4 md:mb-6 text-center">
+              <h2 className="text-lg md:text-xl font-bold text-[#1E5C3B] mb-1 md:mb-1 text-center">
                Users Please Fill Below Details
               </h2>
 
@@ -359,7 +359,7 @@ export default function Signinmodal({ closeModal, partnerloginshow, onLoginSucce
                   {loginError}
                 </p>
               )}
-              <div className="mb-3 md:mb-4">
+              <div className="mb-2 md:mb-2">
                 <label
                   htmlFor="Name"
                   className="block text-sm font-semibold text-gray-700 mb-2"
@@ -383,7 +383,7 @@ export default function Signinmodal({ closeModal, partnerloginshow, onLoginSucce
                   <p className="text-red-500 text-xs mt-1">{formErrors.firstname}</p>
                 )}
               </div>
-              <div className="mb-3 md:mb-4">
+              <div className="mb-2 md:mb-2">
               <label
                 htmlFor="Name"
                 className="block text-sm font-semibold text-gray-700 mb-2"
@@ -409,7 +409,7 @@ export default function Signinmodal({ closeModal, partnerloginshow, onLoginSucce
                 </p>
               )}
               </div>
-              <div className="mb-4 md:mb-5">
+              <div className="mb-2 md:mb-2">
                 <label
                   htmlFor="email"
                   className="block text-sm font-semibold text-gray-700 mb-2"
@@ -432,7 +432,7 @@ export default function Signinmodal({ closeModal, partnerloginshow, onLoginSucce
                   <p className="text-red-500 text-xs mt-1">{formErrors.guest_email}</p>
                 )}
               </div>
-              <div className="mb-4 md:mb-5">
+              <div className="mb-2 md:mb-2">
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Phone Number
                 </label>
@@ -606,7 +606,7 @@ export default function Signinmodal({ closeModal, partnerloginshow, onLoginSucce
                 </p>
               )}
               {/* Email */}
-              <div className="mb-4 md:mb-5">
+              <div className="mb-2 md:mb-2">
                 <label
                   htmlFor="email"
                   className="block text-sm font-semibold text-gray-700 mb-2"
@@ -631,7 +631,7 @@ export default function Signinmodal({ closeModal, partnerloginshow, onLoginSucce
               </div>
 
               {/* Password */}
-              <div className="mb-4 md:mb-6">
+              <div className="mb-2 md:mb-2">
                 <label
                   htmlFor="password"
                   className="block text-sm font-semibold text-gray-700 mb-2"
@@ -816,7 +816,7 @@ export default function Signinmodal({ closeModal, partnerloginshow, onLoginSucce
                   handleguestformchange("lastname", e.target.value)
                 }
                 autoComplete="family-name"
-                className="block w-full h-[40px] md:h-[44px] mb-3 md:mb-4 rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
+                className="block w-full h-[40px] md:h-[44px] rounded-lg border border-gray-300 px-3 text-[14px] text-gray-800 placeholder-gray-400 focus:border-[#1E5C3B] focus:ring-2 focus:ring-[#1E5C3B] outline-none transition-all"
               />
               {formErrors.lastname && (
                 <p className="text-red-500 text-xs mt-1">
@@ -824,7 +824,7 @@ export default function Signinmodal({ closeModal, partnerloginshow, onLoginSucce
                 </p>
               )}
               </div>
-              <div className="mb-4 md:mb-5">
+              <div className="mb-2 md:mb-2">
                 <label
                   htmlFor="email"
                   className="block text-sm font-semibold text-gray-700 mb-2"
@@ -847,7 +847,7 @@ export default function Signinmodal({ closeModal, partnerloginshow, onLoginSucce
                   <p className="text-red-500 text-xs mt-1">{formErrors.guest_email}</p>
                 )}
               </div>
-              <div className="mb-4 md:mb-5">
+              <div className="mb-2 md:mb-2">
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
                   Phone Number
                 </label>

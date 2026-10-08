@@ -1819,39 +1819,39 @@ handleInstructFromCard(
                                           {/* Legal Fees */}
                                           <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
                                             <td className="text-sm font-bold text-emerald-600">Legal Fees</td>
-                                            <td className="text-sm font-semibold text-emerald-600">{formatGBP(quote.service_details[1].taxInfo.legal_fees)}</td>
-                                            <td className="text-sm text-emerald-600 font-semibold">{formatGBP(quote.service_details[1].taxInfo.vat)}</td>
+                                            <td className="text-sm font-semibold text-emerald-600">{formatGBP(quote.service_details[1]?.taxInfo?.legal_fees ?? quote.legal_fees)}</td>
+                                            <td className="text-sm text-emerald-600 font-semibold">{formatGBP(quote.service_details[1]?.taxInfo?.vat ?? quote.vat)}</td>
                                           </tr>
 
                                           {/* Supplements */}
                                           <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
                                             <td className="text-sm">Supplements</td>
-                                            <td className="text-sm">{formatGBP(quote.service_details[1].taxInfo.supplements)}</td>
-                                            <td className="text-sm">{formatGBP(quote.service_details[1].taxInfo.supplementsvat)}</td>
+                                            <td className="text-sm">{formatGBP(quote.service_details[1]?.taxInfo?.supplements ?? quote.supplements)}</td>
+                                            <td className="text-sm">{formatGBP(quote.service_details[1]?.taxInfo?.supplementsvat ?? quote.supplementsvat)}</td>
                                           </tr>
 
                                           {/* Disbursements */}
                                           <tr className="grid grid-cols-3 w-full gap-5 border-gray-200">
                                             <td className="text-sm">Disbursements</td>
-                                            <td className="text-sm">{formatGBP(quote.service_details[1].taxInfo.disbursements)}</td>
-                                            <td className="text-sm">{formatGBP(quote.service_details[1].taxInfo.disbursementsvat)}</td>
+                                            <td className="text-sm">{formatGBP(quote.service_details[1]?.taxInfo?.disbursements ?? quote.disbursements)}</td>
+                                            <td className="text-sm">{formatGBP(quote.service_details[1]?.taxInfo?.disbursementsvat ?? quote.disbursementsvat)}</td>
                                           </tr>
 
                                           {/* TOTAL */}
                                           <tr className="grid grid-cols-3 w-full gap-5 border-t border-gray-300 bg-gray-50">
                                             <td className="text-sm font-semibold text-emerald-600">Total</td>
                                             <td className="text-sm font-semibold text-emerald-600">
-                                              {formatGBP(quote.service_details[1].taxInfo.total)}
+                                              {formatGBP(quote.service_details[1]?.taxInfo?.total ?? quote.total)}
                                             </td>
                                             <td className="text-sm font-semibold text-emerald-600">
-                                              {formatGBP(getTaxTotal(quote.service_details[1].taxInfo))}
+                                              {formatGBP(getTaxTotal(quote.service_details[1]?.taxInfo || {}, quote))}
                                             </td>
                                           </tr>
 
                                           {/* Country-Based Taxes */}
                                           <>
-                                            {(quote.service_details[1].country === "England" ||
-                                              quote.service_details[1].country === "Northern Ireland") && (
+                                            {(quote.service_details[1]?.country === "England" ||
+                                              quote.service_details[1]?.country === "Northern Ireland") && (
                                                 <tr className="grid grid-cols-3 w-full gap-5 border-gray-200 pt-2">
                                                   <td className="text-sm font-semibold">Stamp Duty</td>
                                                   <td className="text-sm">{formatGBP(quote.stamp_duty)}</td>
@@ -1859,7 +1859,7 @@ handleInstructFromCard(
                                                 </tr>
                                               )}
 
-                                            {quote.service_details[1].country === "Scotland" && (
+                                            {quote.service_details[1]?.country === "Scotland" && (
                                               <tr className="grid grid-cols-3 w-full gap-5 border-gray-200 pt-2">
                                                 <td className="text-sm font-semibold">LBTT</td>
                                                 <td className="text-sm">{formatGBP(quote.lbtt)}</td>
@@ -1867,7 +1867,7 @@ handleInstructFromCard(
                                               </tr>
                                             )}
 
-                                            {quote.service_details[1].country === "Wales" && (
+                                            {quote.service_details[1]?.country === "Wales" && (
                                               <tr className="grid grid-cols-3 w-full gap-5 border-gray-200 pt-2">
                                                 <td className="text-sm font-semibold">LLT</td>
                                                 <td className="text-sm">{formatGBP(quote.llt)}</td>
