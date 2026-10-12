@@ -7,14 +7,70 @@ import { MdHolidayVillage } from "react-icons/md"; // Material icon
 import { useRouter } from 'next/navigation';
 import Select from 'react-select';
 import Navbar from "../../parts/navbar/page";
-
+import SalesPropertyDetails from "../../components/comparequotes/Sales_Property";
+import PurchasePropertyDetails from "../../components/comparequotes/PurchasePropertyDetails";
+import RemortagePropertyDetails from "../../components/comparequotes/RemortagePropertyDetails";
+import EquityPropertyDetails from "../../components/comparequotes/EquityPropertyDetails";
 
 import { getData,postData,API_ENDPOINTS } from "../../auth/API/api";
 import Signinmodal from "../../components/utility/Singingmodal";
 // src/components/ServiceSelection.js
 
 export default function ServiceSelection() {
-
+   const [instructloader, setinstructloader] = useState(false);
+   const [cardid, setcardid] = useState();
+const companydata = [
+  {
+    quote_id: "demo-quote-7",
+    guest_id: "demo-user",
+    legal_fees: 0,
+    supplements: 0,
+    disbursements: 0,
+    conveying_details: {
+      conveying_id: "7",
+      company_name: "deva",
+      logo: null,
+      language: "Language 2",
+      ratings: 4.5,
+      recomended: 90,
+      sra: 100,
+      reliable: 85,
+    },
+    customer_details: { customer_id: "demo-customer" },
+    service_details: [
+      {
+        quote_ref_id: "DEMO-7",
+        quote_ref_number: "DEMO-7",
+        taxInfo: { quote_id: "demo-tax-7" },
+      },
+    ],
+  },
+  {
+    quote_id: "demo-quote-6",
+    guest_id: "demo-user",
+    legal_fees: 0,
+    supplements: 0,
+    disbursements: 0,
+    conveying_details: {
+      conveying_id: "6",
+      company_name: "deva2",
+      logo: null,
+      language: "Language 2",
+      ratings: 4.2,
+      recomended: 82,
+      sra: 95,
+      reliable: 80,
+    },
+    customer_details: { customer_id: "demo-customer" },
+    service_details: [
+      {
+        quote_ref_id: "DEMO-6",
+        quote_ref_number: "DEMO-6",
+        taxInfo: { quote_id: "demo-tax-6" },
+      },
+    ],
+  },
+];
 
 const partnerloginshow=false;
 
@@ -65,6 +121,8 @@ const [selectedServicesoption, setSelectedServicesoption] = useState([]);
 const [selectedAudience, setSelectedAudience] = useState("");
 const [selectedCategory, setSelectedCategory] = useState("");
 const [selectedServiceIds, setSelectedServiceIds] = useState([]);
+const[comparequotespayload, setcomparequotespayload]=useState();
+const [navigation,setnavigation]=useState(1);
 
 useEffect(() => {
   const fetchServices = async () => {
@@ -111,7 +169,7 @@ const filteredServices = categoryServices.filter(
 );
 
 
- console.log("formdata:" , selectedServicesoption)
+
 
 const [rawValue, setRawValue] = useState("");
 
@@ -217,10 +275,14 @@ if (selectedServices.length === 0) {
    
   };
 
+
+
   setFormData(updatedFormData);
   console.log("updated formdata =>", updatedFormData);
 
        saveuser(updatedFormData);
+
+  
 }
 
      console.log("formasdfasdfdata =>", formData);
@@ -232,6 +294,26 @@ if (selectedServices.length === 0) {
       try{
         let res = await postData(API_ENDPOINTS.Immigration_createUser, formData);
         console.log(res);
+        localStorage.setItem("comparequotes_refno",res.data.immigration_ref_number);
+
+         let selectedServices = selectedServicesoption.filter((service) =>
+  selectedServiceIds.includes(service.id))
+
+         console.log(selectedServices)
+
+
+
+               const comparequotesdata = {
+    user_id: localStorage.getItem("user"),
+    ref_no: localStorage.getItem("comparequotes_refno"),
+    service_name: selectedServices[0]?.service_name,
+    language:selectedLanguage.id
+  }
+
+  let quoteslist = await postData(API_ENDPOINTS.Immigration_CompareQuotes, comparequotesdata);
+  console.log("quoteslist", quoteslist);
+  localStorage.setItem("comparequotesdata", JSON.stringify(quoteslist.data));
+  setnavigation(2);
       }
       catch(e){
         console.log(e);
@@ -239,37 +321,9 @@ if (selectedServices.length === 0) {
   }
 
 
-    const [selectedLenders, setSelectedLenders] = useState([]);//imp
-     const options_l = [
-   
-      
-    ];
   
     // ✅ Handle change
-    const handleChange_l = (selectedOptions ) => {
-       if (!selectedOptions) {
-    setSelectedLenders(null);
-    handleChange("lenders", null);
-    return;
-  }
-       const hasNotRequired = selectedOptions.value === "Not Known";
-
-    
-    if (hasNotRequired) {
-    const notRequiredOption = lender.find(
-      (opt) => opt.value === "Not Known"
-    );
-
-    setSelectedLenders(notRequiredOption);
-    console.log("Selected lender: Not Known");
-
-    handleChange("lenders", [0]);
-  } else {
-    setSelectedLenders(selectedOptions);
-
-    console.log("Selected lender:", selectedOptions.id);
-    handleChange("lenders", [selectedOptions.id]);
-  }}
+  
 
     // Convert to react-select options
   
@@ -295,12 +349,7 @@ const [loginformdata, setloginformdata] = useState({
   password: "",
 });
 
-function handleloginformchange(name, value) {
-  setloginformdata((prev) => ({
-    ...prev,
-    [name]: value,
-  }));
-}
+
 
 
 
@@ -371,10 +420,11 @@ useEffect(() => {
        
        
 
- 
+             
 
   return (
-                <div className="min-h-screen bg-white font">
+<>
+ <div className="min-h-screen bg-white font">
                 <div className="bg-white shadow-md sticky top-0 p-4 z-50">
                   <Navbar />
                 </div>
@@ -441,7 +491,7 @@ useEffect(() => {
                     <span>/</span>
                     <span className="text-[#1E5C3B] font-medium">Service Details</span>
                     </nav>
-
+    {navigation == 1 &&(<>
                     <h1 className="text-3xl font-bold text-gray-900">
                     Share your Service Details
                     </h1>
@@ -618,10 +668,546 @@ useEffect(() => {
                         Continue &rarr;
                     </button>
                     </div>
+                  </>
+                  )}
+
+
+                     {navigation == 2  &&
+                   (companydata?.map((quote, index) => (
+                    <div
+                      key={index}
+                      className="font border border-gray-200 rounded-2xl overflow-hidden bg-white w-full"
+                    >
+                      {/* Card Header */}
+                      <div
+                        className={`flex flex-col sm:flex-row items-center justify-between   ${index % 2 === 0 ? "bg-green-50" : "bg-red-50"
+                          }  mx-2 mt-2 rounded-2xl p-4 sm:px-8 sm:py-5`}
+                      >
+                     
+                        <div className="flex items-center gap-4">
+                          <div className="text-right">
+                            <p className="text-xl font-bold text-gray-900">
+                                                       </p>
+                           <button
+  className="text-green-700 text-sm font-medium hover:underline cursor-pointer"
+  onClick={() => {
+    toggleDropdown(quote.conveying_details.conveying_id);
+
+    if (window.innerWidth <= 768) {
+      handleDownloadFromCard(quote);
+    }
+  }}
+>
+  <u>Price Breakdown</u>
+</button>
+
+
+                          </div>
+                       
+                        </div>
+                      </div>
+
+                      {/* Expandable Content */}
+
+                      <div className="p-4 sm:p-6 flex flex-col gap-6 font">
+                        <div className="grid grid-cols-1 lg:grid-cols-3 items-start gap-6 lg:gap-10">
+                          {/* Left: Reviews - Static placeholder */}
+                          <div className="flex flex-col">
+                            <div className="flex items-center">
+                            
+                              <span className="pl-2 font-bold text-green-700">
+                                {quote.conveying_details.ratings || 4} out of 5
+                              </span>
+                            </div>
+                           <div className="flex gap-4 mt-3 text-green-700">
+  
+                            {/* Recommended */}
+                            <div className="flex flex-col items-center text-green-700">
+                           {/*    <CircularProgress progress={quote.conveying_details.recomended || 80} /> */}
+                              <span className="mt-1 bg-green-700 text-white text-[10px] px-2 py-0.5 rounded-md">
+                                Rated
+                              </span>
+                            </div>
+
+                            {/* SRA */}
+                            <div className="flex flex-col items-center text-green-700">
+                           {/*    <CircularProgress progress={quote.conveying_details.sra || 90} /> */}
+                              <span className="mt-1 bg-green-700 text-white text-[10px] px-2 py-0.5 rounded-md">
+                                Regulated
+                              </span>
+                            </div>
+
+                            {/* Reliable */}
+                            <div className="flex flex-col items-center text-green-700">
+                              {/* <CircularProgress progress={quote.conveying_details.reliable || 85} /> */}
+                              <span className="mt-1 bg-green-700 text-white text-[10px] px-2 py-0.5 rounded-md">
+                                Reliable
+                              </span>
+                            </div>
+
+                          </div>
+
+                          
+
+                          </div>
+
+                          {/* Middle: Features - Static placeholder */}
+                          <ul className="text-xs text-gray-700 space-y-2 font-normal text-[12px] list-none pl-4">
+
+                          </ul>
+
+                          {/* Right: Buttons */}
+                          <div className="flex flex-row gap-2 justify-start lg:col-start-3 lg:justify-end">
+
+                          
+                            <button
+                              disabled={instructloader}
+                              className={`px-3 py-1.5 rounded-full text-sm cursor-pointer
+                                ${instructloader
+                                  ? "bg-[#4A7C59]/70 cursor-not-allowed"
+                                  : "bg-[#4A7C59] hover:bg-[#3b6248] text-white"}
+                                      mx-auto  // This will center the button horizontally
+                                      block md:inline-block  // Ensures it is block on mobile and inline-block on desktop`}
+                              onClick={() => {
+
+                                 toggleDropdown(quote.conveying_details.conveying_id);
+
+                                  handleInstructFromCard(
+                                    quote.conveying_details.company_name,
+                                    quote.guest_id,
+                                    quote.conveying_details.conveying_id,
+                                    quote.quote_id,
+                                    quote.customer_details.customer_id,
+                                    quote?.service_details[0]?.taxInfo?.quote_id,
+                                    quote.service_details[0].quote_ref_number,
+                                    quote
+                                  );
+
+                              }
+
+                              }
+                            >
+                              {instructloader ? "Processing..." : "Instruct"}
+                            </button>
+
+                          </div>
+                        </div>
+                       
+
+
+
+
+
+
+                        {cardid === quote.conveying_details.conveying_id && viewquotes && (
+                          <div className="fixed inset-0  z-50 flex items-center justify-center  top-10  animate-fadeIn">
+                            <div className="bg-white h-[200px] rounded-2xl  w-[90%] min-h-screen overflow-y-auto text-center shadow-2xl border border-green-200 animate-popIn">
+                             <div className="absolute  right-4 md:top-3 md:right-32">
+                                <button
+                                  className="text-3xl md:text-4xl text-gray-700 p-2 md:p-0"
+                                  onClick={() => showviewquotes(false)}
+                                >
+                                  ×
+                                </button>
+                              </div>
+
+
+                              <div className="font-family min-h-screen p-5  text-black">
+                                {/* ---------- TOP BUTTONS ---------- */}
+                                <div className="grid grid-cols-12 items-center m-3 md:m-6 px-2 md:px-4">
+                                      {/* Back button - Left */}
+                                      <div className="col-span-4 md:col-span-1 flex justify-start">
+                                        <button
+                                          className="border px-2 py-1.5 md:px-4 md:py-2 rounded text-emerald-600 text-xs sm:text-sm"
+                                          onClick={() => showviewquotes(false)}
+                                        >
+                                          Back
+                                        </button>
+                                      </div>
+
+                                      {/* Center Title */}
+                                      <div className="col-span-4 md:col-span-8 flex justify-center">
+                                        <span className="text-[18px] sm:text-[22px] md:text-[34px] p-1 md:p-2 leading-tight md:leading-none font-extrabold text-[#1E5C3B] tracking-tight text-center truncate max-w-full">
+                                          <img
+                                          width={140}
+                                          height={100}
+                                          src={view_data?.appsetting_details?.logo}
+                                          alt={quote.company_name || "company logo"}
+                                          className="mx-auto md:mx-0"
+                                        />
+                                        </span>
+                                      </div>
+
+                                      {/* Instruct button - Right */}
+                                      <div className="col-span-4 md:col-span-3 flex justify-end">
+                                        <button
+                                          disabled={instructloader}
+                                          className={`border px-2 py-1.5 md:px-4 md:py-2 rounded text-xs sm:text-sm cursor-pointer
+                                            ${
+                                              instructloader
+                                                ? "opacity-50 cursor-not-allowed"
+                                                : "text-emerald-600"
+                                            }`}
+                                                onClick={() => {
+                                                  handleInstructFromCard(
+                                                    quote.conveying_details.company_name,
+                                                    quote.guest_id,
+                                                    quote.conveying_details.conveying_id,
+                                                    quote.quote_id,
+                                                    quote.customer_details.customer_id,
+                                                    quote?.service_details[0]?.taxInfo?.quote_id,
+                                                    quote.service_details[0].quote_ref_number,
+                                                    quote
+                                                  );
+                                                }}
+
+                                        >
+                                          {instructloader ? "Processing..." : "Instruct"}
+                                        </button>
+                                         {/* <button className="border px-4 py-2 rounded text-emerald-600 text-sm" onClick={generatePDF}>
+      Download
+    </button> */}
+                                      </div>
+                                    </div>
+
+                                {instructloader && (
+                                  <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/5 backdrop-blur-sm">
+                                    <div className="h-9 w-9 animate-spin rounded-full border-4 border-emerald-700 border-t-transparent"></div>
+                                    <div className="mt-1 text-gray-600">
+                                      Processing...
+                                    </div>
+                                  </div>
+
+                                )}
+
+
+                                {/* ---------- MAIN CONTAINER ---------- */}
+                                  <div ref={pdfRef} id="quote-popup" className="quote-mobile border rounded-lg bg-transparent shadow px-6 py-2 mb-2 space-y-2 quotes" style={{
+                                  backgroundColor: 'transparent',
+                                  color: 'black',
+                                  padding: '24px',
+                                  border: '1px solid #e5e7eb',
+                                  borderRadius: '8px',
+                                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                                  fontFamily: 'Arial, sans-serif',
+                                  lineHeight: '1.6',
+                                  maxWidth: '100%',
+                                  overflow: 'auto'
+                                }}>
+                                  {/* ---------- COMPANY LOGO + RATING ---------- */}
+                                  <table className="w-full font  border-collapse mb-6">
+                                    <tbody>
+                                      {/* Company Logo Row */}
+                                      <tr>
+                                        <td colSpan="2" className="pdf-logo-cell p-4 text-left md:text-left text-center">
+                                      {view_data?.appsetting_details?.logo ? (
+                                        <img
+                                          width={140}
+                                          height={100}
+                                          src={view_data?.appsetting_details?.logo}
+                                          alt={quote.company_name || "company logo"}
+                                          className="mx-auto"
+                                        />
+                                      ) : (
+                                        <span className="block text-[22px] sm:text-[28px] md:text-[34px] me-1 p-2 leading-tight md:leading-none font-extrabold text-[#1E5C3B] tracking-tight text-center md:text-left">
+                                          {view_data?.appsetting_details?.company_name || "MovWise"}
+                                        </span>
+                                      )}
+                                    </td>
+
+
+                                        <td>
+
+                                        </td>
+                                        {/* <td colSpan="2" className="p-3"> 
+                                             <span className="text-[34px] col-span-2 me-1 p-2 leading-none font-extrabold text-[#1E5C3B] tracking-tight">
+                                                {view_data?.appsetting_details?.company_name || "MovWise"}
+                                              </span> 
+                                             </td> */}
+                                      </tr>
+
+                                      {/* Contact Details and User Details in Single Row */}
+                                 <tr className="border-gray-200 block md:table-row">
+                                        {/* Contact Details Column */}
+                                        <td className="p-1 border-gray-200 align-top w-full md:w-1/2 block md:table-cell">
+                                          <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-xl">
+                                            <h4 className="font-semibold text-emerald-700 mb-3">Conveyancer Details</h4>
+                                            <div className="space-y-2">
+                                              <div className="flex flex-wrap gap-x-1">
+                                                <span className="font-semibold text-sm">Name:</span>
+                                                <span className="text-sm">{quote.conveying_details.company_name || "N/A"}</span>
+                                              </div>
+                                              <div className="flex flex-wrap gap-x-1">
+                                                <span className="font-semibold text-sm">Phone:</span>
+                                                <span className="text-sm">{view_data?.appsetting_details?.phone_number || "N/A"}</span>
+                                              </div>
+                                              <div className="flex flex-wrap gap-x-1">
+                                                <span className="font-semibold text-sm">Email:</span>
+                                                <a
+                                                  href={`mailto:${view_data?.appsetting_details?.email}`}
+                                                  className="text-emerald-600 text-sm break-all"
+                                                >
+                                                  {view_data?.appsetting_details?.email}
+                                                </a>
+                                              </div>
+                                              <div className="flex flex-wrap gap-x-1">
+                                                <span className="font-semibold text-sm">Quote Ref:</span>
+                                                <span className="text-sm">{quote.service_details[0].quote_ref_id || "--"}</span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </td>
+
+                                        {/* User Details Column */}
+                                        <td className="p-1 align-top w-full md:w-1/2 block md:table-cell mt-2 md:mt-0">
+                                          <div className="bg-emerald-50 border border-emerald-100 p-4 rounded-xl">
+                                            <h4 className="font-semibold text-emerald-700 mb-3">Client Details</h4>
+                                            <div className="space-y-2">
+                                              <div className="flex flex-wrap gap-x-1">
+                                                <span className="font-semibold text-sm">Name:</span>
+                                                <span className="text-sm">
+                                                  {quote?.customer_details?.first_name} {quote?.customer_details?.last_name}
+                                                </span>
+                                              </div>
+                                              <div className="flex flex-wrap gap-x-1">
+                                                <span className="font-semibold text-sm">Email:</span>
+                                                <span className="text-sm break-all">{quote?.customer_details?.email || "--"}</span>
+                                              </div>
+                                              <div className="flex flex-wrap gap-x-1">
+                                                <span className="font-semibold text-sm">Phone:</span>
+                                                <span className="text-sm">{quote?.customer_details?.phone_number || "--"}</span>
+                                              </div>
+                                              <div className="flex flex-wrap gap-x-1">
+                                                <span className="font-semibold text-sm">Address:</span>
+                                                <span className="text-sm">{quote?.service_details[0]?.address || "--"}</span>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </td>
+                                      </tr>
+
+                                    </tbody>
+                                  </table>
+
+                                  {/* ---------- YOUR DETAILS ---------- */}
+
+                                  <div className="grid grid-cols-1 font gap-6">
+                                    <div className="">
+
+
+                                      {view_data.service_details.length == 1 && (<>
+                                        {(view_data.service_details[0].service_type == 1) && <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} lenders={lenders}  />}
+                                    {(view_data.service_details[0].service_type == 4) && <RemortagePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} lenders={lenders} />}
+                                        {(view_data.service_details[0].service_type == 2) && <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} lenders={lenders}  />}
+                                        {(view_data.service_details[0].service_type == 5) && <EquityPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} lenders={lenders}  />}  </>
+                                        
+                                      )}
+                                      {view_data.service_details.length > 1 && (<>
+                                        <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} lenders={lenders}  /> <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[1]} companydata={companydata} cardid={cardid} taxDetails={taxDetails2} giftvalue={giftvalue} handleprice={handleprice} language={language} lenders={lenders} /></>)}
+
+                                    </div>
+
+
+
+                                  </div>
+
+                                  {/* ---------- FEES SECTION ---------- */}
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="">
+                                    </div>
+
+                                  </div>
+
+
+                                  <div className="  w-full"></div>
+
+                                  {/* ---------- NOTES ---------- */}
+                                  <div className="font">
+                                    <h4>Notes</h4>
+
+                                    {quote?.conveying_details?.notes ? (
+                                      <div
+                                        className="text-xs mt-4 font  text-start"
+                                        dangerouslySetInnerHTML={{
+                                          __html: DOMPurify.sanitize(quote.conveying_details.notes),
+                                        }}
+                                      />
+                                    ) : (
+                                      <p className="text-xs mt-4">
+                                        No notes provided by the firm.
+                                      </p>
+                                    )}
+                                  </div>
+
+                                </div>
+
+                                
+                                <div ref={pdfRef} id="quote-popup" className=" quote-desktop border rounded-lg bg-transparent shadow px-6 py-2 mb-2 space-y-2 quotes" style={{
+                                  backgroundColor: 'transparent',
+                                  color: 'black',
+                                  padding: '24px',
+                                  border: '1px solid #e5e7eb',
+                                  borderRadius: '8px',
+                                  boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+                                  fontFamily: 'Arial, sans-serif',
+                                  lineHeight: '1.6',
+                                  maxWidth: '100%',
+                                  overflow: 'auto'
+                                }}>
+                                  {/* ---------- COMPANY LOGO + RATING ---------- */}
+                                  <table className="w-full font  border-collapse mb-6">
+                                    <tbody>
+                                      {/* Company Logo Row */}
+                                      <tr>
+                                        <td colSpan="2" className="pdf-logo-cell p-4 text-left md:text-left text-center">
+                                      {view_data?.appsetting_details?.logo ? (
+                                        <img
+                                          width={140}
+                                          height={100}
+                                          src={view_data?.appsetting_details?.logo}
+                                          alt={quote.company_name || "company logo"}
+                                          className="mx-auto md:mx-0"
+                                        />
+                                      ) : (
+                                        <span className="block text-[22px] sm:text-[28px] md:text-[34px] me-1 p-2 leading-tight md:leading-none font-extrabold text-[#1E5C3B] tracking-tight text-center md:text-left">
+                                          {view_data?.appsetting_details?.company_name || "MovWise"}
+                                        </span>
+                                      )}
+                                    </td>
+
+
+                                        <td>
+
+                                        </td>
+                                        {/* <td colSpan="2" className="p-3"> 
+                                             <span className="text-[34px] col-span-2 me-1 p-2 leading-none font-extrabold text-[#1E5C3B] tracking-tight">
+                                                {view_data?.appsetting_details?.company_name || "MovWise"}
+                                              </span> 
+                                             </td> */}
+                                      </tr>
+
+                                      {/* Contact Details and User Details in Single Row */}
+                                      <tr>
+                                        <td style={{ width: "50%", verticalAlign: "top", padding: "10px" }}>
+                                          <div
+  className="pdf-info-card"
+  style={{
+    backgroundColor: "#f9fafb",
+    padding: "12px",
+    borderRadius: "6px"
+  }}
+>
+                                            <h4 style={{ color: "#059669", marginBottom: "12px", textAlign: "center" }}>
+                                              Conveyancer Details
+                                            </h4>
+
+                                            <div style={{ fontSize: "13px", lineHeight: "1.6",textAlign: "left" }}>
+                                              <div><strong>Name:</strong> {quote.conveying_details.company_name || "N/A"}</div>
+                                              <div><strong>Phone:</strong> {view_data?.appsetting_details?.phone_number || "N/A"}</div>
+                                              <div><strong>Email:</strong> {view_data?.appsetting_details?.email || "N/A"}</div>
+                                              <div><strong>Quote Ref:</strong> {quote.service_details[0].quote_ref_id || "--"}</div>
+                                            </div>
+                                          </div>
+                                        </td>
+
+                                        <td style={{ width: "50%", verticalAlign: "top", padding: "10px" }}>
+                                        <div
+  className="pdf-info-card"
+  style={{
+    backgroundColor: "#f9fafb",
+    padding: "12px",
+    borderRadius: "6px"
+  }}
+>
+                                            <h4 style={{ color: "#059669", marginBottom: "12px",textAlign: "center" }}>
+                                              Client Details
+                                            </h4>
+
+                                            <div style={{ fontSize: "13px", lineHeight: "1.6",textAlign: "left" }}>
+                                              <div>
+                                                <strong>Name:</strong> {quote?.customer_details?.first_name} {quote?.customer_details?.last_name}
+                                              </div>
+                                              <div><strong>Email:</strong> {quote?.customer_details?.email || "--"}</div>
+                                              <div><strong>Phone:</strong> {quote?.customer_details?.phone_number || "--"}</div>
+                                              <div><strong>Address:</strong> {quote?.service_details[0]?.address || "--"}</div>
+                                            </div>
+                                          </div>
+                                        </td>
+                                      </tr>
+
+                                    </tbody>
+                                  </table>
+
+                                  {/* ---------- YOUR DETAILS ---------- */}
+
+                                  <div className="grid grid-cols-1 font gap-6">
+                                    <div className="">
+
+
+                                      {view_data.service_details.length == 1 && (<>
+                                        {(view_data.service_details[0].service_type == 1) && <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} lenders={lenders}  />}
+                                        {(view_data.service_details[0].service_type == 2) && <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} lenders={lenders} />}
+                                        {(view_data.service_details[0].service_type == 4) && <RemortagePropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} lenders={lenders} />}
+                                        {(view_data.service_details[0].service_type == 5) && <EquityPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language}lenders={lenders}/>}  </>
+                                      )}
+                                      {view_data.service_details.length > 1 && (<>
+                                        <SalesPropertyDetails quote={quote} servicData={view_data.service_details[0]} companydata={companydata} cardid={cardid} taxDetails={taxDetails} giftvalue={giftvalue} handleprice={handleprice} language={language} lenders={lenders} /> <PurchasePropertyDetails quote={quote} servicData={view_data.service_details[1]} companydata={companydata} cardid={cardid} taxDetails={taxDetails2} giftvalue={giftvalue} handleprice={handleprice} language={language} lenders={lenders} /></>)}
+
+                                    </div>
+
+
+
+                                  </div>
+
+                                  {/* ---------- FEES SECTION ---------- */}
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div className="">
+                                    </div>
+
+                                  </div>
+
+
+                                  <div className="  w-full"></div>
+
+                                  {/* ---------- NOTES ---------- */}
+                                  <div className="font pdf-notes-section"
+                                   style={{ pageBreakBefore: "always" }}>
+                                    <h4>Notes</h4>
+
+                                    {quote?.conveying_details?.notes ? (
+                                      <div
+                                        className="text-xs mt-4 font  text-start"
+                                        dangerouslySetInnerHTML={{
+                                          __html: DOMPurify.sanitize(quote.conveying_details.notes),
+                                        }}
+                                      />
+                                    ) : (
+                                      <p className="text-xs mt-4">
+                                        No notes provided by the firm.
+                                      </p>
+                                    )}
+                                  </div>
+
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                      </div>
+
+                    </div>
+
+                  )))
+                  }
                 </section>
                 </div>
                 </main>
-                </div>
+                </div> 
+
+               
+                  </>
+            
   );
 }
 

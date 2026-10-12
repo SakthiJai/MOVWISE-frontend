@@ -617,10 +617,10 @@ export default function SigninPage() {
               <h3 className="text-lg md:text-xl font-bold text-[#1E5C3B] mb-2 md:mb-3">
                 Check your email
               </h3>
-              <p className="text-gray-600 mb-4 md:mb-6 text-sm md:text-base">
-                We've sent a password reset link to your email address. Please
-                check your inbox or spam folder.
-              </p>
+            <p className="text-gray-600 mb-4 md:mb-6 text-sm md:text-base">
+  We&apos;ve sent a password reset link to your email address. Please
+  check your inbox or spam folder.
+</p>
               <button
                 onClick={() => {
                   setShowSuccessPopup(false);

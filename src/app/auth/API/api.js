@@ -1,5 +1,5 @@
 // ✅ Base URL for your backend
-  const BASE_URL = "https://admin.movwise.com/api";
+ const BASE_URL = "https://admin.movwise.com/api";
 
 //const BASE_URL = "http://localhost:5000/api";
 export const config = {
@@ -59,7 +59,8 @@ export const API_ENDPOINTS = {
 
       Immigration_category_services: `${BASE_URL}/immigration-category-services`,
       Immigration_createCompany: `${BASE_URL}/createImmigrationCompany`,
-      Immigration_createUser:`${BASE_URL}/companyuserservices`
+      Immigration_createUser:`${BASE_URL}/companyuserservices`,
+      Immigration_CompareQuotes: `${BASE_URL}/immigration-compare-quotes`
 }
   // add more endpoints here
 

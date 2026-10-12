@@ -94,7 +94,9 @@ function InstructContent() {
               </li>
              
             </ul>
-
+     <p className="text-xl font-semibold text-emerald-800 border-t border-emerald-200 pt-4 mt-4">
+              Movwise - Trusted Partner  for complete peace of mind — especially when every property detail matters.
+            </p>  
           
           </div>
 

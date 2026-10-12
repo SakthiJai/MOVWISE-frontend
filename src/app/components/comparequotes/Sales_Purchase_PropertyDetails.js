@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+// import { useEffect, useState } from "react";
 
 // PropertyDetails.js
 export default function SalesPurchasePropertyDetails({ quote, dropdownOpenId ,servicData }) {
