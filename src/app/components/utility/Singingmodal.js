@@ -293,7 +293,7 @@ export default function Signinmodal({ closeModal, partnerloginshow, onLoginSucce
 
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-2 md:p-4">
-      <div className="bg-white rounded-2xl shadow-2xl overflow-hidden  grid grid-cols-1 md:grid-cols-[35%_65%] animate-scale-in relative mt-20 overflow-y-auto md:overflow-visible">
+      <div className="bg-white w-full md:w-auto max-h-[calc(100vh-1rem)] rounded-2xl shadow-2xl flex flex-col md:grid md:grid-cols-[35%_65%] animate-scale-in relative mt-0 overflow-y-auto overscroll-y-contain scroll-smooth md:max-h-none md:overflow-visible">
         <button
           onClick={closeModal}
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-xl font-bold leading-none"
@@ -301,16 +301,16 @@ export default function Signinmodal({ closeModal, partnerloginshow, onLoginSucce
           <X />
         </button>
         {/* LEFT SIDE (Brand Section - 35%) */}
-        <div className="text-center bg-gradient-to-br from-[#1E5C3B] to-green-600 text-white flex flex-col justify-between items-center md:items-start p-4 md:p-8">
-          <div className="mt-8 md:mt-12">
+        <div className="text-center bg-gradient-to-br from-[#1E5C3B] to-green-600 text-white flex min-h-[240px] shrink-0 flex-col justify-start gap-4 md:min-h-0 md:justify-between md:gap-0 items-center md:items-start p-4 md:p-8">
+          <div className="mt-2 md:mt-12">
             <h2 className="text-2xl md:text-4xl font-extrabold tracking-wide mb-2">
               MOVWISE
             </h2>
-            <p className="text-xs md:text-sm opacity-90 leading-relaxed mt-8 md:mt-12 px-2">
+            <p className="text-xs md:text-sm opacity-90 leading-relaxed mt-2 md:mt-12 px-2">
               Making property transactions simple, secure, and smart.
             </p>
           </div>
-          <div className="flex flex-col gap-3 mt-6 md:mt-8 items-center w-full">
+          <div className="flex flex-col gap-3 mt-auto md:mt-8 items-center w-full">
             <button
               className="w-full max-w-[220px] bg-white text-[#1E5C3B] font-semibold px-6 md:px-8 py-2 md:py-3 rounded-full hover:bg-gray-100 transition-all duration-300 shadow-lg transform hover:scale-105 text-sm md:text-base"
               onClick={() => {
@@ -338,7 +338,7 @@ export default function Signinmodal({ closeModal, partnerloginshow, onLoginSucce
 
       
         {!loginformshow && !guestformshow && (
-          <div className="flex justify-center items-center min-h-[60vh] md:min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-4 md:p-6">
+          <div className="flex shrink-0 justify-center items-start md:items-center min-h-0 md:min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-4 md:p-6">
             <form
               noValidate
               onSubmit={(e) => {
@@ -526,7 +526,7 @@ export default function Signinmodal({ closeModal, partnerloginshow, onLoginSucce
         )}
 
         {forgotPasswordShow ? (
-          <div className="flex justify-center items-center min-h-[60vh] md:min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-4 md:p-6">
+          <div className="flex shrink-0 justify-center items-start md:items-center min-h-0 md:min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-4 md:p-6">
             <form
               onSubmit={(e) => {
                 e.preventDefault();
@@ -584,7 +584,7 @@ export default function Signinmodal({ closeModal, partnerloginshow, onLoginSucce
             </form>
           </div>
         ) : loginformshow ? (
-          <div className="flex justify-center items-center min-h-[60vh] md:min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-4 md:p-6">
+          <div className="flex shrink-0 justify-center items-start md:items-center min-h-0 md:min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-4 md:p-6">
             <form
               noValidate
               onSubmit={(e) => {
@@ -753,7 +753,7 @@ export default function Signinmodal({ closeModal, partnerloginshow, onLoginSucce
         )}
 
         {guestformshow && (
-          <div className="flex justify-center items-center min-h-[60vh] md:min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-4 md:p-6">
+          <div className="flex shrink-0 justify-center items-start md:items-center min-h-0 md:min-h-[70vh] bg-gray-50 rounded-xl shadow-lg p-4 md:p-6">
             <form
               noValidate
               onSubmit={(e) => {
@@ -943,5 +943,3 @@ export default function Signinmodal({ closeModal, partnerloginshow, onLoginSucce
     </div>
   );
 }
-
-
