@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
+import Select from "react-select";
 import { postData } from "../../auth/API/api";
 import LocationSearch from '../Purchase/LocationSearch';
 import AddressFields from './AddressFields';
@@ -11,6 +12,32 @@ const surveyTypes = [
   { value: "homebuyer_report", label: "Homebuyer Report" },
   { value: "building_survey", label: "Building Survey" }
 ];
+
+const countryOptions = [
+  { value: "England", label: "England" },
+  { value: "Scotland", label: "Scotland" },
+  { value: "Wales", label: "Wales" },
+  { value: "Northern Ireland", label: "Northern Ireland" },
+];
+
+const countrySelectStyles = {
+  control: (base, state) => ({
+    ...base,
+    minHeight: "44px",
+    borderRadius: "12px",
+    borderColor: state.isFocused ? "#1E5C3B" : "#D1D5DB",
+    boxShadow: state.isFocused ? "0 0 0 1px #1E5C3B" : "none",
+    "&:hover": {
+      borderColor: "#1E5C3B",
+    },
+  }),
+  option: (base, state) => ({
+    ...base,
+    backgroundColor: state.isFocused ? "#F6CE53" : "white",
+    color: "#111",
+    cursor: "pointer",
+  }),
+};
 
 const SURVEYOR_API_URL = API_ENDPOINTS.createsurveyor;
 export default function Surveyor() {
@@ -136,6 +163,7 @@ export default function Surveyor() {
         address: formData.address || "",
         address_line1: formData.address_line1 || "",
         address_line2: formData.address_line2 || "",
+        city: formData.city || "",
         country: formData.country || "",
         property_values: formData.propertyValue
           ? parseInt(formData.propertyValue, 10)
@@ -302,7 +330,38 @@ export default function Surveyor() {
 
     {/* INPUT */}
     <div className="flex-1 min-w-0">
-      <LocationSearch />
+      <LocationSearch
+        ref={surveyorRef}
+        readOnly={showAddressLines}
+        onSelectAddress={(selected) => {
+          if (!selected) return;
+
+          const details = surveyorRef.current?.onSelectAddressFullDetails?.();
+          if (!details) {
+            setErrors((prev) => ({
+              ...prev,
+              address: "Failed to fetch full address details.",
+            }));
+            return;
+          }
+
+          const postcode = details.postcode || "";
+          const address = !postcode || selected.suggestion.includes(postcode)
+            ? selected.suggestion
+            : `${selected.suggestion} ${postcode}`.trim();
+
+          setFormData((prev) => ({
+            ...prev,
+            address,
+            city: details.post_town || details.admin_district || "",
+            country: details.country || "",
+          }));
+          setErrors((prev) => ({ ...prev, address: "" }));
+        }}
+      />
+      {errors.address && (
+        <p className="mt-1 text-sm text-red-500">{errors.address}</p>
+      )}
     </div>
 
     {/* LINK */}
@@ -340,33 +399,36 @@ export default function Surveyor() {
    
   </div>
 )}
- <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> <input
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> 
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      Town / City
+    </label>
+    <input
       type="text"
       placeholder="City"
       value={formData.city}
       onChange={(e) => handleChange("city", e.target.value)}
-                                className=" hover:border-[#1E5C3B]  outline-none block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
+      className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-gray-900 hover:border-[#1E5C3B] focus:border-[#1E5C3B] focus:ring-1 focus:ring-[#1E5C3B] outline-none"
     />
+  </div>
 
-  <select
-  value={formData.country}
-  onChange={(e) => handleChange("country", e.target.value)}
-  className={`w-full rounded-2xl border px-4 py-3 text-sm
-    ${formData.country ? "text-gray-900" : "text-gray-400"}
-    border-gray-300 bg-white
-    appearance-none
-    hover:border-[#1E5C3B]
-    focus:outline-none focus:ring-2 focus:ring-[#1E5C3B] focus:border-[#1E5C3B]`}
->
-  <option value="" disabled hidden>
-    Select Country
-  </option>
-
-  <option value="England">England</option>
-  <option value="Scotland">Scotland</option>
-  <option value="Wales">Wales</option>
-  <option value="Northern Ireland">Northern Ireland</option>
-</select>
+  <div>
+    <label className="mb-1 block text-sm font-medium text-gray-700">
+      Country <span className="text-red-500">*</span>
+    </label>
+    <Select
+      options={countryOptions}
+      styles={countrySelectStyles}
+      value={countryOptions.find((option) => option.value === formData.country) || null}
+      onChange={(selected) => handleChange("country", selected?.value || "")}
+      isSearchable={false}
+      placeholder="Select country"
+    />
+    {errors.country && (
+      <p className="mt-1 text-xs text-red-500">{errors.country}</p>
+    )}
+  </div>
 </div>
     {/* Property + Survey Type */}
   {/* Property + Survey Type */}
@@ -375,7 +437,7 @@ export default function Surveyor() {
   {/* Property Value */}
   <div>
     <label className="block text-sm font-medium text-gray-700 mb-2">
-      Property value
+      Property value <span className="text-red-500">*</span>
     </label>
     <input
       type="number"
@@ -385,7 +447,7 @@ export default function Surveyor() {
         handleChange("propertyValue", e.target.value)
       }
       placeholder="Enter property value"
-       className=" hover:border-[#1E5C3B]  outline-none block w-full h-[44px] rounded-xl border border-gray-300 pl-10 pr-3 text-[14px] text-gray-900 font-medium focus:border-[#1E5C3B] focus:ring-[#1E5C3B] focus:ring-1 transition-colors"
+     className="block w-full h-[44px] rounded-xl border border-gray-300 px-4 text-gray-900 hover:border-[#1E5C3B] focus:border-[#1E5C3B] focus:ring-1 focus:ring-[#1E5C3B] outline-none"
     />
      {errors.propertyValue && (
     <p className="text-red-500 text-xs mt-1">
@@ -397,30 +459,17 @@ export default function Surveyor() {
   {/* Survey Type */}
 <div>
   <label className="block text-sm font-medium text-gray-700 mb-2">
-    Survey type
+    Survey type <span className="text-red-500">*</span>
   </label>
 
-<select
-  value={formData.surveyType}
-  onChange={(e) => handleChange("surveyType", e.target.value)}
-  className={`w-full rounded-2xl border border-gray-300 
-             px-4 py-3 pr-10 text-sm bg-white
-             appearance-none
-             focus:outline-none focus:ring-2 focus:ring-[#1E5C3B] focus:border-[#1E5C3B]
-             focus:shadow-none
-             ${formData.surveyType ? "text-gray-900" : "text-gray-400"}`}
->                   
-
-  <option value="" disabled hidden>
-    Choose a survey type
-  </option>
-
-  {surveyTypes.map((item) => (
-    <option key={item.value} value={item.value}>
-      {item.label}
-    </option>
-  ))}
-</select>
+<Select
+  options={surveyTypes}
+  styles={countrySelectStyles}
+  value={surveyTypes.find((option) => option.value === formData.surveyType) || null}
+  onChange={(selected) => handleChange("surveyType", selected?.value || "")}
+  isSearchable={false}
+  placeholder="Choose a survey type"
+/>
   {errors.surveyType && (
     <p className="text-red-500 text-xs mt-1">
       {errors.surveyType}
@@ -626,4 +675,3 @@ export default function Surveyor() {
 
 
 }
-
