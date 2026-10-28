@@ -16,7 +16,7 @@ const AddressFields: React.FC<AddressFieldsProps> = ({
   errors,
   onChange,
   showAddressLines,
-  prefix , // default for SALE
+  prefix = "",
 }) => {
 
   const line1 = `${prefix}address_line1`;
