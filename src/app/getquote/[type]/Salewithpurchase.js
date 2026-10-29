@@ -1679,8 +1679,11 @@ console.log(e);
     <p className={`text-[12px] mt-1 min-h-[16px] transition-all duration-200`} ></p>
     </div>
  <div id="languages">
-        <label className="block text-sm font-semibold text-gray-800 mb-1">
+        <label className="mb-1 block text-sm font-semibold text-gray-800">
           Prefer solicitor in your first language? <span className="text-red-500">*</span>
+          <span className="mt-0.5 block text-sm font-medium leading-5 text-[#1E5C3B] md:hidden">
+            Select if you prefer a solicitor who can communicate in your first language in addition to English.
+          </span>
         </label>
         <div className="mt-2">
       
@@ -1701,11 +1704,14 @@ console.log(e);
     }
   }}
         placeholder="Choose languages..."
-        className="text-black mt-2"
+  className="text-black"
       />
      
               </div>
-               <p className="text-[12px] mt-1 min-h-[16px] text-red-500">
+        <p className="mt-1 hidden text-xs leading-5 text-black-600 md:block">
+          Select if you prefer a solicitor who can communicate in your first language in addition to English.
+        </p>
+         <p className="text-[12px] mt-1 min-h-[16px] text-red-500">
   {errors.preferLanguage}
 </p>
       </div>
