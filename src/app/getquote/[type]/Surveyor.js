@@ -9,8 +9,8 @@ import AddressFields from './AddressFields';
 import { getData,API_ENDPOINTS  } from "../../auth/API/api";
 import Signinmodal from "../../components/utility/Singingmodal";
 const surveyTypes = [
-  { value: "homebuyer_report", label: "Homebuyer Report" },
-  { value: "building_survey", label: "Building Survey" }
+  { value: "homebuyer_report", label: "RICS Level 2 - Home Buyer Report" },
+  { value: "building_survey", label: "RICS Level 3 - Building Survey" }
 ];
 
 const countryOptions = [
@@ -239,16 +239,9 @@ export default function Surveyor() {
 
     const newErrors = {};
     
-    // Address validation - check based on whether manual address is being used
-    // if (showAddressLines) {
-    //   if (!formData.address_line1 || !formData.address_line1.trim()) {
-    //     newErrors.address_line1 = "Address line 1 is required.";
-    //   }
-    // } else {
-    //   if (!formData.address || !formData.address.trim()) {
-    //     newErrors.address = "Address is required.";
-    //   }
-    // }
+    if (showAddressLines && !formData.address_line1.trim()) {
+      newErrors.address_line1 = "Address Line 1 is required.";
+    }
 
     if (!formData.propertyValue.trim()) {
       newErrors.propertyValue = "Property value is required.";
@@ -313,7 +306,7 @@ export default function Surveyor() {
           </div>
         </div>
       )}
-   <div className="mt-8 mx-auto max-w-4xl rounded-[28px] border border-gray-200 bg-white p-6 shadow-sm">
+   <div className="mt-8 mx-auto max-w-4xl rounded-[28px] border border-gray-200 bg-white p-4 sm:p-6 shadow-sm">
   <h1 className="mb-6 text-3xl font-semibold text-gray-900">
     Surveyor Quote
   </h1>
@@ -326,10 +319,10 @@ export default function Surveyor() {
     Property address
   </label>
 
-  <div className="flex items-center gap-2 w-full">
+  <div className="flex w-full min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
 
     {/* INPUT */}
-    <div className="flex-1 min-w-0">
+    <div className="w-full min-w-0 sm:w-auto sm:flex-1">
       <LocationSearch
         ref={surveyorRef}
         readOnly={showAddressLines}
@@ -368,7 +361,7 @@ export default function Surveyor() {
     <button
       type="button"
       onClick={handleUnknownPostcode}
-      className="text-blue-600 underline text-sm whitespace-nowrap flex-shrink-0"
+      className="self-start text-left text-sm text-blue-600 underline sm:whitespace-nowrap"
     >
       I don&apos;t know the postcode yet
     </button>
@@ -380,23 +373,38 @@ export default function Surveyor() {
     {/* Address Fields */}
 {showAddressLines && (
   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-    <input
-      type="text"
-      placeholder="Address Line 1"
-      value={formData.address_line1}
-      onChange={(e) => handleChange("address_line1", e.target.value)}
-      className="w-full rounded-2xl border border-gray-300 px-4 py-3 text-sm"
-    />
-
-    <input
-      type="text"
-      placeholder="Address Line 2"
-      value={formData.address_line2}
-      onChange={(e) => handleChange("address_line2", e.target.value)}
-      className="w-full rounded-2xl border border-gray-300 px-4 py-3 text-sm"
-    />
-
-   
+    <div>
+      <label htmlFor="surveyor-address-line1" className="mb-1 block text-sm font-medium text-gray-700">
+        Address Line 1 <span className="text-red-500">*</span>
+      </label>
+      <input
+        id="surveyor-address-line1"
+        type="text"
+        placeholder="Address Line 1"
+        value={formData.address_line1}
+        onChange={(e) => handleChange("address_line1", e.target.value)}
+        aria-describedby={errors.address_line1 ? "surveyor-address-line1-error" : undefined}
+        className="block h-[44px] w-full rounded-xl border border-gray-300 px-4 text-sm text-gray-900 outline-none hover:border-[#1E5C3B] focus:border-[#1E5C3B] focus:ring-1 focus:ring-[#1E5C3B]"
+      />
+      {errors.address_line1 && (
+        <p id="surveyor-address-line1-error" className="mt-1 text-sm text-red-500">
+          {errors.address_line1}
+        </p>
+      )}
+    </div>
+    <div>
+      <label htmlFor="surveyor-address-line2" className="mb-1 block text-sm font-medium text-gray-700">
+        Address Line 2
+      </label>
+      <input
+        id="surveyor-address-line2"
+        type="text"
+        placeholder="Address Line 2"
+        value={formData.address_line2}
+        onChange={(e) => handleChange("address_line2", e.target.value)}
+        className="block h-[44px] w-full rounded-xl border border-gray-300 px-4 text-sm text-gray-900 outline-none hover:border-[#1E5C3B] focus:border-[#1E5C3B] focus:ring-1 focus:ring-[#1E5C3B]"
+      />
+    </div>
   </div>
 )}
  <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> 
