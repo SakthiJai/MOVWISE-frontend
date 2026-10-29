@@ -607,7 +607,7 @@ useEffect(() => {
  {/* 1. Property Address */}
                        <div className="flex flex-col h-full"  ref={(el) => { formFieldRefs.current['sales_address'] = el; }}>
                         <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-                         Property address:<span className="text-red-500">*</span>
+                         Property Address
                          </label>
                         <LocationSearch
                          ref={purchaseRef}

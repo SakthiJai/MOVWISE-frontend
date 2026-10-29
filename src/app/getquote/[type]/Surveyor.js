@@ -316,7 +316,7 @@ export default function Surveyor() {
     {/* Address Search */}
 <div className="w-full">
   <label className="block text-sm font-medium text-gray-700 mb-2">
-    Property address
+    Property Address
   </label>
 
   <div className="flex w-full min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center">

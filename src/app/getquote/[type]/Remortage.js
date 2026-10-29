@@ -519,7 +519,7 @@ const getIconForType = (type) => {
                                  {/* 1. Property Address (Inline Input) */}
                        <div className="flex flex-col h-full" ref={(el) => (errorRefs.current["address"] = el)}>
                         <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-                         Property address:<span className="text-red-500">*</span>
+                         Property Address
                          </label>
                         <LocationSearch
                         ref={purchaseRef} 

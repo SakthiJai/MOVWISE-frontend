@@ -458,7 +458,7 @@ export default function App() {
                                                {/* 1. Property Address (Inline Input) */}
                                              <div className="flex flex-col h-full">
                                               <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-                                                 Property address:
+                                                 Property Address
                                              </label>
                                              <div className="relative mt-auto">
                                              <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">

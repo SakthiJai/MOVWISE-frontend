@@ -879,7 +879,7 @@ console.log(e);
                         {/* 1. Property Address (Inline Input) */}
                        <div className="flex flex-col h-full"  id="sales_country">
                         <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-                         Property address:<span className="text-red-500">*</span>
+                         Property Address
                          </label>
                        <LocationSearch ref={salesRef} readOnly={showAddressLines} onSelectAddress={onSelectAddress("sales")}/>
 
@@ -1145,7 +1145,7 @@ console.log(e);
                                   {/* 1. Property Address (Inline Input) */}
                 <div className="flex flex-col h-full"  id="purchase_country">
                         <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
-                         Property address:<span className="text-red-500">*</span>
+                         Property Address
                          </label>
                        <LocationSearch ref={purchaseRef}  readOnly={showAddressLines_purchase}  onSelectAddress={onSelectAddress("purchase")}/>
 
