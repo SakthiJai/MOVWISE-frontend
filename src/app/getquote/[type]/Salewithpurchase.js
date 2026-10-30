@@ -1708,9 +1708,9 @@ console.log(e);
       />
      
               </div>
-        <p className="mt-1 hidden text-xs leading-5 text-black-600 md:block">
-          Select if you prefer a solicitor who can communicate in your first language in addition to English.
-        </p>
+        <p className="mt-1 hidden text-xs leading-5 text-[#1E5C3B] md:block">
+                  Select if you prefer a solicitor who can communicate in your first language in addition to English.
+                </p>
          <p className="text-[12px] mt-1 min-h-[16px] text-red-500">
   {errors.preferLanguage}
 </p>
