@@ -666,7 +666,12 @@ function SurveyorquotesContent() {
 
   }, [pendingInstructQuote]);
   useEffect(() => {
-    if (localStorage.getItem("user") && localStorage.getItem("logintype")) {
+    const logintype = localStorage.getItem("logintype");
+    const hasUserSession = Boolean(localStorage.getItem("user") && logintype);
+    const hasGuestSession =
+      logintype === "guest" && Boolean(localStorage.getItem("guest_uuid"));
+
+    if (hasUserSession || hasGuestSession) {
       setuserlogin(true);
     } else {
       setShowLoginModal(true);
@@ -2015,17 +2020,6 @@ function SurveyorquotesContent() {
           onLoginSuccess={() => {
             setShowLoginModal(false);
             setuserlogin(true);
-
-            const quoteRefNumber =
-              query_ref_no ||
-              localStorage.getItem("ref_no") ||
-              localStorage.getItem("quote_ref_number");
-
-            window.location.replace(
-              quoteRefNumber
-                ? `/components/surveyorquotes?ref_no=${encodeURIComponent(quoteRefNumber)}`
-                : "/components/surveyorquotes"
-            );
           }}
         />
       )}

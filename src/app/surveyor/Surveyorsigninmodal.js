@@ -238,19 +238,17 @@ export default function Surveyorsigninmodal({ closeModal, partnerloginshow, onLo
         type: type
       };
       console.log(payload)
-      const response = await postData(
+      const result = await postData(
         `${API_ENDPOINTS.addguest}`,
         payload
       );
 
-
-      const result = await response;
-
-      if (result.code !== 200) {
+      if (Number(result.code) !== 200) {
         setLoginError(result.message || "Failed to create guest user");
         return;
       }
 
+      const guestData = result.data || {};
       // 4️⃣ Generate UUID (FRONTEND ONLY)
 
 
@@ -258,9 +256,12 @@ export default function Surveyorsigninmodal({ closeModal, partnerloginshow, onLo
       const updatedQuote = {
         ...quoteData,
         guest_user: guest_uuid,
-        guest_name: result.data.name,
-        guest_email: result.data.email,
-        guest_phonenumber: result.data.phone_number,
+        guest_name:
+          guestData.name ||
+          `${guestformsdata.firstname} ${guestformsdata.lastname}`.trim(),
+        guest_email: guestData.email || guestformsdata.guest_email,
+        guest_phonenumber:
+          guestData.phone_number || guestformsdata.guest_phonenumber,
         user_id: null,
         service_type:
           quoteData?.service_type ||
