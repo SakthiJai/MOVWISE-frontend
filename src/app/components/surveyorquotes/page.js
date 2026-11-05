@@ -18,6 +18,7 @@ import Footer from "../../parts/Footer/footer";
 import Select from 'react-select';
 import { useSearchParams } from "next/navigation";
 import { toPng } from "html-to-image";
+import Surveyorsigninmodal from "../../surveyor/surveyorsigninmodal";
 
 const getTaxTotal = (taxInfo = {}, fallback = {}) => {
   return (
@@ -55,15 +56,15 @@ const FeesTable = ({ quote, label = "Survey" }) => {
 
   const computed = !hasTaxRows && quote?.service_details && Array.isArray(quote.service_details) && quote.service_details.length > 0
     ? quote.service_details.reduce((acc, sd) => {
-        const t = sd.taxInfo || {};
-        acc.legal_fees += Number(t.legal_fees || 0);
-        acc.vat += Number(t.vat || 0);
-        acc.supplements += Number(t.supplements || 0);
-        acc.supplementsvat += Number(t.supplementsvat || 0);
-        acc.disbursements += Number(t.disbursements || 0);
-        acc.disbursementsvat += Number(t.disbursementsvat || 0);
-        return acc;
-      }, { legal_fees: 0, vat: 0, supplements: 0, supplementsvat: 0, disbursements: 0, disbursementsvat: 0 })
+      const t = sd.taxInfo || {};
+      acc.legal_fees += Number(t.legal_fees || 0);
+      acc.vat += Number(t.vat || 0);
+      acc.supplements += Number(t.supplements || 0);
+      acc.supplementsvat += Number(t.supplementsvat || 0);
+      acc.disbursements += Number(t.disbursements || 0);
+      acc.disbursementsvat += Number(t.disbursementsvat || 0);
+      return acc;
+    }, { legal_fees: 0, vat: 0, supplements: 0, supplementsvat: 0, disbursements: 0, disbursementsvat: 0 })
     : null;
 
   const legalFees = hasTaxRows
@@ -83,21 +84,21 @@ const FeesTable = ({ quote, label = "Survey" }) => {
       ? Number(computed.vat || 0) + Number(computed.supplementsvat || 0) + Number(computed.disbursementsvat || 0)
       : Number(vatValue || 0);
 
-      const taxItems =
-  Object.values(quote?.conveying_details?.taxDetails || {})
-    .flat() || [];
+  const taxItems =
+    Object.values(quote?.conveying_details?.taxDetails || {})
+      .flat() || [];
 
-const subTotalFees = taxItems.reduce(
-  (sum, item) => sum + Number(item.fees_amount || 0),
-  0
-);
+  const subTotalFees = taxItems.reduce(
+    (sum, item) => sum + Number(item.fees_amount || 0),
+    0
+  );
 
-const subTotalVat = taxItems.reduce(
-  (sum, item) => sum + Number(item.vat || 0),
-  0
-);
+  const subTotalVat = taxItems.reduce(
+    (sum, item) => sum + Number(item.vat || 0),
+    0
+  );
 
- const [instructpayload, setinstructpayload] = useState({
+  const [instructpayload, setinstructpayload] = useState({
     "ref_no": "",
     "servicetype": "",
     "quoteid": "",
@@ -105,106 +106,106 @@ const subTotalVat = taxItems.reduce(
 
 
   return (
-<div className="border-t border-gray-200 pt-6">
+    <div className="border-t border-gray-200 pt-6">
 
-<table 
-  className="pdf-fee-table w-full table-fixed border-collapse text-black"
->
-    <thead>
-      <tr className="border-b border-gray-300 text-left">
-        <th className="w-[55%] text-sm font-semibold px-8 py-3">
-          Type
-        </th>
+      <table
+        className="pdf-fee-table w-full table-fixed border-collapse text-black"
+      >
+        <thead>
+          <tr className="border-b border-gray-300 text-left">
+            <th className="w-[55%] text-sm font-semibold px-8 py-3">
+              Type
+            </th>
 
-        <th className="w-[22%] text-sm font-semibold px-8 py-3 text-right">
-          Fee Amount
-        </th>
+            <th className="w-[22%] text-sm font-semibold px-8 py-3 text-right">
+              Fee Amount
+            </th>
 
-        <th className="w-[23%] text-sm font-semibold px-8 py-3 text-right">
-          VAT
-        </th>
-      </tr>
-    </thead>
+            <th className="w-[23%] text-sm font-semibold px-8 py-3 text-right">
+              VAT
+            </th>
+          </tr>
+        </thead>
 
-    <tbody>
+        <tbody>
 
-      {/* SUB TOTAL ROW */}
-      <tr  className="border-b border-gray-200">
-  <td className="px-8 py-3 text-sm font-semibold text-emerald-700">
-    Fee Amount Value
-  </td>
-
-  <td className="px-8 py-3 text-right text-sm font-semibold text-emerald-700">
-    {formatGBP(Number(quote?.fees_amount || 0))}
-  </td>
-
-  <td className="px-8 py-3 text-right text-sm font-semibold text-emerald-700">
-    {formatGBP(Number(quote?.vat || 0))}
-  </td>
-</tr>
-
-      {/* SECTION LABEL ROW (CORRECT WAY) */}
-      <tr className="border-t border-gray-300 bg-gray-100">
-        <td colSpan={3} className="w-[55%] text-sm font-semibold px-8 py-3">
-          Fee Categories
-        </td>
-      </tr>
-
-      {/* TAX ROWS */}
-      {hasTaxRows &&
-        taxRows.map((row, index) => (
-          <tr
-            key={`${row.label}-${index}`}
-            className="border-b border-gray-200"
-          >
-            <td className="text-sm px-8 py-3">
-              {row.label}
+          {/* SUB TOTAL ROW */}
+          <tr className="border-b border-gray-200">
+            <td className="px-8 py-3 text-sm font-semibold text-emerald-700">
+              Fee Amount Value
             </td>
 
-            <td className="text-sm px-8 py-3 text-right">
-              {formatGBP(row.amount)}
+            <td className="px-8 py-3 text-right text-sm font-semibold text-emerald-700">
+              {formatGBP(Number(quote?.fees_amount || 0))}
             </td>
 
-            <td className="text-sm px-8 py-3 text-right">
-              {formatGBP(row.vat)}
+            <td className="px-8 py-3 text-right text-sm font-semibold text-emerald-700">
+              {formatGBP(Number(quote?.vat || 0))}
             </td>
           </tr>
-        ))}
-        {/* SUBTOTAL ROW (taxDetails only) */}
-<tr className="px-8 py-3 font-bold ">
-  <td className="w-[55%] text-sm font-semibold px-8 py-3">
-    Sub Total 
-  </td>
 
-  <td className="text-sm font-semibold  px-8 py-4 text-right w-[55%]">
-    {formatGBP(subTotalFees)}
-  </td>
+          {/* SECTION LABEL ROW (CORRECT WAY) */}
+          <tr className="border-t border-gray-300 bg-gray-100">
+            <td colSpan={3} className="w-[55%] text-sm font-semibold px-8 py-3">
+              Fee Categories
+            </td>
+          </tr>
 
-  <td className="text-sm font-semibold  px-8 py-4 text-right w-[55%]">
-    {formatGBP(subTotalVat)}
-  </td>
-</tr>
+          {/* TAX ROWS */}
+          {hasTaxRows &&
+            taxRows.map((row, index) => (
+              <tr
+                key={`${row.label}-${index}`}
+                className="border-b border-gray-200"
+              >
+                <td className="text-sm px-8 py-3">
+                  {row.label}
+                </td>
 
-      {/* TOTAL ROW */}
-   <tr className="border-t-2 border-gray-300 bg-gray-50">
-  <td className="text-sm font-semibold text-emerald-700 px-8 py-4 ">
-    Total
-  </td>
+                <td className="text-sm px-8 py-3 text-right">
+                  {formatGBP(row.amount)}
+                </td>
 
-  <td className="text-sm font-semibold text-emerald-700 px-8 py-4 text-right">
-    {formatGBP(Number(quote.total || 0))}
-  </td>
+                <td className="text-sm px-8 py-3 text-right">
+                  {formatGBP(row.vat)}
+                </td>
+              </tr>
+            ))}
+          {/* SUBTOTAL ROW (taxDetails only) */}
+          <tr className="px-8 py-3 font-bold ">
+            <td className="w-[55%] text-sm font-semibold px-8 py-3">
+              Sub Total
+            </td>
 
-  <td className="text-sm font-semibold text-emerald-700 px-8 py-4 text-right">
-    {formatGBP(Number(quote.total_vat || 0))}
-  </td>
-</tr>
+            <td className="text-sm font-semibold  px-8 py-4 text-right w-[55%]">
+              {formatGBP(subTotalFees)}
+            </td>
 
-    </tbody>
+            <td className="text-sm font-semibold  px-8 py-4 text-right w-[55%]">
+              {formatGBP(subTotalVat)}
+            </td>
+          </tr>
 
-  </table>
+          {/* TOTAL ROW */}
+          <tr className="border-t-2 border-gray-300 bg-gray-50">
+            <td className="text-sm font-semibold text-emerald-700 px-8 py-4 ">
+              Total
+            </td>
 
-</div>
+            <td className="text-sm font-semibold text-emerald-700 px-8 py-4 text-right">
+              {formatGBP(Number(quote.total || 0))}
+            </td>
+
+            <td className="text-sm font-semibold text-emerald-700 px-8 py-4 text-right">
+              {formatGBP(Number(quote.total_vat || 0))}
+            </td>
+          </tr>
+
+        </tbody>
+
+      </table>
+
+    </div>
   );
 };
 
@@ -236,12 +237,12 @@ const getServiceDetailRows = (serviceData = {}) => {
   if (serviceData.town_city || serviceData.sales_town_city) rows.push(["Town / City", serviceData.town_city || serviceData.sales_town_city]);
   if (serviceData.country || serviceData.sales_country) rows.push(["Country", serviceData.country || serviceData.sales_country]);
   if (serviceData.survey_type || serviceData.survey_type) rows.push(["Survey Type", serviceData.survey_type || serviceData.survey_type]);
- 
+
   if (serviceData.purchase_price || serviceData.sales_price || serviceData.property_values || serviceData.price) {
     const priceValue = serviceData.purchase_price || serviceData.sales_price || serviceData.property_values || serviceData.price;
     rows.push(["Property Value", typeof priceValue === "number" ? formatGBP(priceValue) : priceValue]);
   }
-  if(serviceData.valuation) rows.push(["Valuation",(serviceData.valuation==1)?"yes":"No"]);
+  if (serviceData.valuation) rows.push(["Valuation", (serviceData.valuation == 1) ? "yes" : "No"]);
   // if (serviceData.stages || serviceData.sales_stages) rows.push(["Stages", serviceData.stages || serviceData.sales_stages]);
   // if (serviceData.no_of_bedrooms || serviceData.sales_no_of_bedrooms) rows.push(["Number of Bedrooms", serviceData.no_of_bedrooms || serviceData.sales_no_of_bedrooms]);
   // if (serviceData.leasehold_or_free || serviceData.sales_leasehold_or_free) rows.push(["Leasehold or Freehold", serviceData.leasehold_or_free || serviceData.sales_leasehold_or_free]);
@@ -312,35 +313,35 @@ function SurveyorQuoteModal({
   onClose,
   modalPdfRef,
   downloadPdf,
-   onInstructQuote
+  onInstructQuote
 }) {
   const router = useRouter();
 
   const [modalInstructLoader, setModalInstructLoader] = useState(false);
-async function modalInstructQuote() {
-  console.log("MODAL BUTTON CLICKED");
+  async function modalInstructQuote() {
+    console.log("MODAL BUTTON CLICKED");
 
-  try {
+    try {
 
-    setModalInstructLoader(true);
+      setModalInstructLoader(true);
 
-    const payload = {
-      quoteid: quote.quote_id,
-      servicetype: "surveyor",
-      ref_no: quote.quote_ref_number,
-      html: modalPdfRef.current ? modalPdfRef.current.outerHTML : ""
-    };
+      const payload = {
+        quoteid: quote.quote_id,
+        servicetype: "surveyor",
+        ref_no: quote.quote_ref_number,
+        html: modalPdfRef.current ? modalPdfRef.current.outerHTML : ""
+      };
 
-    console.log("MODAL PAYLOAD", payload);
+      console.log("MODAL PAYLOAD", payload);
 
-    await onInstructQuote(payload);
+      await onInstructQuote(payload);
 
-  } catch(error) {
-    console.error(error);
-  } finally {
-    setModalInstructLoader(false);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setModalInstructLoader(false);
+    }
   }
-}
 
   useEffect(() => {
     const originalOverflow = document.body.style.overflow;
@@ -353,205 +354,205 @@ async function modalInstructQuote() {
 
   return (
 
-  
-<div
-  className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-6"
-  onClick={onClose}
->
-  <div
-    className="w-full max-w-[1700px] bg-white border border-gray-200 shadow-xl"
-    onClick={(e) => e.stopPropagation()}
-  >
-    {/* Header */}
-    <div className="flex items-center justify-between px-6 py-4 border-b">
-      <button
-        onClick={onClose}
-        className="border border-emerald-600 text-emerald-600 px-4 py-2 text-sm rounded"
-      >
-        Back
-      </button>
-
-      <h1 className="text-3xl font-bold text-emerald-700">
-        MovWise
-      </h1>
-
-      {/* <button >
-        Instruct
-      </button> */}
-      <button
-  disabled={modalInstructLoader}
-  onClick={modalInstructQuote}
-  className="border border-emerald-600 text-emerald-600 px-4 py-2 text-sm rounded"
->
-  {modalInstructLoader ? "Processing..." : "Instruct"}
-</button>
-      
-    </div>
 
     <div
-      id="price-breakdown-pdf"
-      ref={modalPdfRef}
-      className="max-h-[90vh] overflow-y-auto p-6">
-
-      {/* Logo */}
-     <div className="pdf-logo-cell mb-8">
-        {quote?.conveying_details?.logo && (
-          <img
-            src={quote.conveying_details.logo}
-            alt="Company Logo"
-            className="h-16 object-contain"
-          />
-        )}
-      </div>
-
-      {/* Top Details */}
-      <div className="grid grid-cols-2 gap-6 pdf-grid">
-
-       <div className="bg-gray-50 p-5 pdf-card">
-          <h3 className="text-center text-emerald-700 font-semibold mb-4">
-            Conveyancer Details
-          </h3>
-
-          <div className="space-y-2 text-sm">
-            <p>
-              <strong>Name:</strong>{" "}
-              {quote?.conveying_details?.company_name || "N/A"}
-            </p>
-
-            <p>
-              <strong>Phone:</strong>{" "}
-              {quote?.conveying_details?.phone_number || "N/A"}
-            </p>
-
-            <p>
-              <strong>Email:</strong>{" "}
-              {quote?.conveying_details?.email || "N/A"}
-            </p>
-
-            <p>
-              <strong>Quote Ref:</strong>{" "}
-              {quote?.quote_ref_number || "—"}
-            </p>
-          </div>
-        </div>
-
-        <div className="bg-gray-50 p-5 pdf-card">
-          <h3 className="text-center text-emerald-700 font-semibold mb-4">
-            Client Details
-          </h3>
-
-          <div className="space-y-2 text-sm">
-            <p>
-              <strong>Name:</strong>{" "}
-              {quote?.customer_details?.first_name}{" "}
-              {quote?.customer_details?.last_name}
-            </p>
-
-            <p>
-              <strong>Email:</strong>{" "}
-              {quote?.customer_details?.email || "--"}
-            </p>
-
-            <p>
-              <strong>Phone:</strong>{" "}
-              {quote?.customer_details?.phone_number || "--"}
-            </p>
-
-            <p>
-              <strong>Address:</strong>{" "}
-              {quote?.service_details?.[0]?.address || "--"}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Sales Quote Title */}
-      {/* OUTER BOX */}
-<div className="border border-gray-300 bg-white p-6 mt-10 pdf-modal-card">
-  {/* Sales Quote Title */}
-  <div className="text-center mb-8">
-    <h2 className="text-xl font-bold text-emerald-700">
-      Surveyor Quote
-    </h2>
-  </div>
-
-  {/* INNER GRID */}
-  <div className="grid grid-cols-[320px_1fr] gap-12">
-
-    {/* Left Side */}
-    <div>
-      <h3 className="font-bold text-emerald-700 mb-4 text-lg">
-        Surveyor Property Details
-      </h3>
-
-      <div className="space-y-3 text-sm">
-        {getServiceDetailRows(
-          quote?.service_details?.[0] || {}
-        ).map(([label, value]) => (
-          <div
-            key={label}
-            className="grid grid-cols-[150px_1fr] border-b border-gray-100 pb-2"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-6"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-[1700px] bg-white border border-gray-200 shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b">
+          <button
+            onClick={onClose}
+            className="border border-emerald-600 text-emerald-600 px-4 py-2 text-sm rounded"
           >
-            <span className="font-medium text-gray-700">
-              {label}
-            </span>
+            Back
+          </button>
 
-            <span className="text-gray-900">
-              {value || "--"}
-            </span>
+          <h1 className="text-3xl font-bold text-emerald-700">
+            MovWise
+          </h1>
+
+          {/* <button >
+        Instruct
+      </button> */}
+          <button
+            disabled={modalInstructLoader}
+            onClick={modalInstructQuote}
+            className="border border-emerald-600 text-emerald-600 px-4 py-2 text-sm rounded"
+          >
+            {modalInstructLoader ? "Processing..." : "Instruct"}
+          </button>
+
+        </div>
+
+        <div
+          id="price-breakdown-pdf"
+          ref={modalPdfRef}
+          className="max-h-[90vh] overflow-y-auto p-6">
+
+          {/* Logo */}
+          <div className="pdf-logo-cell mb-8">
+            {quote?.conveying_details?.logo && (
+              <img
+                src={quote.conveying_details.logo}
+                alt="Company Logo"
+                className="h-16 object-contain"
+              />
+            )}
           </div>
-        ))}
+
+          {/* Top Details */}
+          <div className="grid grid-cols-2 gap-6 pdf-grid">
+
+            <div className="bg-gray-50 p-5 pdf-card">
+              <h3 className="text-center text-emerald-700 font-semibold mb-4">
+                Conveyancer Details
+              </h3>
+
+              <div className="space-y-2 text-sm">
+                <p>
+                  <strong>Name:</strong>{" "}
+                  {quote?.conveying_details?.company_name || "N/A"}
+                </p>
+
+                <p>
+                  <strong>Phone:</strong>{" "}
+                  {quote?.conveying_details?.phone_number || "N/A"}
+                </p>
+
+                <p>
+                  <strong>Email:</strong>{" "}
+                  {quote?.conveying_details?.email || "N/A"}
+                </p>
+
+                <p>
+                  <strong>Quote Ref:</strong>{" "}
+                  {quote?.quote_ref_number || "—"}
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-gray-50 p-5 pdf-card">
+              <h3 className="text-center text-emerald-700 font-semibold mb-4">
+                Client Details
+              </h3>
+
+              <div className="space-y-2 text-sm">
+                <p>
+                  <strong>Name:</strong>{" "}
+                  {quote?.customer_details?.first_name}{" "}
+                  {quote?.customer_details?.last_name}
+                </p>
+
+                <p>
+                  <strong>Email:</strong>{" "}
+                  {quote?.customer_details?.email || "--"}
+                </p>
+
+                <p>
+                  <strong>Phone:</strong>{" "}
+                  {quote?.customer_details?.phone_number || "--"}
+                </p>
+
+                <p>
+                  <strong>Address:</strong>{" "}
+                  {quote?.service_details?.[0]?.address || "--"}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Sales Quote Title */}
+          {/* OUTER BOX */}
+          <div className="border border-gray-300 bg-white p-6 mt-10 pdf-modal-card">
+            {/* Sales Quote Title */}
+            <div className="text-center mb-8">
+              <h2 className="text-xl font-bold text-emerald-700">
+                Surveyor Quote
+              </h2>
+            </div>
+
+            {/* INNER GRID */}
+            <div className="grid grid-cols-[320px_1fr] gap-12">
+
+              {/* Left Side */}
+              <div>
+                <h3 className="font-bold text-emerald-700 mb-4 text-lg">
+                  Surveyor Property Details
+                </h3>
+
+                <div className="space-y-3 text-sm">
+                  {getServiceDetailRows(
+                    quote?.service_details?.[0] || {}
+                  ).map(([label, value]) => (
+                    <div
+                      key={label}
+                      className="grid grid-cols-[150px_1fr] border-b border-gray-100 pb-2"
+                    >
+                      <span className="font-medium text-gray-700">
+                        {label}
+                      </span>
+
+                      <span className="text-gray-900">
+                        {value || "--"}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Right Side */}
+              <div>
+                <h3 className="font-bold text-emerald-700 mb-5 text-lg">
+                  Fee Breakdown
+                </h3>
+
+                <div className="overflow-hidden border border-gray-200">
+                  <FeesTable
+                    quote={quote}
+                    label="Survey"
+                  />
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+
+
+          {/* Notes */}
+          <div className="pdf-notes-section mt-10 border-t pt-6">
+            <h3 className="font-bold mb-3">
+              Notes
+            </h3>
+
+            {quote?.conveying_details?.notes ? (
+              <div
+                className="prose max-w-none"
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(
+                    quote.conveying_details.notes
+                  ),
+                }}
+              />
+            ) : quote?.conveying_details?.short_notes ? (
+              <p>
+                {quote.conveying_details.short_notes}
+              </p>
+            ) : (
+              <p className="text-gray-500">
+                No notes available.
+              </p>
+            )}
+          </div>
+
+        </div>
       </div>
     </div>
-
-    {/* Right Side */}
-    <div>
-      <h3 className="font-bold text-emerald-700 mb-5 text-lg">
-        Fee Breakdown
-      </h3>
-
-      <div className="overflow-hidden border border-gray-200">
-       <FeesTable
-    quote={quote}
-    label="Survey"
-  />
-      </div>
-    </div>
-
-  </div>
-</div>
-
-
-
-      {/* Notes */}
-     <div className="pdf-notes-section mt-10 border-t pt-6">
-        <h3 className="font-bold mb-3">
-          Notes
-        </h3>
-
-        {quote?.conveying_details?.notes ? (
-          <div
-            className="prose max-w-none"
-            dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(
-                quote.conveying_details.notes
-              ),
-            }}
-          />
-        ) : quote?.conveying_details?.short_notes ? (
-          <p>
-            {quote.conveying_details.short_notes}
-          </p>
-        ) : (
-          <p className="text-gray-500">
-            No notes available.
-          </p>
-        )}
-      </div>
-
-    </div>
-  </div>
-</div>
 
 
   );
@@ -562,7 +563,7 @@ function SurveyorquotesContent() {
   const searchParams = useSearchParams();
   const query_ref_no = searchParams.get("ref_no");
   const router = useRouter();
-const [pendingInstructQuote, setPendingInstructQuote] = useState(null);
+  const [pendingInstructQuote, setPendingInstructQuote] = useState(null);
   const [instructloader, setinstructloader] = useState(false);
   const [companydata, setcompanydata] = useState([]);
   const [quoteData, setquoteData] = useState([]);
@@ -570,12 +571,14 @@ const [pendingInstructQuote, setPendingInstructQuote] = useState(null);
   const [ref, setref] = useState("");
   const [quotefound, setquotefound] = useState(false);
   const [userlogin, setuserlogin] = useState(false);
-  
+  const [showLoginModal, setShowLoginModal] = useState(false);
+
   const [selectedQuote, setSelectedQuote] = useState(null);
   const [pdfLoading, setPdfLoading] = useState(false);
   const [pendingDownload, setPendingDownload] = useState(false);
-  
-const modalPdfRef = useRef(null);
+  const [dropdownOpenId, setDropdownOpenId] = useState(null);
+
+  const modalPdfRef = useRef(null);
 
 
   const hasCalledService = useRef(false);
@@ -588,83 +591,85 @@ const modalPdfRef = useRef(null);
   const [filterselected, setfilterselected] = useState([]);
 
   async function instructquote(instructpayload) {
-   
-console.log("PAYLOAD", instructpayload);
-  try {
 
-    setinstructloader(true);
+    console.log("PAYLOAD", instructpayload);
+    try {
 
-    console.log("API CALL PAYLOAD", instructpayload);
+      setinstructloader(true);
 
-    const instruct = await postData(
-      API_ENDPOINTS.surveyorquote_mail,
-      instructpayload
-    );
+      console.log("API CALL PAYLOAD", instructpayload);
 
-    console.log("FIRST API RESPONSE", instruct);
+      const instruct = await postData(
+        API_ENDPOINTS.surveyorquote_mail,
+        instructpayload
+      );
 
-    
- router.push(`/Instruct?id=${instructpayload.quoteid}`);
+      console.log("FIRST API RESPONSE", instruct);
+
+
+      router.push(`/Instruct?id=${instructpayload.quoteid}`);
       await postData(
         API_ENDPOINTS.surveyorinstructmail,
         instructpayload
       );
 
-     
-    
-
-  } catch (e) {
-
-    console.error("API error:", e);
-
-  } finally {
-
-    setinstructloader(false);
-
-  }
-}
-
-useEffect(() => {
-
-  if (!pendingInstructQuote) return;
 
 
-  const sendInstruct = async () => {
 
-    if (!modalPdfRef.current) {
-      setTimeout(sendInstruct, 200);
-      return;
-    }
+    } catch (e) {
 
-
-    try {
-
-      const payload = {
-        ...pendingInstructQuote,
-        html: modalPdfRef.current.outerHTML
-      };
-
-
-      await instructquote(payload);
-
+      console.error("API error:", e);
 
     } finally {
 
       setinstructloader(false);
-      setPendingInstructQuote(null);
 
     }
+  }
 
-  };
+  useEffect(() => {
+
+    if (!pendingInstructQuote) return;
 
 
-  sendInstruct();
+    const sendInstruct = async () => {
+
+      if (!modalPdfRef.current) {
+        setTimeout(sendInstruct, 200);
+        return;
+      }
 
 
-}, [pendingInstructQuote]);
+      try {
+
+        const payload = {
+          ...pendingInstructQuote,
+          html: modalPdfRef.current.outerHTML
+        };
+
+
+        await instructquote(payload);
+
+
+      } finally {
+
+        setinstructloader(false);
+        setPendingInstructQuote(null);
+
+      }
+
+    };
+
+
+    sendInstruct();
+
+
+  }, [pendingInstructQuote]);
   useEffect(() => {
     if (localStorage.getItem("user") && localStorage.getItem("logintype")) {
       setuserlogin(true);
+    } else {
+      setShowLoginModal(true);
     }
   }, []);
 
@@ -672,23 +677,27 @@ useEffect(() => {
     if (hasCalledService.current) return;
     hasCalledService.current = true;
 
-    async function quotesdata(formData) {
+    async function quotesdata() {
       try {
-        let refNumberExist = query_ref_no || localStorage.getItem("ref_no");
+        let refNumberExist =
+          query_ref_no ||
+          localStorage.getItem("ref_no") ||
+          localStorage.getItem("quote_ref_number");
 
-        if (!refNumberExist || refNumberExist == "" || refNumberExist.trim() == "") {
-          const response = await postData(API_ENDPOINTS.createsurveyor, formData);
-          localStorage.setItem("ref_no", response?.service?.quote_ref_number);
-
-          if (response.code === 200) {
-            refNumberExist = response?.service?.quote_ref_number;
-            setref(response?.service?.quote_ref_number);
-            setquotefound(true);
-          } else {
-            setquotefound(false);
-            return;
+        if (!refNumberExist) {
+          try {
+            const storedQuote = JSON.parse(localStorage.getItem("getquote") || "{}");
+            refNumberExist =
+              storedQuote?.quote_ref_number ||
+              storedQuote?.quote_ref_id ||
+              storedQuote?.ref_no ||
+              "";
+          } catch (error) {
+            refNumberExist = "";
           }
-        } else {
+        }
+
+        if (refNumberExist) {
           setref(refNumberExist);
           setquotefound(true);
         }
@@ -696,7 +705,9 @@ useEffect(() => {
         setLoading(true);
 
         const quoteResponse = await getData(
-          `${API_ENDPOINTS.surveyorquotes}/${refNumberExist}`
+          refNumberExist
+            ? `${API_ENDPOINTS.surveyorquotes}/${refNumberExist}`
+            : API_ENDPOINTS.surveyorquotes
         );
 
         if (quoteResponse?.status === false) {
@@ -705,7 +716,13 @@ useEffect(() => {
           return;
         }
 
-        const formatted = quoteResponse.data.map((item) => ({
+        const quotes = Array.isArray(quoteResponse?.data)
+          ? quoteResponse.data
+          : Array.isArray(quoteResponse)
+            ? quoteResponse
+            : [];
+
+        const formatted = quotes.map((item) => ({
           ...item,
           conveying_details: {
             ...item.conveying_details,
@@ -715,7 +732,7 @@ useEffect(() => {
           },
         }));
 
-        setquoteData(quoteResponse.data);
+        setquoteData(quotes);
         setcompanydata(formatted);
         setLoading(false);
       } catch (error) {
@@ -724,21 +741,9 @@ useEffect(() => {
       }
     }
 
-    const storedQuote = localStorage.getItem("getquote");
-    const serviceType = localStorage.getItem("service");
-
-    if (storedQuote && serviceType) {
-      const parsedData = JSON.parse(storedQuote);
-      parsedData.service_type = serviceType;
-      parsedData.user_id = Number(localStorage.getItem("user"));
-
-      setLoading(true);
-      quotesdata(parsedData);
-    } else if (query_ref_no && query_ref_no.length > 0) {
-      setLoading(true);
-      quotesdata(null);
-    }
-  }, []);
+    setLoading(true);
+    quotesdata();
+  }, [query_ref_no]);
 
   const generatePDF = async () => {
     try {
@@ -761,18 +766,18 @@ useEffect(() => {
       // Helper: clone pdfRef, apply PDF-mode swaps, strip Tailwind classes
       const buildClone = (hideNotes) => {
         const cloned = modalPdfRef.current.cloneNode(true);
-const propertyFeeGrid = Array.from(
-  cloned.querySelectorAll(".grid")
-).find(el =>
-  el.textContent.includes("Surveyor Property Details") &&
-  el.textContent.includes("Fee Breakdown")
-);
+        const propertyFeeGrid = Array.from(
+          cloned.querySelectorAll(".grid")
+        ).find(el =>
+          el.textContent.includes("Surveyor Property Details") &&
+          el.textContent.includes("Fee Breakdown")
+        );
 
-if (propertyFeeGrid) {
-  propertyFeeGrid.classList.add("pdf-property-fee-grid");
-}
+        if (propertyFeeGrid) {
+          propertyFeeGrid.classList.add("pdf-property-fee-grid");
+        }
         const injectedPdfStyles = document.createElement('style');
-      injectedPdfStyles.textContent = `
+        injectedPdfStyles.textContent = `
 
 /* top cards spacing */
 .pdf-grid {
@@ -965,7 +970,7 @@ if (propertyFeeGrid) {
         cloned.prepend(injectedPdfStyles);
         cloned.querySelectorAll('.pdf-fee-table').forEach(table => table.setAttribute('data-pdf-fee-table', '1'));
 
-    injectedPdfStyles.textContent += `
+        injectedPdfStyles.textContent += `
 
 .pdf-modal-card {
   border:1px solid #e5e7eb !important;
@@ -1041,11 +1046,11 @@ if (propertyFeeGrid) {
 
 `;
         // Handle notes section
-      const notesEl = cloned.querySelector('.pdf-notes-section');
+        const notesEl = cloned.querySelector('.pdf-notes-section');
 
-if (notesEl && hideNotes) {
-  notesEl.remove();
-}
+        if (notesEl && hideNotes) {
+          notesEl.remove();
+        }
 
         const feeCells = cloned.querySelectorAll('[data-pdf-fee-table="1"] th, [data-pdf-fee-table="1"] td');
         const feeRows = cloned.querySelectorAll('[data-pdf-fee-table="1"] tr');
@@ -1055,10 +1060,10 @@ if (notesEl && hideNotes) {
         const headingTags = new Set(['H1', 'H2', 'H3', 'H4', 'H5', 'H6']);
         const cellTags = new Set(['TD', 'TH']);
         cloned.querySelectorAll('*').forEach(el => {
-         const originalClasses =
-  typeof el.className === "string"
-    ? el.className.split(" ")
-    : [];
+          const originalClasses =
+            typeof el.className === "string"
+              ? el.className.split(" ")
+              : [];
           const isPdfLogoCell = originalClasses.includes('pdf-logo-cell');
           const isPdfInfoCardItem = !!el.closest('.pdf-info-card');
           const isPdfOuterCard = !!el.closest('.pdf-outer-card');
@@ -1079,26 +1084,26 @@ if (notesEl && hideNotes) {
             currentRow.dataset.pdfFeeHighlight = '1';
           }
 
-       // Keep Tailwind classes for PDF layout
-if (el instanceof SVGElement) {
-  el.removeAttribute("class");
-}else if (el.classList) {
+          // Keep Tailwind classes for PDF layout
+          if (el instanceof SVGElement) {
+            el.removeAttribute("class");
+          } else if (el.classList) {
 
-  const keepClasses = [
-    "pdf-grid",
-    "pdf-card",
-    "pdf-modal-card",
-    "pdf-quote-heading",
-    "pdf-property-heading",
-    "pdf-fee-heading"
-  ];
+            const keepClasses = [
+              "pdf-grid",
+              "pdf-card",
+              "pdf-modal-card",
+              "pdf-quote-heading",
+              "pdf-property-heading",
+              "pdf-fee-heading"
+            ];
 
-  [...el.classList].forEach(cls => {
-    if (!keepClasses.includes(cls)) {
-      el.classList.remove(cls);
-    }
-  });
-}
+            [...el.classList].forEach(cls => {
+              if (!keepClasses.includes(cls)) {
+                el.classList.remove(cls);
+              }
+            });
+          }
           el.style.fontFamily = 'Arial, sans-serif';
           el.style.color = headingTags.has(el.tagName) ? '#059669' : '#000';
           el.style.fontSize = '11px';
@@ -1107,12 +1112,12 @@ if (el instanceof SVGElement) {
             el.style.background = 'transparent';
             el.style.backgroundColor = 'transparent';
           }
-          
+
           // Skip border reset for pdf-fee-table cells, pdf info cards, fee card wrappers, and outer PDF cards
           if (!el.closest('[data-pdf-fee-table="1"]') && !isPdfInfoCardItem && !el.closest('.pdf-fee-card') && !isPdfOuterCard) {
             el.style.border = 'none';
           }
-          
+
           if (!isPdfOuterCard) {
             el.style.boxShadow = 'none';
           }
@@ -1124,33 +1129,33 @@ if (el instanceof SVGElement) {
           const isPdfQuoteHeading = originalClasses.includes('pdf-quote-heading');
           const isPdfPropertyHeading = originalClasses.includes('pdf-property-heading');
           const isPdfFeeHeading = originalClasses.includes('pdf-fee-heading');
-    const isPropertyDetailRow =
-  el.closest(".pdf-modal-card") &&
-  el.querySelectorAll("span").length === 2; 
+          const isPropertyDetailRow =
+            el.closest(".pdf-modal-card") &&
+            el.querySelectorAll("span").length === 2;
           el.style.textAlign = isPdfLogoCell || isPdfQuoteHeading || isPdfPropertyHeading || isPdfFeeHeading ? 'center' : 'left';
-if (isPropertyDetailRow) {
+          if (isPropertyDetailRow) {
 
-  const spans = el.querySelectorAll("span");
+            const spans = el.querySelectorAll("span");
 
-  if (spans.length === 2) {
+            if (spans.length === 2) {
 
-    el.style.display = "block";
-    el.style.borderBottom = "none";
-    el.style.paddingBottom = "2px";
+              el.style.display = "block";
+              el.style.borderBottom = "none";
+              el.style.paddingBottom = "2px";
 
-    spans[0].style.fontWeight = "700";
-    spans[0].style.color = "#111";
-    spans[0].style.display = "inline";
+              spans[0].style.fontWeight = "700";
+              spans[0].style.color = "#111";
+              spans[0].style.display = "inline";
 
-    spans[1].style.color = "#333";
-    spans[1].style.display = "inline";
+              spans[1].style.color = "#333";
+              spans[1].style.display = "inline";
 
-    spans[0].innerHTML =
-      spans[0].innerHTML + ":";
+              spans[0].innerHTML =
+                spans[0].innerHTML + ":";
 
-    spans[1].style.marginLeft = "5px";
-  }
-}
+              spans[1].style.marginLeft = "5px";
+            }
+          }
           if (originalClasses.includes('text-emerald-600') || isLegalFeesRow || isFinalTotalRow) {
             el.style.color = '#059669';
             if (cellTags.has(el.tagName)) {
@@ -1176,7 +1181,7 @@ if (isPropertyDetailRow) {
             el.style.wordWrap = 'break-word';
             el.style.overflowWrap = 'break-word';
             el.style.textAlign = 'left';
-            
+
             // Add a full border for pdf-fee-table cells so exported PDF shows lines
             if (el.closest('[data-pdf-fee-table="1"]')) {
               el.style.border = '0.05px solid rgba(0,0,0,0.06)';
@@ -1197,7 +1202,7 @@ if (isPropertyDetailRow) {
             el.style.objectFit = 'contain';
           }
         });
-        
+
         // Ensure all fee tables have collapsed borders and strong cell borders
         cloned.querySelectorAll('[data-pdf-fee-table="1"]').forEach(table => {
           table.style.borderCollapse = 'collapse';
@@ -1269,77 +1274,77 @@ if (isPropertyDetailRow) {
           inner.style.padding = '16px';
         });
         // FORCE FEE TABLE PDF STYLE (add before return cloned)
-cloned.querySelectorAll('[data-pdf-fee-table="1"]').forEach(table => {
+        cloned.querySelectorAll('[data-pdf-fee-table="1"]').forEach(table => {
 
-  table.style.width = "100%";
-  table.style.borderCollapse = "collapse";
-  table.style.border = "1px solid #d1d5db";
-  table.style.tableLayout = "fixed";
+          table.style.width = "100%";
+          table.style.borderCollapse = "collapse";
+          table.style.border = "1px solid #d1d5db";
+          table.style.tableLayout = "fixed";
 
-  table.querySelectorAll("th, td").forEach(cell => {
-    cell.style.border = "1px solid #d1d5db";
-    cell.style.padding = "10px";
-    cell.style.fontSize = "11px";
-  });
-
-
-  // header row
-  table.querySelectorAll("thead th").forEach(th=>{
-    th.style.background="#f3f4f6";
-    th.style.fontWeight="700";
-  });
+          table.querySelectorAll("th, td").forEach(cell => {
+            cell.style.border = "1px solid #d1d5db";
+            cell.style.padding = "10px";
+            cell.style.fontSize = "11px";
+          });
 
 
-  // columns
-  table.querySelectorAll("th:first-child, td:first-child")
-  .forEach(cell=>{
-    cell.style.width="55%";
-    cell.style.textAlign="left";
-  });
+          // header row
+          table.querySelectorAll("thead th").forEach(th => {
+            th.style.background = "#f3f4f6";
+            th.style.fontWeight = "700";
+          });
 
 
-  table.querySelectorAll("th:nth-child(2), td:nth-child(2), th:nth-child(3), td:nth-child(3)")
-  .forEach(cell=>{
-    cell.style.width="22.5%";
-    cell.style.textAlign="right";
-  });
+          // columns
+          table.querySelectorAll("th:first-child, td:first-child")
+            .forEach(cell => {
+              cell.style.width = "55%";
+              cell.style.textAlign = "left";
+            });
 
 
-  // Fee amount row
-  const rows = table.querySelectorAll("tr");
-
-  if(rows.length > 1){
-    rows[1].querySelectorAll("td").forEach(cell=>{
-      cell.style.fontWeight="700";
-      cell.style.color="#059669";
-    });
-  }
+          table.querySelectorAll("th:nth-child(2), td:nth-child(2), th:nth-child(3), td:nth-child(3)")
+            .forEach(cell => {
+              cell.style.width = "22.5%";
+              cell.style.textAlign = "right";
+            });
 
 
-  // category row
-  rows.forEach(row=>{
-    if(row.innerText.includes("Fee Categories")){
-      row.querySelectorAll("td").forEach(cell=>{
-        cell.style.background="#f3f4f6";
-        cell.style.fontWeight="700";
-      });
-    }
-  });
+          // Fee amount row
+          const rows = table.querySelectorAll("tr");
+
+          if (rows.length > 1) {
+            rows[1].querySelectorAll("td").forEach(cell => {
+              cell.style.fontWeight = "700";
+              cell.style.color = "#059669";
+            });
+          }
 
 
-  // total row
-  if(rows.length){
-    rows[rows.length-1].querySelectorAll("td").forEach(cell=>{
-      cell.style.background="#f8fafc";
-      cell.style.fontWeight="700";
-      cell.style.color="#059669";
-    });
-  }
+          // category row
+          rows.forEach(row => {
+            if (row.innerText.includes("Fee Categories")) {
+              row.querySelectorAll("td").forEach(cell => {
+                cell.style.background = "#f3f4f6";
+                cell.style.fontWeight = "700";
+              });
+            }
+          });
 
-});
+
+          // total row
+          if (rows.length) {
+            rows[rows.length - 1].querySelectorAll("td").forEach(cell => {
+              cell.style.background = "#f8fafc";
+              cell.style.fontWeight = "700";
+              cell.style.color = "#059669";
+            });
+          }
+
+        });
         return cloned;
       };
-   
+
 
       const canvasOptions = {
         scale: 1.5,
@@ -1377,11 +1382,11 @@ cloned.querySelectorAll('[data-pdf-fee-table="1"]').forEach(table => {
       // --- Capture main content (notes hidden) ---
       const mainWrapper = document.createElement('div');
       mainWrapper.style.cssText = 'position:absolute;left:-9999px;top:0;width:800px;background:white;padding:15px;font-family:Arial,sans-serif;line-height:1.4;';
-    const mainClone = buildClone(true);  // keep notes
-mainClone.style.overflow = 'visible';
-mainClone.style.maxHeight = 'none';
+      const mainClone = buildClone(true);  // keep notes
+      mainClone.style.overflow = 'visible';
+      mainClone.style.maxHeight = 'none';
 
-mainWrapper.appendChild(mainClone);
+      mainWrapper.appendChild(mainClone);
       document.body.appendChild(mainWrapper);
       await waitForImages(mainWrapper);
 
@@ -1482,7 +1487,7 @@ mainWrapper.appendChild(mainClone);
           el.style.boxShadow = 'none';
           el.style.borderRadius = '0';
         });
-        
+
         // Right-align Fee Amount and VAT columns in notes fee tables
         notesEl.querySelectorAll('[data-pdf-fee-table="1"] tr').forEach(row => {
           const cells = row.querySelectorAll('th, td');
@@ -1494,7 +1499,7 @@ mainWrapper.appendChild(mainClone);
             }
           });
         });
-        
+
         notesEl.style.display = 'block';
         notesEl.style.pageBreakBefore = 'unset';
         notesWrapper.appendChild(notesEl);
@@ -1504,32 +1509,32 @@ mainWrapper.appendChild(mainClone);
       const notesCanvas = await html2canvas(notesWrapper, { ...canvasOptions, windowHeight: notesWrapper.scrollHeight });
       document.body.removeChild(notesWrapper);
 
-if (notesCanvas && notesCanvas.width > 0 && notesCanvas.height > 0) {
+      if (notesCanvas && notesCanvas.width > 0 && notesCanvas.height > 0) {
 
-    const notesImgData = notesCanvas.toDataURL('image/png');
-    const notesImgHeight = (notesCanvas.height * imgWidth) / notesCanvas.width;
+        const notesImgData = notesCanvas.toDataURL('image/png');
+        const notesImgHeight = (notesCanvas.height * imgWidth) / notesCanvas.width;
 
-    // get current pdf page height position
-    let currentY = margin + ((renderedHeightPx * imgWidth) / mainCanvas.width);
+        // get current pdf page height position
+        let currentY = margin + ((renderedHeightPx * imgWidth) / mainCanvas.width);
 
-    // add gap before notes
-    currentY += 10;
+        // add gap before notes
+        currentY += 10;
 
-    // if notes don't fit, create new page
-    if (currentY + notesImgHeight > pageHeight) {
-        pdf.addPage();
-        currentY = margin;
-    }
+        // if notes don't fit, create new page
+        if (currentY + notesImgHeight > pageHeight) {
+          pdf.addPage();
+          currentY = margin;
+        }
 
-    pdf.addImage(
-        notesImgData,
-        'PNG',
-        margin,
-        currentY,
-        imgWidth,
-        notesImgHeight
-    );
-}
+        pdf.addImage(
+          notesImgData,
+          'PNG',
+          margin,
+          currentY,
+          imgWidth,
+          notesImgHeight
+        );
+      }
 
       const currentRef = ref || 'surveyor-quote';
       pdf.save(`${currentRef}.pdf`);
@@ -1543,46 +1548,46 @@ if (notesCanvas && notesCanvas.width > 0 && notesCanvas.height > 0) {
   };
 
   const handleDownloadFromCard = (quote) => {
-  setSelectedQuote(quote);
-  setPdfLoading(true);
-  setPendingDownload(true);
-};
-
-useEffect(() => {
-  if (!pendingDownload) return;
-
-  let attempts = 0;
-  const maxAttempts = 20;
-
-  const tryGenerate = async () => {
-
-    if (modalPdfRef?.current) {
-      await generatePDF();
-      setPendingDownload(false);
-      return;
-    }
-
-    attempts += 1;
-
-    if (attempts >= maxAttempts) {
-      setPendingDownload(false);
-      setPdfLoading(false);
-
-      Swal.fire(
-        'Error',
-        'Price breakdown modal not ready',
-        'error'
-      );
-
-      return;
-    }
-
-    setTimeout(tryGenerate, 100);
+    setSelectedQuote(quote);
+    setPdfLoading(true);
+    setPendingDownload(true);
   };
 
-  tryGenerate();
+  useEffect(() => {
+    if (!pendingDownload) return;
 
-}, [pendingDownload]);
+    let attempts = 0;
+    const maxAttempts = 20;
+
+    const tryGenerate = async () => {
+
+      if (modalPdfRef?.current) {
+        await generatePDF();
+        setPendingDownload(false);
+        return;
+      }
+
+      attempts += 1;
+
+      if (attempts >= maxAttempts) {
+        setPendingDownload(false);
+        setPdfLoading(false);
+
+        Swal.fire(
+          'Error',
+          'Price breakdown modal not ready',
+          'error'
+        );
+
+        return;
+      }
+
+      setTimeout(tryGenerate, 100);
+    };
+
+    tryGenerate();
+
+  }, [pendingDownload]);
 
   const handlefilterchange = (selectedoption = []) => {
     setfilterselected(selectedoption);
@@ -1638,6 +1643,16 @@ useEffect(() => {
     setSelectedQuote(null);
   };
 
+  const toggleDropdowncards = (quote) => {
+    const quoteId =
+      quote?.conveying_details?.conveying_id ||
+      quote?.quote_id ||
+      quote?.quote_ref_number ||
+      null;
+
+    setDropdownOpenId((currentId) => currentId === quoteId ? null : quoteId);
+  };
+
   return (
     <div className="bg-white antialiased font">
       {pdfLoading && (
@@ -1648,13 +1663,61 @@ useEffect(() => {
       )}
 
       <div className='bg-white shadow-md sticky top-0 p-4 z-50'>
-        <Navbar hide={!userlogin} />
+        <Navbar hide={userlogin} />
       </div>
 
-      <main className="mx-auto max-w-[1200px] pt-2 px-4 lg:px-0 mb-5 mt-20">
+      <main className="mx-auto max-w-[1200px] pt-2 px-4 lg:px-0 mb-5 mt-6">
         <div className="flex flex-col lg:flex-row gap-8">
-          <section className="flex-1">
-            <div className="overflow-auto space-y-6 pr-2 rounded-[18px] border border-[#f2eded] shadow-[0_6px_24px_rgba(16,24,40,0.04)] bg-white p-4 sm:p-8 lg:p-10">
+          <aside className="hidden lg:block z-49 fixed top-[20] bg-[linear-gradient(122.88deg,rgba(74,124,89,0.1)_35.25%,rgba(246,206,83,0.1)_87.6%)] h-1/2 lg:h-[80vh] lg:w-[300px] w-full rounded-[20px] overflow-hidden bg-white lg:top-22" style={{ height: "88.5%" }}>
+            <div className="p-6 h-full flex flex-col justify-around ">
+              {/* Step 1 */}
+              <div className="flex items-start">
+                <div className="relative mr-4">
+                  <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
+                    <Check size={18} />
+                  </div>
+                  <div className="absolute left-[19px] top-[40px] w-[2px] h-[510%] bg-[#CFE3CF]" />
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-[#1E1E1E]">STEP 1</div>
+                  <div className="text-lg font-extrabold text-[#1E1E1E]">Property Details</div>
+                  <div className="text-xs text-[#2D7C57] mt-1">Completed</div>
+                </div>
+              </div>
+
+              {/* Step 2 (Current) */}
+              <div className="flex items-start mt-6">
+                <div className="relative mr-4">
+                  <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
+                    <Check size={18} />
+                  </div>
+                  <div className="absolute left-[19px] top-[40px] w-[2px] h-[510%] bg-[#CFE3CF]" />
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-[#1E1E1E]">STEP 2</div>
+                  <div className="text-lg font-extrabold text-[#1E1E1E]">Personal Details</div>
+                  <div className="text-xs text-[#2D7C57] mt-1">Completed</div>
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="flex items-start mt-6">
+                <div className="relative mr-4">
+                  <div className="w-10 h-10 rounded-full border-2 border-[#1E5C3B] bg-[#1E5C3B] text-white flex items-center justify-center">
+                    <Check size={18} />
+                  </div>
+
+                </div>
+                <div>
+                  <div className="text-xs font-semibold text-[#1E1E1E]">STEP 3</div>
+                  <div className="text-lg font-extrabold text-[#1E1E1E]">Compare Quotes</div>
+                  <div className="text-xs text-[#2D7C57] mt-1">Completed</div>
+                </div>
+              </div>
+            </div>
+          </aside>
+          <section className="">
+            <div className="overflow-auto space-y-6 pr-2 rounded-[18px] border border-[#f2eded] shadow-[0_6px_24px_rgba(16,24,40,0.04)] bg-white lg:h-[690px] flex-1 p-4 sm:p-8 lg:p-10 lg:ml-83" style={{ marginTop: "5%" }}>
               <div className="p-4 sm:p-8">
                 <nav
                   className="text-[13px] text-[#6B7280] mb-1 flex items-center gap-4"
@@ -1664,19 +1727,27 @@ useEffect(() => {
                     Home
                   </Link>
                   <span className="hidden sm:inline">/</span>
+                  <span className="other-page hidden sm:inline">
+                    Personal Details
+                  </span>
+                  <span className="hidden sm:inline">/</span>
+                  <span className="other-page hidden sm:inline">
+                    Property Details
+                  </span>
+                  <span>/</span>
                   <span className="live-page whitespace-nowrap">
-                    Surveyor Quotes
+                    Compare Quotes
                   </span>
                 </nav>
-
                 <p className="mt-1 text-[14px] leading-5 text-[#6B7280] font-outfit">
-                  Compare surveyor quotes for your property
+                  By completing this form your details are shared with up to 5
+                  firms providing the quotes but absolutely no one else.
                 </p>
-
                 <div className="">
+
                   <Select
                     options={filteroption}
-                    instanceId="filter-select-surveyor"
+                    instanceId="filter-select"
                     isMulti
                     value={filterselected}
                     onChange={handlefilterchange}
@@ -1702,17 +1773,47 @@ useEffect(() => {
                         fontSize: 16,
                         fontFamily: 'Outfit, Arial, sans-serif',
                       }),
+                      input: (base) => ({
+                        ...base,
+                        margin: 0,
+                        fontSize: 16,
+                        fontFamily: 'Outfit, Arial, sans-serif',
+                      }),
                       option: (base, state) => ({
                         ...base,
                         fontSize: 16,
                         fontFamily: 'Outfit, Arial, sans-serif',
                         backgroundColor: state.isSelected || state.isFocused ? '#F6CE53' : base.backgroundColor,
                         color: state.isSelected || state.isFocused ? '#111' : base.color,
+                        '&:hover': {
+                          backgroundColor: '#F6CE53',
+                          color: '#111',
+                        },
+                      }),
+                      multiValue: (base) => ({
+                        ...base,
+                        fontSize: 16,
+                        fontFamily: 'Outfit, Arial, sans-serif',
+                        backgroundColor: '#1E5C3B',
+                        color: '#fff',
+                      }),
+                      multiValueLabel: (base) => ({
+                        ...base,
+                        color: '#fff',
+                        fontFamily: 'Outfit, Arial, sans-serif',
+                        fontWeight: 700,
+                      }),
+                      multiValueRemove: (base) => ({
+                        ...base,
+                        color: '#fff',
+                        ':hover': {
+                          backgroundColor: '#16472F',
+                          color: '#fff',
+                        },
                       }),
                     }}
                   />
                 </div>
-
                 <div className="mt-8 space-y-6" >
                   {loading && (
                     <div className="flex flex-col justify-center items-center py-6">
@@ -1734,11 +1835,10 @@ useEffect(() => {
                   {companydata?.map((quote, index) => (
                     <div
                       key={index}
-                      className="font border border-gray-200 rounded-2xl overflow-hidden bg-white w-full"
+                      className="font border border-gray-200 rounded-2xl overflow-hidden bg-white w-full sm:min-h-[250px]"
                     >
                       <div
-                        className={`flex flex-col sm:flex-row items-center justify-between ${index % 2 === 0 ? "bg-green-50" : "bg-red-50"
-                          } mx-2 mt-2 rounded-2xl p-4 sm:px-8 sm:py-5`}
+                        className={`flex flex-col sm:flex-row items-center justify-between ${index % 2 === 0 ? "bg-green-50" : "bg-red-50"} mx-2 mt-2 rounded-2xl p-4 sm:min-h-[96px] sm:px-8 sm:py-5`}
                       >
                         <div className="flex items-center gap-5 mb-3 sm:mb-0">
                           {quote.conveying_details.logo ? (
@@ -1777,7 +1877,7 @@ useEffect(() => {
 
                           <div
                             className="w-7 h-7 flex items-center justify-center bg-white border border-gray-300 rounded-md shadow-sm cursor-pointer"
-                            onClick={() => openDetailsModal(quote)}
+                            onClick={() => toggleDropdowncards(quote)}
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -1785,7 +1885,14 @@ useEffect(() => {
                               viewBox="0 0 24 24"
                               strokeWidth="1.5"
                               stroke="currentColor"
-                              className="w-4 h-4 text-gray-600"
+                              className={`w-4 h-4 text-gray-600 transform transition-transform duration-200 ${
+                                dropdownOpenId === (
+                                  quote?.conveying_details?.conveying_id ||
+                                  quote?.quote_id ||
+                                  quote?.quote_ref_number ||
+                                  null
+                                ) ? "rotate-180" : ""
+                              }`}
                             >
                               <path
                                 strokeLinecap="round"
@@ -1797,7 +1904,7 @@ useEffect(() => {
                         </div>
                       </div>
 
-                      <div className="p-4 sm:p-6 flex flex-col gap-6 font">
+                      <div className="p-4 sm:min-h-[154px] sm:p-6 flex flex-col gap-6 font">
                         <div className="grid grid-cols-1 lg:grid-cols-3 items-start gap-6 lg:gap-10">
                           <div className="flex flex-col">
                             <div className="flex items-center">
@@ -1836,44 +1943,58 @@ useEffect(() => {
                           </div>
 
                           <div className="flex flex-row px-15 justify-start lg:col-start-3 lg:justify-end">
-                          <button
-  disabled={instructloader}
-  className={`px-3 py-1.5 rounded-full text-sm cursor-pointer
-    ${
-      instructloader
-        ? "bg-[#4A7C59]/70 cursor-not-allowed"
-        : "bg-[#4A7C59] hover:bg-[#3b6248] text-white"
-    }`}
-onClick={() => {
+                            <button
+                              disabled={pdfLoading || pendingDownload}
+                              className={`px-3 py-1.5 rounded-full text-sm cursor-pointer ${pdfLoading || pendingDownload
+                                  ? "bg-[#4A7C59]/70 cursor-not-allowed"
+                                  : "bg-[#4A7C59] hover:bg-[#3b6248] text-white"
+                                } mx-auto block md:inline-block`}
+                              onClick={() => handleDownloadFromCard(quote)}
+                            >
+                              {pdfLoading || pendingDownload ? "Downloading..." : "Download"}
+                            </button>
+                            <button
+                              disabled={instructloader}
+                              className={`px-3 py-1.5 rounded-full text-sm ml-2 cursor-pointer
+    ${instructloader
+                                  ? "bg-[#4A7C59]/70 cursor-not-allowed"
+                                  : "bg-[#4A7C59] hover:bg-[#3b6248] text-white"
+                                }`}
+                              onClick={() => {
 
-  setinstructloader(true);
+                                setinstructloader(true);
 
-  setSelectedQuote(quote);
+                                setSelectedQuote(quote);
 
-  setPendingInstructQuote({
-    quoteid: quote.quote_id,
-    servicetype: "surveyor",
-    ref_no: quote.quote_ref_number,
-  });
+                                setPendingInstructQuote({
+                                  quoteid: quote.quote_id,
+                                  servicetype: "surveyor",
+                                  ref_no: quote.quote_ref_number,
+                                });
 
-}}
->
-  {instructloader ? "Processing..." : "Instruct"}
-</button><button
-  disabled={pdfLoading || pendingDownload}
-  className={`px-3 py-1.5 rounded-full text-sm cursor-pointer ${
-    pdfLoading || pendingDownload
-      ? "bg-[#4A7C59]/70 cursor-not-allowed"
-      : "bg-[#4A7C59] hover:bg-[#3b6248] text-white"
-  } mx-auto block md:inline-block`}
-  onClick={() => handleDownloadFromCard(quote)}
->
-  {pdfLoading || pendingDownload ? "Downloading..." : "Download"}
-</button>
+                              }}
+                            >
+                              {instructloader ? "Processing..." : "Instruct"}
+                            </button>
                           </div>
                         </div>
 
                       </div>
+                      {dropdownOpenId === (
+                        quote?.conveying_details?.conveying_id ||
+                        quote?.quote_id ||
+                        quote?.quote_ref_number ||
+                        null
+                      ) && (
+                        <div className="mx-4 mb-4 sm:mx-6 sm:mb-6 overflow-hidden rounded-xl border border-gray-200 bg-white">
+                          <div className="border-b border-gray-200 px-6 py-3">
+                            <h4 className="text-right text-sm font-semibold text-[#1E5C3B]">
+                              Survey
+                            </h4>
+                          </div>
+                          <FeesTable quote={quote} label="Survey" />
+                        </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -1883,10 +2004,33 @@ onClick={() => {
         </div>
       </main>
 
-      {selectedQuote && <SurveyorQuoteModal quote={selectedQuote} onClose={closeDetailsModal}   modalPdfRef={modalPdfRef}  onInstructQuote={instructquote}
- />}
+      {selectedQuote && <SurveyorQuoteModal quote={selectedQuote} onClose={closeDetailsModal} modalPdfRef={modalPdfRef} onInstructQuote={instructquote}
+      />}
 
-      <Footer />
+      {showLoginModal && (
+        <Surveyorsigninmodal
+          closeModal={() => setShowLoginModal(false)}
+          partnerloginshow={false}
+          isSurveyorFlow={true}
+          onLoginSuccess={() => {
+            setShowLoginModal(false);
+            setuserlogin(true);
+
+            const quoteRefNumber =
+              query_ref_no ||
+              localStorage.getItem("ref_no") ||
+              localStorage.getItem("quote_ref_number");
+
+            window.location.replace(
+              quoteRefNumber
+                ? `/components/surveyorquotes?ref_no=${encodeURIComponent(quoteRefNumber)}`
+                : "/components/surveyorquotes"
+            );
+          }}
+        />
+      )}
+
+      {/* <Footer /> */}
     </div>
   );
 }
