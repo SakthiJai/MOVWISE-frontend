@@ -410,7 +410,7 @@ function SurveyorQuoteModal({
 
             <div className="bg-gray-50 p-5 pdf-card">
               <h3 className="text-center text-emerald-700 font-semibold mb-4">
-                Conveyancer Details
+            Survey Details
               </h3>
 
               <div className="space-y-2 text-sm">
@@ -431,7 +431,7 @@ function SurveyorQuoteModal({
 
                 <p>
                   <strong>Quote Ref:</strong>{" "}
-                  {quote?.quote_ref_number || "—"}
+                  {quote?.quote_ref_id || "—"}
                 </p>
               </div>
             </div>

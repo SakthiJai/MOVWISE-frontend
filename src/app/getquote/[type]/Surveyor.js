@@ -10,8 +10,8 @@ import AddressFields from './AddressFields';
 import { API_ENDPOINTS } from "../../auth/API/api";
 import Surveyorsigninmodal from "../../surveyor/surveyorsigninmodal";
 const surveyTypes = [
-  { value: "homebuyer_report", label: "RICS Level 2 - Home Buyer Report" },
-  { value: "building_survey", label: "RICS Level 3 - Building Survey" }
+  { value: "RICS Level 2 - Home Buyer Report", label: "RICS Level 2 - Home Buyer Report" },
+  { value: "RICS Level 3 - Building Survey", label: "RICS Level 3 - Building Survey" }
 ];
 
 const countryOptions = [
@@ -68,7 +68,7 @@ export default function Surveyor() {
     last_name: "",
     email: "",
     phone_number: "",
-    valuation: "", // yes/no
+    valuation: "0",
   });
   const [errors, setErrors] = useState({});
 
@@ -151,7 +151,7 @@ export default function Surveyor() {
         email: formData.email.trim(),
         phone_number: Number(formData.phone_number),
         valuation:
-          formData.surveyType === "homebuyer_report"
+          formData.surveyType === "RICS Level 2 - Home Buyer Report"
             ? Number(formData.valuation)
             : null,
         service_type: 6,
@@ -261,10 +261,9 @@ export default function Surveyor() {
     //   newErrors.phone_number = "Phone number is required.";
     // }
 
-    // Conditional validation
-    // if (formData.surveyType === "homebuyer_report" && formData.valuation === "") {
-    //   newErrors.valuation = "Please select valuation option.";
-    // }
+    if (formData.surveyType === "RICS Level 2 - Home Buyer Report" && formData.valuation === "") {
+      newErrors.valuation = "Please select whether you require a valuation.";
+    }
 
     if (Object.keys(newErrors).length) {
       setErrors(newErrors);
@@ -511,12 +510,12 @@ export default function Surveyor() {
               </div>
 
             </div>
-            {formData.surveyType === "homebuyer_report" && (
+            {formData.surveyType === "RICS Level 2 - Home Buyer Report" && (
               <div className="flex flex-col h-full mt-4">
 
                 {/* LABEL */}
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Do you require a valuation?
+                  Do you require a Valuation in addition to Survey? <span className="text-red-500">*</span>
                 </label>
 
                 {/* TOGGLE */}
