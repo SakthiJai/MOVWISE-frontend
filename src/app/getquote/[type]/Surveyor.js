@@ -68,7 +68,7 @@ export default function Surveyor() {
     last_name: "",
     email: "",
     phone_number: "",
-    valuation: "0",
+    valuation: "",
   });
   const [errors, setErrors] = useState({});
 
