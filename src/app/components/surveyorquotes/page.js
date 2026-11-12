@@ -478,7 +478,7 @@ function SurveyorQuoteModal({
           <div className="border border-gray-300 bg-white p-6 mt-10 pdf-modal-card">
             {/* Sales Quote Title */}
             <div className="text-center mb-8">
-              <h2 className="text-xl font-bold text-emerald-700">
+              <h2 className="text-xl font-bold text-emerald-700 pdf-quote-heading">
                 Surveyor Quote
               </h2>
             </div>
@@ -488,7 +488,7 @@ function SurveyorQuoteModal({
 
               {/* Left Side */}
               <div>
-                <h3 className="font-bold text-emerald-700 mb-4 text-lg">
+                <h3 className="font-bold text-emerald-700 mb-4 text-lg pdf-property-heading">
                   Surveyor Property Details
                 </h3>
 
@@ -498,7 +498,7 @@ function SurveyorQuoteModal({
                   ).map(([label, value]) => (
                     <div
                       key={label}
-                      className="grid grid-cols-[150px_1fr] border-b border-gray-100 pb-2"
+                      className="grid grid-cols-[150px_1fr] border-b border-gray-100 pb-2 pdf-property-detail-row"
                     >
                       <span className="font-medium text-gray-700">
                         {label}
@@ -514,7 +514,7 @@ function SurveyorQuoteModal({
 
               {/* Right Side */}
               <div>
-                <h3 className="font-bold text-emerald-700 mb-5 text-lg">
+                <h3 className="font-bold text-emerald-700 mb-5 text-lg pdf-fee-heading">
                   Fee Breakdown
                 </h3>
 
@@ -1009,6 +1009,20 @@ function SurveyorquotesContent() {
  font-weight:700 !important;
  text-align:center !important;
 }
+
+.pdf-quote-heading {
+  font-size:14px !important;
+  text-align:center !important;
+}
+
+.pdf-property-heading {
+  text-align:left !important;
+}
+
+.pdf-fee-heading {
+  text-align:left !important;
+}
+
 /* ===========================
    PDF ONLY - PROPERTY DETAILS
    =========================== */
@@ -1106,6 +1120,7 @@ function SurveyorquotesContent() {
               "pdf-modal-card",
               "pdf-quote-heading",
               "pdf-property-heading",
+              "pdf-property-detail-row",
               "pdf-fee-heading"
             ];
 
@@ -1138,9 +1153,9 @@ function SurveyorquotesContent() {
           el.style.overflow = 'visible';
           el.style.maxHeight = 'none';
           const isPropertyDetailRow =
-            el.closest(".pdf-modal-card") &&
+            el.classList.contains("pdf-property-detail-row") &&
             el.querySelectorAll("span").length === 2;
-          el.style.textAlign = 'center';
+          el.style.textAlign = el.closest(".pdf-property-detail-row") ? 'left' : 'center';
           if (isPropertyDetailRow) {
 
             const spans = el.querySelectorAll("span");
