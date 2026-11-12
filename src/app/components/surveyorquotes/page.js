@@ -28,6 +28,12 @@ const getTaxTotal = (taxInfo = {}, fallback = {}) => {
   );
 };
 
+const isValuationRequested = (value) =>
+  value === true ||
+  value === 1 ||
+  (typeof value === "string" &&
+    ["1", "yes"].includes(value.trim().toLowerCase()));
+
 const getTaxDetailsRows = (quote) => {
   const rows = [];
   const taxDetails = quote?.conveying_details?.taxDetails;
@@ -53,6 +59,12 @@ const getTaxDetailsRows = (quote) => {
 const FeesTable = ({ quote, label = "Survey" }) => {
   const taxRows = getTaxDetailsRows(quote);
   const hasTaxRows = taxRows.length > 0;
+  const displayedTaxRows = taxRows.filter((row) => row.amount !== 0 || row.vat !== 0);
+  const hasDisplayedTaxRows = displayedTaxRows.length > 0;
+  const valuationRequested = quote?.service_details?.some((serviceData) =>
+    isValuationRequested(serviceData.valuation)
+  );
+  const showTaxCategories = hasDisplayedTaxRows || valuationRequested;
 
   const computed = !hasTaxRows && quote?.service_details && Array.isArray(quote.service_details) && quote.service_details.length > 0
     ? quote.service_details.reduce((acc, sd) => {
@@ -77,6 +89,9 @@ const FeesTable = ({ quote, label = "Survey" }) => {
   const supplementsvat = computed ? computed.supplementsvat : Number(quote.supplementsvat || 0);
   const disbursements = computed ? computed.disbursements : Number(quote.disbursements || 0);
   const disbursementsvat = computed ? computed.disbursementsvat : Number(quote.disbursementsvat || 0);
+  const surveyFeeAmount = Number(quote?.fees_amount || 0);
+  const surveyFeeExcludingVat = surveyFeeAmount / 1.2;
+  const surveyFeeVat = surveyFeeAmount - surveyFeeExcludingVat;
 
   const totalVatComputed = hasTaxRows
     ? taxRows.reduce((sum, row) => sum + row.vat, 0)
@@ -84,19 +99,17 @@ const FeesTable = ({ quote, label = "Survey" }) => {
       ? Number(computed.vat || 0) + Number(computed.supplementsvat || 0) + Number(computed.disbursementsvat || 0)
       : Number(vatValue || 0);
 
-  const taxItems =
-    Object.values(quote?.conveying_details?.taxDetails || {})
-      .flat() || [];
-
-  const subTotalFees = taxItems.reduce(
-    (sum, item) => sum + Number(item.fees_amount || 0),
+  const subTotalFees = taxRows.reduce(
+    (sum, row) => sum + row.amount,
     0
   );
 
-  const subTotalVat = taxItems.reduce(
-    (sum, item) => sum + Number(item.vat || 0),
+  const subTotalVat = taxRows.reduce(
+    (sum, row) => sum + row.vat,
     0
   );
+  const totalFeeAmount = surveyFeeExcludingVat + subTotalFees;
+  const totalFeeVat = surveyFeeVat + subTotalVat;
 
   const [instructpayload, setinstructpayload] = useState({
     "ref_no": "",
@@ -132,59 +145,59 @@ const FeesTable = ({ quote, label = "Survey" }) => {
           {/* SUB TOTAL ROW */}
           <tr className="border-b border-gray-200">
             <td className="px-8 py-3 text-sm font-semibold text-emerald-700">
-              Fee Amount Value
+             Survey Fees
             </td>
 
             <td className="px-8 py-3 text-right text-sm font-semibold text-emerald-700">
-              {formatGBP(Number(quote?.fees_amount || 0))}
+              {formatGBP(surveyFeeExcludingVat)}
             </td>
 
             <td className="px-8 py-3 text-right text-sm font-semibold text-emerald-700">
-              {formatGBP(Number(quote?.vat || 0))}
+              {formatGBP(surveyFeeVat)}
             </td>
           </tr>
 
-          {/* SECTION LABEL ROW (CORRECT WAY) */}
-          <tr className="border-t border-gray-300 bg-gray-100">
-            <td colSpan={3} className="w-[55%] text-sm font-semibold px-8 py-3">
-              Fee Categories
-            </td>
-          </tr>
-
-          {/* TAX ROWS */}
-          {hasTaxRows &&
-            taxRows.map((row, index) => (
-              <tr
-                key={`${row.label}-${index}`}
-                className="border-b border-gray-200"
-              >
-                <td className="text-sm px-8 py-3">
-                  {row.label}
-                </td>
-
-                <td className="text-sm px-8 py-3 text-right">
-                  {formatGBP(row.amount)}
-                </td>
-
-                <td className="text-sm px-8 py-3 text-right">
-                  {formatGBP(row.vat)}
+          {showTaxCategories && (
+            <>
+              <tr className="border-t border-gray-300 bg-gray-100">
+                <td colSpan={3} className="w-[55%] text-sm font-semibold px-8 py-3">
+                  Fee Categories
                 </td>
               </tr>
-            ))}
-          {/* SUBTOTAL ROW (taxDetails only) */}
-          <tr className="px-8 py-3 font-bold ">
-            <td className="w-[55%] text-sm font-semibold px-8 py-3">
-              Sub Total
-            </td>
 
-            <td className="text-sm font-semibold  px-8 py-4 text-right w-[55%]">
-              {formatGBP(subTotalFees)}
-            </td>
+              {taxRows.map((row, index) => (
+                <tr
+                  key={`${row.label}-${index}`}
+                  className="border-b border-gray-200"
+                >
+                  <td className="text-sm px-8 py-3">
+                    {row.label}
+                  </td>
 
-            <td className="text-sm font-semibold  px-8 py-4 text-right w-[55%]">
-              {formatGBP(subTotalVat)}
-            </td>
-          </tr>
+                  <td className="text-sm px-8 py-3 text-right">
+                    {formatGBP(row.amount)}
+                  </td>
+
+                  <td className="text-sm px-8 py-3 text-right">
+                    {formatGBP(row.vat)}
+                  </td>
+                </tr>
+              ))}
+              <tr className="px-8 py-3 font-bold ">
+                <td className="w-[55%] text-sm font-semibold px-8 py-3">
+                  Sub Total
+                </td>
+
+                <td className="text-sm font-semibold  px-8 py-4 text-right w-[55%]">
+                  {formatGBP(subTotalFees)}
+                </td>
+
+                <td className="text-sm font-semibold  px-8 py-4 text-right w-[55%]">
+                  {formatGBP(subTotalVat)}
+                </td>
+              </tr>
+            </>
+          )}
 
           {/* TOTAL ROW */}
           <tr className="border-t-2 border-gray-300 bg-gray-50">
@@ -193,11 +206,11 @@ const FeesTable = ({ quote, label = "Survey" }) => {
             </td>
 
             <td className="text-sm font-semibold text-emerald-700 px-8 py-4 text-right">
-              {formatGBP(Number(quote.total || 0))}
+              {formatGBP(totalFeeAmount)}
             </td>
 
             <td className="text-sm font-semibold text-emerald-700 px-8 py-4 text-right">
-              {formatGBP(Number(quote.total_vat || 0))}
+              {formatGBP(totalFeeVat)}
             </td>
           </tr>
 
@@ -242,7 +255,7 @@ const getServiceDetailRows = (serviceData = {}) => {
     const priceValue = serviceData.purchase_price || serviceData.sales_price || serviceData.property_values || serviceData.price;
     rows.push(["Property Value", typeof priceValue === "number" ? formatGBP(priceValue) : priceValue]);
   }
-  if (serviceData.valuation) rows.push(["Valuation", (serviceData.valuation == 1) ? "yes" : "No"]);
+  if (isValuationRequested(serviceData.valuation)) rows.push(["Valuation", "yes"]);
   // if (serviceData.stages || serviceData.sales_stages) rows.push(["Stages", serviceData.stages || serviceData.sales_stages]);
   // if (serviceData.no_of_bedrooms || serviceData.sales_no_of_bedrooms) rows.push(["Number of Bedrooms", serviceData.no_of_bedrooms || serviceData.sales_no_of_bedrooms]);
   // if (serviceData.leasehold_or_free || serviceData.sales_leasehold_or_free) rows.push(["Leasehold or Freehold", serviceData.leasehold_or_free || serviceData.sales_leasehold_or_free]);
@@ -396,13 +409,7 @@ function SurveyorQuoteModal({
 
           {/* Logo */}
           <div className="pdf-logo-cell mb-8">
-            {quote?.conveying_details?.logo && (
-              <img
-                src={quote.conveying_details.logo}
-                alt="Company Logo"
-                className="h-16 object-contain"
-              />
-            )}
+           <img width="140" height="100" alt="company logo" className="mx-auto md:mx-0" src="https://admin.movwise.com/images/1772018008574-762246097.jpeg"/>
           </div>
 
           {/* Top Details */}
@@ -851,7 +858,7 @@ function SurveyorquotesContent() {
 
  padding:10px !important;
 
- font-size:11px !important;
+ font-size:14px !important;
 
  vertical-align:middle !important;
 
@@ -1069,7 +1076,6 @@ function SurveyorquotesContent() {
             typeof el.className === "string"
               ? el.className.split(" ")
               : [];
-          const isPdfLogoCell = originalClasses.includes('pdf-logo-cell');
           const isPdfInfoCardItem = !!el.closest('.pdf-info-card');
           const isPdfOuterCard = !!el.closest('.pdf-outer-card');
           const currentRow = el.closest('tr');
@@ -1111,7 +1117,7 @@ function SurveyorquotesContent() {
           }
           el.style.fontFamily = 'Arial, sans-serif';
           el.style.color = headingTags.has(el.tagName) ? '#059669' : '#000';
-          el.style.fontSize = '11px';
+          el.style.fontSize = '14px';
           el.style.margin = '0';
           if (!isPdfInfoCardItem && !el.closest('.pdf-fee-card') && !isPdfOuterCard) {
             el.style.background = 'transparent';
@@ -1131,13 +1137,10 @@ function SurveyorquotesContent() {
           }
           el.style.overflow = 'visible';
           el.style.maxHeight = 'none';
-          const isPdfQuoteHeading = originalClasses.includes('pdf-quote-heading');
-          const isPdfPropertyHeading = originalClasses.includes('pdf-property-heading');
-          const isPdfFeeHeading = originalClasses.includes('pdf-fee-heading');
           const isPropertyDetailRow =
             el.closest(".pdf-modal-card") &&
             el.querySelectorAll("span").length === 2;
-          el.style.textAlign = isPdfLogoCell || isPdfQuoteHeading || isPdfPropertyHeading || isPdfFeeHeading ? 'center' : 'left';
+          el.style.textAlign = 'center';
           if (isPropertyDetailRow) {
 
             const spans = el.querySelectorAll("span");
@@ -1257,7 +1260,7 @@ function SurveyorquotesContent() {
           row.style.verticalAlign = 'middle';
         });
         feeCells.forEach(cell => {
-          cell.style.fontSize = '11px';
+          cell.style.fontSize = '14px';
           cell.style.padding = '5px 8px';
           cell.style.lineHeight = '1.45';
           cell.style.verticalAlign = 'middle';
@@ -1484,7 +1487,7 @@ function SurveyorquotesContent() {
           el.className = '';
           el.style.fontFamily = 'Arial, sans-serif';
           el.style.color = headingTags.has(el.tagName) ? '#059669' : '#000';
-          el.style.fontSize = '11px';
+          el.style.fontSize = '14px';
           el.style.margin = '0';
           el.style.background = 'transparent';
           el.style.backgroundColor = 'transparent';
