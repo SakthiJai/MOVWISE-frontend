@@ -479,7 +479,7 @@ function SurveyorQuoteModal({
             {/* Sales Quote Title */}
             <div className="text-center mb-8">
               <h2 className="text-xl font-bold text-emerald-700 pdf-quote-heading">
-                Surveyor Quote
+                Survey Quote
               </h2>
             </div>
 
@@ -489,7 +489,7 @@ function SurveyorQuoteModal({
               {/* Left Side */}
               <div>
                 <h3 className="font-bold text-emerald-700 mb-4 text-lg pdf-property-heading">
-                  Surveyor Property Details
+                  Survey Property Details
                 </h3>
 
                 <div className="space-y-3 text-sm">
