@@ -126,15 +126,15 @@ const FeesTable = ({ quote, label = "Survey" }) => {
       >
         <thead>
           <tr className="border-b border-gray-300 text-left">
-            <th className="w-[55%] text-sm font-semibold px-8 py-3">
+            <th className="w-[44%] px-1 py-3 text-xs font-semibold sm:px-4 sm:text-sm">
               Type
             </th>
 
-            <th className="w-[22%] text-sm font-semibold px-8 py-3 text-right">
+            <th className="w-[31%] px-1 py-3 text-right text-xs font-semibold sm:px-4 sm:text-sm">
               Fee Amount
             </th>
 
-            <th className="w-[23%] text-sm font-semibold px-8 py-3 text-right">
+            <th className="w-[25%] px-1 py-3 text-right text-xs font-semibold sm:px-4 sm:text-sm">
               VAT
             </th>
           </tr>
@@ -144,15 +144,15 @@ const FeesTable = ({ quote, label = "Survey" }) => {
 
           {/* SUB TOTAL ROW */}
           <tr className="border-b border-gray-200">
-            <td className="px-8 py-3 text-sm font-semibold text-emerald-700">
+            <td className="px-1 py-3 text-xs font-semibold text-emerald-700 sm:px-4 sm:text-sm">
              Survey Fees
             </td>
 
-            <td className="px-8 py-3 text-right text-sm font-semibold text-emerald-700">
+            <td className="px-1 py-3 text-right text-xs font-semibold text-emerald-700 sm:px-4 sm:text-sm">
               {formatGBP(surveyFeeExcludingVat)}
             </td>
 
-            <td className="px-8 py-3 text-right text-sm font-semibold text-emerald-700">
+            <td className="px-1 py-3 text-right text-xs font-semibold text-emerald-700 sm:px-4 sm:text-sm">
               {formatGBP(surveyFeeVat)}
             </td>
           </tr>
@@ -160,7 +160,7 @@ const FeesTable = ({ quote, label = "Survey" }) => {
           {showTaxCategories && (
             <>
               <tr className="border-t border-gray-300 bg-gray-100">
-                <td colSpan={3} className="w-[55%] text-sm font-semibold px-8 py-3">
+                <td colSpan={3} className="px-1 py-3 text-xs font-semibold sm:px-4 sm:text-sm">
                   Fee Categories
                 </td>
               </tr>
@@ -170,29 +170,29 @@ const FeesTable = ({ quote, label = "Survey" }) => {
                   key={`${row.label}-${index}`}
                   className="border-b border-gray-200"
                 >
-                  <td className="text-sm px-8 py-3">
+                  <td className="px-1 py-3 text-xs sm:px-4 sm:text-sm">
                     {row.label}
                   </td>
 
-                  <td className="text-sm px-8 py-3 text-right">
+                  <td className="px-1 py-3 text-right text-xs sm:px-4 sm:text-sm">
                     {formatGBP(row.amount)}
                   </td>
 
-                  <td className="text-sm px-8 py-3 text-right">
+                  <td className="px-1 py-3 text-right text-xs sm:px-4 sm:text-sm">
                     {formatGBP(row.vat)}
                   </td>
                 </tr>
               ))}
               <tr className="px-8 py-3 font-bold ">
-                <td className="w-[55%] text-sm font-semibold px-8 py-3">
+                <td className="px-1 py-3 text-xs font-semibold sm:px-4 sm:text-sm">
                   Sub Total
                 </td>
 
-                <td className="text-sm font-semibold  px-8 py-4 text-right w-[55%]">
+                <td className="px-1 py-4 text-right text-xs font-semibold sm:px-4 sm:text-sm">
                   {formatGBP(subTotalFees)}
                 </td>
 
-                <td className="text-sm font-semibold  px-8 py-4 text-right w-[55%]">
+                <td className="px-1 py-4 text-right text-xs font-semibold sm:px-4 sm:text-sm">
                   {formatGBP(subTotalVat)}
                 </td>
               </tr>
@@ -201,15 +201,15 @@ const FeesTable = ({ quote, label = "Survey" }) => {
 
           {/* TOTAL ROW */}
           <tr className="border-t-2 border-gray-300 bg-gray-50">
-            <td className="text-sm font-semibold text-emerald-700 px-8 py-4 ">
+            <td className="px-1 py-4 text-xs font-semibold text-emerald-700 sm:px-4 sm:text-sm">
               Total
             </td>
 
-            <td className="text-sm font-semibold text-emerald-700 px-8 py-4 text-right">
+            <td className="px-1 py-4 text-right text-xs font-semibold text-emerald-700 sm:px-4 sm:text-sm">
               {formatGBP(totalFeeAmount)}
             </td>
 
-            <td className="text-sm font-semibold text-emerald-700 px-8 py-4 text-right">
+            <td className="px-1 py-4 text-right text-xs font-semibold text-emerald-700 sm:px-4 sm:text-sm">
               {formatGBP(totalFeeVat)}
             </td>
           </tr>
@@ -369,23 +369,23 @@ function SurveyorQuoteModal({
 
 
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4 py-6"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-2 py-3 sm:px-4 sm:py-6"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-[1700px] bg-white border border-gray-200 shadow-xl"
+        className="flex h-[calc(100dvh-1.5rem)] max-h-[calc(100dvh-1.5rem)] w-full max-w-[1700px] flex-col overflow-hidden border border-gray-200 bg-white shadow-xl sm:h-auto sm:max-h-[calc(100dvh-3rem)]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b">
+        <div className="flex shrink-0 items-center justify-between gap-2 border-b px-3 py-3 sm:px-6 sm:py-4">
           <button
             onClick={onClose}
-            className="border border-emerald-600 text-emerald-600 px-4 py-2 text-sm rounded"
+            className="shrink-0 rounded border border-emerald-600 px-2 py-2 text-xs text-emerald-600 sm:px-4 sm:text-sm"
           >
             Back
           </button>
 
-          <h1 className="text-3xl font-bold text-emerald-700">
+          <h1 className="whitespace-nowrap text-xl font-bold text-emerald-700 sm:text-3xl">
             MovWise
           </h1>
 
@@ -395,7 +395,7 @@ function SurveyorQuoteModal({
           <button
             disabled={modalInstructLoader}
             onClick={modalInstructQuote}
-            className="border border-emerald-600 text-emerald-600 px-4 py-2 text-sm rounded"
+            className="shrink-0 rounded border border-emerald-600 px-2 py-2 text-xs text-emerald-600 sm:px-4 sm:text-sm"
           >
             {modalInstructLoader ? "Processing..." : "Instruct"}
           </button>
@@ -405,67 +405,67 @@ function SurveyorQuoteModal({
         <div
           id="price-breakdown-pdf"
           ref={modalPdfRef}
-          className="max-h-[90vh] overflow-y-auto p-6">
+          className="min-h-0 flex-1 touch-pan-y overscroll-y-contain overflow-y-auto p-3 sm:p-6">
 
           {/* Logo */}
-          <div className="pdf-logo-cell mb-8">
+          <div className="pdf-logo-cell mb-5 sm:mb-8">
            <img width="140" height="100" alt="company logo" className="mx-auto md:mx-0" src="https://admin.movwise.com/images/1772018008574-762246097.jpeg"/>
           </div>
 
           {/* Top Details */}
-          <div className="grid grid-cols-2 gap-6 pdf-grid">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-6 pdf-grid">
 
-            <div className="bg-gray-50 p-5 pdf-card">
+            <div className="min-w-0 bg-gray-50 p-4 sm:p-5 pdf-card">
               <h3 className="text-center text-emerald-700 font-semibold mb-4">
             Survey Details
               </h3>
 
-              <div className="space-y-2 text-sm">
-                <p>
+              <div className="space-y-2 break-words text-sm">
+                <p className="break-words">
                   <strong>Name:</strong>{" "}
                   {quote?.conveying_details?.company_name || "N/A"}
                 </p>
 
-                <p>
+                <p className="break-words">
                   <strong>Phone:</strong>{" "}
                   {quote?.conveying_details?.phone_number || "N/A"}
                 </p>
 
-                <p>
+                <p className="break-words">
                   <strong>Email:</strong>{" "}
                   {quote?.conveying_details?.email || "N/A"}
                 </p>
 
-                <p>
+                <p className="break-words">
                   <strong>Quote Ref:</strong>{" "}
                   {quote?.quote_ref_id || "—"}
                 </p>
               </div>
             </div>
 
-            <div className="bg-gray-50 p-5 pdf-card">
+            <div className="min-w-0 bg-gray-50 p-4 sm:p-5 pdf-card">
               <h3 className="text-center text-emerald-700 font-semibold mb-4">
                 Client Details
               </h3>
 
-              <div className="space-y-2 text-sm">
-                <p>
+              <div className="space-y-2 break-words text-sm">
+                <p className="break-words">
                   <strong>Name:</strong>{" "}
                   {quote?.customer_details?.first_name}{" "}
                   {quote?.customer_details?.last_name}
                 </p>
 
-                <p>
+                <p className="break-words">
                   <strong>Email:</strong>{" "}
                   {quote?.customer_details?.email || "--"}
                 </p>
 
-                <p>
+                <p className="break-words">
                   <strong>Phone:</strong>{" "}
                   {quote?.customer_details?.phone_number || "--"}
                 </p>
 
-                <p>
+                <p className="break-words">
                   <strong>Address:</strong>{" "}
                   {quote?.service_details?.[0]?.address || "--"}
                 </p>
@@ -475,7 +475,7 @@ function SurveyorQuoteModal({
 
           {/* Sales Quote Title */}
           {/* OUTER BOX */}
-          <div className="border border-gray-300 bg-white p-6 mt-10 pdf-modal-card">
+          <div className="mt-6 border border-gray-300 bg-white p-3 sm:mt-10 sm:p-6 pdf-modal-card">
             {/* Sales Quote Title */}
             <div className="text-center mb-8">
               <h2 className="text-xl font-bold text-emerald-700 pdf-quote-heading">
@@ -484,7 +484,7 @@ function SurveyorQuoteModal({
             </div>
 
             {/* INNER GRID */}
-            <div className="grid grid-cols-[320px_1fr] gap-12">
+            <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-[320px_minmax(0,1fr)] lg:gap-12">
 
               {/* Left Side */}
               <div>
@@ -498,13 +498,13 @@ function SurveyorQuoteModal({
                   ).map(([label, value]) => (
                     <div
                       key={label}
-                      className="grid grid-cols-[150px_1fr] border-b border-gray-100 pb-2 pdf-property-detail-row"
+                      className="grid min-w-0 grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)] border-b border-gray-100 pb-2 sm:grid-cols-[150px_minmax(0,1fr)] pdf-property-detail-row"
                     >
-                      <span className="font-medium text-gray-700">
+                      <span className="break-words font-medium text-gray-700">
                         {label}
                       </span>
 
-                      <span className="text-gray-900">
+                      <span className="break-words text-gray-900">
                         {value || "--"}
                       </span>
                     </div>
@@ -518,7 +518,7 @@ function SurveyorQuoteModal({
                   Fee Breakdown
                 </h3>
 
-                <div className="overflow-hidden border border-gray-200">
+                <div className="min-w-0 overflow-x-auto border border-gray-200">
                   <FeesTable
                     quote={quote}
                     label="Survey"
